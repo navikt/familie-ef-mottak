@@ -1,0 +1,9 @@
+server:
+  port: 8092
+  servlet:
+    context-path: /
+
+familie:
+  ef:
+    sak:
+      url: http://localhos:8093/api/
