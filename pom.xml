@@ -7,7 +7,7 @@
     <groupId>no.nav</groupId>
     <packaging>jar</packaging>
     <artifactId>familie-ef-mottak</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}${sha1}${changelist}</version>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -17,7 +17,10 @@
 
 
     <properties>
-        <jvmTarget>12</jvmTarget>
+        <revision>1.0</revision>
+        <sha1></sha1>
+        <changelist>-SNAPSHOT</changelist>
+        <jvmTarget>11</jvmTarget>
         <kotlin.version>1.3.50</kotlin.version>
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.9.3</mockk.version>
@@ -81,6 +84,7 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <dependencies>
