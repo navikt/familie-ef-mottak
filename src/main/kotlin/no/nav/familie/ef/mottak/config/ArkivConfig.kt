@@ -6,4 +6,4 @@ import org.springframework.stereotype.Component
 // TODO Endres til ConfigurationProperties ved release av SpringBoot 2.2.0
 //@ConfigurationProperties(prefix = "familie.ef.sak", ignoreUnknownFields = false)
 @Component
-data class SakConfig(@Value("\${familie.ef.sak.url}") val url: String)
+data class ArkivConfig(@Value("\${familie.ef.arkiv.url}") val url: String)

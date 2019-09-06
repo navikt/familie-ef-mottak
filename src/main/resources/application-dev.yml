@@ -6,4 +6,6 @@ server:
 familie:
   ef:
     sak:
-      url: http://localhos:8093/api/
+      url: http://localhost:8093/api/
+    arkiv:
+      url:

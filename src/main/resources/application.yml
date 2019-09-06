@@ -5,4 +5,12 @@ server:
 familie:
   ef:
     sak:
-      url: TBD
+      url: https://api-gw.oera.no/familie-ef-sak/api/
+spring:
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+#  flyway:
+#    schemas: "familie-ef-mottak"
+#    enabled: true

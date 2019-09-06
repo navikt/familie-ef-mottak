@@ -1,23 +1,25 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.api.dto.Søknad
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.SakConfig
-import no.nav.familie.ef.mottak.integration.dto.Kvittering
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
+import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class SøknadClient(operations: RestOperations,
-                   val sakConfig: SakConfig) : AbstractRestClient(operations) {
+class SøknadClient(operations: RestOperations, sakConfig: SakConfig) : AbstractRestClient(operations) {
 
-    override val isEnabled: Boolean = true
+    private val sendInnUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_MOTTAK_DOKUMENT).build()
 
+    fun sendTilSak(søknadDto: String): ResponseEntity<HttpStatus> {
+        return postForEntity(sendInnUri, ObjectMapper().readValue(søknadDto))
+    }
 
-    fun sendInn(søknad: Søknad): Kvittering {
-
-
-        return Kvittering("""bekreftelse fra mottak på innsending av "${søknad.text}" """)
-//        return postForObject(søknadConfig.Uri, søknad)
+    companion object {
+        private const val PATH_MOTTAK_DOKUMENT = "mottak/dokument"
     }
 
 }
