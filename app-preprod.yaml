@@ -8,20 +8,19 @@ metadata:
 
 spec:
   image: navikt/familie-ef-mottak:{{version}}
-  port: 8084
   liveness:
     path: /internal/status/isAlive
-    initialDelay: 30
+    initialDelay: 120
     failureThreshold: 10
   readiness:
     path: /internal/status/isAlive
-    initialDelay: 30
+    initialDelay: 120
     failureThreshold: 10
   prometheus:
     enabled: true
     path: /internal/prometheus
   vault:
-    enabled: true
+    enabled: false
   replicas:
     min: 2
     max: 4
