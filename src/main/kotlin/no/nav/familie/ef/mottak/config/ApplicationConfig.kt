@@ -15,10 +15,13 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.web.client.RestOperations
 import javax.sql.DataSource
+import no.nav.familie.ef.mottak.log
 
 @SpringBootConfiguration
 @EnableScheduling
 class ApplicationConfig : JdbcConfiguration() {
+
+    private val log = log();
 
     @Bean
     fun restTemplate(vararg interceptors: ClientHttpRequestInterceptor): RestOperations =
@@ -26,6 +29,7 @@ class ApplicationConfig : JdbcConfiguration() {
 
     @Bean
     fun dataSource(): DataSource {
+        log.info("Test logging");
         return EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)

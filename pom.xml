@@ -33,6 +33,7 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.9.3</mockk.version>
         <fasterxml.version>2.9.4.1</fasterxml.version>
+        <felles.version>1.0_20190909084910_fc377a1</felles.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
     </properties>
 
@@ -116,6 +117,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>log</artifactId>
+            <version>${felles.version}</version>
         </dependency>
     </dependencies>
     <build>
