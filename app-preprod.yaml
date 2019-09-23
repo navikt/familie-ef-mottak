@@ -8,7 +8,6 @@ metadata:
 
 spec:
   image: navikt/familie-ef-mottak:{{version}}
-  port: 8000
   healthcheck:
     liveness:
       path: /internal/status/isAlive
