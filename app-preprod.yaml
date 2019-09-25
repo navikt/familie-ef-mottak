@@ -10,11 +10,11 @@ spec:
   image: navikt/familie-ef-mottak:{{version}}
   liveness:
     path: /internal/status/isAlive
-    initialDelay: 120
+    initialDelay: 30
     failureThreshold: 10
   readiness:
     path: /internal/status/isAlive
-    initialDelay: 120
+    initialDelay: 30
     failureThreshold: 10
   prometheus:
     enabled: true
