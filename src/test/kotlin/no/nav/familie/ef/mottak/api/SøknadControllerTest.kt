@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
+import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.mottak.api.dto.Kvittering
@@ -11,7 +12,9 @@ internal class SøknadControllerTest {
 
     private val søknadServiceImpl: MottakServiceImpl = mockk()
 
-    private val søknadController = SøknadController(søknadServiceImpl)
+    private val meterRegistry: MeterRegistry = mockk()
+
+    private val søknadController = SøknadController(meterRegistry, søknadServiceImpl)
 
     @Test
     fun `sendInn returnerer samme kvittering som returneres fra søknadService`() {
