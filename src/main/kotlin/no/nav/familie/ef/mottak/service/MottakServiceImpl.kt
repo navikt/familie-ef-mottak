@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.integration.ArkivClient
 import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import no.nav.familie.ef.mottak.repository.domain.Henvendelse
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -39,7 +40,15 @@ class MottakServiceImpl(private val registry: MeterRegistry,
     }
 
     override fun get(id: Long): Henvendelse {
-        val søknad = henvendelseRepository.findById(id)
-        return søknad.orElseThrow { HttpClientErrorException(HttpStatus.BAD_REQUEST, "En ugyldig primærnøkkel ble brukt")  }
+        val søknad = henvendelseRepository.findByIdOrNull(id)
+        if (søknad != null) {
+            log.error("Hentet søknad med id $id fra arkiv")
+            registry.counter("familie.ef.mottak.hent.soknad.suksess").increment()
+            return søknad
+        } else {
+            log.error("Klarte ikke søknad hente med id $id fra arkiv")
+            registry.counter("familie.ef.mottak.hent.soknad.feil").increment()
+            throw HttpClientErrorException(HttpStatus.BAD_REQUEST, "En ugyldig primærnøkkel ble brukt")
+        }
     }
 }
