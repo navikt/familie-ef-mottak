@@ -19,5 +19,4 @@ class SøknadController(val mottakServiceImpl: MottakServiceImpl) {
     fun get(@PathVariable id: Long): Henvendelse {
         return mottakServiceImpl.get(id)
     }
-
 }
