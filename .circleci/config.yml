@@ -166,7 +166,7 @@ workflows:
       - build:
           filters:
             branches:
-              only: deploy-prod
+              only: master
       - deploy_docker:
           context: NAIS deployment
           requires:
