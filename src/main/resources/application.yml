@@ -6,7 +6,7 @@ server:
 familie:
   ef:
     sak:
-      url: https://api-gw.oera.no/familie-ef-sak/api/
+      url:
     arkiv:
         url:
 spring:
