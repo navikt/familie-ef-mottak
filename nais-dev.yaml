@@ -38,4 +38,4 @@ spec:
     enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: preprod
+      value: dev

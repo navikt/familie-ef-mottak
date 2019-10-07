@@ -15,14 +15,6 @@ jobs:
     docker:
       - image: circleci/openjdk:11-jdk
     steps:
-      - run:
-          name: Add github to known hosts
-          command: |
-            mkdir ~/.ssh
-            echo "github.com,140.82.118.3 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
-      - add_ssh_keys:
-          fingerprints:
-            - "d1:16:66:12:2f:80:15:b9:e3:a1:1b:8b:7d:e8:b2:d0"
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
@@ -102,14 +94,6 @@ jobs:
           command: |
             cat /home/circleci/project/properties.env >> $BASH_ENV
       - run:
-          name: Add github to known hosts
-          command: |
-            mkdir ~/.ssh
-            echo "github.com,140.82.118.3 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" >> ~/.ssh/known_hosts
-      - add_ssh_keys:
-          fingerprints:
-            - "d1:16:66:12:2f:80:15:b9:e3:a1:1b:8b:7d:e8:b2:d0"
-      - run:
           name: Github tag
           command: |
             git config --global user.email "team.familie@nav.no"
@@ -136,7 +120,7 @@ jobs:
               --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --resource=./app-preprod.yaml
+              --resource=./nais-dev.yaml
 
   deploy_prod:
     executor: nais-deployer
@@ -157,7 +141,7 @@ jobs:
               --key-base64=${GITHUB_PRIVATE_KEY} \
               --team=${TEAM} \
               --version=${VERSION} \
-              --resource=./app-prod.yaml
+              --resource=./nais-prod.yaml
 
 workflows:
   version: 2
