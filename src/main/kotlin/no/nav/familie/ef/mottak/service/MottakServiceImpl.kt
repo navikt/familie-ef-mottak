@@ -30,7 +30,6 @@ class MottakServiceImpl(private val registry: MeterRegistry,
 
         val arkivResponse = arkivClient.arkiver(søknadDto)
         if (arkivResponse.statusCode.is2xxSuccessful) {
-            log.info("Arkivert søknad")
             registry.counter("familie.ef.mottak.arkivering.suksess").increment()
             return Kvittering("Søknad mottatt")
         }
