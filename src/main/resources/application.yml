@@ -8,7 +8,7 @@ familie:
     sak:
       url:
     arkiv:
-        url:
+      url:
 spring:
   data:
     jdbc:

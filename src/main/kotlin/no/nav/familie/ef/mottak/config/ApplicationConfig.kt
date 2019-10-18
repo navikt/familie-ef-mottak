@@ -8,7 +8,7 @@ import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
-import org.springframework.data.jdbc.repository.config.JdbcConfiguration
+import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -22,9 +22,9 @@ import javax.sql.DataSource
 
 @SpringBootConfiguration
 @EnableScheduling
-class ApplicationConfig : JdbcConfiguration() {
+class ApplicationConfig : AbstractJdbcConfiguration() {
 
-    private val LOG = LoggerFactory.getLogger(ApplicationConfig::class.java)
+    private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
     @Bean
     fun restTemplate(vararg interceptors: ClientHttpRequestInterceptor): RestOperations =
@@ -49,7 +49,7 @@ class ApplicationConfig : JdbcConfiguration() {
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {
-        LOG.info("Registering LogFilter filter")
+        logger.info("Registering LogFilter filter")
         val filterRegistration = FilterRegistrationBean<LogFilter>()
         filterRegistration.filter = LogFilter()
         filterRegistration.order = 1
@@ -58,7 +58,7 @@ class ApplicationConfig : JdbcConfiguration() {
 
     @Bean
     fun requestTimeFilter(): FilterRegistrationBean<RequestTimeFilter> {
-        LOG.info("Registering RequestTimeFilter filter")
+        logger.info("Registering RequestTimeFilter filter")
         val filterRegistration = FilterRegistrationBean<RequestTimeFilter>()
         filterRegistration.filter = RequestTimeFilter()
         filterRegistration.order = 2

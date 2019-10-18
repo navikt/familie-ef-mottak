@@ -4,14 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <repositories>
-        <repository>
-            <id>spring</id>
-            <url>https://repo.spring.io/libs-milestone/</url>
-        </repository>
-
-    </repositories>
-
     <groupId>no.nav</groupId>
     <packaging>jar</packaging>
     <artifactId>familie-ef-mottak</artifactId>
@@ -20,9 +12,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.0.RELEASE</version>
-        <!-- TODO Oppgraderes til 2.2.0 ved release -->
     </parent>
-
 
     <properties>
         <revision>1.0</revision>

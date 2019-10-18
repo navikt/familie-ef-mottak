@@ -1,9 +1,8 @@
 package no.nav.familie.ef.mottak.config
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 
-// TODO Endres til ConfigurationProperties ved release av SpringBoot 2.2.0
-//@ConfigurationProperties(prefix = "familie.ef.sak", ignoreUnknownFields = false)
-@Component
-data class SakConfig(@Value("\${familie.ef.sak.url}") val url: String)
+@ConfigurationProperties("familie.ef.sak")
+@ConstructorBinding
+data class SakConfig(val url: String)
