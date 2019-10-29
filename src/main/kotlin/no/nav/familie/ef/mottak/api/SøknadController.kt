@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
+/*
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.domain.Henvendelse
 import no.nav.familie.ef.mottak.service.MottakServiceImpl
@@ -18,5 +19,25 @@ class SøknadController(val mottakServiceImpl: MottakServiceImpl) {
     @GetMapping("{id}")
     fun get(@PathVariable id: Long): Henvendelse {
         return mottakServiceImpl.get(id)
+    }
+}
+*/
+
+import no.nav.familie.ef.mottak.api.dto.Kvittering
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.web.bind.annotation.*
+
+@RestController
+@RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
+class SøknadController {
+
+    @PostMapping("sendInn")
+    fun sendInn(@RequestBody søknadDto: String): Kvittering {
+        return Kvittering("")
+    }
+
+    @GetMapping("{id}")
+    fun get(@PathVariable id: Long): String {
+        return "mottakServiceImpl.get(id)"
     }
 }
