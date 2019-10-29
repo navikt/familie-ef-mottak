@@ -14,10 +14,15 @@ spring:
     jdbc:
       repositories:
         enabled: true
-#  flyway:
-#    schemas: "familie-ef-mottak"
-#    enabled: true
-
+  flyway:
+    schemas: "familie-ef-mottak"
+    enabled: true
+  cloud:
+    vault:
+      database:
+        role: ""
+  datasource:
+    url: jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak
 logging:
   config: "classpath:logback-spring.xml"
 

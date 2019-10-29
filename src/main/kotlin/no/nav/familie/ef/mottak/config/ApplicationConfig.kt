@@ -18,6 +18,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.web.client.RestOperations
+import java.sql.DriverManager
+import java.util.*
 import javax.sql.DataSource
 
 @SpringBootConfiguration
@@ -32,6 +34,14 @@ class ApplicationConfig : AbstractJdbcConfiguration() {
 
     @Bean
     fun dataSource(): DataSource {
+
+
+        val url = "jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak"
+        val props = Properties()
+        props.setProperty("user", "postgres")
+        props.setProperty("password", "test")
+        val conn = DriverManager.getConnection(url, props)
+
         return EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
