@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
-/*
+
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.integration.ArkivClient
+//import no.nav.familie.ef.mottak.integration.ArkivClient
 import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import no.nav.familie.ef.mottak.repository.domain.Henvendelse
 import org.slf4j.LoggerFactory
@@ -12,11 +12,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpServerErrorException
+//import org.springframework.web.client.HttpServerErrorException
 
 @Service
 class MottakServiceImpl(private val registry: MeterRegistry,
-                        private val arkivClient: ArkivClient,
+                        //private val arkivClient: ArkivClient,
                         private val henvendelseRepository: HenvendelseRepository) : MottakService {
 
 
@@ -24,11 +24,11 @@ class MottakServiceImpl(private val registry: MeterRegistry,
 
     @Transactional
     override fun motta(søknadDto: String): Kvittering {
-
-        val henvendelse = Henvendelse(0L, søknadDto)
-
+        val id = System.currentTimeMillis() //midlertidig
+        val henvendelse = Henvendelse(id, søknadDto)
         henvendelseRepository.save(henvendelse)
-
+        return Kvittering("Søknad lagret i mottak med id " + id)
+        /*
         val arkivResponse = arkivClient.arkiver(søknadDto)
         if (arkivResponse.statusCode.is2xxSuccessful) {
             registry.counter("familie.ef.mottak.arkivering.suksess").increment()
@@ -37,6 +37,7 @@ class MottakServiceImpl(private val registry: MeterRegistry,
         log.error("Arkivering av søknad feilet")
         registry.counter("familie.ef.mottak.arkivering.feil").increment()
         throw HttpServerErrorException(arkivResponse.statusCode, "Arkivering av søknad feilet")
+        */
     }
 
     override fun get(id: Long): Henvendelse {
@@ -52,4 +53,4 @@ class MottakServiceImpl(private val registry: MeterRegistry,
         }
     }
 }
-*/
+
