@@ -1,0 +1,3 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ef-mottak

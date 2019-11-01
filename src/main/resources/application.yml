@@ -2,7 +2,6 @@ server:
   servlet:
     context-path: /
 
-
 familie:
   ef:
     sak:
@@ -20,9 +19,10 @@ spring:
   cloud:
     vault:
       database:
-        role: ""
+        enabled: true
+        role: familie-ks-mottak-admin
   datasource:
-    url: jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak
+    url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
 logging:
   config: "classpath:logback-spring.xml"
 
