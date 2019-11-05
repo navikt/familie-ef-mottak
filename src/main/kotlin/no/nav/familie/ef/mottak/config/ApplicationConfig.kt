@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
+import org.springframework.core.annotation.Order
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
@@ -17,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.transaction.PlatformTransactionManager
 
 @SpringBootConfiguration
+@EnableJdbcRepositories
 @EnableScheduling
 class ApplicationConfig : AbstractJdbcConfiguration() {
 
@@ -24,21 +27,21 @@ class ApplicationConfig : AbstractJdbcConfiguration() {
 
     @Bean
     fun dataSource(): HikariDataSource {
-
         val hikariConf = HikariConfig()
         hikariConf.username = "postgres"
         hikariConf.password = "test"
-        hikariConf.jdbcUrl = "jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak"
+        hikariConf.jdbcUrl = "jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak?stringtype=unspecified"
         val hikariDataSource = HikariDataSource(hikariConf)
         return hikariDataSource
     }
 
+    /*
     @Bean
     fun operations(): NamedParameterJdbcOperations = NamedParameterJdbcTemplate(dataSource())
 
     @Bean
     fun transactionManager(): PlatformTransactionManager = DataSourceTransactionManager(dataSource())
-
+     */
     @Bean
     fun kotlinModule(): KotlinModule = KotlinModule()
 

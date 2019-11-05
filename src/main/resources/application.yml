@@ -13,8 +13,9 @@ spring:
     jdbc:
       repositories:
         enabled: true
+  main:
+    allow-bean-definition-overriding: true
   flyway:
-    schemas: "familie-ef-mottak"
     enabled: true
   cloud:
     vault:
