@@ -14,8 +14,8 @@ class SøknadController(private val søknadDAO: SøknadDAO) {
 
     @PostMapping("sendInn")
     fun sendInn(@RequestBody søknadDto: SøknadDto): Kvittering {
-        søknadDAO.lagreSøknad(søknadDto.id, søknadDto.toString())
-        return Kvittering("Søknad lagret med id " + søknadDto.id)
+        val id = søknadDAO.lagreSøknad(søknadDto.søknad_json, søknadDto.fnr)
+        return Kvittering("Søknad lagret - id " + id + ", fnr " + søknadDto.fnr)
     }
 
     @ResponseBody
@@ -25,8 +25,8 @@ class SøknadController(private val søknadDAO: SøknadDAO) {
     }
 
     data class SøknadDto(
-            val id: Long,
-            val søknad_json: String
+            val søknad_json: String,
+            val fnr: String
     )
     /*
     @PostMapping("sendInn")

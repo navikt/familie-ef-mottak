@@ -9,6 +9,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
 import java.util.UUID
+import org.springframework.jdbc.support.GeneratedKeyHolder
+import org.springframework.jdbc.support.KeyHolder
+
+
+
+
 
 @Service
 @Transactional
@@ -16,22 +22,19 @@ import java.util.UUID
 class SøknadDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
     fun lagreSøknad(
-            id: Long,
-            soknad_json: String
-    ): String {
-        val uuid = UUID.randomUUID().toString()
+            soknad_json: String,
+            fnr: String
+    ): Long {
 
-        try {
-            namedParameterJdbcTemplate.update(
-                    "INSERT INTO soknad (id, soknad_json) VALUES (:id, :soknad_json)",
-                    MapSqlParameterSource()
-                            .addValue("id", id)
-                            .addValue("soknad_json", soknad_json)
-            )
-        } catch (e: DuplicateKeyException) {
-
-        }
-        return "ok, søknad lagra"
+        val keyHolder = GeneratedKeyHolder()
+        namedParameterJdbcTemplate.update(
+                "INSERT INTO SOKNAD (ID, SOKNAD_JSON, FNR) VALUES (nextval('SOKNAD_SEQ'), :soknad_json, :fnr)",
+                MapSqlParameterSource()
+                        .addValue("soknad_json", soknad_json)
+                        .addValue("fnr", fnr),
+                keyHolder
+        )
+        return keyHolder.keys["ID"] as Long
     }
 
 
