@@ -1,20 +1,13 @@
 package no.nav.familie.ef.mottak.repository
-import no.nav.familie.ef.mottak.api.SøknadController
+
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import org.springframework.dao.DuplicateKeyException
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
-import java.util.UUID
 import org.springframework.jdbc.support.GeneratedKeyHolder
-import org.springframework.jdbc.support.KeyHolder
-
-
-
-
 
 @Service
 @Transactional
@@ -25,7 +18,6 @@ class SøknadDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             soknad_json: String,
             fnr: String
     ): Long {
-
         val keyHolder = GeneratedKeyHolder()
         namedParameterJdbcTemplate.update(
                 "INSERT INTO SOKNAD (ID, SOKNAD_JSON, FNR) VALUES (nextval('SOKNAD_SEQ'), :soknad_json, :fnr)",
@@ -38,28 +30,27 @@ class SøknadDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTempl
     }
 
 
-    fun hentSøknadForBruker(id: Long): Søknad? {
+    fun hentSøknadForBruker(søknadId: Long): Søknad? {
         return namedParameterJdbcTemplate.query(
-                "SELECT * FROM soknad WHERE id = :id",
+                "SELECT * FROM SOKNAD WHERE ID = :id",
                 MapSqlParameterSource()
-                        .addValue("id", id),
+                        .addValue("id", søknadId),
                 søknadRowMapper
         ).firstOrNull()
     }
 
-    fun slettSøknadForBruker(id: Long) {
+    fun slettSøknadForBruker(søknadId: Long) {
         namedParameterJdbcTemplate.update(
-                "DELETE FROM soknad WHERE id = :id",
-
-                MapSqlParameterSource().addValue("id", id)
+                "DELETE FROM SOKNAD WHERE ID = :id",
+                MapSqlParameterSource().addValue("id", søknadId)
         )
     }
 }
 
 val søknadRowMapper: (ResultSet, Int) -> Søknad = { resultSet, _ ->
     Søknad(
-            id = resultSet.getLong("id"),
-            soknad_json = resultSet.getString("soknad_json")
+            id = resultSet.getLong("ID"),
+            soknad_json = resultSet.getString("SOKNAD_JSON")
     )
 }
 

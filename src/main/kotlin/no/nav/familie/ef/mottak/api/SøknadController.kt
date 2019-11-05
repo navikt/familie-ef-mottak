@@ -1,7 +1,5 @@
 package no.nav.familie.ef.mottak.api
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.JsonProperty
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.SøknadDAO
 import no.nav.familie.ef.mottak.repository.domain.Søknad

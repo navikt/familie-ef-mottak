@@ -6,7 +6,10 @@ import com.zaxxer.hikari.HikariDataSource
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.log.filter.LogFilter
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.core.annotation.Order
@@ -17,6 +20,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.transaction.PlatformTransactionManager
+import java.net.URI
 
 @SpringBootConfiguration
 @EnableJdbcRepositories
@@ -26,11 +30,13 @@ class ApplicationConfig : AbstractJdbcConfiguration() {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
     @Bean
-    fun dataSource(): HikariDataSource {
+    fun dataSource(@Value("\${spring.datasource.username}") username: String,
+                   @Value("\${spring.datasource.password}") password: String,
+                   @Value("\${spring.datasource.url}") url: String): HikariDataSource {
         val hikariConf = HikariConfig()
-        hikariConf.username = "postgres"
-        hikariConf.password = "test"
-        hikariConf.jdbcUrl = "jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak?stringtype=unspecified"
+        hikariConf.username = username
+        hikariConf.password = password
+        hikariConf.jdbcUrl = url
         val hikariDataSource = HikariDataSource(hikariConf)
         return hikariDataSource
     }

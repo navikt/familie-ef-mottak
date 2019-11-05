@@ -9,6 +9,8 @@ spring:
         enabled: true
         role: postgres
   datasource:
+    username: postgres
+    password: test
     url: jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak
 
 logging:
