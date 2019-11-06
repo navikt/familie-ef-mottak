@@ -1,14 +1,10 @@
 package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.log.filter.LogFilter
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
