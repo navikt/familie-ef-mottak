@@ -3,11 +3,6 @@ server:
   servlet:
     context-path: /
 spring:
-  cloud:
-    vault:
-      database:
-        enabled: true
-        role: postgres
   datasource:
     username: postgres
     password: test

@@ -17,11 +17,6 @@ spring:
     allow-bean-definition-overriding: true
   flyway:
     enabled: true
-  cloud:
-    vault:
-      database:
-        enabled: true
-        role: familie-ks-mottak-admin
   datasource:
     url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
 logging:

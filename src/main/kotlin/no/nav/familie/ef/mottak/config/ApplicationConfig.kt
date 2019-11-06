@@ -8,19 +8,12 @@ import no.nav.familie.log.filter.LogFilter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
-import org.springframework.core.annotation.Order
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.transaction.PlatformTransactionManager
-import java.net.URI
 
 @SpringBootConfiguration
 @EnableJdbcRepositories
@@ -30,6 +23,7 @@ class ApplicationConfig : AbstractJdbcConfiguration() {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
     @Bean
+    @ConditionalOnProperty(name = ["spring.flyway.enabled"], havingValue = "false")
     fun dataSource(@Value("\${spring.datasource.username}") username: String,
                    @Value("\${spring.datasource.password}") password: String,
                    @Value("\${spring.datasource.url}") url: String): HikariDataSource {
