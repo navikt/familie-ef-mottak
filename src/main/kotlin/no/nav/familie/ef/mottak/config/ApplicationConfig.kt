@@ -22,19 +22,6 @@ class ApplicationConfig : AbstractJdbcConfiguration() {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
-    @Bean
-    @ConditionalOnProperty(name = ["spring.flyway.enabled"], havingValue = "false")
-    fun dataSource(@Value("\${spring.datasource.username}") username: String,
-                   @Value("\${spring.datasource.password}") password: String,
-                   @Value("\${spring.datasource.url}") url: String): HikariDataSource {
-        val hikariConf = HikariConfig()
-        hikariConf.username = username
-        hikariConf.password = password
-        hikariConf.jdbcUrl = url
-        val hikariDataSource = HikariDataSource(hikariConf)
-        return hikariDataSource
-    }
-
     /*
     @Bean
     fun operations(): NamedParameterJdbcOperations = NamedParameterJdbcTemplate(dataSource())

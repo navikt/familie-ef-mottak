@@ -11,7 +11,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 class ApplicationLocal
 fun main(args: Array<String>) {
-
     SpringApplicationBuilder(ApplicationLocal::class.java)
             .profiles("local")
             .run(*args)
