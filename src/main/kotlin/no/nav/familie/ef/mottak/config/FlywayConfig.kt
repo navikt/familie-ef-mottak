@@ -14,7 +14,7 @@ class FlywayConfig {
     private val logger = LoggerFactory.getLogger(FlywayConfig::class.java)
 
     @Bean
-    fun flywayConfig(@Value("\${spring.cloud.vault.database.role}") role: String): FlywayConfigurationCustomizer {
+    fun setRole(@Value("\${spring.cloud.vault.database.role}") role: String): FlywayConfigurationCustomizer {
         logger.info("Setter rolle " + role)
         return FlywayConfigurationCustomizer { c -> c.initSql(String.format("SET ROLE \"%s\"", role)) }
     }
