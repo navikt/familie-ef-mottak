@@ -5,8 +5,10 @@ import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.log.filter.LogFilter
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -14,6 +16,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @SpringBootConfiguration
 @EnableJdbcRepositories
 @EnableScheduling
+@EntityScan("no.nav.familie")
+@ComponentScan("no.nav.familie")
 class ApplicationConfig : AbstractJdbcConfiguration() {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
