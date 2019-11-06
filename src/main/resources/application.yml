@@ -19,6 +19,11 @@ spring:
     enabled: true
   datasource:
     url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: "select 1"
+      max-lifetime: 30000
+      minimum-idle: 1
 logging:
   config: "classpath:logback-spring.xml"
 

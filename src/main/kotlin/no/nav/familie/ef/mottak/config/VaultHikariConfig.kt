@@ -60,5 +60,3 @@ fun dataSource(@Value("\${spring.datasource.username}") username: String,
     val hikariDataSource = HikariDataSource(hikariConf)
     return hikariDataSource
 }
-
-
