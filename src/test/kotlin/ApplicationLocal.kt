@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.builder.SpringApplicationBuilder
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
-@SpringBootApplication(scanBasePackages = ["no.nav.familie"], exclude = [ErrorMvcAutoConfiguration::class])
+@SpringBootApplication(exclude = [ErrorMvcAutoConfiguration::class])
 @EnableSwagger2
 class ApplicationLocal
 fun main(args: Array<String>) {

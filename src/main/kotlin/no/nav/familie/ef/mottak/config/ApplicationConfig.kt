@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 
 @SpringBootConfiguration
+@ComponentScan("no.nav.familie")
 //@EnableScheduling
 class ApplicationConfig : AbstractJdbcConfiguration() {
 
