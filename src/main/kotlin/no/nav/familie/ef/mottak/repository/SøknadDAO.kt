@@ -10,8 +10,8 @@ import java.sql.ResultSet
 import org.springframework.jdbc.support.GeneratedKeyHolder
 
 @Service
-@Transactional
 @Repository
+@Transactional
 class SøknadDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
     fun lagreSøknad(

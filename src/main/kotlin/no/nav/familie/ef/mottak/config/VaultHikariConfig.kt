@@ -9,12 +9,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.cloud.vault.config.databases.VaultDatabaseProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.vault.core.lease.SecretLeaseContainer
 import org.springframework.vault.core.lease.event.SecretLeaseCreatedEvent
 import org.springframework.vault.core.lease.domain.RequestedSecret.rotating
 
-@Profile("!local")
 @Configuration
 @ConditionalOnProperty(name = ["spring.cloud.vault.enabled"])
 class VaultHikariConfig(private val container: SecretLeaseContainer,
@@ -48,7 +46,7 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
     }
 }
 
-@Profile("local")
+@ConditionalOnProperty(name = ["spring.cloud.vault.enabled"], havingValue = "false")
 @Bean
 fun dataSource(@Value("\${spring.datasource.username}") username: String,
                @Value("\${spring.datasource.password}") password: String,

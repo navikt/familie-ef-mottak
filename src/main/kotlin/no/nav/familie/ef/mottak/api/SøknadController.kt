@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.api.dto.SøknadDto
+import no.nav.familie.ef.mottak.api.exception.SøknadNotFoundException
 import no.nav.familie.ef.mottak.repository.SøknadDAO
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -18,14 +20,10 @@ class SøknadController(private val søknadDAO: SøknadDAO) {
 
     @ResponseBody
     @GetMapping("{id}")
-    fun get(@PathVariable id: Long): Søknad? {
-        return søknadDAO.hentSøknadForBruker(id)
+    fun get(@PathVariable id: Long): Søknad {
+        return søknadDAO.hentSøknadForBruker(id) ?: throw SøknadNotFoundException()
     }
 
-    data class SøknadDto(
-            val søknad_json: String,
-            val fnr: String
-    )
     /*
     @PostMapping("sendInn")
     fun sendInn(@RequestBody søknadDto: String): Kvittering {
