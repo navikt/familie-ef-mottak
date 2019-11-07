@@ -9,10 +9,10 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api"], produces = [APPLICATION_JSON_VALUE])
 class SøknadController(private val søknadDAO: SøknadDAO) {
 
-    @PostMapping("sendInn")
+    @PostMapping("/soknad")
     fun sendInn(@RequestBody søknadDto: SøknadDto): Kvittering {
         val id = søknadDAO.lagreSøknad(søknadDto.søknad_json, søknadDto.fnr)
         return Kvittering("Søknad lagret - id " + id + ", fnr " + søknadDto.fnr)
