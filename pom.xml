@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.0.RELEASE</version>
+        <version>2.2.1.RELEASE</version>
     </parent>
 
     <properties>
@@ -23,7 +23,9 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.9.3</mockk.version>
         <fasterxml.version>2.10.0</fasterxml.version>
-        <felles.version>1.0_20191007152733_dff2e9b</felles.version>
+        <felles.version>1.0_20191106113227_c2ad869</felles.version>
+        <token-validation.version>1.1.2</token-validation.version>
+        <spring-cloud.version>2.1.3.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
     </properties>
 
@@ -32,7 +34,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-vault-dependencies</artifactId>
-                <version>2.1.3.RELEASE</version>
+                <version>${spring-cloud.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -92,13 +94,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!-- Test -->
         <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk</artifactId>
             <version>${mockk.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
@@ -109,6 +112,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-test-support</artifactId>
+            <version>${token-validation.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Nav-internt  -->
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-spring</artifactId>
+            <version>${token-validation.version}</version>
         </dependency>
 
         <!-- Database -->
@@ -121,7 +137,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-vault-config-databases</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
@@ -210,7 +225,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>make-assembly</id>

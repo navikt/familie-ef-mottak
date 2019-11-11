@@ -5,11 +5,13 @@ import no.nav.familie.ef.mottak.api.dto.SøknadDto
 import no.nav.familie.ef.mottak.api.exception.SøknadNotFoundException
 import no.nav.familie.ef.mottak.repository.SøknadDAO
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.security.token.support.core.api.Protected
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(path = ["/api"], produces = [APPLICATION_JSON_VALUE])
+@Protected
 class SøknadController(private val søknadDAO: SøknadDAO) {
 
     @PostMapping("/soknad")

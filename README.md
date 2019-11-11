@@ -4,6 +4,8 @@ Mottaksapplikasjon for søknader om overgangsstønad.
 ## Kjøre appen
 `ApplicationLocal` launcher appen med Spring-profil `local` og appen blir tilgjengelig på port 8092.
 
+Cookie med selvbetjeningstoken finnes da på `http://localhost:8092/local/cookie`.
+
 ## Database
 
 For å sette opp Postgres-database lokalt med Docker:

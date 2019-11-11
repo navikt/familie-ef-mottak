@@ -10,3 +10,11 @@ spring:
 
 logging:
   config: "classpath:logback-test.xml"
+
+no.nav.security.jwt:
+  issuers: selvbetjening
+  issuer.selvbetjening:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+    proxyurl:
