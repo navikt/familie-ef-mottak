@@ -12,7 +12,7 @@ docker run --name familie-ef-mottak -e POSTGRES_PASSWORD=<PASSWORD> -d -p 5432:5
 docker ps (finn container id)
 docker exec -it <container_id> bash
 psql -U postgres
-CREATE DATABASE familie-ef-mottak;
+CREATE DATABASE "familie-ef-mottak";
 ```
 
 For å kjøre med denne lokalt må følgende miljøvariabler settes i `application-local.yml`:
