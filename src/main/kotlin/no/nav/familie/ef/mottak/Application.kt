@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
-@SpringBootApplication()
+@SpringBootApplication
 @EnableSwagger2
-@ConfigurationPropertiesScan(basePackages = ["no.nav.familie.ef.mottak"])
+@ConfigurationPropertiesScan
 class Application
 
 fun main(args: Array<String>) {
