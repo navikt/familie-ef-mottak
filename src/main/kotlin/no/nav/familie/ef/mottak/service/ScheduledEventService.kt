@@ -5,7 +5,6 @@ import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
-
 @Service
 class ScheduledEventService(private val henvendelseRepository: HenvendelseRepository,
                             private val henvendelseService: HenvendelseService) {

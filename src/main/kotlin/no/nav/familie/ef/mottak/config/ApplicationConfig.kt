@@ -11,11 +11,12 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.http.client.ClientHttpRequestInterceptor
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
-//@EnableScheduling
+@EnableScheduling
 class ApplicationConfig : AbstractJdbcConfiguration() {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpServerErrorException
 
 @Service
 class MottakServiceImpl(private val registry: MeterRegistry,
@@ -26,8 +25,9 @@ class MottakServiceImpl(private val registry: MeterRegistry,
 
         val henvendelse = Henvendelse(0L, søknadDto)
 
-        henvendelseRepository.save(henvendelse)
-
+        val lagret = henvendelseRepository.save(henvendelse)
+        return Kvittering("Søknad mottatt og lagret med id "+lagret.id)
+        /*
         val arkivResponse = arkivClient.arkiver(søknadDto)
         if (arkivResponse.statusCode.is2xxSuccessful) {
             registry.counter("familie.ef.mottak.arkivering.suksess").increment()
@@ -36,6 +36,7 @@ class MottakServiceImpl(private val registry: MeterRegistry,
         log.error("Arkivering av søknad feilet")
         registry.counter("familie.ef.mottak.arkivering.feil").increment()
         throw HttpServerErrorException(arkivResponse.statusCode, "Arkivering av søknad feilet")
+        */
     }
 
     override fun get(id: Long): Henvendelse {
