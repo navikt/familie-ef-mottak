@@ -1,5 +1,5 @@
 package no.nav.familie.ef.mottak.integration
-/*
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.SakConfig
@@ -23,4 +23,3 @@ class SøknadClient(operations: RestOperations, sakConfig: SakConfig) : Abstract
     }
 
 }
-*/

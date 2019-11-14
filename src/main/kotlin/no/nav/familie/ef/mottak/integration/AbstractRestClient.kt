@@ -1,5 +1,5 @@
 package no.nav.familie.ef.mottak.integration
-/*
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.Marker
@@ -36,4 +36,3 @@ abstract class AbstractRestClient(protected val operations: RestOperations) {
 
     override fun toString(): String = this::class.simpleName + " [operations=" + operations + "]"
 }
-*/

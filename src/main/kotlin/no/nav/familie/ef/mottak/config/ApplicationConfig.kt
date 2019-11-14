@@ -5,17 +5,25 @@ import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.log.filter.LogFilter
 import org.slf4j.LoggerFactory
 import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
+import org.springframework.http.client.ClientHttpRequestInterceptor
+import org.springframework.web.client.RestOperations
 
 @SpringBootConfiguration
-@ComponentScan("no.nav.familie")
+@ConfigurationPropertiesScan
 //@EnableScheduling
 class ApplicationConfig : AbstractJdbcConfiguration() {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
+
+
+    @Bean
+    fun restTemplate(vararg interceptors: ClientHttpRequestInterceptor): RestOperations =
+            RestTemplateBuilder().interceptors(*interceptors).build()
 
     @Bean
     fun kotlinModule(): KotlinModule = KotlinModule()

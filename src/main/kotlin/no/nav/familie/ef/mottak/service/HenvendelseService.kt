@@ -1,5 +1,5 @@
 package no.nav.familie.ef.mottak.service
-/*
+
 import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import no.nav.familie.ef.mottak.repository.domain.Henvendelse
@@ -17,4 +17,3 @@ class HenvendelseService(private val søknadClient: SøknadClient,
         søknadClient.sendTilSak(henvendelse.payload)
     }
 }
-*/

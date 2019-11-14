@@ -1,5 +1,5 @@
 package no.nav.familie.ef.mottak.service
-/*
+
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.integration.ArkivClient
@@ -51,4 +51,3 @@ class MottakServiceImpl(private val registry: MeterRegistry,
         }
     }
 }
-*/

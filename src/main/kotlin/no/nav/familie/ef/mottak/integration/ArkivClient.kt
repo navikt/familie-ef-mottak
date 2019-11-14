@@ -1,5 +1,5 @@
 package no.nav.familie.ef.mottak.integration
-/*
+
 import no.nav.familie.ef.mottak.config.SakConfig
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,4 +22,3 @@ class ArkivClient(operations: RestOperations, sakConfig: SakConfig) : AbstractRe
     }
 
 }
-*/
