@@ -45,16 +45,3 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
         private val LOGGER = LoggerFactory.getLogger(VaultHikariConfig::class.java)
     }
 }
-
-@ConditionalOnProperty(name = ["spring.cloud.vault.enabled"], havingValue = "false")
-@Bean
-fun dataSource(@Value("\${spring.datasource.username}") username: String,
-               @Value("\${spring.datasource.password}") password: String,
-               @Value("\${spring.datasource.url}") url: String): HikariDataSource {
-    val hikariConf = HikariConfig()
-    hikariConf.username = username
-    hikariConf.password = password
-    hikariConf.jdbcUrl = url
-    val hikariDataSource = HikariDataSource(hikariConf)
-    return hikariDataSource
-}
