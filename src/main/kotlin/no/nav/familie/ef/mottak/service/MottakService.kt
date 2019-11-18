@@ -8,5 +8,4 @@ interface MottakService {
     fun motta(søknadDto: String): Kvittering
 
     fun get(id: Long): Henvendelse
-
 }

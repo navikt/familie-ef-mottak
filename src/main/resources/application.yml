@@ -2,7 +2,6 @@ server:
   servlet:
     context-path: /
 
-
 familie:
   ef:
     sak:
@@ -14,10 +13,17 @@ spring:
     jdbc:
       repositories:
         enabled: true
-#  flyway:
-#    schemas: "familie-ef-mottak"
-#    enabled: true
-
+  main:
+    allow-bean-definition-overriding: true
+  flyway:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
+    hikari:
+      maximum-pool-size: 2
+      connection-test-query: "select 1"
+      max-lifetime: 30000
+      minimum-idle: 1
 logging:
   config: "classpath:logback-spring.xml"
 
@@ -30,3 +36,12 @@ management:
       info: "status/isAlive"
   metrics.export.prometheus.enabled: true
   metrics.web.server.auto-time-requests: true
+
+no.nav.security.jwt:
+  issuers: selvbetjening
+  issuer.selvbetjening:
+    discoveryurl: https://login.microsoftonline.com/navnob2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_idporten
+    acceptedaudience: ${ACCEPTEDAUDIENCE}
+    proxyurl: http://webproxy-nais.nav.no:8088
+    cookie_name: selvbetjening-idtoken
+

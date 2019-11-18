@@ -1,5 +1,3 @@
-SET DATABASE SQL SYNTAX PGS true;
-
 CREATE TABLE henvendelse (
     id                  bigserial PRIMARY KEY,
     payload             text         NOT NULL,
@@ -9,4 +7,3 @@ CREATE TABLE henvendelse (
 );
 
 CREATE INDEX status_index ON henvendelse (status);
-

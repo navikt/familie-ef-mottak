@@ -16,6 +16,4 @@ class HenvendelseService(private val søknadClient: SøknadClient,
         henvendelseRepository.save(henvendelse.copy(status = HenvendelseStatus.FERDIG))
         søknadClient.sendTilSak(henvendelse.payload)
     }
-
-
 }

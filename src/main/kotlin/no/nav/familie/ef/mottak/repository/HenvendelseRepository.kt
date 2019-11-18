@@ -10,5 +10,4 @@ interface HenvendelseRepository : CrudRepository<Henvendelse, Long>{
                      WHERE status IN ('KLAR_TIL_PLUKK', 'UBEHANDLET') 
                      ORDER BY opprettet_Tidspunkt """)
     fun finnAlleHenvendelserKlareForProsessering(): List<Henvendelse>
-
 }

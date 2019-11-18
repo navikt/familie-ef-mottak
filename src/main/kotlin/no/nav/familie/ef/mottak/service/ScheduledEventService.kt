@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
+
 import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-
 
 @Service
 class ScheduledEventService(private val henvendelseRepository: HenvendelseRepository,
@@ -20,4 +20,3 @@ class ScheduledEventService(private val henvendelseRepository: HenvendelseReposi
         }
     }
 }
-

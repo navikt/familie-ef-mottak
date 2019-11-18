@@ -2,10 +2,19 @@ server:
   port: 8092
   servlet:
     context-path: /
+spring:
+  datasource:
+    username: postgres
+    password: test
+    url: jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak
 
-familie:
-  ef:
-    sak:
-      url: http://localhost:8093/api/
-    arkiv:
-      url:
+logging:
+  config: "classpath:logback-test.xml"
+
+no.nav.security.jwt:
+  issuers: selvbetjening
+  issuer.selvbetjening:
+    discoveryurl: http://metadata
+    accepted_audience: aud-localhost
+    cookie_name: localhost-idtoken
+    proxyurl:
