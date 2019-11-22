@@ -1,11 +1,16 @@
 package no.nav.familie.ef.mottak.repository.domain
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Column
+import no.nav.familie.ef.mottak.encryption.StringCryptoConverter
 import java.time.LocalDateTime
+import javax.persistence.*
 
-data class Henvendelse(@Id val id: Long,
+@Entity
+data class Henvendelse(@Id
+                       @GeneratedValue(strategy = GenerationType.IDENTITY)
+                       val id: Long,
+                       @Convert(converter = StringCryptoConverter::class)
                        val payload: String,
+                       @Enumerated(EnumType.STRING)
                        val status: HenvendelseStatus = HenvendelseStatus.UBEHANDLET,
                        val versjon: Int = 1,
-                       @Column("opprettet_tidspunkt") val opprettetTidspunkt: LocalDateTime = LocalDateTime.now())
+                       @Column(name = "opprettet_tidspunkt") val opprettetTidspunkt: LocalDateTime = LocalDateTime.now())

@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
-import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
@@ -17,10 +16,9 @@ import org.springframework.web.client.RestOperations
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
 @EnableScheduling
-class ApplicationConfig : AbstractJdbcConfiguration() {
+class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
-
 
     @Bean
     fun restTemplate(vararg interceptors: ClientHttpRequestInterceptor): RestOperations =
