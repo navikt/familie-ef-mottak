@@ -1,13 +1,8 @@
 package no.nav.familie.ef.mottak.encryption
 
 import javax.crypto.Cipher
-import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import java.security.InvalidAlgorithmParameterException
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
-import kotlin.random.Random.Default.nextBytes
 
 class CipherInitializer {
 
@@ -25,8 +20,8 @@ class CipherInitializer {
     }
 
     companion object {
-        private val CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding"
-        private val SECRET_KEY_ALGORITHM = "AES"
+        private const val CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding"
+        private const val SECRET_KEY_ALGORITHM = "AES"
     }
 
 }

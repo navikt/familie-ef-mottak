@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.integration.ArkivClient
 import no.nav.familie.ef.mottak.repository.HenvendelseRepository
 import no.nav.familie.ef.mottak.repository.domain.Henvendelse
 import org.slf4j.LoggerFactory
@@ -14,7 +13,6 @@ import org.springframework.web.client.HttpClientErrorException
 
 @Service
 class MottakServiceImpl(private val registry: MeterRegistry,
-                        private val arkivClient: ArkivClient,
                         private val henvendelseRepository: HenvendelseRepository) : MottakService {
 
 

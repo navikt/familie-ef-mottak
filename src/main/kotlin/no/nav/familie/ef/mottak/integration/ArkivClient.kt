@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.ArkivConfig
-import no.nav.familie.ef.mottak.config.SakConfig
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
