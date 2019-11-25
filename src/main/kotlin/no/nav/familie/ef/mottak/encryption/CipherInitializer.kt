@@ -1,9 +1,11 @@
 package no.nav.familie.ef.mottak.encryption
 
+import org.springframework.stereotype.Component
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+@Component
 class CipherInitializer {
 
     fun prepareCipher(): Cipher {

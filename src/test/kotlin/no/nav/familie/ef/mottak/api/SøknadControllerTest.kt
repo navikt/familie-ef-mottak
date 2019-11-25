@@ -3,13 +3,13 @@ package no.nav.familie.ef.mottak.api
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.service.MottakServiceImpl
+import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class SøknadControllerTest {
 
-    private val søknadServiceImpl: MottakServiceImpl = mockk()
+    private val søknadServiceImpl: SøknadServiceImpl = mockk()
 
     private val søknadController = SøknadController(søknadServiceImpl)
 
