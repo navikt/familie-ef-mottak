@@ -1,11 +1,14 @@
 package no.nav.familie.ef.mottak.encryption
 
-import org.springframework.stereotype.Component
 import javax.crypto.Cipher
+import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import java.security.InvalidAlgorithmParameterException
+import java.security.InvalidKeyException
+import java.security.NoSuchAlgorithmException
+import kotlin.random.Random.Default.nextBytes
 
-@Component
 class CipherInitializer {
 
     fun prepareCipher(): Cipher {

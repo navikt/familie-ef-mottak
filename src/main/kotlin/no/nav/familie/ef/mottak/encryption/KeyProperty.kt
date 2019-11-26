@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.encryption
 
+import no.nav.familie.ef.mottak.encryption.KeyProperty.Companion.DATABASE_ENCRYPTION_KEY
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 

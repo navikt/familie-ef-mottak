@@ -11,10 +11,8 @@ import java.net.URI
 
 abstract class AbstractRestClient(protected val operations: RestOperations) {
 
-    companion object {
-        protected val CONFIDENTIAL: Marker = MarkerFactory.getMarker("CONFIDENTIAL")
-        protected val LOG: Logger = LoggerFactory.getLogger(this::class.java)
-    }
+    private val marker: Marker = MarkerFactory.getMarker("CONFIDENTIAL")
+    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     protected inline fun <reified T> getForEntity(uri: URI): T {
         val respons = operations.getForEntity(uri, T::class.java)
@@ -27,11 +25,11 @@ abstract class AbstractRestClient(protected val operations: RestOperations) {
     }
 
     protected fun <T> validerOgPakkUt(respons: ResponseEntity<T>): T {
-        LOG.trace(CONFIDENTIAL, "Respons: {}", respons)
+        logger.trace(marker, "Respons: {}", respons)
         if (!respons.statusCode.is2xxSuccessful) {
             throw HttpServerErrorException(respons.statusCode)
         }
-        return respons.body ?: throw IllegalStateException()
+        return respons.body ?: error("")
     }
 
     override fun toString(): String = this::class.simpleName + " [operations=" + operations + "]"

@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.familie.ef.mottak.service.HentJournalpostService
 import no.nav.familie.ef.mottak.task.HentSaksnummerFraJoarkTask
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse

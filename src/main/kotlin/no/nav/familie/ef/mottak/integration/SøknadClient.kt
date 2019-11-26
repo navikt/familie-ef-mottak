@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
 import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
-import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

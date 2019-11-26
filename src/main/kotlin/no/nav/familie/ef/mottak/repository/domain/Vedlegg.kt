@@ -1,16 +1,13 @@
 package no.nav.familie.ef.mottak.repository.domain
 
+import no.nav.familie.ef.mottak.encryption.PdfCryptoConverter
 import javax.persistence.*
 
 @Entity
 @Table
-data class Vedlegg(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long? = null,
-//        @ManyToOne @JoinColumn(name = "soknad_id")
-//        val soknad: Søknad,
-        val data: ByteArray,
-        val filnavn: String
-
-)
+data class Vedlegg(@Id
+                   @GeneratedValue(strategy = GenerationType.IDENTITY)
+                   val id: Long? = null,
+                   @Convert(converter = PdfCryptoConverter::class)
+                   val data: Pdf,
+                   val filnavn: String)

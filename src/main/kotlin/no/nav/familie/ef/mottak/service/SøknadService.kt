@@ -11,4 +11,6 @@ interface SøknadService {
     fun get(id: Long): Søknad
 
     fun sendTilSak(søknadId: String)
+
+    fun lagreSøknad(søknad: Søknad)
 }

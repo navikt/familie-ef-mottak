@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.repository
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Query
-import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.stereotype.Repository
 
