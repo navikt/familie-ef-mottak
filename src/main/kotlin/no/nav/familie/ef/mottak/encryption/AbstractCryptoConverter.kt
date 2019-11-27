@@ -1,48 +1,47 @@
 package no.nav.familie.ef.mottak.encryption
 
-import org.apache.commons.lang3.StringUtils.isNotEmpty
-import java.util.*
 import javax.crypto.Cipher
 import javax.persistence.AttributeConverter
 import kotlin.random.Random
 
 
-abstract class AbstractCryptoConverter<T>(private val cipherInitializer: CipherInitializer) : AttributeConverter<T, String> {
+abstract class AbstractCryptoConverter<T> : AttributeConverter<T, ByteArray> {
 
-    abstract fun stringToEntityAttribute(dbData: String): T
+    private val cipherInitializer = CipherInitializer()
 
-    abstract fun entityAttributeToString(attribute: T): String
+    abstract fun byteArrayToEntityAttribute(dbData: ByteArray): T
 
-    override fun convertToDatabaseColumn(attribute: T): String {
-        if (isNotEmpty(KeyProperty.DATABASE_ENCRYPTION_KEY) && attribute != null) {
+    abstract fun entityAttributeToByteArray(attribute: T): ByteArray
+
+    override fun convertToDatabaseColumn(attribute: T): ByteArray {
+        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && attribute != null) {
             return encrypt(attribute)
         }
-        return entityAttributeToString(attribute)
+        return entityAttributeToByteArray(attribute)
     }
 
-    override fun convertToEntityAttribute(dbData: String): T {
-        if (isNotEmpty(KeyProperty.DATABASE_ENCRYPTION_KEY) && isNotEmpty(dbData)) {
+    override fun convertToEntityAttribute(dbData: ByteArray): T {
+        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData.isNotEmpty()) {
             return decrypt(dbData)
         }
-        return stringToEntityAttribute(dbData)
+        return byteArrayToEntityAttribute(dbData)
     }
 
-    private fun encrypt(attribute: T): String {
+    private fun encrypt(attribute: T): ByteArray {
         val cipher = cipherInitializer.prepareCipher()
-        val bytesToEncrypt = entityAttributeToString(attribute).toByteArray()
-        val iv = Random.nextBytes(cipher.blockSize)
-        cipherInitializer.initCipher(cipher, Cipher.ENCRYPT_MODE, iv)
+        val bytesToEncrypt = entityAttributeToByteArray(attribute)
+        val initializationVector = Random.nextBytes(cipher.blockSize)
+        cipherInitializer.initCipher(cipher, Cipher.ENCRYPT_MODE, initializationVector)
         val encryptedBytes = cipher.doFinal(bytesToEncrypt)
-        return Base64.getEncoder().encodeToString(cipher.iv + encryptedBytes)
+        return cipher.iv + encryptedBytes
     }
 
-    private fun decrypt(dbData: String): T {
+    private fun decrypt(ivAndEncryptedBytes: ByteArray): T {
         val cipher = cipherInitializer.prepareCipher()
-        val ivAndEncryptedBytes = Base64.getDecoder().decode(dbData)
-        val iv = ivAndEncryptedBytes.copyOfRange(0, cipher.blockSize)
+        val initializationVector = ivAndEncryptedBytes.copyOfRange(0, cipher.blockSize)
         val encryptedBytes = ivAndEncryptedBytes.copyOfRange(cipher.blockSize, ivAndEncryptedBytes.size)
-        cipherInitializer.initCipher(cipher, Cipher.DECRYPT_MODE, iv)
+        cipherInitializer.initCipher(cipher, Cipher.DECRYPT_MODE, initializationVector)
         val decryptedBytes = cipher.doFinal(encryptedBytes)
-        return stringToEntityAttribute(String(decryptedBytes))
+        return byteArrayToEntityAttribute(decryptedBytes)
     }
 }

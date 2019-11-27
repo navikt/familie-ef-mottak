@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.config.interceptor
 
 import no.nav.familie.ef.mottak.config.ClientConfigurationProperties
+import no.nav.familie.ef.mottak.config.ClientPropertiesMedUrl
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -24,7 +25,7 @@ class BearerTokenClientInterceptor(private val oAuth2AccessTokenService: OAuth2A
         return execution.execute(request, body)
     }
 
-    private fun clientPropertiesFor(uri: URI): ClientProperties {
+    private fun clientPropertiesFor(uri: URI): ClientPropertiesMedUrl {
         return clientConfigurationProperties
                        .registration
                        .values

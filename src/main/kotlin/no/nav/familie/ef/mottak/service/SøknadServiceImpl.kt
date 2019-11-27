@@ -6,7 +6,8 @@ import no.nav.familie.ef.mottak.api.dto.SøknadDto
 import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SøknadRepository
-import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.repository.TaskRepository
+import no.nav.familie.ef.mottak.repository.domain.Soknad
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -26,18 +27,18 @@ class SøknadServiceImpl(private val registry: MeterRegistry,
         return Kvittering("Søknad lagre med id ${søknad.id} er registrert mottatt.")
     }
 
-    override fun get(id: Long): Søknad {
+    override fun get(id: Long): Soknad {
         return søknadRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
     }
 
     override fun sendTilSak(søknadId: String) {
 
-        val søknad: Søknad = søknadRepository.findByIdOrNull(søknadId.toLong()) ?: error("")
-        val sendTilSakDto = SøknadMapper.toDto(søknad)
+        val soknad: Soknad = søknadRepository.findByIdOrNull(søknadId.toLong()) ?: error("")
+        val sendTilSakDto = SøknadMapper.toDto(soknad)
         søknadClient.sendTilSak(sendTilSakDto)
     }
 
-    override fun lagreSøknad(søknad: Søknad) {
-        søknadRepository.save(søknad)
+    override fun lagreSøknad(soknad: Soknad) {
+        søknadRepository.save(soknad)
     }
 }

@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.repository.domain
 
-import no.nav.familie.ef.mottak.encryption.PdfCryptoConverter
+import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import javax.persistence.*
 
 @Entity
@@ -8,6 +8,6 @@ import javax.persistence.*
 data class Vedlegg(@Id
                    @GeneratedValue(strategy = GenerationType.IDENTITY)
                    val id: Long? = null,
-                   @Convert(converter = PdfCryptoConverter::class)
-                   val data: Pdf,
+                   @Convert(converter = FileCryptoConverter::class)
+                   val data: Fil,
                    val filnavn: String)

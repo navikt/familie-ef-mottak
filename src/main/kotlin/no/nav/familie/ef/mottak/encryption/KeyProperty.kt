@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.encryption
 
-import no.nav.familie.ef.mottak.encryption.KeyProperty.Companion.DATABASE_ENCRYPTION_KEY
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -9,10 +8,10 @@ class KeyProperty {
 
     @Suppress("ConvertSecondaryConstructorToPrimary")
     constructor(@Value("\${example.database.encryption.key}") databaseEncryptionKey: String) {
-        DATABASE_ENCRYPTION_KEY = databaseEncryptionKey
+        DATABASE_ENCRYPTION_KEY = databaseEncryptionKey.toByteArray()
     }
 
     companion object {
-        lateinit var DATABASE_ENCRYPTION_KEY: String
+        var DATABASE_ENCRYPTION_KEY: ByteArray = ByteArray(0)
     }
 }

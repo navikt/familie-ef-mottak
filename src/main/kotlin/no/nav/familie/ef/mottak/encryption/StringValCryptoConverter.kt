@@ -1,12 +1,12 @@
 package no.nav.familie.ef.mottak.encryption
 
-class StringValCryptoConverter(cipherInitializer: CipherInitializer) : AbstractCryptoConverter<String>(cipherInitializer) {
+class StringValCryptoConverter : AbstractCryptoConverter<String>() {
 
-    override fun stringToEntityAttribute(dbData: String): String {
-        return dbData
+    override fun byteArrayToEntityAttribute(dbData: ByteArray): String {
+        return String(dbData)
     }
 
-    override fun entityAttributeToString(attribute: String): String {
-        return attribute
+    override fun entityAttributeToByteArray(attribute: String): ByteArray {
+        return attribute.toByteArray()
     }
 }

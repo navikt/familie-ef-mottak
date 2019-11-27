@@ -30,17 +30,18 @@ CREATE SEQUENCE task_logg_seq;
 CREATE INDEX ON task_logg (task_id);
 
 CREATE TABLE soknad (
-    id             bigserial NOT NULL PRIMARY KEY,
-    soknad_json    text      NOT NULL,
-    journalpost_id varchar,
-    saksnummer     varchar,
-    fnr            varchar(50)
+    id                bigserial NOT NULL PRIMARY KEY,
+    soknad_json       bytea     NOT NULL,
+    soknad_pdf        bytea     NOT NULL,
+    journalpost_id    varchar,
+    saksnummer        varchar,
+    fnr               varchar(50),
+    ny_saksbehandling boolean
 );
 
 CREATE TABLE vedlegg (
     id        bigserial NOT NULL PRIMARY KEY,
     soknad_id bigint    NOT NULL REFERENCES soknad,
     filnavn   varchar   NOT NULL,
-    type      varchar,
     data      bytea
 );

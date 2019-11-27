@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.api.dto.SøknadDto
-import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -18,7 +18,7 @@ class SøknadController(val mottakServiceImpl: SøknadServiceImpl) {
         return mottakServiceImpl.motta(søknadDto)
     }
     @GetMapping("{id}")
-    fun get(@PathVariable id: Long): Søknad {
+    fun get(@PathVariable id: Long): Soknad {
         return mottakServiceImpl.get(id)
     }
 }

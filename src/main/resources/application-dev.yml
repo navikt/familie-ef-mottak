@@ -9,3 +9,28 @@ no.nav.security.jwt:
     acceptedaudience: ${ACCEPTEDAUDIENCE}
     proxyurl: http://webproxy-nais.nav.no:8088
     cookie_name: selvbetjening-idtoken
+  issuer.azuread:
+    discoveryurl: https://login.microsoftonline.com/navno.onmicrosoft.com/v2.0/.well-known/openid-configuration
+    accepted_audience: ${CLIENT_ID}
+    proxyurl: http://webproxy-nais.nav.no:8088
+    cookie_name: azure_token
+  client:
+    registration:
+      ef-sak-clientcredentials:
+        resource-url: ${FAMILIE_EF_SAK_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${EF_SAK_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      ef-arkiv-clientcredentials:
+        resource-url: ${FAMILIE_EF_ARKIV_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${EF_ARKIV_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic

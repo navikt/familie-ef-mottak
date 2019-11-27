@@ -24,7 +24,7 @@
         <mockk.version>1.9.3</mockk.version>
         <fasterxml.version>2.10.1</fasterxml.version>
         <felles.version>1.0-SNAPSHOT</felles.version>
-        <token-validation.version>1.1.2</token-validation.version>
+        <token-support.version>1.1.3</token-support.version>
         <spring-cloud.version>2.1.3.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
     </properties>
@@ -96,15 +96,15 @@
         </dependency>
 
         <!-- Nav-internt  -->
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring</artifactId>
-            <version>${token-validation.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>no.nav.security</groupId>-->
+<!--            <artifactId>token-validation-spring</artifactId>-->
+<!--            <version>${token-validation.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-client-spring</artifactId>
-            <version>${token-validation.version}</version>
+            <version>${token-support.version}</version>
         </dependency>
 
         <!-- Database -->
@@ -116,10 +116,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-vault-config-databases</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -177,11 +173,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-junit-jupiter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-test-support</artifactId>
-            <version>${token-validation.version}</version>
+            <version>${token-support.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -251,7 +257,9 @@
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
-                        <goals> <goal>single</goal> </goals>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                         <configuration>
                             <archive>
                                 <manifest>
