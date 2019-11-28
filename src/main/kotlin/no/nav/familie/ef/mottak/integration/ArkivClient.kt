@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.ArkivConfig
-import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentRequest
+import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
 import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
@@ -15,9 +15,9 @@ class ArkivClient(operations: RestOperations, private val arkivConfig: ArkivConf
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(arkivConfig.url).path(PATH_SEND_INN).build()
 
-    fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
+    fun arkiver(arkiverSøknadRequest: ArkiverSøknadRequest): ArkiverDokumentResponse {
         try {
-            return postForEntity(sendInnUri, arkiverDokumentRequest)
+            return postForEntity(sendInnUri, arkiverSøknadRequest)
         } catch (e: RestClientResponseException) {
             logger.warn("Innsending til dokarkiv feilet. Responskode: {}, body: {}",
                         e.rawStatusCode,

@@ -23,7 +23,7 @@ class HentJournalpostService(private val søknadService: SøknadService,
         val soknad: Soknad = søknadService.get(søknadId.toLong())
         val journalpostId = arkivClient.hentJournalpostId(callId)
 
-        val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId, vedlegg = emptyList())
+        val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId)
 
         søknadService.lagreSøknad(søknadMedJournalpostId)
     }

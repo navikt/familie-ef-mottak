@@ -10,8 +10,7 @@ CREATE TABLE task (
     avvikstype    varchar(50)
 );
 
-
-CREATE SEQUENCE task_seq;
+CREATE SEQUENCE task_seq INCREMENT BY 50;
 
 CREATE INDEX ON task (status);
 
@@ -25,7 +24,7 @@ CREATE TABLE task_logg (
     endret_av     varchar(100) DEFAULT 'VL'::character varying
 );
 
-CREATE SEQUENCE task_logg_seq;
+CREATE SEQUENCE task_logg_seq INCREMENT BY 50;;
 
 CREATE INDEX ON task_logg (task_id);
 

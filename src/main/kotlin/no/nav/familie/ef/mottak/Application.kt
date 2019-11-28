@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
-@SpringBootApplication(scanBasePackages = ["no.nav.familie"])
+@SpringBootApplication
 @EnableSwagger2
 @ConfigurationPropertiesScan
 class Application

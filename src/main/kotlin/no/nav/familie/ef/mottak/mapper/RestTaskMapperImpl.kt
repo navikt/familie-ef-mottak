@@ -4,9 +4,10 @@ import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.rest.RestTask
 import no.nav.familie.prosessering.rest.RestTaskMapper
+import org.springframework.stereotype.Component
 
-
-class RestTaskMapperImpl(private val søknadService: SøknadService): RestTaskMapper {
+@Component
+class RestTaskMapperImpl(private val søknadService: SøknadService) : RestTaskMapper {
 
     override fun toDto(task: Task): RestTask {
 

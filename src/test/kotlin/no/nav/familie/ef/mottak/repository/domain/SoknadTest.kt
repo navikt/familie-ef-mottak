@@ -8,15 +8,15 @@ internal class SoknadTest {
 
     @Test
     fun testHashCode() {
-        val one = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false, emptyList())
-        val other = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false, emptyList())
+        val one = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false)
+        val other = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false)
         assertEquals(one.hashCode(), other.hashCode())
     }
 
     @Test
     fun testEquals() {
-        val one = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false, emptyList())
-        val other = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false, emptyList())
+        val one = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false)
+        val other = Soknad(15L, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789", false)
         assertTrue(one == other)
 
     }

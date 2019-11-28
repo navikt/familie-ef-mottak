@@ -20,35 +20,31 @@ logging:
   config: "classpath:logback-test.xml"
 
 no.nav.security.jwt:
-  issuers: selvbetjening
+#  issuers: selvbetjening
   issuer.selvbetjening:
     discoveryurl: http://metadata
     accepted_audience: aud-localhost
     cookie_name: localhost-idtoken
     proxyurl:
-  issuer.azuread:
-    discoveryurl: http://metadata
-    accepted_audience: ${CLIENT_ID}
-    cookie_name: azure_token
   client:
     registration:
       ef-sak-clientcredentials:
         resource-url: http://localhost:8083/api
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${EF_SAK_SCOPE}
+        scope: anything0
         authentication:
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
+          client-id: anything1
+          client-secret: anything2
           client-auth-method: client_secret_basic
       ef-arkiv-clientcredentials:
         resource-url: http://localhost:8085/api
         token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${EF_ARKIV_SCOPE}
+        scope: anything4
         authentication:
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
+          client-id: anything5
+          client-secret: anything6
           client-auth-method: client_secret_basic
 
 example:

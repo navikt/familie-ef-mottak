@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.encryption
 
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import java.util.*
 
 
 class FileCryptoConverter : AbstractCryptoConverter<Fil>() {

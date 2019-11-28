@@ -17,7 +17,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 @Import(TokenGeneratorConfiguration::class)
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
-//@ConfigurationPropertiesScan("no.nav.familie")
 class ApplicationLocal
 
 @Bean @Primary

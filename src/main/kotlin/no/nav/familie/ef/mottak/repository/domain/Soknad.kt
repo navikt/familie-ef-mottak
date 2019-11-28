@@ -4,7 +4,8 @@ import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
 import javax.persistence.*
 
-@Entity @Table(name = "SOKNAD")
+@Entity
+@Table(name = "SOKNAD")
 data class Soknad(@Id
                   @GeneratedValue(strategy = GenerationType.IDENTITY)
                   val id: Long? = null,
@@ -23,6 +24,9 @@ data class Soknad(@Id
                   @OneToMany(fetch = FetchType.EAGER,
                              cascade = [CascadeType.ALL],
                              orphanRemoval = true)
+                  @JoinColumn(name = "soknad_id",
+                              referencedColumnName = "id",
+                              nullable = false)
                   @OrderBy("id asc")
                   val vedlegg: List<Vedlegg> = ArrayList()
 )

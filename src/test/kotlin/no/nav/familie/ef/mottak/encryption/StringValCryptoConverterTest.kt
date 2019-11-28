@@ -6,11 +6,11 @@ import java.util.*
 
 internal class StringValCryptoConverterTest {
 
-    private val stringValCryptoConverter: StringValCryptoConverter;
+    private val stringValCryptoConverter: StringValCryptoConverter
 
     init {
         KeyProperty("kdjeuyfjkekhndlknvfdekljnolrhsdo")
-        stringValCryptoConverter= StringValCryptoConverter()
+        stringValCryptoConverter = StringValCryptoConverter()
     }
 
 
