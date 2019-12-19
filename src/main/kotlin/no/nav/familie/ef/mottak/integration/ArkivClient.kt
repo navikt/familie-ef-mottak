@@ -1,8 +1,10 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.ArkivConfig
-import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
+import no.nav.familie.ef.mottak.config.ClientConfigurationPropertiesLocal
 import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
+import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -11,7 +13,11 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 import java.net.URI
 
 @Service
-class ArkivClient(operations: RestOperations, private val arkivConfig: ArkivConfig) : AbstractRestClient(operations) {
+class ArkivClient(operations: RestOperations,
+                  private val arkivConfig: ArkivConfig,
+                  private val oAuth2AccessTokenService: OAuth2AccessTokenService,
+                  private val clientConfigurationPropertiesLocal: ClientConfigurationPropertiesLocal) : AbstractRestClient(
+        operations) {
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(arkivConfig.url).path(PATH_SEND_INN).build()
 
@@ -31,11 +37,13 @@ class ArkivClient(operations: RestOperations, private val arkivConfig: ArkivConf
     }
 
     fun hentSaksnummer(journalPostId: String): String {
+
         return getForEntity(hentSaksnummerUri(journalPostId))
     }
 
     fun hentJournalpostId(callId: String): String {
-        return getForEntity(hentJournalpostIdUri(callId))
+        val uri = hentJournalpostIdUri(callId)
+        return getForEntity(uri)
     }
 
     private fun hentSaksnummerUri(id: String): URI {

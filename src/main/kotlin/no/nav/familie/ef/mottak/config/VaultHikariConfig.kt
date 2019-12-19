@@ -16,15 +16,14 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
                         private val hikariDataSource: HikariDataSource,
                         private val props: VaultDatabaseProperties) : InitializingBean {
 
-    private val logger = LoggerFactory.getLogger(VaultHikariConfig::class.java)
-
     override fun afterPropertiesSet() {
-        val secret = rotating(props.backend + "/creds/" + props.role)
+        val secret = rotating(props.getBackend() + "/creds/" + props.getRole())
         container.addLeaseListener { leaseEvent ->
-            if (leaseEvent.source === secret && leaseEvent is SecretLeaseCreatedEvent) {
-                logger.info("Rotating creds for path: " + leaseEvent.getSource().path)
-                val username = leaseEvent.secrets["username"].toString()
-                val password = leaseEvent.secrets["password"].toString()
+            if (leaseEvent.getSource() === secret && leaseEvent is SecretLeaseCreatedEvent) {
+                LOGGER.info("Rotating creds for path: " + leaseEvent.getSource().getPath())
+                val slce = leaseEvent
+                val username = slce.getSecrets().get("username").toString()
+                val password = slce.getSecrets().get("password").toString()
                 hikariDataSource.username = username
                 hikariDataSource.password = password
                 hikariDataSource.hikariConfigMXBean.setUsername(username)
@@ -33,5 +32,16 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
             }
         }
         container.addRequestedSecret(secret)
+    }
+
+    override fun toString(): String {
+        return javaClass.simpleName + " [container=" +
+               container + ", hikariDataSource=" +
+               hikariDataSource + ", props=" +
+               props + "]"
+    }
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(VaultHikariConfig::class.java)
     }
 }

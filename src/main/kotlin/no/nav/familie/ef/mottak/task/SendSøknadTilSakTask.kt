@@ -13,11 +13,13 @@ class SendSøknadTilSakTask(private val søknadService: SøknadService,
                            private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        søknadService.sendTilSak(task.payloadId)
+
+
+        søknadService.sendTilSak(task.payload)
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payloadId))
+        taskRepository.save(Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payload))
     }
 
     companion object {

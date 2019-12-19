@@ -19,7 +19,7 @@ class SøknadController(val søknadService: SøknadService) {
     }
 
     @GetMapping("{id}")
-    fun get(@PathVariable id: Long): Soknad {
+    fun get(@PathVariable id: String): Soknad {
         return søknadService.get(id)
     }
 }

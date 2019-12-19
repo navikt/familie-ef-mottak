@@ -7,13 +7,13 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
-    <root level="${ROOT_LOG_LEVEL:-INFO}">
+    <root level="${ROOT_LOG_LEVEL:-DEBUG}">
         <!-- nais+local -->
         <appender-ref ref="stdout_json"/>
     </root>
 
     <logger name="no.nav" level="WARN"/>
-    <logger name="no.nav.familie" level="INFO"/>
+    <logger name="no.nav.familie" level="DEBUG"/>
     <logger name="no.nav.familie.http.sts" level="WARN"/>
     <logger name="org.apache" level="INFO"/>
     <logger name="org.apache.cxf" level="ERROR"/>

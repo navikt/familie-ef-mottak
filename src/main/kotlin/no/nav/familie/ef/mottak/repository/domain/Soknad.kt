@@ -2,13 +2,14 @@ package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
+import java.util.*
 import javax.persistence.*
+import kotlin.collections.ArrayList
 
 @Entity
 @Table(name = "SOKNAD")
 data class Soknad(@Id
-                  @GeneratedValue(strategy = GenerationType.IDENTITY)
-                  val id: Long? = null,
+                  val id: String = UUID.randomUUID().toString(),
                   @Convert(converter = StringValCryptoConverter::class)
                   @Column(name = "soknad_json")
                   val søknadJson: String,

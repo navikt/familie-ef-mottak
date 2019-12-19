@@ -20,7 +20,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
 
     override fun doTask(task: Task) {
         try {
-            hentJournalpostService.hentSaksnummer(task.payloadId)
+            hentJournalpostService.hentSaksnummer(task.payload)
         } catch (notFound: HttpClientErrorException.NotFound) {
             LOG.info("Hent saksnummer returnerte 404 responsebody={}",
                      notFound.responseBodyAsString)
@@ -32,7 +32,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
         val nesteTask: Task =
-                Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payloadId)
+                Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload)
         taskRepository.save(nesteTask)
     }
 

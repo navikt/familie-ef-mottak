@@ -29,7 +29,7 @@ abstract class AbstractRestClient(protected val operations: RestOperations) {
         if (!respons.statusCode.is2xxSuccessful) {
             throw HttpServerErrorException(respons.statusCode)
         }
-        return respons.body ?: error("")
+        return respons.body ?: error("Ingen body i response")
     }
 
     override fun toString(): String = this::class.simpleName + " [operations=" + operations + "]"

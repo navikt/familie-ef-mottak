@@ -3,8 +3,8 @@ package no.nav.familie.ef.mottak.mapper
 import no.nav.familie.ef.mottak.api.dto.SøknadDto
 import no.nav.familie.ef.mottak.api.dto.VedleggDto
 import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
-import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 
 object SøknadMapper {
@@ -23,7 +23,8 @@ object SøknadMapper {
         return Soknad(søknadJson = søknadDto.soknadJson,
                       søknadPdf = Fil(søknadDto.soknadPdf.toByteArray()),
                       fnr = søknadDto.fnr,
-                      vedlegg = fromDto(søknadDto.vedlegg))
+                      vedlegg = fromDto(søknadDto.vedlegg),
+                      nySaksbehandling = søknadDto.nySaksbehandling)
     }
 
     private fun fromDto(vedlegg: List<VedleggDto>): List<Vedlegg> {

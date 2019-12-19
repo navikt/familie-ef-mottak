@@ -2,9 +2,8 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
 import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
+import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -18,11 +17,10 @@ class SøknadClient(operations: RestOperations, sakConfig: SakConfig) : Abstract
 
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
-    fun sendTilSak(søknadDto: SøknadssakDto): ResponseEntity<HttpStatus> {
+    fun sendTilSak(søknadDto: SøknadssakDto): SøknadServiceImpl.OkDto {
         log.info("Sender søknad til {}", sendInnUri)
 
         try {
-
             return postForEntity(sendInnUri, søknadDto)
         } catch (e: RestClientResponseException) {
             log.warn("Innsending til sak feilet. Responskode: {}, body: {}",

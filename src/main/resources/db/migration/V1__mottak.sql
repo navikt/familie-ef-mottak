@@ -1,6 +1,6 @@
 CREATE TABLE task (
     id            bigint                                               NOT NULL PRIMARY KEY,
-    payload       text                                                 NOT NULL UNIQUE,
+    payload       text                                                 NOT NULL,
     status        varchar(15)  DEFAULT 'UBEHANDLET'::character varying NOT NULL,
     versjon       bigint       DEFAULT 0,
     opprettet_tid timestamp(3) DEFAULT LOCALTIMESTAMP,
@@ -29,7 +29,7 @@ CREATE SEQUENCE task_logg_seq INCREMENT BY 50;;
 CREATE INDEX ON task_logg (task_id);
 
 CREATE TABLE soknad (
-    id                bigserial NOT NULL PRIMARY KEY,
+    id                text      NOT NULL PRIMARY KEY,
     soknad_json       bytea     NOT NULL,
     soknad_pdf        bytea     NOT NULL,
     journalpost_id    varchar,
@@ -40,7 +40,7 @@ CREATE TABLE soknad (
 
 CREATE TABLE vedlegg (
     id        bigserial NOT NULL PRIMARY KEY,
-    soknad_id bigint    NOT NULL REFERENCES soknad,
+    soknad_id text    NOT NULL REFERENCES soknad,
     filnavn   varchar   NOT NULL,
     data      bytea
 );

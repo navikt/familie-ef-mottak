@@ -17,12 +17,13 @@ class HentJournalpostIdFraJoarkTask @Autowired constructor(private val taskRepos
     private val hentJournalpostService: HentJournalpostService
 
     override fun doTask(task: Task) {
-        hentJournalpostService.hentJournalpostId(task.payloadId, task.callId)
+        hentJournalpostService.oppdaterSøknadMedJournalpostId(task.payload, task.callId)
     }
 
     override fun onCompletion(task: Task) {
         val nesteTask: Task =
-                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payloadId)
+                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload)
+
         taskRepository.save(nesteTask)
     }
 

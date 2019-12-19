@@ -10,7 +10,7 @@ class JournalføringService(private val arkivClient: ArkivClient,
                            private val søknadService: SøknadService) {
 
     fun journalførSøknad(søknadId: String) {
-        val soknad: Soknad = søknadService.get(søknadId.toLong())
+        val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = send(soknad)
         val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId, vedlegg = emptyList())
 
@@ -19,8 +19,6 @@ class JournalføringService(private val arkivClient: ArkivClient,
 
     private fun send(soknad: Soknad): String {
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.toDto(soknad)
-        val arkiverDokumentResponse = arkivClient.arkiver(arkiverDokumentRequest)
-
-        return arkiverDokumentResponse.journalpostId
+        return arkivClient.arkiver(arkiverDokumentRequest).journalpostId
     }
 }

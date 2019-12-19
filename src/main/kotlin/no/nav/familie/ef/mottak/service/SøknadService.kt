@@ -8,7 +8,7 @@ interface SøknadService {
 
     fun motta(søknadDto: SøknadDto): Kvittering
 
-    fun get(id: Long): Soknad
+    fun get(id: String): Soknad
 
     fun sendTilSak(søknadId: String)
 

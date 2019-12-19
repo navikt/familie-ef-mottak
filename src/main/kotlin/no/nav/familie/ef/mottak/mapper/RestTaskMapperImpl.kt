@@ -11,7 +11,7 @@ class RestTaskMapperImpl(private val søknadService: SøknadService) : RestTaskM
 
     override fun toDto(task: Task): RestTask {
 
-        val søknad = søknadService.get(task.payloadId.toLong())
+        val søknad = søknadService.get(task.payload)
 
         return RestTask(task, søknad.journalpostId, søknad.saksnummer, søknad.fnr)
     }

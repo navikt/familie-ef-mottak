@@ -5,32 +5,40 @@ server:
 
 spring:
   datasource:
-    username: familie
-    password: Test
+    username: postgres
+    password: test
     url: jdbc:postgresql://localhost:5432/familie-ef-mottak
 
 familie:
   ef:
     sak:
-      url: http://localhost:8093/api/
+      url: http://localhost:8092/mockapi/
     arkiv:
-      url:
+      url: http://localhost:8092/mockapi/
 
 logging:
   config: "classpath:logback-test.xml"
 
+#http://localhost:8080/metadata
+#https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+
 no.nav.security.jwt:
-#  issuers: selvbetjening
-  issuer.selvbetjening:
-    discoveryurl: http://metadata
-    accepted_audience: aud-localhost
-    cookie_name: localhost-idtoken
-    proxyurl:
+  issuer:
+    selvbetjening:
+      discoveryurl: http://localhost:8080/metadata
+      accepted_audience: aud-localhost
+      cookie_name: localhost-idtoken
+      proxyurl:
+    azuread:
+      discoveryurl:  https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+      accepted_audience: local-aud
+      cookie_name: azure_token
+      proxyurl:
   client:
     registration:
       ef-sak-clientcredentials:
-        resource-url: http://localhost:8083/api
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        resource-url: http://localhost:8092/mockapi
+        token-endpoint-url: http://localhost:8092/mockapi/token
         grant-type: client_credentials
         scope: anything0
         authentication:
@@ -38,8 +46,8 @@ no.nav.security.jwt:
           client-secret: anything2
           client-auth-method: client_secret_basic
       ef-arkiv-clientcredentials:
-        resource-url: http://localhost:8085/api
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        resource-url: http://localhost:8092/mockapi
+        token-endpoint-url: http://localhost:8092/mockapi/token
         grant-type: client_credentials
         scope: anything4
         authentication:
