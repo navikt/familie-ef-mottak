@@ -29,6 +29,17 @@
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>http://packages.confluent.io/maven/</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/navikt/familie-felles</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -96,15 +107,32 @@
         </dependency>
 
         <!-- Nav-internt  -->
-<!--        <dependency>-->
-<!--            <groupId>no.nav.security</groupId>-->
-<!--            <artifactId>token-validation-spring</artifactId>-->
-<!--            <version>${token-validation.version}</version>-->
-<!--        </dependency>-->
+
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-client-spring</artifactId>
             <version>${token-support.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>log</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>prosessering</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>http-client</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet</artifactId>
+            <version>${felles.version}</version>
         </dependency>
 
         <!-- Database -->
@@ -135,31 +163,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>log</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>http-client</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>prosessering</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <!--<dependency>
-          <groupId>no.nav.familie.felles</groupId>
-          <artifactId>kontrakt</artifactId>
-          <version>${felles.version}</version>
-      </dependency> -->
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>sikkerhet</artifactId>
-            <version>${felles.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
