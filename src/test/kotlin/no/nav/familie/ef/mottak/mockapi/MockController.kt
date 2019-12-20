@@ -44,9 +44,15 @@ class MockController() {
     }
 
 
-    @PostMapping("/token")
+    @PostMapping("/saktoken")
     @Unprotected
     fun mockOauthToken(): ResponseEntity<OAuth2AccessTokenResponse> {
+        return ResponseEntity.ok(OAuth2AccessTokenResponse.builder().accessToken(tokenResponse()).build())
+    }
+
+    @PostMapping("/integrationtoken")
+    @Unprotected
+    fun mockIntOauthToken(): ResponseEntity<OAuth2AccessTokenResponse> {
         return ResponseEntity.ok(OAuth2AccessTokenResponse.builder().accessToken(tokenResponse()).build())
     }
 

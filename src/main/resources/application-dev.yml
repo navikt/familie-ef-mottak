@@ -25,11 +25,11 @@ no.nav.security.jwt:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
-      ef-arkiv-clientcredentials:
-        resource-url: ${FAMILIE_EF_ARKIV_API_URL}
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+      integrasjoner-clientcredentials:
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${EF_ARKIV_SCOPE}
+        scope: ${FAMILIE_INTEGRASJONER_SCOPE}
         authentication:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}

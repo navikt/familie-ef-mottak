@@ -38,22 +38,24 @@ no.nav.security.jwt:
     registration:
       ef-sak-clientcredentials:
         resource-url: http://localhost:8092/mockapi
-        token-endpoint-url: http://localhost:8092/mockapi/token
+        token-endpoint-url: http://localhost:8092/mockapi/saktoken
         grant-type: client_credentials
         scope: anything0
         authentication:
           client-id: anything1
           client-secret: anything2
           client-auth-method: client_secret_basic
-      ef-arkiv-clientcredentials:
+      integrasjoner-clientcredentials:
         resource-url: http://localhost:8092/mockapi
-        token-endpoint-url: http://localhost:8092/mockapi/token
+        token-endpoint-url: http://localhost:8092/mockapi/integrationtoken
         grant-type: client_credentials
         scope: anything4
         authentication:
           client-id: anything5
           client-secret: anything6
           client-auth-method: client_secret_basic
+
+      #  ef-arkiv-clientcredentials:
 
 example:
   database:
