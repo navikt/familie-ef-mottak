@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 class KeyProperty {
 
     @Suppress("ConvertSecondaryConstructorToPrimary")
-    constructor(@Value("\${example.database.encryption.key}") databaseEncryptionKey: String) {
+    constructor(@Value("\${database.encryption.key}") databaseEncryptionKey: String) {
         DATABASE_ENCRYPTION_KEY = databaseEncryptionKey.toByteArray()
     }
 

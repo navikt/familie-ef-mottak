@@ -57,8 +57,7 @@ no.nav.security.jwt:
 
       #  ef-arkiv-clientcredentials:
 
-example:
-  database:
-    encryption:
-      # 16, 24 or 32 bytes
-      key: Det finnes mange gode eksempler.
+database:
+  encryption:
+    # 16, 24 or 32 bytes
+    key: Det finnes mange gode eksempler.
