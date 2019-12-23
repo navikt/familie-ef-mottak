@@ -15,6 +15,8 @@ jobs:
       - image: circleci/openjdk:11-jdk
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run:
           name: Generate version number and docker image tags
           command: |
@@ -22,10 +24,16 @@ jobs:
             echo "export VERSION="$CIRCLE_SHA1"" >> properties.env
             echo "export DOCKER_TAG=\"$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$VERSION\"" >> properties.env
             cat properties.env >> $BASH_ENV
+      - restore_cache:
+          key: familie-ef-mottak-{{ checksum "pom.xml" }}
       - run:
           name: Hent dependencies
           command: |
             mvn  --settings .m2/maven-settings.xml dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: familie-ef-mottak-{{ checksum "pom.xml" }}
       - run:
           name: Bygger produksjon
           command: |
@@ -53,7 +61,7 @@ jobs:
       - attach_workspace:
           at: /home/circleci/project
       - setup_remote_docker:
-          docker_layer_caching: true
+          docker_layer_caching: false
       - run:
           name: Set up environment variables
           command: cat /home/circleci/project/properties.env >> $BASH_ENV
