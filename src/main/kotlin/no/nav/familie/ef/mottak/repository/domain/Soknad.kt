@@ -20,8 +20,6 @@ data class Soknad(@Id
                   val journalpostId: String? = null,
                   val saksnummer: String? = null,
                   val fnr: String,
-                  @Column(name = "ny_saksbehandling")
-                  val nySaksbehandling: Boolean = false,
                   @OneToMany(fetch = FetchType.EAGER,
                              cascade = [CascadeType.ALL],
                              orphanRemoval = true)

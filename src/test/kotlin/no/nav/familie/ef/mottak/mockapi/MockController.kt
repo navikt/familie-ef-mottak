@@ -56,12 +56,6 @@ class MockController() {
         return ResponseEntity.ok(OAuth2AccessTokenResponse.builder().accessToken(tokenResponse()).build())
     }
 
-    @PostMapping("/oauth2/v2.0/token")
-    @Unprotected
-    fun mockToken(): ResponseEntity<String> {
-        return ResponseEntity.ok(tokenResponse())
-    }
-
     private fun tokenResponse(): String {
         return token
                 .replace("###expires_at###", "" + Instant.now().plusSeconds(3600).epochSecond)
