@@ -1,1 +1,0 @@
-alter table soknad drop column ny_saksbehandling

@@ -23,7 +23,8 @@ object SøknadMapper {
         return Soknad(søknadJson = søknadDto.soknadJson,
                       søknadPdf = Fil(søknadDto.soknadPdf.toByteArray()),
                       fnr = søknadDto.fnr,
-                      vedlegg = fromDto(søknadDto.vedlegg))
+                      vedlegg = fromDto(søknadDto.vedlegg),
+                      nySaksbehandling = søknadDto.nySaksbehandling)
     }
 
     private fun fromDto(vedlegg: List<VedleggDto>): List<Vedlegg> {
