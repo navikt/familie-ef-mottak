@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.task.HentJournalpostIdFraJoarkTask.Companion.HENT_JOURNALPOSTID_FRA_JOARK
 import no.nav.familie.ef.mottak.task.JournalførSøknadTask.Companion.JOURNALFØR_SØKNAD
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -21,9 +20,7 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
     }
 
     fun opprettTask(soknad: Soknad) {
-        val taskType = if (soknad.nySaksbehandling) JOURNALFØR_SØKNAD else HENT_JOURNALPOSTID_FRA_JOARK
-        val nyTask = Task.nyTask(taskType, soknad.id)
-        taskRepository.save(nyTask)
+        taskRepository.save(Task.nyTask(JOURNALFØR_SØKNAD, soknad.id))
 
     }
 

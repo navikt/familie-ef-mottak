@@ -31,11 +31,10 @@ CREATE INDEX ON task_logg (task_id);
 CREATE TABLE soknad (
     id                text      NOT NULL PRIMARY KEY,
     soknad_json       bytea     NOT NULL,
-    soknad_pdf        bytea     NOT NULL,
+    soknad_pdf        bytea    ,
     journalpost_id    varchar,
     saksnummer        varchar,
-    fnr               varchar(50),
-    ny_saksbehandling boolean
+    fnr               varchar(50)
 );
 
 CREATE TABLE vedlegg (
