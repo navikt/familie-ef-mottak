@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.web.client.RestOperations
+import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 @SpringBootConfiguration
 @ComponentScan("no.nav.familie.prosessering",
@@ -28,8 +29,9 @@ import org.springframework.web.client.RestOperations
 @EnableJpaRepositories("no.nav.familie")
 @EntityScan(basePackages = ["no.nav.familie"])
 @ConfigurationPropertiesScan
-@EnableJwtTokenValidation
 @EnableOAuth2Client(cacheEnabled = true)
+@EnableSwagger2
+@EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
 class ApplicationConfig(@Value("\${application.name}")
                         val applicationName: String) {
 
