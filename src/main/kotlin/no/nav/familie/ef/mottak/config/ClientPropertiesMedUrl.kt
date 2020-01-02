@@ -18,16 +18,15 @@ class ClientPropertiesMedUrl(val resourceUrl: URI,
     : ClientProperties(tokenEndpointUrl,
                        grantType,
                        scope,
-                       authentication)
-{
+                       authentication) {
 
     @ConstructorBinding
     class ClientAuthenticationPropertiesLocal(clientId: String,
                                               clientAuthMethod: ClientAuthenticationMethod,
                                               clientSecret: String) : ClientAuthenticationProperties(clientId,
-                                                                                                  clientAuthMethod,
-                                                                                                  clientSecret,
-                                                                                                  null)
+                                                                                                     clientAuthMethod,
+                                                                                                     clientSecret,
+                                                                                                     null)
 
 }
 
