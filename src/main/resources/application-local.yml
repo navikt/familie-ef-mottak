@@ -13,7 +13,7 @@ familie:
   ef:
     sak:
       url: http://localhost:8092/mockapi/
-    arkiv:
+    integrasjoner:
       url: http://localhost:8092/mockapi/
 
 logging:
@@ -37,7 +37,7 @@ no.nav.security.jwt:
   client:
     registration:
       ef-sak-clientcredentials:
-        resource-url: http://localhost:8092/mockapi
+        resource-url: ${familie.ef.sak.url}
         token-endpoint-url: http://localhost:8092/mockapi/saktoken
         grant-type: client_credentials
         scope: anything0
@@ -46,7 +46,7 @@ no.nav.security.jwt:
           client-secret: anything2
           client-auth-method: client_secret_basic
       integrasjoner-clientcredentials:
-        resource-url: http://localhost:8092/mockapi
+        resource-url: ${familie.ef.integrasjoner.url}
         token-endpoint-url: http://localhost:8092/mockapi/integrationtoken
         grant-type: client_credentials
         scope: anything4
@@ -61,3 +61,4 @@ database:
   encryption:
     # 16, 24 or 32 bytes
     key: Det finnes mange gode eksempler.
+

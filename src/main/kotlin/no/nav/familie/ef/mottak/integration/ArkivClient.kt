@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.config.ArkivConfig
 import no.nav.familie.ef.mottak.config.ClientConfigurationPropertiesLocal
+import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
 import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -14,12 +14,12 @@ import java.net.URI
 
 @Service
 class ArkivClient(operations: RestOperations,
-                  private val arkivConfig: ArkivConfig,
+                  private val integrasjonerConfig: IntegrasjonerConfig,
                   private val oAuth2AccessTokenService: OAuth2AccessTokenService,
                   private val clientConfigurationPropertiesLocal: ClientConfigurationPropertiesLocal) : AbstractRestClient(
         operations) {
 
-    private val sendInnUri = DefaultUriBuilderFactory().uriString(arkivConfig.url).path(PATH_SEND_INN).build()
+    private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
 
     fun arkiver(arkiverSøknadRequest: ArkiverSøknadRequest): ArkiverDokumentResponse {
         try {
@@ -48,14 +48,14 @@ class ArkivClient(operations: RestOperations,
 
     private fun hentSaksnummerUri(id: String): URI {
         return DefaultUriBuilderFactory()
-                .uriString(arkivConfig.url)
+                .uriString(integrasjonerConfig.url)
                 .path(PATH_HENT_SAKSNUMMER.format(id))
                 .build()
     }
 
     private fun hentJournalpostIdUri(id: String): URI {
         return DefaultUriBuilderFactory()
-                .uriString(arkivConfig.url)
+                .uriString(integrasjonerConfig.url)
                 .path(PATH_HENT_JOURNALPOST_ID.format(id))
                 .build()
     }
