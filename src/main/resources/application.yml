@@ -73,7 +73,10 @@ no.nav.security.jwt:
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
-
+database:
+  encryption:
+    # 16, 24 or 32 bytes
+    key: ${DATABASEKEY}
 
 
 
