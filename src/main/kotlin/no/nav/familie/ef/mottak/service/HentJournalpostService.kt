@@ -15,11 +15,4 @@ class HentJournalpostService(private val søknadService: SøknadService,
         val søknadMedSaksnummer = soknad.copy(saksnummer = saksnummer)
         søknadService.lagreSøknad(søknadMedSaksnummer)
     }
-
-    fun oppdaterSøknadMedJournalpostId(søknadId: String, callId: String) {
-        val soknad: Soknad = søknadService.get(søknadId)
-        val journalpostId = arkivClient.hentJournalpostId(callId)
-        val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId)
-        søknadService.lagreSøknad(søknadMedJournalpostId)
-    }
 }

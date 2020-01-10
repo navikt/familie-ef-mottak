@@ -111,7 +111,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-client-spring</artifactId>
-            <version>${token-support.version}</version>
+            <version>${token-validation.version}</version>
         </dependency>
 
         <dependency>
@@ -200,7 +200,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-test-support</artifactId>
-            <version>${token-support.version}</version>
+            <version>${token-validation.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
