@@ -11,7 +11,8 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class SøknadClient(operations: RestOperations, sakConfig: SakConfig) : AbstractRestClient(operations, "familie-ef-mottak->sak") {
+class SøknadClient(operations: RestOperations,
+                   sakConfig: SakConfig) : AbstractRestClient(operations, "sak") {
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_MOTTAK_DOKUMENT).build()
 

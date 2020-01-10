@@ -11,6 +11,7 @@ CREATE TABLE task (
 );
 
 CREATE SEQUENCE task_seq INCREMENT BY 50;
+CREATE UNIQUE INDEX ON task (payload, type);
 
 CREATE INDEX ON task (status);
 
@@ -29,17 +30,18 @@ CREATE SEQUENCE task_logg_seq INCREMENT BY 50;;
 CREATE INDEX ON task_logg (task_id);
 
 CREATE TABLE soknad (
-    id                text      NOT NULL PRIMARY KEY,
-    soknad_json       bytea     NOT NULL,
-    soknad_pdf        bytea    ,
-    journalpost_id    varchar,
-    saksnummer        varchar,
-    fnr               varchar(50)
+    id             text  NOT NULL PRIMARY KEY,
+    soknad_json    bytea NOT NULL,
+    soknad_pdf     bytea,
+    journalpost_id varchar,
+    saksnummer     varchar,
+    fnr            varchar(50)
 );
 
 CREATE TABLE vedlegg (
     id        bigserial NOT NULL PRIMARY KEY,
-    soknad_id text    NOT NULL REFERENCES soknad,
-    filnavn   varchar   NOT NULL,
-    data      bytea
+    soknad_id text      NOT NULL REFERENCES soknad,
+    data      bytea     NOT NULL,
+    filnavn   varchar,
+    tittel    varchar
 );

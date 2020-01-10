@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.service.HentJournalpostService
-import no.nav.familie.ef.mottak.task.HentSaksnummerFraJoarkTask
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -22,7 +21,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
         try {
             hentJournalpostService.hentSaksnummer(task.payload)
         } catch (notFound: HttpClientErrorException.NotFound) {
-            LOG.info("Hent saksnummer returnerte 404 responsebody={}",
+            LOG.info("Hent saksnummer returnerte 404 response body={}",
                      notFound.responseBodyAsString)
             val copy = task.copy(triggerTid = LocalDateTime.now().plusMinutes(15))
             taskRepository.save(copy)

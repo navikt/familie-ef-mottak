@@ -27,7 +27,7 @@ object SøknadMapper {
     }
 
     private fun fromDto(vedlegg: List<VedleggDto>): List<Vedlegg> {
-        return vedlegg.map { Vedlegg(data = Fil(it.data.toByteArray()), filnavn = (it.tittel)) }
+        return vedlegg.map { Vedlegg(data = Fil(it.data.toByteArray()), tittel = (it.tittel), filnavn = (it.filnavn)) }
 
 
     }

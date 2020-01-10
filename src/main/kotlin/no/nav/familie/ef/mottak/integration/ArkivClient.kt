@@ -1,15 +1,12 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.config.ClientConfigurationPropertiesLocal
+
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
-import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
 import no.nav.familie.ef.mottak.integration.rest.AbstractRestClient
-
-
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
@@ -24,16 +21,14 @@ fun <T> Ressurs<T>.getDataOrThrow(): T {
 
 @Service
 class ArkivClient(operations: RestOperations,
-                  private val integrasjonerConfig: IntegrasjonerConfig,
-                  private val oAuth2AccessTokenService: OAuth2AccessTokenService,
-                  private val clientConfigurationPropertiesLocal: ClientConfigurationPropertiesLocal) :
+                  private val integrasjonerConfig: IntegrasjonerConfig) :
         AbstractRestClient(operations, "Arkiv") {
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
 
-    fun arkiver(arkiverSøknadRequest: ArkiverSøknadRequest): ArkiverDokumentResponse {
+    fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
-                postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverSøknadRequest) ?: error("Ressurs er null")
+                postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverDokumentRequest)
         return response.getDataOrThrow()
     }
 

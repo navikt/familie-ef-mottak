@@ -36,7 +36,7 @@ no.nav.security.jwt:
       proxyurl:
   client:
     registration:
-      ef-sak-clientcredentials:
+      ef-sak-client-credentials:
         resource-url: ${familie.ef.sak.url}
         token-endpoint-url: http://localhost:8092/mockapi/saktoken
         grant-type: client_credentials
@@ -45,7 +45,7 @@ no.nav.security.jwt:
           client-id: anything1
           client-secret: anything2
           client-auth-method: client_secret_basic
-      integrasjoner-clientcredentials:
+      integrasjoner-client-credentials:
         resource-url: ${familie.ef.integrasjoner.url}
         token-endpoint-url: http://localhost:8092/mockapi/integrationtoken
         grant-type: client_credentials
@@ -55,7 +55,7 @@ no.nav.security.jwt:
           client-secret: anything6
           client-auth-method: client_secret_basic
 
-      #  ef-arkiv-clientcredentials:
+      #  ef-arkiv-client-credentials:
 
 database:
   encryption:

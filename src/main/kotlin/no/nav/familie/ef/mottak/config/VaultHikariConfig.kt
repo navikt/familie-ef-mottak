@@ -22,7 +22,7 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
         val secret = rotating(props.backend + "/creds/" + props.role)
         container.addLeaseListener { leaseEvent ->
             if (leaseEvent.source === secret && leaseEvent is SecretLeaseCreatedEvent) {
-                log.info("Rotating creds for path: " + leaseEvent.getSource().path)
+                log.info("Rotating credentials for path: " + leaseEvent.getSource().path)
                 val username = leaseEvent.secrets["username"].toString()
                 val password = leaseEvent.secrets["password"].toString()
                 hikariDataSource.username = username

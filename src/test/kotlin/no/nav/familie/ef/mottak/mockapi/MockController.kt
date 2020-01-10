@@ -2,10 +2,10 @@ package no.nav.familie.ef.mottak.mockapi
 
 //import no.nav.familie.kontrakter.felles.Ressurs
 //import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
-import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus
@@ -16,18 +16,16 @@ import java.time.Instant
 import java.util.*
 import javax.validation.Valid
 
-//class MinRes() : Ressurs<ArkiverDokumentResponse>(){}
-
 @RestController
 @RequestMapping(path = ["/mockapi/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
-class MockController() {
+class MockController {
 
     data class OkDto(val status: String = "OK")
 
     @PostMapping(path = ["/arkiv/v2"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun arkiverDokument(@RequestBody @Valid
-                        arkiverDokumentRequest: ArkiverSøknadRequest): ResponseEntity<Ressurs<ArkiverDokumentResponse>> {
+    fun arkiverDokument(@RequestBody @Valid arkiverDokumentRequest: ArkiverDokumentRequest)
+            : ResponseEntity<Ressurs<ArkiverDokumentResponse>> {
         val data = ArkiverDokumentResponse("JOURNALPOST_MOCK_ID", true)
         val ressurs: Ressurs<ArkiverDokumentResponse> = success(data)
         return ResponseEntity.status(HttpStatus.CREATED).body(ressurs)
@@ -70,6 +68,7 @@ class MockController() {
                 .replace("###expires_at###", "" + Instant.now().plusSeconds(3600).epochSecond)
     }
 
+    @Suppress("LongLine")
     // language=jSon
     val token: String =
             """{"token_type": "Bearer","scope":"###expires_at###","expires_at":"28021078036","ext_expires_in":"30","expires_in":"30","access_token":"somerandomaccesstoken"}"""

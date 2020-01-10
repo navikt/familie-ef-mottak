@@ -2,14 +2,12 @@ package no.nav.familie.ef.mottak.integration
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.ef.mottak.config.ClientConfigurationPropertiesLocal
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.ef.mottak.integration.dto.ArkiverDokumentResponse
-import no.nav.familie.ef.mottak.integration.dto.ArkiverSøknadRequest
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -24,22 +22,19 @@ internal class ArkivClientTest {
 
     private val operations: RestOperations = mockk()
     private val integrasjonerConfig: IntegrasjonerConfig = IntegrasjonerConfig("mock/")
-    private val oAuth2AccessTokenService: OAuth2AccessTokenService = mockk()
-    private val clientConfigurationPropertiesLocal: ClientConfigurationPropertiesLocal = mockk()
 
-    val arkivClient: ArkivClient =
-            ArkivClient(operations, integrasjonerConfig, oAuth2AccessTokenService, clientConfigurationPropertiesLocal)
+    private val arkivClient: ArkivClient = ArkivClient(operations, integrasjonerConfig)
 
-    val arkiverSøknadRequest = ArkiverSøknadRequest("123456789", true, listOf())
-    val arkiverDokumentResponse: ArkiverDokumentResponse = ArkiverDokumentResponse("wer", true)
-    val uri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(ArkivClient.PATH_SEND_INN).build()
+    private val arkiverSøknadRequest = ArkiverDokumentRequest("123456789", true, listOf())
+    private val arkiverDokumentResponse: ArkiverDokumentResponse = ArkiverDokumentResponse("wer", true)
+    private val uri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(ArkivClient.PATH_SEND_INN).build()
 
 
     @Test
     fun `Skal arkivere  søknad`() {
         // Gitt
         operationMockSkalReturnere(success(arkiverDokumentResponse))
-        // Vil gi reultat
+        // Vil gi resultat
         assertNotNull(arkivClient.arkiver(arkiverSøknadRequest))
 
     }

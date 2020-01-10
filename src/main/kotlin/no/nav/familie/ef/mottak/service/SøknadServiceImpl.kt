@@ -18,7 +18,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun motta(søknadDto: SøknadDto): Kvittering {
         val søknad = SøknadMapper.fromDto(søknadDto)
         soknadRepository.save(søknad)
-        return Kvittering("Søknad lagre med id ${søknad.id} er registrert mottatt.")
+        return Kvittering("Søknad lagret med id ${søknad.id} er registrert mottatt.")
     }
 
     override fun get(id: String): Soknad {

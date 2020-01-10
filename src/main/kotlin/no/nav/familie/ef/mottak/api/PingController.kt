@@ -16,21 +16,4 @@ class PingController {
         return "Ack - vi har kontakt"
     }
 
-//    @GetMapping("/azureadprotected")
-//    @ProtectedWithClaims(issuer="azuread", claimMap = ["acr=Level4"]  )
-//    fun azuread(): String {
-//        return "Ack - vi har kontakt"
-//    }
-//
-//    @GetMapping("/selvbetjening")
-//    @ProtectedWithClaims(issuer="selvbetjening", claimMap = ["acr=Level4"]  )
-//    fun pong(): String {
-//        return "Ack - vi har kontakt"
-//    }
-//
-//    @GetMapping("/protected")
-//    @Protected
-//    fun pang(): String {
-//        return "Ack - vi har kontakt"
-//    }
 }

@@ -10,4 +10,6 @@ data class Vedlegg(@Id
                    val id: Long? = null,
                    @Convert(converter = FileCryptoConverter::class)
                    val data: Fil,
-                   val filnavn: String)
+                   val filnavn: String,
+                   val tittel: String?) {
+}

@@ -5,8 +5,6 @@ import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Timer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.Marker
-import org.slf4j.MarkerFactory
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
@@ -17,31 +15,31 @@ import java.util.concurrent.TimeUnit
 abstract class AbstractRestClient(val operations: RestOperations,
                                   metricsPrefix: String) {
 
-    val responstid: Timer = Metrics.timer("$metricsPrefix.tid")
-    val responsSuccess: Counter = Metrics.counter("$metricsPrefix.response", "status", "success")
-    val responsFailure: Counter = Metrics.counter("$metricsPrefix.response", "status", "failure")
+    private val responstid: Timer = Metrics.timer("$metricsPrefix.tid")
+    private val responsSuccess: Counter = Metrics.counter("$metricsPrefix.response", "status", "success")
+    private val responsFailure: Counter = Metrics.counter("$metricsPrefix.response", "status", "failure")
 
-    private val confidential: Marker = MarkerFactory.getMarker("CONFIDENTIAL")
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
     val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     inline fun <reified T : Any> getForEntity(uri: URI): T {
-        return executeMedMetrics(uri) { operations.getForEntity<T>(uri) } ?: error("Get feilet ved kall til $uri")
+        return executeMedMetrics(uri) { operations.getForEntity<T>(uri) }
     }
 
-    inline fun <reified T> postForEntity(uri: URI, payload: Any): T? {
+    inline fun <reified T> postForEntity(uri: URI, payload: Any): T {
         return executeMedMetrics(uri) { operations.exchange<T>(uri, HttpMethod.POST, HttpEntity(payload)) }
     }
 
-    private fun <T> validerOgPakkUt(respons: ResponseEntity<T>, uri: URI): T? {
+    private fun <T> validerOgPakkUt(respons: ResponseEntity<T>, uri: URI): T {
         if (!respons.statusCode.is2xxSuccessful) {
-            log.info(confidential, "Kall mot $uri feilet:  ${respons.body}")
+            secureLogger.info("Kall mot $uri feilet:  ${respons.body}")
             log.info("Kall mot $uri feilet: ${respons.statusCode}")
             throw HttpServerErrorException(respons.statusCode, "", respons.body?.toString()?.toByteArray(), Charsets.UTF_8)
         }
-        return respons.body
+        return respons.body!!
     }
 
-    fun <T> executeMedMetrics(uri: URI, function: () -> ResponseEntity<T>): T? {
+    fun <T> executeMedMetrics(uri: URI, function: () -> ResponseEntity<T>): T {
         try {
             val startTime = System.nanoTime()
             val responseEntity = function.invoke()

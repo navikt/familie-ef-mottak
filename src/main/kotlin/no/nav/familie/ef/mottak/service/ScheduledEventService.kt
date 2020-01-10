@@ -7,6 +7,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class ScheduledEventService(private val taskRepository: TaskRepository,
@@ -19,9 +20,8 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
         }
     }
 
+    @Transactional
     fun opprettTask(soknad: Soknad) {
         taskRepository.save(Task.nyTask(JOURNALFØR_SØKNAD, soknad.id))
-
     }
-
 }

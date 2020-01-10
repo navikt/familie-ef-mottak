@@ -14,7 +14,6 @@ class ClientPropertiesMedUrl(val resourceUrl: URI,
                              grantType: OAuth2GrantType,
                              scope: List<String>,
                              authentication: ClientAuthenticationPropertiesLocal)
-
     : ClientProperties(tokenEndpointUrl,
                        grantType,
                        scope,

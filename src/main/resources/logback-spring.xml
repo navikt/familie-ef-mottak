@@ -2,7 +2,7 @@
 <configuration>
     <property name="ROOT_LOG_LEVEL" value="INFO"/>
 
-    <!-- Spesiell håndtering av loggeren no.nav.log.LogFilter for å forhindre logging av isAlive-sjekker o.l. -->
+    <!-- Spesiell håndtering av logger no.nav.log.LogFilter for å forhindre logging av isAlive-sjekker o.l. -->
     <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
