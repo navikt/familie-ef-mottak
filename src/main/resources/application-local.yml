@@ -2,19 +2,63 @@ server:
   port: 8092
   servlet:
     context-path: /
+
 spring:
   datasource:
     username: postgres
     password: test
-    url: jdbc:postgresql://0.0.0.0:5432/familie-ef-mottak
+    url: jdbc:postgresql://localhost:5432/familie-ef-mottak
+
+familie:
+  ef:
+    sak:
+      url: http://localhost:8092/mockapi/
+    integrasjoner:
+      url: http://localhost:8092/mockapi/
 
 logging:
   config: "classpath:logback-test.xml"
 
+#http://localhost:8080/metadata
+#https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+
 no.nav.security.jwt:
-  issuers: selvbetjening
-  issuer.selvbetjening:
-    discoveryurl: http://metadata
-    accepted_audience: aud-localhost
-    cookie_name: localhost-idtoken
-    proxyurl:
+  issuer:
+    selvbetjening:
+      discoveryurl: http://localhost:8080/metadata
+      accepted_audience: aud-localhost
+      cookie_name: localhost-idtoken
+      proxyurl:
+    azuread:
+      discoveryurl:  https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+      accepted_audience: local-aud
+      cookie_name: azure_token
+      proxyurl:
+  client:
+    registration:
+      ef-sak-client-credentials:
+        resource-url: ${familie.ef.sak.url}
+        token-endpoint-url: http://localhost:8092/mockapi/saktoken
+        grant-type: client_credentials
+        scope: anything0
+        authentication:
+          client-id: anything1
+          client-secret: anything2
+          client-auth-method: client_secret_basic
+      integrasjoner-client-credentials:
+        resource-url: ${familie.ef.integrasjoner.url}
+        token-endpoint-url: http://localhost:8092/mockapi/integrationtoken
+        grant-type: client_credentials
+        scope: anything4
+        authentication:
+          client-id: anything5
+          client-secret: anything6
+          client-auth-method: client_secret_basic
+
+      #  ef-arkiv-client-credentials:
+
+database:
+  encryption:
+    # 16, 24 or 32 bytes
+    key: Det finnes mange gode eksempler.
+

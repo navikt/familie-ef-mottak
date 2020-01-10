@@ -1,24 +1,51 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.config.SakConfig
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+
+import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
+import no.nav.familie.ef.mottak.integration.rest.AbstractRestClient
+import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.Ressurs.Status
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
+import java.net.URI
+
+fun <T> Ressurs<T>.getDataOrThrow(): T {
+    return when (this.status) {
+        Status.SUKSESS -> data ?: error("Data er null i Ressurs")
+        else -> error(melding)
+    }
+}
 
 @Service
-class ArkivClient(operations: RestOperations, sakConfig: SakConfig) : AbstractRestClient(operations) {
+class ArkivClient(operations: RestOperations,
+                  private val integrasjonerConfig: IntegrasjonerConfig) :
+        AbstractRestClient(operations, "Arkiv") {
 
-    private val sendInnUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_SEND_INN).build()
+    private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
 
-    fun arkiver(søknadDto: String): ResponseEntity<HttpStatus> {
-        return ResponseEntity.ok(HttpStatus.CREATED)
-//        return postForObject(sendInnUri, ObjectMapper().readValue(søknadDto))
+    fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
+        val response =
+                postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverDokumentRequest)
+        return response.getDataOrThrow()
+    }
+
+    fun hentSaksnummer(journalPostId: String): String {
+        return getForEntity(hentSaksnummerUri(journalPostId))
+    }
+
+    private fun hentSaksnummerUri(id: String): URI {
+        return DefaultUriBuilderFactory()
+                .uriString(integrasjonerConfig.url)
+                .path(PATH_HENT_SAKSNUMMER.format(id))
+                .build()
     }
 
     companion object {
-        private const val PATH_SEND_INN = "soknad/sendInn"
+        const val PATH_SEND_INN = "arkiv/v2"
+        private const val PATH_HENT_SAKSNUMMER = "/journalpost/%s/sak"
     }
 
 }

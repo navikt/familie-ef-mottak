@@ -1,3 +1,6 @@
 package no.nav.familie.ef.mottak.api.dto
 
-data class SøknadDto(val text: String)
+class SøknadDto(val fnr: String,
+                val soknadJson: String,
+                val soknadPdf: String,
+                val vedlegg: List<VedleggDto>)

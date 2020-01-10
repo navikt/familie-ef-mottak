@@ -23,11 +23,23 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.9.3</mockk.version>
         <fasterxml.version>2.10.1</fasterxml.version>
-        <felles.version>1.0_20191106113227_c2ad869</felles.version>
+        <felles.version>1.0_20191230205149_509e1c9</felles.version>
+        <kontrakter.version>2.0_20200110133759_9f5f87a</kontrakter.version>
         <token-validation.version>1.1.3</token-validation.version>
         <spring-cloud.version>2.2.0.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>http://packages.confluent.io/maven/</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/navikt/familie-felles</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -44,7 +56,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
@@ -58,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,6 +107,74 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- Nav-internt  -->
+
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-client-spring</artifactId>
+            <version>${token-validation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>log</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>prosessering</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>http-client</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.kontrakter</groupId>
+            <artifactId>felles</artifactId>
+            <version>${kontrakter.version}</version>
+        </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-vault-config-databases</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <!-- Logging og metrikker -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>io.mockk</groupId>
@@ -112,62 +192,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-junit-jupiter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-test-support</artifactId>
             <version>${token-validation.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Nav-internt  -->
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring</artifactId>
-            <version>${token-validation.version}</version>
-        </dependency>
-
-        <!-- Database -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-vault-config-databases</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
-        <!-- Logging og metrikker -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>log</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
-            <artifactId>http-client</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -182,6 +222,11 @@
                         <artifactId>kotlin-maven-allopen</artifactId>
                         <version>${kotlin.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-noarg</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
                 </dependencies>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -189,6 +234,7 @@
                 <configuration>
                     <compilerPlugins>
                         <plugin>spring</plugin>
+                        <plugin>jpa</plugin>
                     </compilerPlugins>
                 </configuration>
                 <executions>
@@ -230,7 +276,9 @@
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
-                        <goals> <goal>single</goal> </goals>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                         <configuration>
                             <archive>
                                 <manifest>
