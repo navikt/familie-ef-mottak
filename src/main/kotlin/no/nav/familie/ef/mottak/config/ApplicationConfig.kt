@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import no.nav.familie.ba.mottak.config.NaisProxyCustomizer
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.ef.mottak.config.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
@@ -44,10 +45,13 @@ class ApplicationConfig(@Value("\${application.name}")
     fun consumerIdClientInterceptor() = ConsumerIdClientInterceptor(consumerId = applicationName)
 
 
-    @Bean
+    @Bean("restTemplate")
     fun restTemplate(mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      bearerTokenClientInterceptor: BearerTokenClientInterceptor): RestOperations {
-        return RestTemplateBuilder().interceptors(mdcInterceptor, bearerTokenClientInterceptor).build()
+        return RestTemplateBuilder()
+                .additionalCustomizers(NaisProxyCustomizer())
+                .interceptors(mdcInterceptor, bearerTokenClientInterceptor)
+                .build()
     }
 
     @Bean
