@@ -14,7 +14,7 @@ familie:
     sak:
       url: http://localhost:8092/mockapi/
     integrasjoner:
-      url: http://localhost:8092/mockapi/
+      url: http://localhost:8092/mockintegrasjoner/
 
 logging:
   config: "classpath:logback-test.xml"
@@ -38,7 +38,7 @@ no.nav.security.jwt:
     registration:
       ef-sak-client-credentials:
         resource-url: ${familie.ef.sak.url}
-        token-endpoint-url: http://localhost:8092/mockapi/saktoken
+        token-endpoint-url: http://localhost:8092/mockapi/token
         grant-type: client_credentials
         scope: anything0
         authentication:
@@ -47,7 +47,7 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
       integrasjoner-client-credentials:
         resource-url: ${familie.ef.integrasjoner.url}
-        token-endpoint-url: http://localhost:8092/mockapi/integrationtoken
+        token-endpoint-url: http://localhost:8092/mockapi/token
         grant-type: client_credentials
         scope: anything4
         authentication:

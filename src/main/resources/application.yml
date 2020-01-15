@@ -29,16 +29,19 @@ management:
     exposure.include: info, health, metrics, prometheus
     base-path: "/internal"
     path-mapping:
-      info: "status/isAlive"
+      health: "status/isAlive"
   metrics.export.prometheus.enabled: true
-  metrics.web.server.auto-time-requests: true
+  health:
+    db:
+      enabled: true
+
 
 familie:
   ef:
     sak:
-      url: http://familie-ef-sak/api
+      url: http://familie-ef-sak/api/
     integrasjoner:
-      url: http://familie-integrasjoner/api
+      url: http://familie-integrasjoner/api/
 
 no.nav.security.jwt:
   issuer:
