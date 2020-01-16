@@ -34,6 +34,7 @@ spec:
       cpu: 500m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ef-mottak.nais.preprod.local
+    - https://familie-ef-mottak.dev-fss-pub.nais.io
   secureLogs:
     enabled: true
   env:
