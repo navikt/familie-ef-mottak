@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.config.interceptor
 
-import no.nav.familie.ef.mottak.config.ClientConfigurationPropertiesLocal
-import no.nav.familie.ef.mottak.config.ClientPropertiesMedUrl
+import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -13,7 +13,7 @@ import java.net.URI
 
 @Component
 class BearerTokenClientInterceptor(private val oAuth2AccessTokenService: OAuth2AccessTokenService,
-                                   private val clientConfigurationPropertiesLocal: ClientConfigurationPropertiesLocal) :
+                                   private val clientConfigurationProperties: ClientConfigurationProperties) :
         ClientHttpRequestInterceptor {
 
 
@@ -24,8 +24,8 @@ class BearerTokenClientInterceptor(private val oAuth2AccessTokenService: OAuth2A
         return execution.execute(request, body)
     }
 
-    private fun clientPropertiesFor(uri: URI): ClientPropertiesMedUrl {
-        return clientConfigurationPropertiesLocal
+    private fun clientPropertiesFor(uri: URI): ClientProperties {
+        return clientConfigurationProperties
                        .registration
                        .values
                        .firstOrNull { uri.toString().startsWith(it.resourceUrl.toString()) }
