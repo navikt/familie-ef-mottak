@@ -10,16 +10,16 @@ internal class SoknadTest {
     @Test
     fun testHashCode() {
         val uuid = UUID.randomUUID().toString()
-        val one = Soknad(uuid, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789")
-        val other = Soknad(uuid, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789")
+        val one = Soknad(uuid, "string", "321", "654", "789")
+        val other = Soknad(uuid, "string",  "321", "654", "789")
         assertEquals(one.hashCode(), other.hashCode())
     }
 
     @Test
     fun testEquals() {
         val uuid = UUID.randomUUID().toString()
-        val one = Soknad(uuid, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789")
-        val other = Soknad(uuid, "string", Fil(ByteArray(5) { 2 }), "321", "654", "789")
+        val one = Soknad(uuid, "string", "321", "654", "789")
+        val other = Soknad(uuid, "string", "321", "654", "789")
         assertTrue(one == other)
     }
 }
