@@ -32,61 +32,76 @@ class DokumentHelperTest {
                                   Dokument(Fil(byteArrayOf(12)), "n"),
                                   Dokument(Fil(byteArrayOf(12)), "o"))
 
+        print(list)
+
+    }
+
+    @Test
+    fun `finnFelter finner alle felter i en struktur`() {
+
+        val søknad = søknad()
+
+        val list: List<List<Felt<*>>> = DokumentHelper.finnFelter(søknad)
+
+
+        list.forEach{ it.forEach{ inner -> println(inner.label)} }
+
+
     }
 
 
     private fun søknad() =
-            Søknad(Felt("", Personalia(Felt("", Fødselsnummer("24117938529")), fs, fs,
-                                       Felt("", Adresse(fs, fi, fs, fs, fs, fs, fs)), fs, fs)),
-                   Felt("", Sivilstandsdetaljer(fb,
-                                                dokument("a"),
-                                                fb,
-                                                dokument("b"),
-                                                fb,
-                                                fd,
-                                                dokument("c"),
-                                                fs,
-                                                dokument("d"),
-                                                fd,
-                                                fd,
-                                                fs)),
-                   Felt("", Medlemskapsdetaljer(fb, fb, null, fb, dokument("e"))),
-                   Felt("", Bosituasjon(fs, null, fd)),
-                   Felt("", Sivilstandsplaner(fb, fd, null)),
+            Søknad(Felt("Personalia", Personalia(Felt("", Fødselsnummer("24117938529")), fs, fs,
+                                                 Felt("", Adresse(fs, fi, fs, fs, fs, fs, fs)), fs, fs)),
+                   Felt("Sivilstandsdetaljer", Sivilstandsdetaljer(fb,
+                                                                   dokument("a"),
+                                                                   fb,
+                                                                   dokument("b"),
+                                                                   fb,
+                                                                   fd,
+                                                                   dokument("c"),
+                                                                   fs,
+                                                                   dokument("d"),
+                                                                   fd,
+                                                                   fd,
+                                                                   fs)),
+                   Felt("Medlemskap", Medlemskapsdetaljer(fb, fb, null, fb, dokument("e"))),
+                   Felt("Bosituasjon", Bosituasjon(fs, null, fd)),
+                   Felt("Sivilstandsplaner", Sivilstandsplaner(fb, fd, null)),
                    null,
-                   Felt("", listOf(KommendeBarn(fs,
-                                                fs,
-                                                null,
-                                                f(Samvær(fb,
-                                                       dokument("f"),
-                                                       fs,
-                                                       fs,
-                                                       dokument("g"),
-                                                       fs,
-                                                       fb,
-                                                       fb,
-                                                       fd,
-                                                       dokument("h"),
-                                                       fs,
-                                                       fs)),
-                                                fb,
-                                                fd,
-                                                fb,
-                                                dokument("j")))),
-                   Felt("", Aktivitet(fl, null, null, null, null, null)),
-                   Felt("", Situasjon(fl,
-                                      dokument("i"),
-                                      dokument("j"),
-                                      dokument("k"),
-                                      dokument("l"),
-                                      dokument("m"),
-                                      fd,
-                                      dokument("n"),
-                                      fd,
-                                      fs,
-                                      fs,
-                                      fd,
-                                      dokument("o"))),
+                   Felt("KommendeBarn", listOf(KommendeBarn(fs,
+                                                            fs,
+                                                            null,
+                                                            f(Samvær(fb,
+                                                                     dokument("f"),
+                                                                     fs,
+                                                                     fs,
+                                                                     dokument("g"),
+                                                                     fs,
+                                                                     fb,
+                                                                     fb,
+                                                                     fd,
+                                                                     dokument("h"),
+                                                                     fs,
+                                                                     fs)),
+                                                            fb,
+                                                            fd,
+                                                            fb,
+                                                            dokument("j")))),
+                   Felt("Aktivitet", Aktivitet(fl, null, null, null, null, null)),
+                   Felt("Situasjon", Situasjon(fl,
+                                               dokument("i"),
+                                               dokument("j"),
+                                               dokument("k"),
+                                               dokument("l"),
+                                               dokument("m"),
+                                               fd,
+                                               dokument("n"),
+                                               fd,
+                                               fs,
+                                               fs,
+                                               fd,
+                                               dokument("o"))),
                    Felt("", Stønadsstart(f(Month.AUGUST), fi)))
 
     private fun dokument(tittel: String) = Felt("", Dokument(Fil(byteArrayOf(12)), tittel))
