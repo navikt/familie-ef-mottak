@@ -16,89 +16,95 @@ class DokumentHelperTest {
 
         val list: List<Dokument> = DokumentHelper.finnDokumenter(søknad)
 
-        assertThat(list).contains(dokument("a"),
-                                  dokument("b"),
-                                  dokument("c"),
-                                  dokument("d"),
-                                  dokument("e"),
-                                  dokument("f"),
-                                  dokument("g"),
-                                  dokument("h"),
-                                  dokument("i"),
-                                  dokument("j"),
-                                  dokument("k"),
-                                  dokument("l"),
-                                  dokument("m"),
-                                  dokument("n"),
-                                  dokument("o"))
+        assertThat(list).contains(Dokument(Fil(byteArrayOf(12)), "a"),
+                                  Dokument(Fil(byteArrayOf(12)), "b"),
+                                  Dokument(Fil(byteArrayOf(12)), "c"),
+                                  Dokument(Fil(byteArrayOf(12)), "d"),
+                                  Dokument(Fil(byteArrayOf(12)), "e"),
+                                  Dokument(Fil(byteArrayOf(12)), "f"),
+                                  Dokument(Fil(byteArrayOf(12)), "g"),
+                                  Dokument(Fil(byteArrayOf(12)), "h"),
+                                  Dokument(Fil(byteArrayOf(12)), "i"),
+                                  Dokument(Fil(byteArrayOf(12)), "j"),
+                                  Dokument(Fil(byteArrayOf(12)), "k"),
+                                  Dokument(Fil(byteArrayOf(12)), "l"),
+                                  Dokument(Fil(byteArrayOf(12)), "m"),
+                                  Dokument(Fil(byteArrayOf(12)), "n"),
+                                  Dokument(Fil(byteArrayOf(12)), "o"))
 
     }
 
 
     private fun søknad() =
-            Søknad(Personalia(Fødselsnummer("24117938529"), "", "", Adresse("", 0, "", "", "", "", ""), "", ""),
-                   Sivilstandsdetaljer(spørsmålBoolean,
-                                       dokument("a"),
-                                       spørsmålBoolean,
-                                       dokument("b"),
-                                       spørsmålBoolean,
-                                       spørsmålDate,
-                                       dokument("c"),
-                                       spørsmålString,
-                                       dokument("d"),
-                                       date,
-                                       date,
-                                       ""),
-                   Medlemskapsdetaljer(spørsmålBoolean, spørsmålBoolean, null, spørsmålBoolean, dokument("e")),
-                   Bosituasjon(spørsmålString, null, spørsmålDate),
-                   Sivilstandsplaner(spørsmålBoolean, spørsmålDate, null),
+            Søknad(Felt("", Personalia(Felt("", Fødselsnummer("24117938529")), fs, fs,
+                                       Felt("", Adresse(fs, fi, fs, fs, fs, fs, fs)), fs, fs)),
+                   Felt("", Sivilstandsdetaljer(fb,
+                                                dokument("a"),
+                                                fb,
+                                                dokument("b"),
+                                                fb,
+                                                fd,
+                                                dokument("c"),
+                                                fs,
+                                                dokument("d"),
+                                                fd,
+                                                fd,
+                                                fs)),
+                   Felt("", Medlemskapsdetaljer(fb, fb, null, fb, dokument("e"))),
+                   Felt("", Bosituasjon(fs, null, fd)),
+                   Felt("", Sivilstandsplaner(fb, fd, null)),
                    null,
-                   listOf(KommendeBarn("",
-                                       "",
-                                       null,
-                                       Samvær(spørsmålBoolean,
-                                              dokument("f"),
-                                              spørsmålString,
-                                              spørsmålString,
-                                              dokument("g"),
-                                              spørsmålString,
-                                              spørsmålBoolean,
-                                              spørsmålBoolean,
-                                              spørsmålDate,
-                                              dokument("h"),
-                                              spørsmålString,
-                                              spørsmålString),
-                                       spørsmålBoolean,
-                                       date,
-                                       spørsmålBoolean,
-                                       dokument("j"))),
-                   Aktivitet(spørsmålList, null, null, null, null, null),
-                   Situasjon(spørsmålList,
-                             dokument("i"),
-                             dokument("j"),
-                             dokument("k"),
-                             dokument("l"),
-                             dokument("m"),
-                             spørsmålDate,
-                             dokument("n"),
-                             spørsmålDate,
-                             spørsmålString,
-                             spørsmålString,
-                             spørsmålDate,
-                             dokument("o")),
-                   Stønadsstart(Month.AUGUST, 2014))
+                   Felt("", listOf(KommendeBarn(fs,
+                                                fs,
+                                                null,
+                                                f(Samvær(fb,
+                                                       dokument("f"),
+                                                       fs,
+                                                       fs,
+                                                       dokument("g"),
+                                                       fs,
+                                                       fb,
+                                                       fb,
+                                                       fd,
+                                                       dokument("h"),
+                                                       fs,
+                                                       fs)),
+                                                fb,
+                                                fd,
+                                                fb,
+                                                dokument("j")))),
+                   Felt("", Aktivitet(fl, null, null, null, null, null)),
+                   Felt("", Situasjon(fl,
+                                      dokument("i"),
+                                      dokument("j"),
+                                      dokument("k"),
+                                      dokument("l"),
+                                      dokument("m"),
+                                      fd,
+                                      dokument("n"),
+                                      fd,
+                                      fs,
+                                      fs,
+                                      fd,
+                                      dokument("o"))),
+                   Felt("", Stønadsstart(f(Month.AUGUST), fi)))
 
-    private fun dokument(tittel: String) = Dokument(Fil(byteArrayOf(12)), tittel)
+    private fun dokument(tittel: String) = Felt("", Dokument(Fil(byteArrayOf(12)), tittel))
 
     private val date = LocalDate.now()
 
-    private val spørsmålList = Spørsmål("", listOf(""))
+    private val fl = Felt("", listOf(""))
 
-    private val spørsmålBoolean = Spørsmål("", true)
+    private val fb = Felt("", true)
 
-    private val spørsmålDate = Spørsmål("", LocalDate.now())
 
-    private val spørsmålString = Spørsmål("", "")
+    private val fd = Felt("", LocalDate.now())
+    private val fi = Felt("", 1)
+
+    private val fs = Felt("", "")
+
+
+    fun <T> f(s: T) = Felt("", s)
 
 
 }

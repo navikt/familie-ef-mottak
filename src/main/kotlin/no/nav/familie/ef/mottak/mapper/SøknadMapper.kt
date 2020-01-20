@@ -18,7 +18,7 @@ object SøknadMapper {
 
     fun fromDto(søknad: Søknad): Soknad {
         return Soknad(søknadJson = objectMapper.writeValueAsString(søknad),
-                      fnr = søknad.personalia.fødselsnummer.verdi)
+                      fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi)
     }
 
 }

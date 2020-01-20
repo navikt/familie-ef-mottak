@@ -14,7 +14,7 @@ object ArkiverDokumentRequestMapper {
 
     fun toDto(søknad: Søknad): ArkiverDokumentRequest {
         val dokumenter: List<Dokument> = tilDokumenter(søknad)
-        return ArkiverDokumentRequest(søknad.personalia.fødselsnummer.verdi, true, dokumenter)
+        return ArkiverDokumentRequest(søknad.personalia.verdi.fødselsnummer.verdi.verdi, true, dokumenter)
     }
 
     private fun tilDokumenter(søknad: Søknad): List<Dokument> {
