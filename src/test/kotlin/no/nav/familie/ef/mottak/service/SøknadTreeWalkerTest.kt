@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
 import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -32,9 +33,6 @@ class SøknadTreeWalkerTest {
                                   Dokument(Fil(byteArrayOf(12)), "arbeidskontrakt"),
                                   Dokument(Fil(byteArrayOf(12)), "utdanningstilbud"),
                                   Dokument(Fil(byteArrayOf(12)), "oppsigelseReduksjonDokumentasjon"))
-
-        print(list)
-
     }
 
     @Test
@@ -42,21 +40,18 @@ class SøknadTreeWalkerTest {
 
         val søknad = søknad()
 
-        val list: List<List<Felt<*>>> = SøknadTreeWalker.finnFelter(søknad)
+        val list: Map<String, List<Felt<String>>> = SøknadTreeWalker.finnFelter(søknad)
 
+        val writeValueAsString = objectMapper.writeValueAsString(list)
 
-        list.forEach {
-            println(it)
-            it.forEach { inner -> println(inner) }
-        }
-
+        print(writeValueAsString)
 
     }
 
 
     private fun søknad() =
             Søknad(Felt("Personalia",
-                        Personalia(Felt("", Fødselsnummer("24117938529")),
+                        Personalia(Felt("fødselsnummer", Fødselsnummer("24117938529")),
                                    fs("navn"),
                                    fs("statsborgerskap"),
                                    adresseFelt(),
