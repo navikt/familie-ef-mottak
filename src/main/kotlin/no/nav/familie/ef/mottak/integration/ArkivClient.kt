@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.integration
 
 
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.ef.mottak.integration.rest.AbstractRestClient
+import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
@@ -29,7 +29,7 @@ class ArkivClient(operations: RestOperations,
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
                 postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverDokumentRequest)
-        return response.getDataOrThrow()
+        return response?.getDataOrThrow() ?: error("No respons data")
     }
 
     fun hentSaksnummer(journalPostId: String): String {
@@ -46,7 +46,7 @@ class ArkivClient(operations: RestOperations,
 
     companion object {
         const val PATH_SEND_INN = "arkiv/v2"
-        private const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
+        const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
     }
 
 }

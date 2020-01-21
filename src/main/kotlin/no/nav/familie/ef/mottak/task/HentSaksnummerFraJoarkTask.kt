@@ -7,8 +7,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
-import java.time.LocalDateTime
 
 @Service
 @TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
@@ -18,15 +16,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
                                  private val hentJournalpostService: HentJournalpostService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        try {
-            hentJournalpostService.hentSaksnummer(task.payload)
-        } catch (notFound: HttpClientErrorException.NotFound) {
-            LOG.info("Hent saksnummer returnerte 404 response body={}",
-                     notFound.responseBodyAsString)
-            val copy = task.copy(triggerTid = LocalDateTime.now().plusMinutes(15))
-            taskRepository.save(copy)
-            throw notFound
-        }
+        hentJournalpostService.hentSaksnummer(task.payload)
     }
 
     override fun onCompletion(task: Task) {
