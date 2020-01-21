@@ -44,7 +44,8 @@ class SøknadTreeWalkerTest {
 
         val writeValueAsString = objectMapper.writeValueAsString(list)
 
-        print(writeValueAsString)
+        @Suppress("LongLine")
+        assertThat(writeValueAsString).isEqualTo("""[{"label":"Personalia","verdi":[{"label":"fødselsnummer","verdi":"24117938529"},{"label":"navn","verdi":"hei"},{"label":"statsborgerskap","verdi":"hei"},{"label":"adresse","verdi":[{"label":"gatenavn","verdi":"hei"},{"label":"husnummer","verdi":"1"},{"label":"husbokstav","verdi":"hei"},{"label":"bolignummer","verdi":"hei"},{"label":"postnummer","verdi":"hei"},{"label":"poststedsnavn","verdi":"hei"},{"label":"kommune","verdi":"hei"}]},{"label":"telefonnummer","verdi":"hei"},{"label":"sivilstatus","verdi":"hei"}]},{"label":"Sivilstandsdetaljer","verdi":[{"label":"giftIUtlandet","verdi":"Ja"},{"label":"dokument","verdi":"giftIUtlandetDokumentasjon"},{"label":"separertEllerSkiltIUtlandet","verdi":"Ja"},{"label":"dokument","verdi":"separertEllerSkiltIUtlandetDokumentasjon"},{"label":"søktOmSkilsmisseSeparasjon","verdi":"Ja"},{"label":"søknadsdato","verdi":"2020-01-21"},{"label":"dokument","verdi":"separasjonsbekreftelse"},{"label":"årsakEnslig","verdi":"hei"},{"label":"dokument","verdi":"samlivsbruddsdokumentasjon"},{"label":"samlivsbruddsdato","verdi":"2020-01-21"},{"label":"fraflytningsdato","verdi":"2020-01-21"},{"label":"spesifikasjonAnnet","verdi":"hei"},{"label":"endringSamværsordningDato","verdi":"2020-01-21"}]},{"label":"Medlemskap","verdi":[{"label":"oppholderDuDegINorge","verdi":"Ja"},{"label":"bosattNorgeSisteÅrene","verdi":"Ja"},{"label":"flyktningstatus","verdi":"Ja"},{"label":"dokument","verdi":"flyktningdokumentasjon"}]},{"label":"Bosituasjon","verdi":[{"label":"delerDuBolig","verdi":"hei"},{"label":"samboerdetaljer","verdi":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"adresse","verdi":[{"label":"gatenavn","verdi":"hei"},{"label":"husnummer","verdi":"1"},{"label":"husbokstav","verdi":"hei"},{"label":"bolignummer","verdi":"hei"},{"label":"postnummer","verdi":"hei"},{"label":"poststedsnavn","verdi":"hei"},{"label":"kommune","verdi":"hei"}]},{"label":"land","verdi":"hei"}]},{"label":"sammenflyttingsdato","verdi":"2020-01-21"}]},{"label":"Sivilstandsplaner","verdi":[{"label":"harPlaner","verdi":"Ja"},{"label":"fraDato","verdi":"2020-01-21"},{"label":"vordendeSamboerEktefelle","verdi":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"adresse","verdi":[{"label":"gatenavn","verdi":"hei"},{"label":"husnummer","verdi":"1"},{"label":"husbokstav","verdi":"hei"},{"label":"bolignummer","verdi":"hei"},{"label":"postnummer","verdi":"hei"},{"label":"poststedsnavn","verdi":"hei"},{"label":"kommune","verdi":"hei"}]},{"label":"land","verdi":"hei"}]}]},{"label":"KommendeBarn","verdi":[{"label":"navn","verdi":"hei"},{"label":"fnr","verdi":"hei"},{"label":"annenForelder","verdi":[{"label":"kanIkkeOppgiAnnenForelderFar","verdi":"Ja"},{"label":"ikkeOppgittAnnenForelderBegrunnelse","verdi":"hei"},{"label":"bosattNorge","verdi":"Ja"},{"label":"personalia","verdi":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"adresse","verdi":[{"label":"gatenavn","verdi":"hei"},{"label":"husnummer","verdi":"1"},{"label":"husbokstav","verdi":"hei"},{"label":"bolignummer","verdi":"hei"},{"label":"postnummer","verdi":"hei"},{"label":"poststedsnavn","verdi":"hei"},{"label":"kommune","verdi":"hei"}]},{"label":"land","verdi":"hei"}]}]},{"label":"samvær","verdi":[{"label":"spørsmålAvtaleOmDeltBosted","verdi":"Ja"},{"label":"dokument","verdi":"avtaleOmDeltBosted"},{"label":"skalAnnenForelderHaSamvær","verdi":"hei"},{"label":"harDereSkriftligAvtaleOmSamvær","verdi":"hei"},{"label":"dokument","verdi":"samværsavtale"},{"label":"hvordanPraktiseresSamværet","verdi":"hei"},{"label":"borAnnenForelderISammeHus","verdi":"Ja"},{"label":"harDereTidligereBoddSammen","verdi":"Ja"},{"label":"nårFlyttetDereFraHverandre","verdi":"2020-01-21"},{"label":"dokument","verdi":"erklæringOmSamlivsbrudd"},{"label":"hvorMyeErDuSammenMedAnnenForelder","verdi":"hei"},{"label":"beskrivSamværUtenBarn","verdi":"hei"}]},{"label":"erBarnetFødt","verdi":"Ja"},{"label":"fødselTermindato","verdi":"2020-01-21"},{"label":"skalBarnetBoHosSøker","verdi":"Ja"},{"label":"dokument","verdi":"terminbekreftelse"}]},{"label":"Aktivitet","verdi":[{"label":"hvordanErArbeidssituasjonen","verdi":"A, B, C"}]},{"label":"Situasjon","verdi":[{"label":"gjelderDetteDeg","verdi":"A, B, C"},{"label":"dokument","verdi":"sykdom"},{"label":"dokument","verdi":"barnsSykdom"},{"label":"dokument","verdi":"manglendeBarnepass"},{"label":"dokument","verdi":"barnMedSærligeBehov"},{"label":"dokument","verdi":"arbeidskontrakt"},{"label":"oppstartNyJobb","verdi":"2020-01-21"},{"label":"dokument","verdi":"utdanningstilbud"},{"label":"oppstartUtdanning","verdi":"2020-01-21"},{"label":"sagtOppEllerRedusertStilling","verdi":"hei"},{"label":"oppsigelseReduksjonÅrsak","verdi":"hei"},{"label":"oppsigelseReduksjonTidspunkt","verdi":"2020-01-21"},{"label":"dokument","verdi":"oppsigelseReduksjonDokumentasjon"}]},{"label":"stønadsstart","verdi":[{"label":"måned","verdi":"august"},{"label":"år","verdi":"1"}]}]""")
 
     }
 
@@ -52,111 +53,110 @@ class SøknadTreeWalkerTest {
     private fun søknad() =
             Søknad(Felt("Personalia",
                         Personalia(Felt("fødselsnummer", Fødselsnummer("24117938529")),
-                                   fs("navn"),
-                                   fs("statsborgerskap"),
+                                   stringfelt("navn"),
+                                   stringfelt("statsborgerskap"),
                                    adresseFelt(),
-                                   fs("telefonnummer"),
-                                   fs("sivilstatus"))),
+                                   stringfelt("telefonnummer"),
+                                   stringfelt("sivilstatus"))),
                    Felt("Sivilstandsdetaljer",
-                        Sivilstandsdetaljer(fb("giftIUtlandet"),
-                                            dokument("giftIUtlandetDokumentasjon"),
-                                            fb("separertEllerSkiltIUtlandet"),
-                                            dokument("separertEllerSkiltIUtlandetDokumentasjon"),
-                                            fb("søktOmSkilsmisseSeparasjon"),
-                                            fd("søknadsdato"),
-                                            dokument("separasjonsbekreftelse"),
-                                            fs("årsakEnslig"),
-                                            dokument("samlivsbruddsdokumentasjon"),
-                                            fd("samlivsbruddsdato"),
-                                            fd("fraflytningsdato"),
-                                            fs("spesifikasjonAnnet"),
-                                            fd("endringSamværsordningDato"))),
+                        Sivilstandsdetaljer(booleanfelt("giftIUtlandet"),
+                                            dokumentfelt("giftIUtlandetDokumentasjon"),
+                                            booleanfelt("separertEllerSkiltIUtlandet"),
+                                            dokumentfelt("separertEllerSkiltIUtlandetDokumentasjon"),
+                                            booleanfelt("søktOmSkilsmisseSeparasjon"),
+                                            datofelt("søknadsdato"),
+                                            dokumentfelt("separasjonsbekreftelse"),
+                                            stringfelt("årsakEnslig"),
+                                            dokumentfelt("samlivsbruddsdokumentasjon"),
+                                            datofelt("samlivsbruddsdato"),
+                                            datofelt("fraflytningsdato"),
+                                            stringfelt("spesifikasjonAnnet"),
+                                            datofelt("endringSamværsordningDato"))),
                    Felt("Medlemskap",
-                        Medlemskapsdetaljer(fb("oppholderDuDegINorge"),
-                                            fb("bosattNorgeSisteÅrene"),
-                                            Felt("utenlandsopphold", emptyList()),
-                                            fb("flyktningstatus"),
-                                            dokument("flyktningdokumentasjon"))),
+                        Medlemskapsdetaljer(booleanfelt("oppholderDuDegINorge"),
+                                            booleanfelt("bosattNorgeSisteÅrene"),
+                                            null,
+                                            booleanfelt("flyktningstatus"),
+                                            dokumentfelt("flyktningdokumentasjon"))),
                    Felt("Bosituasjon",
-                        Bosituasjon(fs("delerDuBolig"),
+                        Bosituasjon(stringfelt("delerDuBolig"),
                                     Felt("samboerdetaljer", personMinimum()),
-                                    fd("sammenflyttingsdato"))),
+                                    datofelt("sammenflyttingsdato"))),
                    Felt("Sivilstandsplaner",
-                        Sivilstandsplaner(fb("harPlaner"),
-                                          fd("fraDato"),
+                        Sivilstandsplaner(booleanfelt("harPlaner"),
+                                          datofelt("fraDato"),
                                           Felt("vordendeSamboerEktefelle", personMinimum()))),
                    null,
                    Felt("KommendeBarn",
-                        listOf(KommendeBarn(fs("navn"),
-                                            fs("fnr"),
-                                            Felt("annenForelder", Forelder(fb("kanIkkeOppgiAnnenForelderFar"),
-                                                                           fs("ikkeOppgittAnnenForelderBegrunnelse"),
-                                                                           fb("bosattNorge"),
+                        listOf(KommendeBarn(stringfelt("navn"),
+                                            stringfelt("fnr"),
+                                            Felt("annenForelder", Forelder(booleanfelt("kanIkkeOppgiAnnenForelderFar"),
+                                                                           stringfelt("ikkeOppgittAnnenForelderBegrunnelse"),
+                                                                           booleanfelt("bosattNorge"),
                                                                            Felt("personalia", personMinimum()))),
                                             Felt("samvær",
-                                                 Samvær(fb("spørsmålAvtaleOmDeltBosted"),
-                                                        dokument("avtaleOmDeltBosted"),
-                                                        fs("skalAnnenForelderHaSamvær"),
-                                                        fs("harDereSkriftligAvtaleOmSamvær"),
-                                                        dokument("samværsavtale"),
-                                                        fs("hvordanPraktiseresSamværet"),
-                                                        fb("borAnnenForelderISammeHus"),
-                                                        fb("harDereTidligereBoddSammen"),
-                                                        fd("nårFlyttetDereFraHverandre"),
-                                                        dokument("erklæringOmSamlivsbrudd"),
-                                                        fs("hvorMyeErDuSammenMedAnnenForelder"),
-                                                        fs("beskrivSamværUtenBarn"))),
-                                            fb("erBarnetFødt"),
-                                            fd("fødselTermindato"),
-                                            fb("skalBarnetBoHosSøker"),
-                                            dokument("terminbekreftelse")))),
+                                                 Samvær(booleanfelt("spørsmålAvtaleOmDeltBosted"),
+                                                        dokumentfelt("avtaleOmDeltBosted"),
+                                                        stringfelt("skalAnnenForelderHaSamvær"),
+                                                        stringfelt("harDereSkriftligAvtaleOmSamvær"),
+                                                        dokumentfelt("samværsavtale"),
+                                                        stringfelt("hvordanPraktiseresSamværet"),
+                                                        booleanfelt("borAnnenForelderISammeHus"),
+                                                        booleanfelt("harDereTidligereBoddSammen"),
+                                                        datofelt("nårFlyttetDereFraHverandre"),
+                                                        dokumentfelt("erklæringOmSamlivsbrudd"),
+                                                        stringfelt("hvorMyeErDuSammenMedAnnenForelder"),
+                                                        stringfelt("beskrivSamværUtenBarn"))),
+                                            booleanfelt("erBarnetFødt"),
+                                            datofelt("fødselTermindato"),
+                                            booleanfelt("skalBarnetBoHosSøker"),
+                                            dokumentfelt("terminbekreftelse")))),
                    Felt("Aktivitet",
-                        Aktivitet(fl("hvordanErArbeidssituasjonen"), null, null, null, null, null)),
+                        Aktivitet(listefelt("hvordanErArbeidssituasjonen"), null, null, null, null, null)),
                    Felt("Situasjon",
-                        Situasjon(fl("gjelderDetteDeg"),
-                                  dokument("sykdom"),
-                                  dokument("barnsSykdom"),
-                                  dokument("manglendeBarnepass"),
-                                  dokument("barnMedSærligeBehov"),
-                                  dokument("arbeidskontrakt"),
-                                  fd("oppstartNyJobb"),
-                                  dokument("utdanningstilbud"),
-                                  fd("oppstartUtdanning"),
-                                  fs("sagtOppEllerRedusertStilling"),
-                                  fs("oppsigelseReduksjonÅrsak"),
-                                  fd("oppsigelseReduksjonTidspunkt"),
-                                  dokument("oppsigelseReduksjonDokumentasjon"))),
-                   Felt("stønadsstart", Stønadsstart(Felt("måned", Month.AUGUST), fi("år"))))
+                        Situasjon(listefelt("gjelderDetteDeg"),
+                                  dokumentfelt("sykdom"),
+                                  dokumentfelt("barnsSykdom"),
+                                  dokumentfelt("manglendeBarnepass"),
+                                  dokumentfelt("barnMedSærligeBehov"),
+                                  dokumentfelt("arbeidskontrakt"),
+                                  datofelt("oppstartNyJobb"),
+                                  dokumentfelt("utdanningstilbud"),
+                                  datofelt("oppstartUtdanning"),
+                                  stringfelt("sagtOppEllerRedusertStilling"),
+                                  stringfelt("oppsigelseReduksjonÅrsak"),
+                                  datofelt("oppsigelseReduksjonTidspunkt"),
+                                  dokumentfelt("oppsigelseReduksjonDokumentasjon"))),
+                   Felt("stønadsstart", Stønadsstart(Felt("måned", Month.AUGUST), integerfelt("år"))))
 
     private fun personMinimum(): PersonMinimum {
-        return PersonMinimum(fs("navn"),
+        return PersonMinimum(stringfelt("navn"),
                              null,
-                             fd("fødselsdato"),
+                             datofelt("fødselsdato"),
                              adresseFelt(),
-                             fs("land"))
+                             stringfelt("land"))
     }
 
     private fun adresseFelt(): Felt<Adresse> {
         return Felt("adresse",
-                    Adresse(fs("gatenavn"),
-                            fi("husnummer"),
-                            fs("husbokstav"),
-                            fs("bolignummer"),
-                            fs("postnummer"),
-                            fs("poststedsnavn"),
-                            fs("kommune")))
+                    Adresse(stringfelt("gatenavn"),
+                            integerfelt("husnummer"),
+                            stringfelt("husbokstav"),
+                            stringfelt("bolignummer"),
+                            stringfelt("postnummer"),
+                            stringfelt("poststedsnavn"),
+                            stringfelt("kommune")))
     }
 
-    private fun dokument(tittel: String) = Felt("dokument",
-                                                Dokument(Fil(byteArrayOf(12)),
-                                                         tittel))
+    private fun dokumentfelt(tittel: String) = Felt("dokument", Dokument(Fil(byteArrayOf(12)), tittel))
 
+    private fun listefelt(tittel: String) = Felt(tittel, listOf("A", "B", "C"))
 
-    private fun fl(tittel: String) = Felt(tittel, listOf("A", "B", "C"))
-    private fun fb(tittel: String) = Felt(tittel, true)
-    private fun fd(tittel: String) = Felt(tittel, LocalDate.now())
-    private fun fi(tittel: String) = Felt(tittel, 1)
-    private fun fs(tittel: String) = Felt(tittel, "hei")
+    private fun booleanfelt(tittel: String) = Felt(tittel, true)
 
+    private fun datofelt(tittel: String) = Felt(tittel, LocalDate.now())
 
+    private fun integerfelt(tittel: String) = Felt(tittel, 1)
+
+    private fun stringfelt(tittel: String) = Felt(tittel, "hei")
 }
