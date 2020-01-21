@@ -3,8 +3,7 @@ package no.nav.familie.ef.mottak.config
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.ba.mottak.config.NaisProxyCustomizer
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
-import no.nav.familie.ef.mottak.config.interceptor.BearerTokenClientInterceptor
-import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
+import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.log.filter.LogFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
@@ -19,6 +18,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.DependsOn
+import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.web.client.RestOperations
 import springfox.documentation.swagger2.annotations.EnableSwagger2
@@ -34,31 +34,24 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableSwagger2
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
+@Import(BearerTokenClientInterceptor::class, MdcValuesPropagatingClientInterceptor::class)
 class ApplicationConfig(@Value("\${application.name}")
                         val applicationName: String) {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
-    @Bean
-    fun mdcValuesPropagatingClientInterceptor() = MdcValuesPropagatingClientInterceptor()
-
-    @Bean
-    fun consumerIdClientInterceptor() = ConsumerIdClientInterceptor(consumerId = applicationName)
-
     @Bean("restTemplateBuilder")
     fun restTemplateBuilder(): RestTemplateBuilder {
-        return RestTemplateBuilder()
-                .additionalCustomizers(NaisProxyCustomizer())
-
+        return RestTemplateBuilder().additionalCustomizers(NaisProxyCustomizer())
     }
 
     @Bean("restTemplate")
     @DependsOn("restTemplateBuilder")
-    fun restTemplate(restTemplateBuilder: RestTemplateBuilder, mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+    fun restTemplate(restTemplateBuilder: RestTemplateBuilder,
+                     mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      bearerTokenClientInterceptor: BearerTokenClientInterceptor): RestOperations {
         return restTemplateBuilder.interceptors(mdcInterceptor, bearerTokenClientInterceptor).build()
     }
-
 
     @Bean
     fun kotlinModule(): KotlinModule = KotlinModule()

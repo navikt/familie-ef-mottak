@@ -39,13 +39,14 @@ class ArkivClient(operations: RestOperations,
     private fun hentSaksnummerUri(id: String): URI {
         return DefaultUriBuilderFactory()
                 .uriString(integrasjonerConfig.url)
-                .path(PATH_HENT_SAKSNUMMER.format(id))
+                .path(PATH_HENT_SAKSNUMMER)
+                .queryParam("journalpostId", id)
                 .build()
     }
 
     companion object {
         const val PATH_SEND_INN = "arkiv/v2"
-        private const val PATH_HENT_SAKSNUMMER = "/journalpost/%s/sak"
+        private const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
     }
 
 }
