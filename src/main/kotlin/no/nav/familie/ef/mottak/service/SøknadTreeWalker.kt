@@ -3,14 +3,14 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Felt
 import no.nav.familie.kontrakter.ef.søknad.Søknad
-import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.full.starProjectedType
 
-object DokumentHelper {
+
+object SøknadTreeWalker {
 
     fun finnDokumenter(entity: Any): List<Dokument> {
 
@@ -30,7 +30,6 @@ object DokumentHelper {
                 .map { finnDokumenter(it) }
                 .flatten()
                 .toList()
-
     }
 
 
@@ -42,14 +41,18 @@ object DokumentHelper {
                 .mapNotNull { it.getter.call(søknad) }
                 .map { finnFelter(it) }
                 .toList()
-
-
     }
 
-    fun finnFelter(entity: Any): List<Felt<*>> {
+    private fun finnFelter(entity: Any): List<Felt<*>> {
+
+        if (entity is ByteArray) {
+            return emptyList()
+        }
 
         if (entity is List<Any?>) {
-            return entity.filterNotNull().map { finnFelter(it) }.flatten()
+            return entity.filterNotNull()
+                    .map { finnFelter(it) }
+                    .flatten()
         }
 
         val parameters = entity::class.primaryConstructor?.parameters ?: return emptyList()
@@ -58,15 +61,18 @@ object DokumentHelper {
                 .asSequence()
                 .map { param -> entity::class.declaredMemberProperties.first { it.name == param.name } }
                 .filterNotNull()
-                .mapNotNull { it.getter.call(entity) }
+                .filter {
+                    it.visibility == KVisibility.PUBLIC
+                }
+                .mapNotNull {
+                    it.getter.call(entity)
+                }
                 .filterNotNull()
                 .map { finnFelter(it) }
                 .filterNotNull()
                 .flatten()
                 .toList()
-        return if (entity is Felt<*>) list + entity else list
+        return if (entity is Felt<*>) listOf(entity) + list  else list
 
     }
-
-
 }

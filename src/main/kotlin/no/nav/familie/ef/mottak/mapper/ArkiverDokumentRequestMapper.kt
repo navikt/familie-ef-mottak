@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.service.DokumentHelper
+import no.nav.familie.ef.mottak.service.SøknadTreeWalker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.Dokument
@@ -18,7 +18,7 @@ object ArkiverDokumentRequestMapper {
     }
 
     private fun tilDokumenter(søknad: Søknad): List<Dokument> {
-        val vedleggsdokumenter = DokumentHelper.finnDokumenter(søknad).map { tilDokument(it) }
+        val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(søknad).map { tilDokument(it) }
         //   val søknadsdokumentPdf = TODO genererPdf
         val søknadsdokumentJson =
                 Dokument(objectMapper.writeValueAsBytes(søknad), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
