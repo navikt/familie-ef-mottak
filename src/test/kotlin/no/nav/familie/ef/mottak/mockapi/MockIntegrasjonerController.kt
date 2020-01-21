@@ -27,7 +27,7 @@ class MockIntegrasjonerController {
 
     @GetMapping("/journalpost/sak")
     @Unprotected
-    fun mockhentSakId(@RequestParam(name = "journalpostId") journalpostId: String): ResponseEntity<Ressurs<Map<String, String>>> {
+    fun hentSakId(@RequestParam(name = "journalpostId") journalpostId: String): ResponseEntity<Ressurs<Map<String, String>>> {
         val saksnummer = UUID.randomUUID().toString()
         return ResponseEntity.ok(success(mapOf("saksnummer" to saksnummer), "OK"))
     }
