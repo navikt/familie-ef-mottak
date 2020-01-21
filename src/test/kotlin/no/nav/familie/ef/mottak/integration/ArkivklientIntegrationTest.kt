@@ -24,13 +24,13 @@ class ArkivklientIntegrationTest {
     lateinit var arkivClient: ArkivClient
 
     @Test
-    fun `Skal motta saksnummer fra Klient`() {
+    fun `Skal motta saksnummer fra restklient`() {
         val saksnummer = arkivClient.hentSaksnummer("hvaSomHelst")
         assertNotNull(saksnummer)
     }
 
     @Test
-    fun `Skal arkivere og motta journalpostId fra klient`() {
+    fun `Skal arkivere og motta journalpostId fra restklient`() {
         val søknad =
                 Soknad(UUID.randomUUID().toString(), "hvaSomHelst", Fil(ByteArray(5) { 2 }), "hvaSomHelst", null, "hvaSomHelst")
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.toDto(søknad)
