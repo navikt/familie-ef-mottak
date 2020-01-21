@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Felt
 import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
-import no.nav.familie.kontrakter.ef.søknad.Søknad
 import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
@@ -46,16 +45,7 @@ object SøknadTreeWalker {
     }
 
 
-    fun finnFelter(søknad: Søknad): Map<String, List<Felt<String>>> {
-
-        val listFeltverdier = listFeltverdier(søknad).filterIsInstance<Felt<*>>()
-
-
-        return listFeltverdier.associateBy( {it.label}, {finnFelter(it)} )
-
-    }
-
-    private fun finnFelter(entity: Any): List<Felt<String>> {
+    fun finnFelter(entity: Any): List<Felt<*>> {
 
         if (entity is ByteArray) {
             return emptyList()
@@ -66,35 +56,27 @@ object SøknadTreeWalker {
                     .map { finnFelter(it) }
                     .flatten()
         }
-
-
-        val list = listFeltverdier(entity)
-                .map { finnFelter(it) }
-                .flatten()
-                .toList()
-
-
-        return if (entity is Felt<*>) {
-            val verdi = entity.verdi!!
-            if (verdi::class in endNodes) {
-                return listOf(Felt(entity.label, entity.verdi.toString()))
-            } else {
-                listOf(Felt(entity.label, "seksjon")) + list
-            }
-        } else list
-
-    }
-
-    private fun listFeltverdier(entity: Any): List<Any> {
         val parameters = entity::class.primaryConstructor?.parameters
                          ?: return emptyList()
-        return parameters
+        val list = parameters
                 .asSequence()
                 .map { param -> entity::class.declaredMemberProperties.first { it.name == param.name } }
                 .filterNotNull()
                 .filter { it.visibility == KVisibility.PUBLIC }
                 .mapNotNull { it.getter.call(entity) }
                 .filterNotNull()
+                .map { finnFelter(it) }
+                .flatten()
                 .toList()
+
+        return if (entity is Felt<*>) {
+            val verdi = entity.verdi!!
+            if (verdi::class in endNodes) {
+                return listOf(Felt(entity.label, entity.verdi.toString()))
+            } else {
+                listOf(Felt(entity.label, list))
+            }
+        } else list
+
     }
 }

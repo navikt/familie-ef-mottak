@@ -40,7 +40,7 @@ class SøknadTreeWalkerTest {
 
         val søknad = søknad()
 
-        val list: Map<String, List<Felt<String>>> = SøknadTreeWalker.finnFelter(søknad)
+        val list: List<Felt<*>> = SøknadTreeWalker.finnFelter(søknad)
 
         val writeValueAsString = objectMapper.writeValueAsString(list)
 
