@@ -4,6 +4,9 @@ import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Felt
 import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import java.time.LocalDate
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
@@ -47,6 +50,7 @@ object SøknadTreeWalker {
 
     fun finnFelter(entity: Any): List<Felt<*>> {
 
+
         if (entity is ByteArray) {
             return emptyList()
         }
@@ -72,7 +76,14 @@ object SøknadTreeWalker {
         return if (entity is Felt<*>) {
             val verdi = entity.verdi!!
             if (verdi::class in endNodes) {
-                return listOf(Felt(entity.label, entity.verdi.toString()))
+                return when (verdi::class) {
+                    Month::class ->
+                        listOf(Felt(entity.label, (entity.verdi as Month).getDisplayName(TextStyle.FULL, Locale("no"))))
+                    Boolean::class ->
+                        listOf(Felt(entity.label, if(entity.verdi as Boolean) "Ja" else "Nei"))
+                    else ->
+                        listOf(Felt(entity.label, entity.verdi.toString()))
+                }
             } else {
                 listOf(Felt(entity.label, list))
             }
