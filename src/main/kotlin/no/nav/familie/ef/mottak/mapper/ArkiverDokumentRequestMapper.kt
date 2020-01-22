@@ -18,7 +18,7 @@ object ArkiverDokumentRequestMapper {
         val søknadsdokumentJson =
                 Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
         val dokumenter: List<Dokument> = listOf(søknadsdokumentJson) + vedleggsdokumenter
-        // .plus(søknadsdokumentPdf) TODO legg til generert pdf
+        // .plus(søknadsdokumentPdf) TODO bytt til generert pdf  (DOKUMENTTYPE_OVERGANGSSTØNAD) når pdf er generert.
         return ArkiverDokumentRequest(soknad.fnr, true, dokumenter)
     }
 
