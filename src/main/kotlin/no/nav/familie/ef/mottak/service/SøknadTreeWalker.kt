@@ -61,7 +61,7 @@ object SøknadTreeWalker {
                     .map { finnFelter(it) }
                     .flatten()
         }
-        val parametere = kontruktørparametere(entitet)
+        val parametere = konstruktørparametere(entitet)
 
         val list = parametere
                 .asSequence()
@@ -92,9 +92,8 @@ object SøknadTreeWalker {
      * Håndterer formatering utover vanlig toString for endenodene
      */
     private fun mapEndenodeTilFelt(entitet: Felt<*>): List<Felt<*>> {
-        val verdi = entitet.verdi!!
 
-        return when (verdi) {
+        return when (val verdi = entitet.verdi!!) {
             is Month -> listOf(Felt(entitet.label, verdi.getDisplayName(TextStyle.FULL, Locale("no"))))
             is Boolean -> listOf(Felt(entitet.label, if (verdi) "Ja" else "Nei"))
             is List<*> -> listOf(Felt(entitet.label, verdi.joinToString()))
@@ -120,6 +119,6 @@ object SøknadTreeWalker {
     /**
      * Konstruktørparametere er det eneste som gir oss en garantert rekkefølge for feltene, så vi henter disse først.
      */
-    fun kontruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
+    private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
 
 }
