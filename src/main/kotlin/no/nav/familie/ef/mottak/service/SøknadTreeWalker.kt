@@ -1,8 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.Dokument
-import no.nav.familie.kontrakter.ef.søknad.Felt
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.TextStyle
@@ -24,6 +22,7 @@ object SøknadTreeWalker {
                              Boolean::class,
                              Dokument::class,
                              Fødselsnummer::class,
+                             Adresse::class,
                              LocalDate::class,
                              Month::class,
                              Long::class)
@@ -48,7 +47,15 @@ object SøknadTreeWalker {
                 .toList()
     }
 
-    fun finnFelter(entitet: Any): List<Felt<*>> {
+    fun mapSøknadsfelterTilMap(søknad: Søknad): Map<String, Any> {
+
+        val finnFelter = finnFelter(søknad)
+
+        return feltlisteMap("søknad", finnFelter)
+    }
+
+
+    private fun finnFelter(entitet: Any): List<Map<String, *>> {
 
         // Kotlin reflection takler ikke å kalle getter på size, fordi den ikke finnes. Så vi ignorerer dem her.
         if (entitet is ByteArray) {
@@ -65,25 +72,25 @@ object SøknadTreeWalker {
 
         val list = parametere
                 .asSequence()
-                .map { finnFelt(entitet, it) }
+                .map { finnSøknadsfelt(entitet, it) }
                 .filter { it.visibility == KVisibility.PUBLIC }
                 .mapNotNull { getFeltverdi(it, entitet) }
                 .map { finnFelter(it) } // Kall rekursivt videre
                 .flatten()
                 .toList()
 
-        if (entitet is Felt<*>) {
+        if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!!::class in endNodes) {
-                return mapEndenodeTilFelt(entitet)
+                return listOf(mapEndenodeTilUtskriftMap(entitet))
             }
             if (entitet.verdi is List<*>) {
-                val list1 = entitet.verdi as List<*>
-                if (list1.isNotEmpty() && list1.first() is String) {
-                    return mapEndenodeTilFelt(entitet)
+                val verdiliste = entitet.verdi as List<*>
+                if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
+                    return listOf(mapEndenodeTilUtskriftMap(entitet))
                 }
 
             }
-            return listOf(Felt(entitet.label, list))
+            return listOf(feltlisteMap(entitet.label, list))
         }
         return list
     }
@@ -91,18 +98,36 @@ object SøknadTreeWalker {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    private fun mapEndenodeTilFelt(entitet: Felt<*>): List<Felt<*>> {
+    private fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
 
         return when (val verdi = entitet.verdi!!) {
-            is Month -> listOf(Felt(entitet.label, verdi.getDisplayName(TextStyle.FULL, Locale("no"))))
-            is Boolean -> listOf(Felt(entitet.label, if (verdi) "Ja" else "Nei"))
-            is List<*> -> listOf(Felt(entitet.label, verdi.joinToString()))
-            is Fødselsnummer -> listOf(Felt(entitet.label, verdi.verdi))
-            is Dokument -> listOf(Felt(entitet.label, verdi.tittel))
-            else -> listOf(Felt(entitet.label, verdi.toString()))
+            is Month ->
+                feltMap(entitet.label, verdi.getDisplayName(TextStyle.FULL, Locale("no")))
+            is Boolean ->
+                feltMap(entitet.label, if (verdi) "Ja" else "Nei")
+            is List<*> ->
+                feltMap(entitet.label, verdi.joinToString("\n"))
+            is Fødselsnummer ->
+                feltMap(entitet.label, verdi.verdi)
+            is Dokument ->
+                feltMap(entitet.label, verdi.tittel)
+            is Adresse ->
+                feltMap(entitet.label, adresseString(verdi))
+            else ->
+                feltMap(entitet.label, verdi.toString())
 
         }
     }
+
+    private fun adresseString(adresse: Adresse): String {
+        return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(),
+                      adresse.bolignummer,
+                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString()).joinToString("\n\n")
+    }
+
+    private fun feltMap(label: String, verdi: String) = mapOf("label" to label, "verdi" to verdi)
+
+    private fun feltlisteMap(label: String, verdi: List<*>) = mapOf("label" to label, "verdiliste" to verdi)
 
     /**
      * Henter ut verdien for felt på entitet.
@@ -113,7 +138,7 @@ object SøknadTreeWalker {
     /**
      * Finn første (og eneste) felt på entiteten som har samme navn som konstruktørparameter.
      */
-    private fun finnFelt(entity: Any, konstruktørparameter: KParameter) =
+    private fun finnSøknadsfelt(entity: Any, konstruktørparameter: KParameter) =
             entity::class.declaredMemberProperties.first { it.name == konstruktørparameter.name }
 
     /**
