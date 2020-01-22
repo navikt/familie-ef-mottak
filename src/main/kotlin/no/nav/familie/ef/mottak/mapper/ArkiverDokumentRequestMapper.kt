@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.ef.mottak.service.SøknadTreeWalker
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.Dokument
 import no.nav.familie.kontrakter.felles.arkivering.FilType
@@ -12,21 +12,22 @@ object ArkiverDokumentRequestMapper {
     private const val DOKUMENTTYPE_VEDLEGG = "OVERGANGSSTØNAD_SØKNAD_VEDLEGG"
 
     fun toDto(soknad: Soknad): ArkiverDokumentRequest {
-        val dokumenter: List<Dokument> = tilDokumenter(soknad)
+        val kontrakssøknad = SøknadMapper.toDto(soknad)
+        val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(kontrakssøknad).map { tilDokument(it) }
+        //   val søknadsdokumentPdf = TODO genererPdf
+        val søknadsdokumentJson =
+                Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
+        val dokumenter: List<Dokument> = listOf(søknadsdokumentJson) + vedleggsdokumenter
+        // .plus(søknadsdokumentPdf) TODO bytt til generert pdf  (DOKUMENTTYPE_OVERGANGSSTØNAD) når pdf er generert.
         return ArkiverDokumentRequest(soknad.fnr, true, dokumenter)
     }
 
-    private fun tilDokumenter(soknad: Soknad): List<Dokument> {
-        val vedleggsdokumenter = soknad.vedlegg.map { tilDokument(it) }
-        val søknadsdokumentPdf =
-                Dokument(soknad.søknadPdf.bytes, FilType.PDFA, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
-        val søknadsdokumentJson =
-                Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
-        return vedleggsdokumenter.plus(søknadsdokumentJson).plus(søknadsdokumentPdf)
-    }
-
-    private fun tilDokument(vedlegg: Vedlegg): Dokument {
-        return Dokument(vedlegg.data.bytes, FilType.PDFA, vedlegg.filnavn, vedlegg.tittel, DOKUMENTTYPE_VEDLEGG)
+    private fun tilDokument(vedlegg: no.nav.familie.kontrakter.ef.søknad.Dokument): Dokument {
+        return Dokument(dokument = vedlegg.fil.bytes,
+                        filType = FilType.PDFA,
+                        tittel = vedlegg.tittel,
+                        filnavn = null,
+                        dokumentType = DOKUMENTTYPE_VEDLEGG)
     }
 
 

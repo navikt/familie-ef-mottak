@@ -12,7 +12,7 @@ class JournalføringService(private val arkivClient: ArkivClient,
     fun journalførSøknad(søknadId: String) {
         val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = send(soknad)
-        val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId, vedlegg = emptyList())
+        val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId)
         søknadService.lagreSøknad(søknadMedJournalpostId)
     }
 

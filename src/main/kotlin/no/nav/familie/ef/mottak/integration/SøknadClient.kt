@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
-import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
 import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.ef.søknad.Søknad
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -16,7 +16,7 @@ class SøknadClient(operations: RestOperations,
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_MOTTAK_DOKUMENT).build()
 
-    fun sendTilSak(søknadDto: SøknadssakDto): SøknadServiceImpl.OkDto? {
+    fun sendTilSak(søknadDto: Søknad): SøknadServiceImpl.OkDto? {
         log.info("Sender søknad til {}", sendInnUri)
 
         try {
