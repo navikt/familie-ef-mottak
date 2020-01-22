@@ -154,7 +154,7 @@ class SøknadTreeWalkerTest {
 
     private fun booleanfelt(tittel: String) = Felt(tittel, true)
 
-    private fun datofelt(tittel: String) = Felt(tittel, LocalDate.now())
+    private fun datofelt(tittel: String) = Felt(tittel, LocalDate.of(2020, 1, 21))
 
     private fun integerfelt(tittel: String) = Felt(tittel, 1)
 

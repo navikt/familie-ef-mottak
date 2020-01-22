@@ -16,7 +16,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
     @Transactional
     override fun motta(søknad: Søknad): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad)
+        val søknadDb = SøknadMapper.toDto(søknad)
         soknadRepository.save(søknadDb)
         return Kvittering("Søknad lagret med id ${søknadDb.id} er registrert mottatt.")
     }
@@ -28,8 +28,8 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun sendTilSak(søknadId: String) {
 
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
-        val sendTilSakDto = SøknadMapper.fromDto(soknad)
-        søknadClient.sendTilSak(sendTilSakDto)
+        val kontraktssøknad = SøknadMapper.toDto(soknad)
+        søknadClient.sendTilSak(kontraktssøknad)
     }
 
     data class OkDto(val status: String = "OK")

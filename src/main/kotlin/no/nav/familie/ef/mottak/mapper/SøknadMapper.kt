@@ -1,24 +1,21 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.kontrakter.ef.søknad.Søknad
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.ef.søknad.Søknad as Kontraktssøknad
 
 object SøknadMapper {
 
-    fun fromDto(soknad: Soknad): SøknadssakDto {
+    fun toDto(soknad: Soknad): Kontraktssøknad {
         requireNotNull(soknad.saksnummer, { "saksnummer er null" })
         requireNotNull(soknad.journalpostId, { "JournalpostId er null" })
 
-        return SøknadssakDto(soknad.søknadJson,
-                             soknad.saksnummer,
-                             soknad.journalpostId)
+        return objectMapper.readValue(soknad.søknadJson)
     }
 
-    fun fromDto(søknad: Søknad): Soknad {
-        return Soknad(søknadJson = objectMapper.writeValueAsString(søknad),
-                      fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi)
+    fun toDto(kontraktssøknad: Kontraktssøknad): Soknad {
+        return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad),
+                      fnr = kontraktssøknad.personalia.verdi.fødselsnummer.verdi.verdi)
     }
-
 }
