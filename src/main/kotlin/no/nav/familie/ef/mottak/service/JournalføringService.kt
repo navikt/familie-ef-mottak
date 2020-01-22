@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.convertValue
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.ArkivClient
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
@@ -14,7 +14,7 @@ class JournalføringService(private val arkivClient: ArkivClient,
 
     fun journalførSøknad(søknadId: String) {
         val soknad: Soknad = søknadService.get(søknadId)
-        val søknad = objectMapper.convertValue<Søknad>(soknad.søknadJson)
+        val søknad = objectMapper.readValue<Søknad>(soknad.søknadJson)
         val journalpostId: String = send(søknad)
         val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId)
         søknadService.lagreSøknad(søknadMedJournalpostId)
