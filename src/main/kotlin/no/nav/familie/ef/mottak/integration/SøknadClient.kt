@@ -2,8 +2,8 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
 import no.nav.familie.ef.mottak.integration.dto.SøknadssakDto
-import no.nav.familie.ef.mottak.integration.rest.AbstractRestClient
 import no.nav.familie.ef.mottak.service.SøknadServiceImpl
+import no.nav.familie.http.client.AbstractRestClient
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -34,7 +34,7 @@ class SøknadClient(operations: RestOperations,
     }
 
     companion object {
-        private const val PATH_MOTTAK_DOKUMENT = "mottak/dokument"
+        const val PATH_MOTTAK_DOKUMENT = "mottak/dokument"
     }
 
 }
