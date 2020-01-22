@@ -25,10 +25,11 @@ class MockIntegrasjonerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ressurs)
     }
 
-    @GetMapping("/journalpost/{id}/sak")
+    @GetMapping("/journalpost/sak")
     @Unprotected
-    fun mockSak(@PathVariable id: String): String {
-        return UUID.randomUUID().toString()
+    fun hentSakId(@RequestParam(name = "journalpostId") journalpostId: String): ResponseEntity<Ressurs<Map<String, String>>> {
+        val saksnummer = UUID.randomUUID().toString()
+        return ResponseEntity.ok(success(mapOf("saksnummer" to saksnummer), "OK"))
     }
 }
 
