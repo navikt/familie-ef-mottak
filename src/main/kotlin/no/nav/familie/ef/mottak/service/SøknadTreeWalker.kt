@@ -122,7 +122,8 @@ object SøknadTreeWalker {
     private fun adresseString(adresse: Adresse): String {
         return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(),
                       adresse.bolignummer,
-                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString()).joinToString("\n\n")
+                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(),
+                      adresse.kommune).joinToString("\n\n")
     }
 
     private fun feltMap(label: String, verdi: String) = mapOf("label" to label, "verdi" to verdi)
