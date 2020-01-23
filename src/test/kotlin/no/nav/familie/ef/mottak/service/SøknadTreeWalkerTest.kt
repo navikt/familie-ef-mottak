@@ -1,274 +1,48 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Dokument
+import no.nav.familie.kontrakter.ef.søknad.Fil
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.Month
 
 class SøknadTreeWalkerTest {
 
     @Test
     fun `finnDokumenter finner alle dokumenter i en struktur`() {
 
-        val søknad = søknad()
+        val søknad = Testsøknad.søknad
 
         val list: List<Dokument> = SøknadTreeWalker.finnDokumenter(søknad)
 
         assertThat(list).contains(Dokument(Fil(byteArrayOf(12)), "giftIUtlandetDokumentasjon"),
                                   Dokument(Fil(byteArrayOf(12)), "separertEllerSkiltIUtlandetDokumentasjon"),
-                                  Dokument(Fil(byteArrayOf(12)), "separasjonsbekreftelse"),
-                                  Dokument(Fil(byteArrayOf(12)), "samlivsbruddsdokumentasjon"),
+                                  Dokument(Fil(byteArrayOf(12)), "Skilsmisse- eller separasjonsbevilling"),
                                   Dokument(Fil(byteArrayOf(12)), "flyktningdokumentasjon"),
-                                  Dokument(Fil(byteArrayOf(12)), "avtaleOmDeltBosted"),
-                                  Dokument(Fil(byteArrayOf(12)), "samværsavtale"),
-                                  Dokument(Fil(byteArrayOf(12)), "erklæringOmSamlivsbrudd"),
-                                  Dokument(Fil(byteArrayOf(12)), "terminbekreftelse"),
-                                  Dokument(Fil(byteArrayOf(12)), "sykdom"),
-                                  Dokument(Fil(byteArrayOf(12)), "barnsSykdom"),
-                                  Dokument(Fil(byteArrayOf(12)), "manglendeBarnepass"),
-                                  Dokument(Fil(byteArrayOf(12)), "barnMedSærligeBehov"),
-                                  Dokument(Fil(byteArrayOf(12)), "arbeidskontrakt"),
-                                  Dokument(Fil(byteArrayOf(12)), "utdanningstilbud"),
-                                  Dokument(Fil(byteArrayOf(12)), "oppsigelseReduksjonDokumentasjon"))
+                                  Dokument(Fil(byteArrayOf(12)), "Avtale om delt bosted for barna"),
+                                  Dokument(Fil(byteArrayOf(12)), "Avtale om samvær"),
+                                  Dokument(Fil(byteArrayOf(12)), "Erklæring om samlivsbrudd"),
+                                  Dokument(Fil(byteArrayOf(12)), "Bekreftelse på ventet fødselsdato"),
+                                  Dokument(Fil(byteArrayOf(12)), "Legeerklæring"),
+                                  Dokument(Fil(byteArrayOf(12)), "Legeattest for egen sykdom eller sykt barn"),
+                                  Dokument(Fil(byteArrayOf(12)), "Avslag på søknad om barnehageplass, skolefritidsordning e.l."),
+                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av særlig tilsynsbehov"),
+                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av jobbtilbud"),
+                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av studieopptak"),
+                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av arbeidsforhold"))
     }
 
     @Test
     fun `finnFelter finner alle felter i en struktur`() {
 
-        val søknad = søknad()
+        val søknad = Testsøknad.søknad
 
         val list: Map<String, Any> = SøknadTreeWalker.mapSøknadsfelterTilMap(søknad)
 
         val writeValueAsString = objectMapper.writeValueAsString(list)
-
         @Suppress("LongLine")
-        assertThat(writeValueAsString).isEqualTo("""{"label":"søknad","verdiliste":[{"label":"Personalia","verdiliste":[{"label":"fødselsnummer","verdi":"24117938529"},{"label":"navn","verdi":"hei"},{"label":"statsborgerskap","verdi":"hei"},{"label":"adresse","verdi":"Søknadsfelt(label=gatenavn, verdi=hei) Søknadsfelt(label=husnummer, verdi=1) Søknadsfelt(label=husbokstav, verdi=hei)\nSøknadsfelt(label=postnummer, verdi=hei) Søknadsfelt(label=poststedsnavn, verdi=hei)"},{"label":"telefonnummer","verdi":"hei"},{"label":"sivilstatus","verdi":"hei"}]},{"label":"Sivilstandsdetaljer","verdiliste":[{"label":"giftIUtlandet","verdi":"Ja"},{"label":"dokument","verdi":"giftIUtlandetDokumentasjon"},{"label":"separertEllerSkiltIUtlandet","verdi":"Ja"},{"label":"dokument","verdi":"separertEllerSkiltIUtlandetDokumentasjon"},{"label":"søktOmSkilsmisseSeparasjon","verdi":"Ja"},{"label":"søknadsdato","verdi":"2020-01-21"},{"label":"dokument","verdi":"separasjonsbekreftelse"},{"label":"årsakEnslig","verdi":"hei"},{"label":"dokument","verdi":"samlivsbruddsdokumentasjon"},{"label":"samlivsbruddsdato","verdi":"2020-01-21"},{"label":"fraflytningsdato","verdi":"2020-01-21"},{"label":"spesifikasjonAnnet","verdi":"hei"},{"label":"endringSamværsordningDato","verdi":"2020-01-21"}]},{"label":"Medlemskap","verdiliste":[{"label":"oppholderDuDegINorge","verdi":"Ja"},{"label":"bosattNorgeSisteÅrene","verdi":"Ja"},{"label":"flyktningstatus","verdi":"Ja"},{"label":"dokument","verdi":"flyktningdokumentasjon"}]},{"label":"Bosituasjon","verdiliste":[{"label":"delerDuBolig","verdi":"hei"},{"label":"samboerdetaljer","verdiliste":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"land","verdi":"hei"}]},{"label":"sammenflyttingsdato","verdi":"2020-01-21"}]},{"label":"Sivilstandsplaner","verdiliste":[{"label":"harPlaner","verdi":"Ja"},{"label":"fraDato","verdi":"2020-01-21"},{"label":"vordendeSamboerEktefelle","verdiliste":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"land","verdi":"hei"}]}]},{"label":"KommendeBarn","verdiliste":[{"label":"navn","verdi":"hei"},{"label":"fnr","verdi":"hei"},{"label":"annenForelder","verdiliste":[{"label":"kanIkkeOppgiAnnenForelderFar","verdi":"Ja"},{"label":"ikkeOppgittAnnenForelderBegrunnelse","verdi":"hei"},{"label":"bosattNorge","verdi":"Ja"},{"label":"personalia","verdiliste":[{"label":"navn","verdi":"hei"},{"label":"fødselsdato","verdi":"2020-01-21"},{"label":"land","verdi":"hei"}]},{"label":"adresse","verdi":"Søknadsfelt(label=gatenavn, verdi=hei) Søknadsfelt(label=husnummer, verdi=1) Søknadsfelt(label=husbokstav, verdi=hei)\nSøknadsfelt(label=postnummer, verdi=hei) Søknadsfelt(label=poststedsnavn, verdi=hei)"}]},{"label":"samvær","verdiliste":[{"label":"spørsmålAvtaleOmDeltBosted","verdi":"Ja"},{"label":"dokument","verdi":"avtaleOmDeltBosted"},{"label":"skalAnnenForelderHaSamvær","verdi":"hei"},{"label":"harDereSkriftligAvtaleOmSamvær","verdi":"hei"},{"label":"dokument","verdi":"samværsavtale"},{"label":"hvordanPraktiseresSamværet","verdi":"hei"},{"label":"borAnnenForelderISammeHus","verdi":"Ja"},{"label":"harDereTidligereBoddSammen","verdi":"Ja"},{"label":"nårFlyttetDereFraHverandre","verdi":"2020-01-21"},{"label":"dokument","verdi":"erklæringOmSamlivsbrudd"},{"label":"hvorMyeErDuSammenMedAnnenForelder","verdi":"hei"},{"label":"beskrivSamværUtenBarn","verdi":"hei"}]},{"label":"erBarnetFødt","verdi":"Ja"},{"label":"fødselTermindato","verdi":"2020-01-21"},{"label":"skalBarnetBoHosSøker","verdi":"Ja"},{"label":"dokument","verdi":"terminbekreftelse"}]},{"label":"Aktivitet","verdiliste":[{"label":"hvordanErArbeidssituasjonen","verdi":"A\nB\nC"}]},{"label":"Situasjon","verdiliste":[{"label":"gjelderDetteDeg","verdi":"A\nB\nC"},{"label":"dokument","verdi":"sykdom"},{"label":"dokument","verdi":"barnsSykdom"},{"label":"dokument","verdi":"manglendeBarnepass"},{"label":"dokument","verdi":"barnMedSærligeBehov"},{"label":"dokument","verdi":"arbeidskontrakt"},{"label":"oppstartNyJobb","verdi":"2020-01-21"},{"label":"dokument","verdi":"utdanningstilbud"},{"label":"oppstartUtdanning","verdi":"2020-01-21"},{"label":"sagtOppEllerRedusertStilling","verdi":"hei"},{"label":"oppsigelseReduksjonÅrsak","verdi":"hei"},{"label":"oppsigelseReduksjonTidspunkt","verdi":"2020-01-21"},{"label":"dokument","verdi":"oppsigelseReduksjonDokumentasjon"}]},{"label":"stønadsstart","verdiliste":[{"label":"måned","verdi":"august"},{"label":"år","verdi":"1"}]}]}""")
+        assertThat(writeValueAsString).isEqualTo("""{"label":"søknad","verdiliste":[{"label":"Søker","verdiliste":[{"label":"Fødselsnummer","verdi":"24117938529"},{"label":"Navn","verdi":"Kari Nordmann"},{"label":"Statsborgerskap","verdi":"Norsk"},{"label":"Adresse","verdi":"Jerpefaret, 5, C\n\nH0508\n\n1440, Drøbak\n\nNorge"},{"label":"Telefonnummer","verdi":"12345678"},{"label":"Sivilstand","verdi":"Ugift"}]},{"label":"Detaljer om sivilstand","verdiliste":[{"label":"Er du gift uten at dette er formelt registrert eller godkjent i Norge?","verdi":"Ja"},{"label":"Dokument","verdi":"giftIUtlandetDokumentasjon"},{"label":"Er du separert eller skilt uten at dette er formelt registrert eller godkjent i Norge?","verdi":"Ja"},{"label":"Dokument","verdi":"separertEllerSkiltIUtlandetDokumentasjon"},{"label":"Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?","verdi":"Ja"},{"label":"Når søkte dere eller reiste sak?","verdi":"23.12.2015"},{"label":"Dokument","verdi":"Skilsmisse- eller separasjonsbevilling"},{"label":"Hva er grunnen til at du er alene med barn?","verdi":"Trives best alene"},{"label":"Dokument","verdi":"Erklæring om samlivsbrudd"},{"label":"Dato for samlivsbrudd","verdi":"03.10.2014"},{"label":"Når flyttet dere fra hverandre?","verdi":"04.10.2014"},{"label":"Hva er grunnen til at du er alene med barn?","verdi":"Endring i samværsordning"},{"label":"Når skjedde endringen / når skal endringen skje?","verdi":"17.04.2013"}]},{"label":"Opphold i Norge","verdiliste":[{"label":"Oppholder du deg i Norge?","verdi":"Ja"},{"label":"Har du bodd i Norge de siste tre årene?","verdi":"Ja"},{"label":"","verdiliste":[{"label":"Fra","verdi":"04.12.2012"},{"label":"Til","verdi":"18.12.2012"},{"label":"Hvorfor bodde du i utlandet?","verdi":"Granca, Granca, Granca"}]},{"label":"Har du flyktningsatus hos Utlendingsdirektoratet?","verdi":"Ja"},{"label":"Dokument","verdi":"flyktningdokumentasjon"}]},{"label":"Bosituasjonen din","verdiliste":[{"label":"Deler du bolig med andre voksne?","verdi":"Ja, jeg har samboer og lever i et ekteskapslignende forhold"},{"label":"Om samboeren din","verdiliste":[{"label":"Navn","verdi":"Bob Burger"},{"label":"Fødselsdato","verdi":"18.02.1992"}]},{"label":"Når flyttet dere sammen?","verdi":"12.08.2018"}]},{"label":"Sivilstandsplaner","verdiliste":[{"label":"Har du konkrete planer om å gifte deg eller bli samboer","verdi":"Ja"},{"label":"Når skal dette skje?","verdi":"15.04.2021"},{"label":"Hvem skal du gifte deg eller bli samboer med?","verdiliste":[{"label":"Navn","verdi":"Bob Burger"},{"label":"Fødselsdato","verdi":"18.02.1992"}]}]},{"label":"Barn fra folkeregisteret","verdiliste":[{"label":"Navn","verdi":"Lykkeliten"},{"label":"Fødselsnummer","verdi":"31081953069"},{"label":"Har samme adresse som søker","verdi":"Ja"},{"label":"Barnets andre forelder","verdiliste":[{"label":"personalia","verdiliste":[{"label":"Navn","verdi":"Bob Burger"},{"label":"Fødselsdato","verdi":"18.02.1992"}]},{"label":"Adresse","verdi":"Jerpefaret, 5, C\n\nH0508\n\n1440, Drøbak\n\nNorge"}]},{"label":"samvær","verdiliste":[{"label":"Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?","verdi":"Ja"},{"label":"Dokument","verdi":"Avtale om delt bosted for barna"},{"label":"Har den andre forelderen samvær med barnet","verdi":"Ja, men ikke mer enn vanlig samværsrett"},{"label":"Har dere skriftlig samværsavtale for barnet?","verdi":"Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"},{"label":"Dokument","verdi":"Avtale om samvær"},{"label":"Hvordan praktiserer dere samværet?","verdi":"Litt hver for oss"},{"label":"Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?","verdi":"Ja"},{"label":"Har du bodd sammen med den andre forelderen til [barnets fornavn] før?","verdi":"Ja"},{"label":"Når flyttet dere fra hverandre?","verdi":"21.07.2018"},{"label":"Dokument","verdi":"Erklæring om samlivsbrudd"},{"label":"Hvor mye er du sammen med den andre forelderen til barnet?","verdi":"Vi møtes også uten at barnet er til stede"},{"label":"Beskriv  hvor mye er du sammen med den andre forelderen til barnet?","verdi":"Vi sees stadig vekk"}]}]},{"label":"Barn lagt til","verdiliste":[{"label":"Barnets fulle navn, hvis dette er bestemt","verdi":"Sorgløs"},{"label":"Er barnet født?","verdi":"Nei"},{"label":"Termindato","verdi":"16.05.2020"},{"label":"Dokument","verdi":"Bekreftelse på ventet fødselsdato"},{"label":"Skal barnet bo hos deg?","verdi":"Ja"},{"label":"Barnets andre forelder","verdiliste":[{"label":"Jeg kan ikke oppgi den andre forelderen","verdi":"Ja"},{"label":"Hvorfor kan du ikke oppgi den andre forelderen?","verdi":"Fordi jeg ikke liker hen."}]},{"label":"samvær","verdiliste":[{"label":"Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?","verdi":"Ja"},{"label":"Dokument","verdi":"Avtale om samvær"},{"label":"Har den andre forelderen samvær med barnet","verdi":"Ja, men ikke mer enn vanlig samværsrett"},{"label":"Har dere skriftlig samværsavtale for barnet?","verdi":"Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"},{"label":"Dokument","verdi":"Avtale om samvær"},{"label":"Hvordan praktiserer dere samværet?","verdi":"Litt hver for oss"},{"label":"Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?","verdi":"Ja"},{"label":"Har du bodd sammen med den andre forelderen til [barnets fornavn] før?","verdi":"Ja"},{"label":"Når flyttet dere fra hverandre?","verdi":"21.07.2018"},{"label":"Dokument","verdi":"Erklæring om samlivsbrudd"},{"label":"Hvor mye er du sammen med den andre forelderen til barnet?","verdi":"Vi møtes også uten at barnet er til stede"},{"label":"Beskriv  hvor mye er du sammen med den andre forelderen til barnet?","verdi":"Vi sees stadig vekk"}]}]},{"label":"Arbeid, utdanning og andre aktiviteter","verdiliste":[{"label":"Hvordan er arbeidssituasjonen din?","verdi":"Jeg er hjemme med barn under 1 år (vises kun hvis har barn under 1 år)\nJeg er i arbeid\nJeg er selvstendig næringsdrivende eller frilanser"},{"label":"Om arbeidsforholdet ditt","verdiliste":[{"label":"Navn på arbeidsgiveren","verdi":"Palpatine"},{"label":"Hvor mye jobber du?","verdi":"15"},{"label":"Er stillingen fast eller midlertidig?","verdi":"Fast"},{"label":"Har du en sluttdato?","verdi":"Ja"},{"label":"Når skal du slutte?","verdi":"18.11.2020"}]},{"label":"Om firmaet du driver","verdiliste":[{"label":"Navn på firma","verdi":"Bobs burgers"},{"label":"Organisasjonsnummer","verdi":"987654321"},{"label":"Når etablerte du firmaet?","verdi":"05.04.2018"},{"label":"Hvor mye jobber du?","verdi":"150"},{"label":"Hvordan ser arbeidsuken din ut?","verdi":"Veldig tung"}]},{"label":"Om virksomheten du etablerer","verdiliste":[{"label":"Beskriv virksomheten","verdi":"Den kommer til å revolusjonere verden"}]},{"label":"Når du er arbeidssøker","verdiliste":[{"label":"Er du registrert som arbeidssøker hos NAV?","verdi":"Ja"},{"label":"Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?","verdi":"Ja"},{"label":"Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?","verdi":"Ja"},{"label":"Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?","verdi":"Nei"},{"label":"Hvor ønsker du å søke arbeid?","verdi":"Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"},{"label":"Ønsker du å stå som arbeidssøker til minst 50% stilling?","verdi":"Ja"}]},{"label":"Utdanningen du skal ta","verdiliste":[{"label":"Skole/utdanningssted","verdi":"UiO"},{"label":"Utdanning","verdiliste":[{"label":"Linje/kurs/grad","verdi":"Profesjonsstudium Informatikk"},{"label":"Når skal du være elev/student?","verdi":"Fra januar 1999 til oktober 2004"}]},{"label":"Er utdanningen offentlig eller privat?","verdi":"Offentlig"},{"label":"Hvor mye skal du studere?","verdi":"300"},{"label":"Hva er målet med utdanningen?","verdi":"Økonomisk selvstendighet"},{"label":"Har du tatt utdanning etter grunnskolen?","verdi":"Ja"},{"label":"Tidligere Utdanning","verdiliste":[{"label":"Linje/kurs/grad","verdi":"Master Fysikk"},{"label":"Når var du elev/student?","verdi":"Fra januar 1999 til oktober 2004"}]}]}]},{"label":"Mer om situasjonen din","verdiliste":[{"label":"Gjelder noe av dette deg?","verdi":"Barnet mitt er sykt\nJeg har søkt om barnepass, men ikke fått plass enda\nJeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer"},{"label":"Dokument","verdi":"Legeerklæring"},{"label":"Dokument","verdi":"Legeattest for egen sykdom eller sykt barn"},{"label":"Dokument","verdi":"Avslag på søknad om barnehageplass, skolefritidsordning e.l."},{"label":"Dokument","verdi":"Dokumentasjon av særlig tilsynsbehov"},{"label":"Dokument","verdi":"Dokumentasjon av studieopptak"},{"label":"Når skal du starte i ny jobb?","verdi":"16.12.2045"},{"label":"Dokument","verdi":"Dokumentasjon av jobbtilbud"},{"label":"Når skal du starte utdanningen?","verdi":"28.07.2025"},{"label":"Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?","verdi":"Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)"},{"label":"Hvorfor sa du opp?","verdi":"Sjefen var dum"},{"label":"Når sa du opp?","verdi":"12.01.2014"},{"label":"Dokument","verdi":"Dokumentasjon av arbeidsforhold"}]},{"label":"Når søker du stønad fra?","verdiliste":[{"label":"Fra måned","verdi":"august"},{"label":"Fra år","verdi":"2018"}]}]}""")
     }
-
-    private fun søknad() =
-            Søknad(Søknadsfelt("Søker",
-                               Personalia(Søknadsfelt("Fødselsnummer", Fødselsnummer("24117938529")),
-                                          Søknadsfelt("Navn", "Kari Nordmann"),
-                                          Søknadsfelt("Statsborgerskap", "Norsk"),
-                                          adresseSøknadsfelt(),
-                                          Søknadsfelt("Telefonnummer", "12345678"),
-                                          Søknadsfelt("Sivilstand", "Ugift"))),
-                   Søknadsfelt("Detaljer om sivilstand",
-                               Sivilstandsdetaljer(Søknadsfelt("Er du gift uten at dette er formelt registrert eller godkjent i Norge?",
-                                                               true),
-                                                   dokumentfelt("giftIUtlandetDokumentasjon"),
-                                                   Søknadsfelt("Er du separert eller skilt uten at dette er formelt registrert eller godkjent i Norge?",
-                                                               true),
-                                                   dokumentfelt("separertEllerSkiltIUtlandetDokumentasjon"),
-                                                   Søknadsfelt("Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?",
-                                                               true),
-                                                   Søknadsfelt("Når søkte dere eller reiste sak?", LocalDate.of(2015, 12, 23)),
-                                                   dokumentfelt("separasjonsbekreftelse"),
-                                                   Søknadsfelt("Hva er grunnen til at du er alene med barn?",
-                                                               "Trives best alene"),
-                                                   dokumentfelt("samlivsbruddsdokumentasjon"),
-                                                   Søknadsfelt("Dato for samlivsbrudd", LocalDate.of(2014, 10, 3)),
-                                                   Søknadsfelt("Når flyttet dere fra hverandre?", LocalDate.of(2014, 10, 4)),
-                                                   Søknadsfelt("Hva er grunnen til at du er alene med barn?",
-                                                               "Endring i samværsordning"),
-                                                   Søknadsfelt("Når skjedde endringen / når skal endringen skje?",
-                                                               LocalDate.of(2013, 4, 17)))),
-                   Søknadsfelt("Opphold i Norge",
-                               Medlemskapsdetaljer(Søknadsfelt("Oppholder du deg i Norge?", true),
-                                                   Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
-                                                   Søknadsfelt("",
-                                                               listOf(Utenlandsopphold(Søknadsfelt("Fra",
-                                                                                                   LocalDate.of(2012, 12, 4)),
-                                                                                       Søknadsfelt("Til",
-                                                                                                   LocalDate.of(2012, 12, 18)),
-                                                                                       Søknadsfelt("Hvorfor bodde du i utlandet?",
-                                                                                                   "Granca, Granca, Granca")))),
-                                                   Søknadsfelt("Har du flyktningsatus hos Utlendingsdirektoratet?", true),
-                                                   dokumentfelt("flyktningdokumentasjon"))),
-                   Søknadsfelt("Bosituasjonen din",
-                               Bosituasjon(Søknadsfelt("Deler du bolig med andre voksne?",
-                                                       "Ja, jeg har samboer og lever i et ekteskapslignende forhold"),
-                                           Søknadsfelt("Om samboeren din", personMinimum()),
-                                           Søknadsfelt("Når flyttet dere sammen?", LocalDate.of(2018, 8, 12)))),
-                   Søknadsfelt("Sivilstandsplaner",
-                               Sivilstandsplaner(Søknadsfelt("Har du konkrete planer om å gifte deg eller bli samboer", true),
-                                                 Søknadsfelt("Når skal dette skje?", LocalDate.of(2021, 4, 15)),
-                                                 Søknadsfelt("Hvem skal du gifte deg eller bli samboer med?", personMinimum()))),
-                   Søknadsfelt("Barn fra folkeregisteret",
-                               listOf(Folkeregisterbarn(Søknadsfelt("Navn"),
-                                                        Søknadsfelt("Fødselsnummer", Fødselsnummer("31081953069")),
-                                                        Søknadsfelt("Har samme adresse som søker", true),
-                                                        Søknadsfelt("Barnets andre forelder",
-                                                                    Forelder(person = Søknadsfelt("personalia", personMinimum()),
-                                                                             adresse = adresseSøknadsfelt())),
-                                                        Søknadsfelt("samvær",
-                                                                    Samvær(Søknadsfelt("Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
-                                                                                       true),
-                                                                           dokumentfelt("avtaleOmDeltBosted"),
-                                                                           Søknadsfelt("Har den andre forelderen samvær med barnet",
-                                                                                       "Ja, men ikke mer enn vanlig samværsrett"),
-                                                                           Søknadsfelt("Har dere skriftlig samværsavtale for barnet?",
-                                                                                       "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"),
-                                                                           dokumentfelt("samværsavtale"),
-                                                                           Søknadsfelt("Hvordan praktiserer dere samværet?",
-                                                                                       "Litt hver for oss"),
-                                                                           Søknadsfelt("Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
-                                                                                       true),
-                                                                           Søknadsfelt("Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
-                                                                                       true),
-                                                                           Søknadsfelt("Når flyttet dere fra hverandre?",
-                                                                                       LocalDate.of(2018, 7, 21)),
-                                                                           dokumentfelt("erklæringOmSamlivsbrudd"),
-                                                                           Søknadsfelt("Hvor mye er du sammen med den andre forelderen til barnet?",
-                                                                                       "Vi møtes også uten at barnet er til stede"),
-                                                                           Søknadsfelt("Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
-                                                                                       "Vi sees stadig vekk")))))),
-                   Søknadsfelt("Barn lagt til",
-                               listOf(KommendeBarn(navn = Søknadsfelt("Barnets fulle navn, hvis dette er bestemt"),
-                                                   erBarnetFødt = Søknadsfelt("Er barnet født?"),
-                                                   fødselTermindato = Søknadsfelt("Termindato"),
-                                                   skalBarnetBoHosSøker = Søknadsfelt("Skal barnet bo hos deg?"),
-                                                   terminbekreftelse = dokumentfelt("terminbekreftelse"),
-                                                   annenForelder = Søknadsfelt("Barnets andre forelder",
-                                                                               Forelder(Søknadsfelt("Jeg kan ikke oppgi den andre forelderen",
-                                                                                                    true),
-                                                                                        Søknadsfelt("Hvorfor kan du ikke oppgi den andre forelderen?",
-                                                                                                    "Fordi jeg ikke like hen."))),
-                                                   samvær = Søknadsfelt("samvær",
-                                                                        Samvær(Søknadsfelt("Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
-                                                                                           true),
-                                                                               dokumentfelt("avtaleOmDeltBosted"),
-                                                                               Søknadsfelt("Har den andre forelderen samvær med barnet",
-                                                                                           "Ja, men ikke mer enn vanlig samværsrett"),
-                                                                               Søknadsfelt("Har dere skriftlig samværsavtale for barnet?",
-                                                                                           "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"),
-                                                                               dokumentfelt("samværsavtale"),
-                                                                               Søknadsfelt("Hvordan praktiserer dere samværet?",
-                                                                                           "Litt hver for oss"),
-                                                                               Søknadsfelt("Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
-                                                                                           true),
-                                                                               Søknadsfelt("Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
-                                                                                           true),
-                                                                               Søknadsfelt("Når flyttet dere fra hverandre?",
-                                                                                           LocalDate.of(2018, 7, 21)),
-                                                                               dokumentfelt("erklæringOmSamlivsbrudd"),
-                                                                               Søknadsfelt("Hvor mye er du sammen med den andre forelderen til barnet?",
-                                                                                           "Vi møtes også uten at barnet er til stede"),
-                                                                               Søknadsfelt("Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
-                                                                                           "Vi sees stadig vekk")))))),
-                   Søknadsfelt("Arbeid, utdanning og andre aktiviteter",
-                               Aktivitet(Søknadsfelt("Hvordan er arbeidssituasjonen din?",
-                                                     listOf("Jeg er hjemme med barn under 1 år (vises kun hvis har barn under 1 år)",
-                                                            "Jeg er i arbeid",
-                                                            "Jeg er selvstendig næringsdrivende eller frilanser")),
-                                         Søknadsfelt("Om arbeidsforholdet ditt",
-                                                     listOf(Arbeidsgiver(Søknadsfelt("Navn på arbeidsgiveren", "Palpatine"),
-                                                                         Søknadsfelt("Hvor mye jobber du?", 15),
-                                                                         Søknadsfelt("Er stillingen fast eller midlertidig?",
-                                                                                     "Fast"),
-                                                                         Søknadfelt("Har du en sluttdato?", true),
-                                                                         Søknadsfelt("Når skal du slutte?",
-                                                                                     LocalDate.of(2020, 11, 18))))),
-                                         Søknadsfelt("Om firmaet du driver",
-                                                     Selvstendig(Selvstendig(Søknadsfelt("Navn på firma", "Bobs burgers"),
-                                                                             Søknadsfelt("Organisasjonsnummer", "987654321"),
-                                                                             Søknadsfelt("Når etablerte du firmaet?",
-                                                                                         LocalDate.of(2018, 4, 5, )),
-                                                                             Søknadsfelt("Hvor mye jobber du?", 150),
-                                                                             Søknadsfelt("Hvordan ser arbeidsuken din ut?",
-                                                                                         "Et evig mas")))),
-                                         Søknadsfelt("Om virksomheten du etablerer",
-                                                     Virksomhet(Søknadsfelt("Beskriv virksomheten",
-                                                                            "Den kommer til å revolusjonere alternativ-bransjen"))),
-                                         Søknadsfelt("Når du er arbeidssøker",
-                                                     Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos NAV?", true),
-                                                                  Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-                                                                              true),
-                                                                  Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-                                                                              true),
-                                                                  Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-                                                                              false),
-                                                                  Søknadsfelt("Hvor ønsker du å søke arbeid?",
-                                                                              "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"),
-                                                                  Søknadsfelt("Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-                                                                              true))),
-                                         Søknadsfelt("Utdanningen du skal ta",
-                                                     UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
-                                                                    Søknadsfelt("Utdanning",
-                                                                                Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                                                      "Profesjonsstudium Informatikk"),
-                                                                                          Søknadsfelt("Når skal du være elev/student?",
-                                                                                                      Periode(Søknadsfelt("Fra måned",
-                                                                                                                          Month.JANUARY),
-                                                                                                              Søknadsfelt("Fra år",
-                                                                                                                          1999),
-                                                                                                              Søknadsfelt("Til måned",
-                                                                                                                          Month.OCTOBER),
-                                                                                                              Søknadsfelt("Til år"),
-                                                                                                              2004)))),
-                                                                    Søknadsfelt("Er utdanningen offentlig eller privat?",
-                                                                                "Offentlig"),
-                                                                    Søknadsfelt("Hvor mye skal du studere?", 300),
-                                                                    Søknadsfelt("Hva er målet med utdanningen?",
-                                                                                "Økonomisk selvstendighet"),
-                                                                    Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
-                                                                    Søknadsfelt("Tidligere Utdanning",
-                                                                                listOf<>(Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                                                               "Master Fysikk"),
-                                                                                                   Søknadsfelt("Når var du elev/student?",
-                                                                                                               Periode(Søknadsfelt(
-                                                                                                                       "Fra måned",
-                                                                                                                       Month.JANUARY),
-                                                                                                                       Søknadsfelt(
-                                                                                                                               "Fra år",
-                                                                                                                               1999),
-                                                                                                                       Søknadsfelt(
-                                                                                                                               "Til måned",
-                                                                                                                               Month.OCTOBER),
-                                                                                                                       Søknadsfelt(
-                                                                                                                               "Til år"),
-                                                                                                                       2004))))))))),
-                   Søknadsfelt("Mer om situasjonen din",
-                               Situasjon(Søknadsfelt("Gjelder noe av dette deg?",
-                                                     listOf("Barnet mitt er sykt",
-                                                            "Jeg har søkt om barnepass, men ikke fått plass enda",
-                                                            "Jeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer")),
-                                         dokumentfelt("sykdom"),
-                                         dokumentfelt("barnsSykdom"),
-                                         dokumentfelt("manglendeBarnepass"),
-                                         dokumentfelt("barnMedSærligeBehov"),
-                                         dokumentfelt("arbeidskontrakt"),
-                                         Søknadsfelt("Når skal du starte i ny jobb?", LocalDate.of(2045, 12, 16)),
-                                         dokumentfelt("utdanningstilbud"),
-                                         Søknadsfelt("Når skal du starte utdanningen?", LocalDate.of(2025, 7, 28)),
-                                         Søknadsfelt("Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?",
-                                                     true),
-                                         Søknadsfelt("Hvorfor sa du opp?", "Sjefen var dum"),
-                                         Søknadsfelt("Når sa du opp?", LocalDate.of(2014, 1, 12)),
-                                         dokumentfelt("oppsigelseReduksjonDokumentasjon"))),
-                   Søknadsfelt("Når søker du stønad fra?",
-                               Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST), Søknadsfelt("Fra år", 2018))))
-
-    private fun personMinimum(): PersonMinimum {
-        return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),
-                             null,
-                             Søknadsfelt("Fødselsdato", LocalDate.of(1992, 2, 18)))
-    }
-
-    private fun adresseSøknadsfelt(): Søknadsfelt<Adresse> {
-        return Søknadsfelt("Adresse",
-                           Adresse("Jerpefaret",
-                                   5,
-                                   "C",
-                                   "H0508",
-                                   "1440",
-                                   "Drøbak",
-                                   "norge"))
-    }
-
-    private fun dokumentfelt(tittel: String) = Søknadsfelt("dokument", Dokument(Fil(byteArrayOf(12)), tittel))
 
 }

@@ -3,8 +3,6 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.TextStyle
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
@@ -22,6 +20,7 @@ object SøknadTreeWalker {
                              Boolean::class,
                              Dokument::class,
                              Fødselsnummer::class,
+                             Periode::class,
                              Adresse::class,
                              LocalDate::class,
                              Month::class,
@@ -81,12 +80,12 @@ object SøknadTreeWalker {
 
         if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!!::class in endNodes) {
-                return listOf(mapEndenodeTilUtskriftMap(entitet))
+                return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
-                    return listOf(mapEndenodeTilUtskriftMap(entitet))
+                    return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
 
             }
@@ -94,39 +93,6 @@ object SøknadTreeWalker {
         }
         return list
     }
-
-    /**
-     * Håndterer formatering utover vanlig toString for endenodene
-     */
-    private fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
-
-        return when (val verdi = entitet.verdi!!) {
-            is Month ->
-                feltMap(entitet.label, verdi.getDisplayName(TextStyle.FULL, Locale("no")))
-            is Boolean ->
-                feltMap(entitet.label, if (verdi) "Ja" else "Nei")
-            is List<*> ->
-                feltMap(entitet.label, verdi.joinToString("\n"))
-            is Fødselsnummer ->
-                feltMap(entitet.label, verdi.verdi)
-            is Dokument ->
-                feltMap(entitet.label, verdi.tittel)
-            is Adresse ->
-                feltMap(entitet.label, adresseString(verdi))
-            else ->
-                feltMap(entitet.label, verdi.toString())
-
-        }
-    }
-
-    private fun adresseString(adresse: Adresse): String {
-        return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(),
-                      adresse.bolignummer,
-                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(),
-                      adresse.kommune).joinToString("\n\n")
-    }
-
-    private fun feltMap(label: String, verdi: String) = mapOf("label" to label, "verdi" to verdi)
 
     private fun feltlisteMap(label: String, verdi: List<*>) = mapOf("label" to label, "verdiliste" to verdi)
 
