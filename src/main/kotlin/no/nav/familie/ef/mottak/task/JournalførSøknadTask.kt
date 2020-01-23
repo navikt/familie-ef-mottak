@@ -13,7 +13,11 @@ class JournalførSøknadTask(private val journalføringService: JournalføringSe
                            private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        journalføringService.journalførSøknad(task.payload)
+        val journalpostId = journalføringService.journalførSøknad(task.payload)
+        task.metadata.apply {
+            this["journalpostId"] = journalpostId
+        }
+        taskRepository.saveAndFlush(task)
     }
 
     override fun onCompletion(task: Task) {

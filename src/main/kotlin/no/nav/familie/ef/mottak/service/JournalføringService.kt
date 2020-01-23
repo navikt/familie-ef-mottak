@@ -9,11 +9,12 @@ import org.springframework.stereotype.Service
 class JournalføringService(private val arkivClient: ArkivClient,
                            private val søknadService: SøknadService) {
 
-    fun journalførSøknad(søknadId: String) {
+    fun journalførSøknad(søknadId: String): String {
         val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = send(soknad)
         val søknadMedJournalpostId = soknad.copy(journalpostId = journalpostId)
         søknadService.lagreSøknad(søknadMedJournalpostId)
+        return journalpostId
     }
 
     private fun send(soknad: Soknad): String {
