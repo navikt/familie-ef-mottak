@@ -31,7 +31,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
         val nesteTask: Task =
-                Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload)
+                Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 
