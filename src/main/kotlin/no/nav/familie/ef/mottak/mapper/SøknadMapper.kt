@@ -8,9 +8,6 @@ import no.nav.familie.kontrakter.ef.søknad.Søknad as Kontraktssøknad
 object SøknadMapper {
 
     fun toDto(soknad: Soknad): Kontraktssøknad {
-        requireNotNull(soknad.saksnummer, { "saksnummer er null" })
-        requireNotNull(soknad.journalpostId, { "JournalpostId er null" })
-
         return objectMapper.readValue(soknad.søknadJson)
     }
 
