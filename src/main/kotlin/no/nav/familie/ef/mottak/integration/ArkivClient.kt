@@ -7,20 +7,15 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 import java.net.URI
 
-fun <T> Ressurs<T>.getDataOrThrow(): T {
-    return when (this.status) {
-        Status.SUKSESS -> data ?: error("Data er null i Ressurs")
-        else -> error(melding)
-    }
-}
 
 @Service
-class ArkivClient(operations: RestOperations,
+class ArkivClient(@Qualifier("restTemplateAzure") operations: RestOperations,
                   private val integrasjonerConfig: IntegrasjonerConfig) :
         AbstractRestClient(operations, "Arkiv") {
 
@@ -42,6 +37,13 @@ class ArkivClient(operations: RestOperations,
                 .path(PATH_HENT_SAKSNUMMER)
                 .queryParam("journalpostId", id)
                 .build()
+    }
+
+    fun <T> Ressurs<T>.getDataOrThrow(): T {
+        return when (this.status) {
+            Status.SUKSESS -> data ?: error("Data er null i Ressurs")
+            else -> error(melding)
+        }
     }
 
     companion object {

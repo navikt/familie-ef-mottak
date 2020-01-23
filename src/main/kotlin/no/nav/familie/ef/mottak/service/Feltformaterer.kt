@@ -21,7 +21,7 @@ object Feltformaterer {
             is Boolean ->
                 feltMap(entitet.label, if (verdi) "Ja" else "Nei")
             is List<*> ->
-                feltMap(entitet.label, verdi.joinToString("\n"))
+                feltMap(entitet.label, verdi.joinToString("\n\n"))
             is Fødselsnummer ->
                 feltMap(entitet.label, verdi.verdi)
             is Dokument ->
@@ -45,9 +45,9 @@ object Feltformaterer {
     }
 
     private fun adresseString(adresse: Adresse): String {
-        return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(),
+        return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(" "),
                       adresse.bolignummer,
-                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(),
+                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
                       adresse.land).joinToString("\n\n")
     }
 

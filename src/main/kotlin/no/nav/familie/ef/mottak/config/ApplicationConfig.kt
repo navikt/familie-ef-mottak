@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.ba.mottak.config.NaisProxyCustomizer
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
+import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.log.filter.LogFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
@@ -17,7 +18,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.web.client.RestOperations
@@ -35,22 +35,35 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
 @Import(BearerTokenClientInterceptor::class, MdcValuesPropagatingClientInterceptor::class)
-class ApplicationConfig(@Value("\${application.name}")
-                        val applicationName: String) {
+class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
+
 
     @Bean("restTemplateBuilder")
     fun restTemplateBuilder(): RestTemplateBuilder {
         return RestTemplateBuilder().additionalCustomizers(NaisProxyCustomizer())
     }
 
-    @Bean("restTemplate")
-    @DependsOn("restTemplateBuilder")
+    @Bean
+    fun consumerIdClientInterceptor(@Value("\${application.name}") applicationName: String) =
+            ConsumerIdClientInterceptor(applicationName)
+
+    @Bean("restTemplateAzure")
+    fun restTemplateAzure(restTemplateBuilder: RestTemplateBuilder,
+                          mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+                          bearerTokenClientInterceptor: BearerTokenClientInterceptor,
+                          consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+        return restTemplateBuilder.interceptors(mdcInterceptor,
+                                                bearerTokenClientInterceptor,
+                                                consumerIdClientInterceptor).build()
+    }
+
+    @Bean("restTemplateUnsecured")
     fun restTemplate(restTemplateBuilder: RestTemplateBuilder,
                      mdcInterceptor: MdcValuesPropagatingClientInterceptor,
-                     bearerTokenClientInterceptor: BearerTokenClientInterceptor): RestOperations {
-        return restTemplateBuilder.interceptors(mdcInterceptor, bearerTokenClientInterceptor).build()
+                     consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+        return restTemplateBuilder.interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
     @Bean

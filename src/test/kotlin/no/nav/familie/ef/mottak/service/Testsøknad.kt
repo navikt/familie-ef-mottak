@@ -43,7 +43,7 @@ internal object Testsøknad {
     @Suppress("LongLine")
     private fun aktivitet(): Aktivitet {
         return Aktivitet(Søknadsfelt("Hvordan er arbeidssituasjonen din?",
-                                     listOf("Jeg er hjemme med barn under 1 år (vises kun hvis har barn under 1 år)",
+                                     listOf("Jeg er hjemme med barn under 1 år",
                                             "Jeg er i arbeid",
                                             "Jeg er selvstendig næringsdrivende eller frilanser")),
                          Søknadsfelt("Om arbeidsforholdet ditt",
@@ -117,7 +117,7 @@ internal object Testsøknad {
                                                                              true),
                                                                  Søknadsfelt("Hvorfor kan du ikke oppgi den andre forelderen?",
                                                                              "Fordi jeg ikke liker hen."))),
-                            samvær = Søknadsfelt("samvær",
+                            samvær = Søknadsfelt("Samvær",
                                                  Samvær(Søknadsfelt("Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
                                                                     true),
                                                         dokumentfelt("Avtale om samvær"),
@@ -189,7 +189,7 @@ internal object Testsøknad {
     private fun medlemskapsdetaljer(): Medlemskapsdetaljer {
         return Medlemskapsdetaljer(Søknadsfelt("Oppholder du deg i Norge?", true),
                                    Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
-                                   Søknadsfelt("",
+                                   Søknadsfelt("Utenlandsopphold",
                                                listOf(Utenlandsopphold(Søknadsfelt("Fra",
                                                                                    LocalDate.of(2012, 12, 4)),
                                                                        Søknadsfelt("Til",
@@ -213,12 +213,12 @@ internal object Testsøknad {
                                    Søknadsfelt("Når søkte dere eller reiste sak?", LocalDate.of(2015, 12, 23)),
                                    dokumentfelt("Skilsmisse- eller separasjonsbevilling"),
                                    Søknadsfelt("Hva er grunnen til at du er alene med barn?",
-                                               "Trives best alene"),
+                                               "Endring i samværsordning"),
                                    dokumentfelt("Erklæring om samlivsbrudd"),
                                    Søknadsfelt("Dato for samlivsbrudd", LocalDate.of(2014, 10, 3)),
                                    Søknadsfelt("Når flyttet dere fra hverandre?", LocalDate.of(2014, 10, 4)),
-                                   Søknadsfelt("Hva er grunnen til at du er alene med barn?",
-                                               "Endring i samværsordning"),
+                                   Søknadsfelt("Spesifiser grunnen til at du er alene med barn?",
+                                               "Trives best alene"),
                                    Søknadsfelt("Når skjedde endringen / når skal endringen skje?",
                                                LocalDate.of(2013, 4, 17)))
     }

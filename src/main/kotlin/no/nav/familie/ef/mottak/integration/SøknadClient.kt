@@ -4,6 +4,7 @@ import no.nav.familie.ef.mottak.config.SakConfig
 import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.ef.søknad.Søknad
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestClientResponseException
@@ -11,7 +12,7 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class SøknadClient(operations: RestOperations,
+class SøknadClient(@Qualifier("restTemplateAzure") operations: RestOperations,
                    sakConfig: SakConfig) : AbstractRestClient(operations, "sak") {
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_MOTTAK_DOKUMENT).build()

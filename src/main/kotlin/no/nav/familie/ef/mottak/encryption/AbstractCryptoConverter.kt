@@ -9,19 +9,19 @@ abstract class AbstractCryptoConverter<T> : AttributeConverter<T, ByteArray> {
 
     private val cipherInitializer = CipherInitializer()
 
-    abstract fun byteArrayToEntityAttribute(dbData: ByteArray): T
+    abstract fun byteArrayToEntityAttribute(dbData: ByteArray?): T
 
-    abstract fun entityAttributeToByteArray(attribute: T): ByteArray
+    abstract fun entityAttributeToByteArray(attribute: T): ByteArray?
 
-    override fun convertToDatabaseColumn(attribute: T): ByteArray {
+    override fun convertToDatabaseColumn(attribute: T): ByteArray? {
         if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && attribute != null) {
             return encrypt(attribute)
         }
         return entityAttributeToByteArray(attribute)
     }
 
-    override fun convertToEntityAttribute(dbData: ByteArray): T {
-        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData.isNotEmpty()) {
+    override fun convertToEntityAttribute(dbData: ByteArray?): T {
+        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData != null && dbData.isNotEmpty()) {
             return decrypt(dbData)
         }
         return byteArrayToEntityAttribute(dbData)

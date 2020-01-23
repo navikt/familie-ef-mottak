@@ -17,16 +17,13 @@ object ArkiverDokumentRequestMapper {
 
         val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(kontraktssøknad).map { tilDokument(it) }
 
-
-
-
-
-
-        //   val søknadsdokumentPdf = TODO genererPdf
+        @Suppress("UNUSED_VARIABLE")
         val søknadsdokumentJson =
                 Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
-        val dokumenter: List<Dokument> = listOf(søknadsdokumentJson) + vedleggsdokumenter
-        // .plus(søknadsdokumentPdf) TODO bytt til generert pdf  (DOKUMENTTYPE_OVERGANGSSTØNAD) når pdf er generert.
+        val søknadsdokumentPdf =
+                Dokument(soknad.søknadPdf!!.bytes, FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)
+        val dokumenter: List<Dokument> = listOf(søknadsdokumentPdf) + vedleggsdokumenter
+        // TODO legge til bytt til søknadsdokumentJson når integrasjoner takler variantfomater.
         return ArkiverDokumentRequest(soknad.fnr, true, dokumenter)
     }
 
