@@ -22,7 +22,7 @@ class JournalførSøknadTask(private val journalføringService: JournalføringSe
 
     override fun onCompletion(task: Task) {
         val nesteTask: Task =
-                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload)
+                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 
