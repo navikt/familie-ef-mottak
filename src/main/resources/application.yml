@@ -42,6 +42,8 @@ familie:
       url: http://familie-ef-sak/api/
     integrasjoner:
       url: http://familie-integrasjoner/api/
+    pdfgenerator:
+      url: https://familie-ef-dokgen.adeo.no/
 
 no.nav.security.jwt:
   issuer:

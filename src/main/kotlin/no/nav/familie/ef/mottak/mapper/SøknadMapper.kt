@@ -11,7 +11,7 @@ object SøknadMapper {
         return objectMapper.readValue(soknad.søknadJson)
     }
 
-    fun toDto(kontraktssøknad: Kontraktssøknad): Soknad {
+    fun fromDto(kontraktssøknad: Kontraktssøknad): Soknad {
         return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad),
                       fnr = kontraktssøknad.personalia.verdi.fødselsnummer.verdi.verdi)
     }

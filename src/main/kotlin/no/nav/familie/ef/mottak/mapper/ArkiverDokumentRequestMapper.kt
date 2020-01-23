@@ -12,8 +12,16 @@ object ArkiverDokumentRequestMapper {
     private const val DOKUMENTTYPE_VEDLEGG = "OVERGANGSSTØNAD_SØKNAD_VEDLEGG"
 
     fun toDto(soknad: Soknad): ArkiverDokumentRequest {
-        val kontrakssøknad = SøknadMapper.toDto(soknad)
-        val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(kontrakssøknad).map { tilDokument(it) }
+
+        val kontraktssøknad = SøknadMapper.toDto(soknad)
+
+        val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(kontraktssøknad).map { tilDokument(it) }
+
+
+
+
+
+
         //   val søknadsdokumentPdf = TODO genererPdf
         val søknadsdokumentJson =
                 Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, null, DOKUMENTTYPE_OVERGANGSSTØNAD)

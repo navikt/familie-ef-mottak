@@ -15,6 +15,9 @@ familie:
       url: http://localhost:8092/mockapi/
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
+    pdfgenerator:
+      url: https://familie-ef-dokgen.dev-adeo.no/
+
 
 logging:
   config: "classpath:logback-test.xml"
