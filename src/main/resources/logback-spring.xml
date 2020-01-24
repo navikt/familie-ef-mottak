@@ -25,7 +25,7 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
-    <root level="${ROOT_LOG_LEVEL:-DEBUG}">
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
         <!-- nais+local -->
         <appender-ref ref="stdout_json"/>
     </root>

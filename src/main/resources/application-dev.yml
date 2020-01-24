@@ -2,6 +2,10 @@ spring:
   datasource:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ef-mottak
 
+familie:
+  ef:
+    pdfgenerator:
+      url: https://familie-ef-dokgen.dev-adeo.no/
 
 no.nav.security.jwt:
   issuer:

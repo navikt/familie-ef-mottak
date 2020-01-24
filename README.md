@@ -9,7 +9,7 @@ https://github.com/navikt/familie-oidc-test
 f.eks: 
 docker build -t local:oidc-test-support . 
 docker run -it -p 8080:8080 local:oidc-test-support 
-Tokan kan da genereres ved å gå til url: http://localhost:8080/cookie
+Token kan da genereres ved å gå til url: http://localhost:8080/cookie
 
 ## Database
 

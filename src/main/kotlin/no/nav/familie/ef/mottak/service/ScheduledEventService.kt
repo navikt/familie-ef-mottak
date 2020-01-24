@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.task.JournalførSøknadTask.Companion.JOURNALFØR_SØKNAD
+import no.nav.familie.ef.mottak.task.LagPdfTask.Companion.LAG_PDF
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.scheduling.annotation.Scheduled
@@ -23,7 +23,7 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
 
     @Transactional
     fun opprettTask(soknad: Soknad) {
-        taskRepository.save(Task.nyTask(JOURNALFØR_SØKNAD,
+        taskRepository.save(Task.nyTask(LAG_PDF,
                                         soknad.id,
                                         Properties().apply { this["søkersFødselsnummer"] = soknad.fnr }))
     }

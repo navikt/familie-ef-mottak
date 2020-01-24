@@ -5,8 +5,8 @@ server:
 
 spring:
   datasource:
-    username: postgres
-    password: test
+    username: familie
+    password: Test
     url: jdbc:postgresql://localhost:5432/familie-ef-mottak
 
 familie:
@@ -15,6 +15,9 @@ familie:
       url: http://localhost:8092/mockapi/
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
+    pdfgenerator:
+      url: https://familie-ef-dokgen.dev-adeo.no/
+
 
 logging:
   config: "classpath:logback-test.xml"
