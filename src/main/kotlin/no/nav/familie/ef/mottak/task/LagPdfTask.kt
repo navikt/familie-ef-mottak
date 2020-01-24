@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.service.LagPdfService
+import no.nav.familie.ef.mottak.service.PdfService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagPdfTask.LAG_PDF, beskrivelse = "Lag pdf")
-class LagPdfTask(private val lagPdfService: LagPdfService,
+class LagPdfTask(private val pdfService: PdfService,
                  private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        lagPdfService.lagPdf(task.payload)
+        pdfService.lagPdf(task.payload)
     }
 
     override fun onCompletion(task: Task) {

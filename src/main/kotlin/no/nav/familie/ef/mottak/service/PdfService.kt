@@ -7,7 +7,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class LagPdfService(private val soknadRepository: SoknadRepository, private val pdfClient: PdfClient) {
+class PdfService(private val soknadRepository: SoknadRepository, private val pdfClient: PdfClient) {
 
     fun lagPdf(id: String) {
 
