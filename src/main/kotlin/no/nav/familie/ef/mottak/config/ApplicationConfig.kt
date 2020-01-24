@@ -10,7 +10,6 @@ import no.nav.familie.log.filter.LogFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -34,7 +33,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableSwagger2
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
-@Import(BearerTokenClientInterceptor::class, MdcValuesPropagatingClientInterceptor::class)
+@Import(BearerTokenClientInterceptor::class,
+        MdcValuesPropagatingClientInterceptor::class,
+        ConsumerIdClientInterceptor::class)
 class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
@@ -44,10 +45,6 @@ class ApplicationConfig {
     fun restTemplateBuilder(): RestTemplateBuilder {
         return RestTemplateBuilder().additionalCustomizers(NaisProxyCustomizer())
     }
-
-    @Bean
-    fun consumerIdClientInterceptor(@Value("\${application.name}") applicationName: String) =
-            ConsumerIdClientInterceptor(applicationName)
 
     @Bean("restTemplateAzure")
     fun restTemplateAzure(restTemplateBuilder: RestTemplateBuilder,
