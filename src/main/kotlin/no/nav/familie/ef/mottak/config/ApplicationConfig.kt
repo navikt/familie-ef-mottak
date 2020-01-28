@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import no.nav.familie.ba.mottak.config.NaisProxyCustomizer
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
