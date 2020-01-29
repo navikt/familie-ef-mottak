@@ -1,4 +1,4 @@
-package no.nav.familie.ba.mottak.config
+package no.nav.familie.ef.mottak.config
 
 import org.apache.http.HttpException
 import org.apache.http.HttpHost
@@ -19,7 +19,7 @@ class NaisProxyCustomizer : RestTemplateCustomizer {
                     @Throws(HttpException::class)
                     override fun determineProxy(target: HttpHost,
                                                 request: HttpRequest?, context: HttpContext?): HttpHost? {
-                        return if (target.getHostName().contains("microsoft")) {
+                        return if (target.hostName.contains("microsoft")) {
                             super.determineProxy(target, request, context)
                         } else null
                     }
