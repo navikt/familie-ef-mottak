@@ -1,8 +1,6 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
-import no.nav.familie.kontrakter.ef.søknad.Dokument
-import no.nav.familie.kontrakter.ef.søknad.Fil
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,23 +12,23 @@ class SøknadTreeWalkerTest {
 
         val søknad = Testsøknad.søknad
 
-        val list: List<Dokument> = SøknadTreeWalker.finnDokumenter(søknad)
+        val list = SøknadTreeWalker.finnDokumenter(søknad).map { it.toString() }
 
-        assertThat(list).contains(Dokument(Fil(byteArrayOf(12)), "giftIUtlandetDokumentasjon"),
-                                  Dokument(Fil(byteArrayOf(12)), "separertEllerSkiltIUtlandetDokumentasjon"),
-                                  Dokument(Fil(byteArrayOf(12)), "Skilsmisse- eller separasjonsbevilling"),
-                                  Dokument(Fil(byteArrayOf(12)), "flyktningdokumentasjon"),
-                                  Dokument(Fil(byteArrayOf(12)), "Avtale om delt bosted for barna"),
-                                  Dokument(Fil(byteArrayOf(12)), "Avtale om samvær"),
-                                  Dokument(Fil(byteArrayOf(12)), "Erklæring om samlivsbrudd"),
-                                  Dokument(Fil(byteArrayOf(12)), "Bekreftelse på ventet fødselsdato"),
-                                  Dokument(Fil(byteArrayOf(12)), "Legeerklæring"),
-                                  Dokument(Fil(byteArrayOf(12)), "Legeattest for egen sykdom eller sykt barn"),
-                                  Dokument(Fil(byteArrayOf(12)), "Avslag på søknad om barnehageplass, skolefritidsordning e.l."),
-                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av særlig tilsynsbehov"),
-                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av jobbtilbud"),
-                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av studieopptak"),
-                                  Dokument(Fil(byteArrayOf(12)), "Dokumentasjon av arbeidsforhold"))
+        assertThat(list).contains("giftIUtlandetDokumentasjon",
+                                  "separertEllerSkiltIUtlandetDokumentasjon",
+                                  "Skilsmisse- eller separasjonsbevilling",
+                                  "flyktningdokumentasjon",
+                                  "Avtale om delt bosted for barna",
+                                  "Avtale om samvær",
+                                  "Erklæring om samlivsbrudd",
+                                  "Bekreftelse på ventet fødselsdato",
+                                  "Legeerklæring",
+                                  "Legeattest for egen sykdom eller sykt barn",
+                                  "Avslag på søknad om barnehageplass, skolefritidsordning e.l.",
+                                  "Dokumentasjon av særlig tilsynsbehov",
+                                  "Dokumentasjon av jobbtilbud",
+                                  "Dokumentasjon av studieopptak",
+                                  "Dokumentasjon av arbeidsforhold")
     }
 
     @Test

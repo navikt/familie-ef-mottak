@@ -37,7 +37,7 @@ internal class PdfServiceTest {
     fun `Søknad skal oppdateres med pdf når pdf genereres`() {
         // Given
         val slot = slot<Soknad>()
-        capturePdfAddedToSøknad(slot, søknad)
+        capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf("søknadsId")
         // Then
@@ -48,7 +48,7 @@ internal class PdfServiceTest {
     fun `Søknad med pdf skal lagres`() {
         // Given
         val slot = slot<Soknad>()
-        capturePdfAddedToSøknad(slot, søknad)
+        capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf("søknadsId")
         // Then
@@ -74,8 +74,7 @@ internal class PdfServiceTest {
         return objectMapper.writeValueAsString(søknadDto)
     }
 
-    private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>,
-                                        søknad: Soknad) {
+    private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>) {
         every {
             soknadRepository.saveAndFlush(capture(slot))
         } answers {
