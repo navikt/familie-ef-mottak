@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.Periode
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -24,8 +27,6 @@ object Feltformaterer {
                 feltMap(entitet.label, verdi.joinToString("\n\n"))
             is Fødselsnummer ->
                 feltMap(entitet.label, verdi.verdi)
-            is Dokument ->
-                feltMap(entitet.label, verdi.tittel)
             is Adresse ->
                 feltMap(entitet.label, adresseString(verdi))
             is LocalDate ->

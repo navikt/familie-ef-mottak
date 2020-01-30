@@ -28,7 +28,7 @@ object ArkiverDokumentRequestMapper {
     }
 
     private fun tilDokument(vedlegg: no.nav.familie.kontrakter.ef.søknad.Dokument): Dokument {
-        return Dokument(dokument = vedlegg.fil.bytes,
+        return Dokument(dokument = vedlegg.bytes,
                         filType = FilType.PDFA,
                         tittel = vedlegg.tittel,
                         filnavn = null,
