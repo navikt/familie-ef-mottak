@@ -46,8 +46,7 @@ object Feltformaterer {
     }
 
     private fun adresseString(adresse: Adresse): String {
-        return listOf(listOf(adresse.gatenavn, adresse.husnummer, adresse.husbokstav).joinToString(" "),
-                      adresse.bolignummer,
+        return listOf(adresse.adresse,
                       listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
                       adresse.land).joinToString("\n\n")
     }
