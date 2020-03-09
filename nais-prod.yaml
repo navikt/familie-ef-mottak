@@ -7,7 +7,7 @@ metadata:
     team: teamfamilie
 
 spec:
-  image: navikt/familie-ef-mottak:{{version}}
+  image: docker.pkg.github.com/navikt/familie-ef-mottak/familie-ef-mottak:{{tag}}
   liveness:
     path: /internal/status/isAlive
     initialDelay: 30
