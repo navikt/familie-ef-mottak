@@ -23,7 +23,7 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.9.3</mockk.version>
         <fasterxml.version>2.10.3</fasterxml.version>
-        <felles.version>1.20200325131618_102c329</felles.version>
+        <felles.version>1.20200408151439_00385c3</felles.version>
         <kontrakter.version>2.0_20200408074716_e14d187</kontrakter.version>
         <token-validation.version>1.1.4</token-validation.version>
         <spring-cloud.version>2.2.2.RELEASE</spring-cloud.version>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.11</version>
+            <version>42.2.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
