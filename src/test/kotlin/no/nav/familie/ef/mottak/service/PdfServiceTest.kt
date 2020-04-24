@@ -16,16 +16,17 @@ internal class PdfServiceTest {
 
     private val soknadRepository: SoknadRepository = mockk()
     private val pdfClient: PdfClient = mockk()
-    val pdfService: PdfService = PdfService(soknadRepository, pdfClient)
+    private val pdfService: PdfService = PdfService(soknadRepository, pdfClient)
 
     private val serializedSoknad = createValidSøknadJson()
-    val pdf = Fil("321".toByteArray())
-    val søknad = Soknad(id = "randomUUID",
-                        søknadJson = serializedSoknad,
-                        søknadPdf = null,
-                        fnr = "654",
-                        journalpostId = null,
-                        saksnummer = null)
+    private val pdf = Fil("321".toByteArray())
+    private val søknad = Soknad(id = "randomUUID",
+                                søknadJson = serializedSoknad,
+                                søknadPdf = null,
+                                fnr = "654",
+                                dokumenttype = "",
+                                journalpostId = null,
+                                saksnummer = null)
 
     @BeforeEach
     private fun init() {

@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,7 +11,7 @@ class SøknadTreeWalkerTest {
     fun `finnDokumenter finner alle dokumenter i en struktur`() {
 
         val søknad = Testsøknad.søknad
-
+        val writeValueAsString = objectMapper.writeValueAsString(søknad)
         val list = SøknadTreeWalker.finnDokumenter(søknad).map { it.toString() }
 
         assertThat(list).contains("giftIUtlandetDokumentasjon",

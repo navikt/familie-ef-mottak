@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty("spring.flyway.enabled")
+@ConditionalOnProperty(name = ["spring.cloud.vault.enabled"])
 class FlywayConfig {
 
     private val logger = LoggerFactory.getLogger(FlywayConfig::class.java)
