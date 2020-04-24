@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    username: familie
+    username: postgres
     password: Test
-    url: jdbc:postgresql://localhost:5432/familie-ef-mottak
+    url: jdbc:postgresql://localhost:5431/familie-ef-mottak
 
 familie:
   ef:
