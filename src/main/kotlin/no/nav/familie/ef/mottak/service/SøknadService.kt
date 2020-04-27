@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
 
 interface SøknadService {
@@ -13,4 +14,6 @@ interface SøknadService {
     fun sendTilSak(søknadId: String)
 
     fun lagreSøknad(soknad: Soknad)
+
+    fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering
 }

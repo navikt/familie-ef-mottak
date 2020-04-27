@@ -15,6 +15,7 @@ data class Soknad(@Id
                   @Convert(converter = FileCryptoConverter::class)
                   @Column(name = "soknad_pdf")
                   val søknadPdf: Fil? = null,
+                  val dokumenttype: String,
                   @Column(name = "journalpost_id")
                   val journalpostId: String? = null,
                   val saksnummer: String? = null,

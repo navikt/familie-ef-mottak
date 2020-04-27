@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.mapper
 
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_VEDLEGG
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
@@ -7,9 +8,6 @@ import no.nav.familie.kontrakter.felles.arkivering.Dokument
 import no.nav.familie.kontrakter.felles.arkivering.FilType
 
 object ArkiverDokumentRequestMapper {
-
-    private const val DOKUMENTTYPE_OVERGANGSSTØNAD = "OVERGANGSSTØNAD_SØKNAD"
-    private const val DOKUMENTTYPE_VEDLEGG = "OVERGANGSSTØNAD_SØKNAD_VEDLEGG"
 
     fun toDto(soknad: Soknad): ArkiverDokumentRequest {
 
@@ -20,9 +18,9 @@ object ArkiverDokumentRequestMapper {
         // TODO legge til søknadsdokumentJson når integrasjoner takler flere variantfomater.
         @Suppress("UNUSED_VARIABLE")
         val søknadsdokumentJson =
-                Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, "hoveddokument", DOKUMENTTYPE_OVERGANGSSTØNAD)
+                Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, "hoveddokument", soknad.dokumenttype)
         val søknadsdokumentPdf =
-                Dokument(soknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", DOKUMENTTYPE_OVERGANGSSTØNAD)
+                Dokument(soknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", soknad.dokumenttype)
         val dokumenter: List<Dokument> = listOf(søknadsdokumentPdf) + vedleggsdokumenter
         return ArkiverDokumentRequest(soknad.fnr, true, dokumenter)
     }

@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -32,8 +33,14 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         søknadClient.sendTilSak(kontraktssøknad)
     }
 
-    data class OkDto(val status: String = "OK")
+    @Transactional
+    override fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
+        soknadRepository.save(søknadDb)
+        return Kvittering("Skjema er mottatt og lagret med id ${søknadDb.id}.")
+    }
 
+    data class OkDto(val status: String = "OK")
 
     override fun lagreSøknad(soknad: Soknad) {
         soknadRepository.save(soknad)
