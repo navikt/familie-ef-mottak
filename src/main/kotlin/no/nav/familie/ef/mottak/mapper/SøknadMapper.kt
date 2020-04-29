@@ -10,7 +10,7 @@ import no.nav.familie.kontrakter.ef.søknad.Søknad as Kontraktssøknad
 
 object SøknadMapper {
 
-    fun toDto(soknad: Soknad): Kontraktssøknad {
+    inline fun <reified T : Any> toDto(soknad: Soknad): T {
         return objectMapper.readValue(soknad.søknadJson)
     }
 

@@ -29,7 +29,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun sendTilSak(søknadId: String) {
 
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
-        val kontraktssøknad = SøknadMapper.toDto(soknad)
+        val kontraktssøknad: Søknad = SøknadMapper.toDto(soknad)
         søknadClient.sendTilSak(kontraktssøknad)
     }
 

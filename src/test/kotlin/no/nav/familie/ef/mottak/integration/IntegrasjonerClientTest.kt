@@ -18,16 +18,16 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
-internal class ArkivClientTest {
+internal class IntegrasjonerClientTest {
 
     private val operations: RestOperations = mockk()
     private val integrasjonerConfig: IntegrasjonerConfig = IntegrasjonerConfig("mock/")
 
-    private val arkivClient: ArkivClient = ArkivClient(operations, integrasjonerConfig)
+    private val integrasjonerClient: IntegrasjonerClient = IntegrasjonerClient(operations, integrasjonerConfig)
 
     private val arkiverSøknadRequest = ArkiverDokumentRequest("123456789", true, listOf())
     private val arkiverDokumentResponse: ArkiverDokumentResponse = ArkiverDokumentResponse("wer", true)
-    private val uri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(ArkivClient.PATH_SEND_INN).build()
+    private val uri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(IntegrasjonerClient.PATH_SEND_INN).build()
 
 
     @Test
@@ -35,7 +35,7 @@ internal class ArkivClientTest {
         // Gitt
         operationMockSkalReturnere(success(arkiverDokumentResponse))
         // Vil gi resultat
-        assertNotNull(arkivClient.arkiver(arkiverSøknadRequest))
+        assertNotNull(integrasjonerClient.arkiver(arkiverSøknadRequest))
 
     }
 
@@ -43,7 +43,7 @@ internal class ArkivClientTest {
     fun `Skal ikke arkivere  søknad`() {
         operationMockSkalReturnere(failure("error"))
         assertFailsWith(IllegalStateException::class) {
-            arkivClient.arkiver(arkiverSøknadRequest)
+            integrasjonerClient.arkiver(arkiverSøknadRequest)
         }
     }
 

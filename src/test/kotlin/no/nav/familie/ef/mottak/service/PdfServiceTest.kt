@@ -1,8 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
 import io.mockk.*
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service.Testsøknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
@@ -24,7 +25,7 @@ internal class PdfServiceTest {
                                 søknadJson = serializedSoknad,
                                 søknadPdf = null,
                                 fnr = "654",
-                                dokumenttype = "",
+                                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                                 journalpostId = null,
                                 saksnummer = null)
 
@@ -71,7 +72,7 @@ internal class PdfServiceTest {
     }
 
     private fun createValidSøknadJson(): String {
-        val søknadDto = Testsøknad.søknad
+        val søknadDto = Testdata.søknad
         return objectMapper.writeValueAsString(søknadDto)
     }
 

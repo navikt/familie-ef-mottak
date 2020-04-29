@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
-import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -9,9 +8,8 @@ class SøknadTreeWalkerTest {
 
     @Test
     fun `finnDokumenter finner alle dokumenter i en struktur`() {
+        val søknad = Testdata.søknad
 
-        val søknad = Testsøknad.søknad
-        val writeValueAsString = objectMapper.writeValueAsString(søknad)
         val list = SøknadTreeWalker.finnDokumenter(søknad).map { it.toString() }
 
         assertThat(list).contains("giftIUtlandetDokumentasjon",
@@ -29,4 +27,36 @@ class SøknadTreeWalkerTest {
                                   "Dokumentasjon av studieopptak",
                                   "Dokumentasjon av arbeidsforhold")
     }
+    @Test
+    fun `finnDokumenter returnerer en tom liste hvis det ikke finnes noen dokumenter i en struktur`() {
+        val skjemaForArbeidssøker = Testdata.skjemaForArbeidssøker
+
+        val list = SøknadTreeWalker.finnDokumenter(skjemaForArbeidssøker).map { it.toString() }
+
+        assertThat(list).isEmpty()
+    }
+
+    @Test
+    fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden`() {
+        val søknad = Testdata.søknad
+
+        val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad)
+
+        assertThat(mapSøknadsfelter).isNotEmpty
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(10)
+    }
+
+    @Test
+    fun `mapSkjemafelter returnerer en map-struktur med feltene fra skjema`() {
+        val skjemaForArbeidssøker = Testdata.skjemaForArbeidssøker
+
+        val mapSøknadsfelter = SøknadTreeWalker.mapSkjemafelter(skjemaForArbeidssøker)
+
+        assertThat(mapSøknadsfelter).isNotEmpty
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Skjema for arbeidssøker")
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(3)
+    }
+
+
 }
