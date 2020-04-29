@@ -46,13 +46,15 @@ object SøknadTreeWalker {
                 .toList()
     }
 
-    fun mapSøknadsfelterTilMap(søknad: Søknad): Map<String, Any> {
-
+    fun mapSøknadsfelter(søknad: Søknad): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-
-        return feltlisteMap("søknad", finnFelter)
+        return feltlisteMap("Søknad enslig forsørger", finnFelter)
     }
 
+    fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
+        val finnFelter = finnFelter(skjema)
+        return feltlisteMap("Skjema for arbeidssøker", finnFelter)
+    }
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {
 

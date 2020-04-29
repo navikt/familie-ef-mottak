@@ -7,6 +7,9 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
@@ -15,15 +18,23 @@ import java.net.URI
 
 
 @Service
-class ArkivClient(@Qualifier("restTemplateAzure") operations: RestOperations,
-                  private val integrasjonerConfig: IntegrasjonerConfig) :
+class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperations,
+                          private val integrasjonerConfig: IntegrasjonerConfig) :
         AbstractRestClient(operations, "Arkiv") {
 
     private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
+    private val opprettOppgaveUri =
+            DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_OPPRETT_OPPGAVE).build()
 
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
                 postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverDokumentRequest)
+        return response?.getDataOrThrow() ?: error("No respons data")
+    }
+
+    fun lagOppgave(opprettOppgave: OpprettOppgave): OppgaveResponse {
+        val response =
+                postForEntity<Ressurs<OppgaveResponse>>(opprettOppgaveUri, opprettOppgave)
         return response?.getDataOrThrow() ?: error("No respons data")
     }
 
@@ -49,6 +60,7 @@ class ArkivClient(@Qualifier("restTemplateAzure") operations: RestOperations,
     companion object {
         const val PATH_SEND_INN = "arkiv/v2"
         const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
+        const val PATH_OPPRETT_OPPGAVE = "/oppgave"
     }
 
 }

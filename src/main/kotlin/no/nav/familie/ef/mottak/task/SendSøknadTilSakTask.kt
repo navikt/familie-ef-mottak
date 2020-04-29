@@ -13,8 +13,6 @@ class SendSøknadTilSakTask(private val søknadService: SøknadService,
                            private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-
-
         søknadService.sendTilSak(task.payload)
     }
 
