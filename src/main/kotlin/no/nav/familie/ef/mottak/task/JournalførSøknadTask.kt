@@ -21,8 +21,7 @@ class JournalførSøknadTask(private val journalføringService: JournalføringSe
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task =
-                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+        val nesteTask: Task = Task.nyTask(LagOppgaveTask.LAG_OPPGAVE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

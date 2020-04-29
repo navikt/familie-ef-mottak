@@ -3,8 +3,12 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.Month
+import java.util.*
 
 internal object Testdata {
+
+    fun randomFnr(): String = UUID.randomUUID().toString()
+    fun randomAktørId(): String = UUID.randomUUID().toString()
 
     val skjemaForArbeidssøker =
             SkjemaForArbeidssøker(Søknadsfelt("Fødselsnummer", Fødselsnummer("04105635198")),

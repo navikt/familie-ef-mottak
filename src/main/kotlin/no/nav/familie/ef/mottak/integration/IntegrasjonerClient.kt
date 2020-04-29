@@ -7,10 +7,11 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
-import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
+import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
@@ -25,6 +26,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
     private val opprettOppgaveUri =
             DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_OPPRETT_OPPGAVE).build()
+    private val aktørUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_OPPRETT_OPPGAVE).build()
 
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
@@ -42,6 +44,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return getForEntity(hentSaksnummerUri(journalPostId))
     }
 
+    fun hentAktørId(personident: String): String {
+        val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
+        return response.getDataOrThrow().get("aktørId").toString() ?: error("Kan ikke finne aktørId")
+    }
+
+
     private fun hentSaksnummerUri(id: String): URI {
         return DefaultUriBuilderFactory()
                 .uriString(integrasjonerConfig.url)
@@ -57,10 +65,16 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         }
     }
 
+    private fun HttpHeaders.medPersonident(personident: String): HttpHeaders {
+        this.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
+        return this
+    }
+
     companion object {
         const val PATH_SEND_INN = "arkiv/v2"
         const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "/oppgave"
+        const val PATH_AKTØR = "/aktoer/v1"
     }
 
 }
