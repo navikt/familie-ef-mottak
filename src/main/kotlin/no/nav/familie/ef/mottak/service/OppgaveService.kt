@@ -15,8 +15,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val soknad: Soknad = søknadService.get(søknadId)
         if (soknad.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val aktørId = integrasjonerClient.hentAktørId(soknad.fnr)
-            val fristForFerdigstillelse = LocalDate.now()
-            val beskrivelse = "Oppgavetekst skal inn her - hva skal stå her"
 
             val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
             val opprettOppgave = OpprettOppgave(
@@ -25,8 +23,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     journalpostId = journalpostId,
                     tema = Tema.ENF,
                     oppgavetype = Oppgavetype.Journalføring,
-                    fristFerdigstillelse = fristForFerdigstillelse,
-                    beskrivelse = beskrivelse,
+                    fristFerdigstillelse = LocalDate.now(),
+                    beskrivelse = "Enslig mor eller far som er arbeidssøker (15-08.01)",
                     behandlingstema = null,
                     enhetsnummer = null
             )
