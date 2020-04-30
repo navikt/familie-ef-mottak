@@ -26,7 +26,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val sendInnUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_SEND_INN).build()
     private val opprettOppgaveUri =
             DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_OPPRETT_OPPGAVE).build()
-    private val aktørUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_OPPRETT_OPPGAVE).build()
+    private val aktørUri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(PATH_AKTØR).build()
 
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
