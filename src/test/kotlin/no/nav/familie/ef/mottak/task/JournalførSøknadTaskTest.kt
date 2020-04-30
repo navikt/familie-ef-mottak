@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class JournalførSøknadTaskTest {
+
     val taskRepository: TaskRepository = mockk()
     val journalførSøknadTaskTest: JournalførSøknadTask = JournalførSøknadTask(mockk(), taskRepository)
 

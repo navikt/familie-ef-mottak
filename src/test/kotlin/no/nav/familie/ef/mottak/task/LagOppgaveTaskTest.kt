@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class LagOppgaveTaskTest {
+
     val taskRepository: TaskRepository = mockk()
     val lagOppgaveTask: LagOppgaveTask = LagOppgaveTask(taskRepository, mockk())
 

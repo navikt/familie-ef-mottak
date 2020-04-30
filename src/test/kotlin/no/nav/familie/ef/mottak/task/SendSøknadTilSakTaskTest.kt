@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class SendSøknadTilSakTaskTest {
+
     val taskRepository: TaskRepository = mockk()
     val sendSøknadTilSakTask: SendSøknadTilSakTask = SendSøknadTilSakTask(mockk(), taskRepository)
 

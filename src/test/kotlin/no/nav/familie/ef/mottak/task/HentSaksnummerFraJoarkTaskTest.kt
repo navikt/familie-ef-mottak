@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 internal class HentSaksnummerFraJoarkTaskTest {
+
     val taskRepository: TaskRepository = mockk()
     val hentSaksnummerFraJoarkTask: HentSaksnummerFraJoarkTask = HentSaksnummerFraJoarkTask(taskRepository, mockk())
 
