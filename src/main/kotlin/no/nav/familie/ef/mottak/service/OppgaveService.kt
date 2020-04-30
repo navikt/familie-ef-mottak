@@ -21,7 +21,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
             val opprettOppgave = OpprettOppgave(
                     ident = OppgaveIdent(ident = aktørId, type = IdentType.Aktør),
-                    saksId = journalpostId,
+                    saksId = null,
+                    journalpostId = journalpostId,
                     tema = Tema.ENF,
                     oppgavetype = Oppgavetype.Journalføring,
                     fristFerdigstillelse = fristForFerdigstillelse,
