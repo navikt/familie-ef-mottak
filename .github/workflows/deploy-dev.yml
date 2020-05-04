@@ -1,9 +1,8 @@
 name: Build-Deploy
 on:
   push:
-    branches:
-      - '*'
-      - '*/*'
+    branches-ignore:
+      - 'master'
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/familie-ef-mottak:${{ github.sha }}
@@ -51,4 +50,3 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-fss
           RESOURCE: nais-dev.yaml
-
