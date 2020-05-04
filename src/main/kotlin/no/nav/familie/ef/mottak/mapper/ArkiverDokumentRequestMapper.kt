@@ -30,7 +30,7 @@ object ArkiverDokumentRequestMapper {
         val søknadsdokumentPdf =
                 Dokument(soknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", soknad.dokumenttype)
         val dokumenter: List<Dokument> = listOf(søknadsdokumentPdf) + vedleggsdokumenter
-        return ArkiverDokumentRequest(soknad.fnr, true, dokumenter)
+        return ArkiverDokumentRequest(soknad.fnr, false, dokumenter)
     }
 
     private fun tilDokument(vedlegg: no.nav.familie.kontrakter.ef.søknad.Dokument): Dokument {
