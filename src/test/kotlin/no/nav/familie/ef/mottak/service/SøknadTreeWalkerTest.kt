@@ -55,7 +55,7 @@ class SøknadTreeWalkerTest {
 
         assertThat(mapSøknadsfelter).isNotEmpty
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Skjema for arbeidssøker")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(3)
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(2)
     }
 
 
