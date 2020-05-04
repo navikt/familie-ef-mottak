@@ -45,8 +45,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun hentAktørId(personident: String): String {
-        val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
-        return response.getDataOrThrow().get("aktørId").toString() ?: error("Kan ikke finne aktørId")
+        val response = postForEntity<List<String>>(aktørUri, personident)
+        return response?.firstOrNull() ?: error("Kan ikke finne aktørId")
     }
 
 
@@ -74,7 +74,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_SEND_INN = "arkiv/v2"
         const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "/oppgave"
-        const val PATH_AKTØR = "/aktoer/v1"
+        const val PATH_AKTØR = "/personopplysning/aktorId/ENF"
     }
 
 }
