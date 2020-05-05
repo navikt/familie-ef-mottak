@@ -27,7 +27,8 @@ internal class IntegrasjonerClientTest {
 
     private val arkiverSøknadRequest = ArkiverDokumentRequest("123456789", true, listOf())
     private val arkiverDokumentResponse: ArkiverDokumentResponse = ArkiverDokumentResponse("wer", true)
-    private val uri = DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(IntegrasjonerClient.PATH_SEND_INN).build()
+    private val uri =
+            DefaultUriBuilderFactory().uriString(integrasjonerConfig.url).path(IntegrasjonerClient.PATH_SEND_INN).build()
 
 
     @Test

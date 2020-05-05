@@ -7,8 +7,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
-import java.time.LocalDateTime
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagOppgaveTask.LAG_OPPGAVE,
