@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.Periode
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -31,6 +32,8 @@ object Feltformaterer {
                 feltMap(entitet.label, adresseString(verdi))
             is LocalDate ->
                 feltMap(entitet.label, verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+            is LocalDateTime ->
+                feltMap(entitet.label, verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
             is Periode ->
                 feltMap(entitet.label, periodeString(verdi))
             else ->

@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.util.*
 
@@ -11,17 +12,23 @@ internal object Testdata {
     fun randomAktørId(): String = UUID.randomUUID().toString()
 
     val skjemaForArbeidssøker =
-            SkjemaForArbeidssøker(Søknadsfelt("Fødselsnummer", Fødselsnummer("04105635198")),
-                                  Søknadsfelt("Navn", "Bob Burger"),
+            SkjemaForArbeidssøker(Søknadsfelt("Søker",
+                                              PersonaliaArbeidssøker(Søknadsfelt("Fødselsnummer", Fødselsnummer("04105635198")),
+                                                                     Søknadsfelt("Navn", "Bob Burger"))),
                                   Søknadsfelt("Arbeidssøker",
-                                              Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos Nav?", true),
-                                                           Søknadsfelt("Er du villig til å ta imot tilbud om arbeid?", true),
+                                              Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos Nav?",
+                                                                       true),
+                                                           Søknadsfelt("Er du villig til å ta imot tilbud om arbeid?",
+                                                                       true),
                                                            Søknadsfelt("Kan du begynne innen en uke?", true),
                                                            Søknadsfelt("Kan du skaffe barnepass innen en uke?", true),
                                                            Søknadsfelt("Hvor ønsker du arbeid?", "Mordor"),
-                                                           Søknadsfelt("Ønsker du minst 50 prosent stilling?", true))))
+                                                           Søknadsfelt("Ønsker du minst 50 prosent stilling?",
+                                                                       true))),
+                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))))
 
     val søknad = Søknad(Søknadsfelt("Søker", personalia()),
+                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))),
                         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
                         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
                         Søknadsfelt("Bosituasjonen din", bosituasjon()),
