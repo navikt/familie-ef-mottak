@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.util.*
 
@@ -23,15 +24,16 @@ internal object Testdata {
                                                            Søknadsfelt("Hvor ønsker du arbeid?", "Mordor"),
 
                                                            Søknadsfelt("Ønsker du minst 50 prosent stilling?",
-                                                                       true))))
+                                                                       true))),
+                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))))
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
         return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("18068124693")),
                                       Søknadsfelt("Navn", "Navnesen"))
     }
 
-
     val søknad = Søknad(Søknadsfelt("Søker", personalia()),
+                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))),
                         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
                         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
                         Søknadsfelt("Bosituasjonen din", bosituasjon()),
