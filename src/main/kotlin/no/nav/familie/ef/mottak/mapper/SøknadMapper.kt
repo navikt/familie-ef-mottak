@@ -22,7 +22,7 @@ object SøknadMapper {
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Soknad {
         return Soknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
-                      fnr = skjemaForArbeidssøker.fødselsnummer.verdi.verdi,
+                      fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER)
     }
 }
