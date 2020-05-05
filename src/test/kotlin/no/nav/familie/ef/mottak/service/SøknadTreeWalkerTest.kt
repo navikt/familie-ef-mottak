@@ -54,7 +54,7 @@ class SøknadTreeWalkerTest {
         val mapSøknadsfelter = SøknadTreeWalker.mapSkjemafelter(skjemaForArbeidssøker)
 
         assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Skjema for arbeidssøker")
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Skjema for arbeidssøker - 15-08.01")
         assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(3)
     }
 

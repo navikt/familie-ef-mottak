@@ -12,20 +12,25 @@ internal object Testdata {
     fun randomAktørId(): String = UUID.randomUUID().toString()
 
     val skjemaForArbeidssøker =
-            SkjemaForArbeidssøker(Søknadsfelt("Søker",
-                                              PersonaliaArbeidssøker(Søknadsfelt("Fødselsnummer", Fødselsnummer("04105635198")),
-                                                                     Søknadsfelt("Navn", "Bob Burger"))),
+            SkjemaForArbeidssøker(Søknadsfelt("Søker", lagPersonaliaForArbeidssøker()),
                                   Søknadsfelt("Arbeidssøker",
                                               Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos Nav?",
                                                                        true),
                                                            Søknadsfelt("Er du villig til å ta imot tilbud om arbeid?",
                                                                        true),
                                                            Søknadsfelt("Kan du begynne innen en uke?", true),
-                                                           Søknadsfelt("Kan du skaffe barnepass innen en uke?", true),
+                                                           Søknadsfelt("Kan du skaffe barnepass innen en uke?",
+                                                                       true),
                                                            Søknadsfelt("Hvor ønsker du arbeid?", "Mordor"),
+
                                                            Søknadsfelt("Ønsker du minst 50 prosent stilling?",
                                                                        true))),
                                   Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))))
+
+    private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
+        return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("18068124693")),
+                                      Søknadsfelt("Navn", "Navnesen"))
+    }
 
     val søknad = Søknad(Søknadsfelt("Søker", personalia()),
                         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))),

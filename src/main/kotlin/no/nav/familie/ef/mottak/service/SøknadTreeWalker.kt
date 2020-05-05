@@ -53,7 +53,7 @@ object SøknadTreeWalker {
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
         val finnFelter = finnFelter(skjema)
-        return feltlisteMap("Skjema for arbeidssøker", finnFelter)
+        return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
     }
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {
