@@ -6,14 +6,11 @@ import no.nav.familie.kontrakter.ef.søknad.Periode
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 
 internal class FeltformatererTest {
-
 
 
     @Test
@@ -36,7 +33,7 @@ internal class FeltformatererTest {
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer List korrekt`() {
-        val testverdi = Søknadsfelt<List<*>>("label", listOf("Lille", "Grimme", "Arne", "Trenger", "Ris" ))
+        val testverdi = Søknadsfelt<List<*>>("label", listOf("Lille", "Grimme", "Arne", "Trenger", "Ris"))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
@@ -72,7 +69,7 @@ internal class FeltformatererTest {
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer LocalDateTime korrekt`() {
-        val testverdi = Søknadsfelt<LocalDateTime>("label", LocalDateTime.of(2015, 12, 5, 14,52,48))
+        val testverdi = Søknadsfelt<LocalDateTime>("label", LocalDateTime.of(2015, 12, 5, 14, 52, 48))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
@@ -87,8 +84,6 @@ internal class FeltformatererTest {
 
         assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra februar 2015 til juli 2018"))
     }
-
-
 
 
 }

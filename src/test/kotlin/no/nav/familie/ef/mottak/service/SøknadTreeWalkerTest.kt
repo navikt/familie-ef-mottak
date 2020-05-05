@@ -27,6 +27,7 @@ class SøknadTreeWalkerTest {
                                   "Dokumentasjon av studieopptak",
                                   "Dokumentasjon av arbeidsforhold")
     }
+
     @Test
     fun `finnDokumenter returnerer en tom liste hvis det ikke finnes noen dokumenter i en struktur`() {
         val skjemaForArbeidssøker = Testdata.skjemaForArbeidssøker
