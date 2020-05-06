@@ -24,8 +24,7 @@
         <mockk.version>1.10.0</mockk.version>
         <fasterxml.version>2.11.0</fasterxml.version>
         <felles.version>1.20200408151439_00385c3</felles.version>
-        <kontrakter.version>2.0_20200428101003_eadb204</kontrakter.version>
-        <kontrakter.søknad.version>2.0_20200505113108_5e54d5d</kontrakter.søknad.version>
+        <kontrakter.version>2.0_20200506100233_d9fe2c3</kontrakter.version>
         <token-validation.version>1.1.4</token-validation.version>
         <spring-cloud.version>2.2.2.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -157,7 +156,7 @@
         <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>
             <artifactId>enslig-forsorger</artifactId>
-            <version>${kontrakter.søknad.version}</version>
+            <version>${kontrakter.version}</version>
         </dependency>
 
         <!-- Database -->
