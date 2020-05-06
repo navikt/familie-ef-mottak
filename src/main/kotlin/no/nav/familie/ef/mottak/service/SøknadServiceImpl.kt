@@ -1,10 +1,14 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.SøknadClient
+import no.nav.familie.ef.mottak.mapper.SakMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.sak.Sak
+import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
 import org.springframework.data.repository.findByIdOrNull
@@ -27,10 +31,18 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     }
 
     override fun sendTilSak(søknadId: String) {
-
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
-        val kontraktssøknad: Søknad = SøknadMapper.toDto(soknad)
-        søknadClient.sendTilSak(kontraktssøknad)
+
+                if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
+                    val sak: Sak = SakMapper.toSak(soknad)
+                    søknadClient.sendTilSak(sak)
+
+                } else {
+                    val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
+                    søknadClient.sendTilSak(skjemasak)
+                }
+
+
     }
 
     @Transactional
