@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -23,6 +24,7 @@ object SøknadTreeWalker {
                              Periode::class,
                              Adresse::class,
                              LocalDate::class,
+                             LocalDateTime::class,
                              Month::class,
                              Long::class)
 
