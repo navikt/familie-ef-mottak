@@ -44,7 +44,7 @@ familie:
     integrasjoner:
       url: http://familie-integrasjoner/api/
     pdfgenerator:
-      url: https://familie-ef-dokgen.adeo.no/
+      url: https://familie-ef-dokgen.nais.adeo.no/
 
 no.nav.security.jwt:
   issuer:
