@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity

@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
-import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.Dokument
 import no.nav.familie.kontrakter.felles.arkivering.FilType
 
@@ -23,14 +23,12 @@ object ArkiverDokumentRequestMapper {
 
         val vedleggsdokumenter = SøknadTreeWalker.finnDokumenter(kontraktssøknad).map { tilDokument(it) }
 
-        // TODO legge til søknadsdokumentJson når integrasjoner takler flere variantfomater.
-        @Suppress("UNUSED_VARIABLE")
         val søknadsdokumentJson =
                 Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, "hoveddokument", soknad.dokumenttype)
         val søknadsdokumentPdf =
                 Dokument(soknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", soknad.dokumenttype)
-        val dokumenter: List<Dokument> = listOf(søknadsdokumentPdf) + vedleggsdokumenter
-        return ArkiverDokumentRequest(soknad.fnr, false, dokumenter)
+        val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)
+        return ArkiverDokumentRequest(soknad.fnr, false, hoveddokumentvarianter, vedleggsdokumenter)
     }
 
     private fun tilDokument(vedlegg: no.nav.familie.kontrakter.ef.søknad.Dokument): Dokument {
