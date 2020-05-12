@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.mockapi
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus

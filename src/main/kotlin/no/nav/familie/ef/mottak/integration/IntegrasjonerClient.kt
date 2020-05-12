@@ -5,7 +5,7 @@ import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
-import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
@@ -46,7 +46,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     fun hentAktørId(personident: String): String {
         val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
-        return response.getDataOrThrow().get("aktørId").toString() ?: error("Kan ikke finne aktørId")
+        return response.getDataOrThrow().get("aktørId").toString()
     }
 
 
@@ -71,7 +71,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     companion object {
-        const val PATH_SEND_INN = "arkiv/v2"
+        const val PATH_SEND_INN = "arkiv/v3"
         const val PATH_HENT_SAKSNUMMER = "/journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "/oppgave"
         const val PATH_AKTØR = "/aktoer/v1"
