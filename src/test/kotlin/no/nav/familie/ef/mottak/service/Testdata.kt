@@ -176,7 +176,7 @@ internal object Testdata {
                               Søknadsfelt("Har samme adresse som søker", true),
                               Søknadsfelt("Barnets andre forelder",
                                           AnnenForelder(person = Søknadsfelt("personalia", personMinimum()),
-                                                        adresse = adresseSøknadsfelt())),
+                                                        kanIkkeOppgiAnnenForelderFar = Søknadsfelt("kan ikke oppgi", false))),
                               Søknadsfelt("samvær",
                                           Samvær(Søknadsfelt("Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
                                                              true),
