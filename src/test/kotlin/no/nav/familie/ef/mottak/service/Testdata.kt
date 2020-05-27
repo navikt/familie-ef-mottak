@@ -249,8 +249,6 @@ internal object Testdata {
                                    dokumentfelt("Erklæring om samlivsbrudd"),
                                    Søknadsfelt("Dato for samlivsbrudd", LocalDate.of(2014, 10, 3)),
                                    Søknadsfelt("Når flyttet dere fra hverandre?", LocalDate.of(2014, 10, 4)),
-                                   Søknadsfelt("Spesifiser grunnen til at du er alene med barn?",
-                                               "Trives best alene"),
                                    Søknadsfelt("Når skjedde endringen / når skal endringen skje?",
                                                LocalDate.of(2013, 4, 17)))
     }
