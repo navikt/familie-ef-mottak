@@ -23,7 +23,7 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.10.0</mockk.version>
         <fasterxml.version>2.11.0</fasterxml.version>
-        <felles.version>1.20200519094152_75dba46</felles.version>
+        <felles.version>1.20200525161012_b74511c</felles.version>
         <kontrakter.version>2.0_20200526143954_169f375</kontrakter.version>
         <token-validation.version>1.1.5</token-validation.version>
         <spring-cloud.version>2.2.2.RELEASE</spring-cloud.version>
