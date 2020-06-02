@@ -22,7 +22,7 @@ class SlettSøknadFraMottakTask(private val soknadRepository: SoknadRepository) 
     }
 
     companion object {
-        const val SLETT_SØKNAD_FRA_MOTTAK_TASK = "SlettSøknadFraMottakTask"
+        const val SLETT_SØKNAD_FRA_MOTTAK_TASK = "slettSøknadFraMottak"
     }
 
 }
