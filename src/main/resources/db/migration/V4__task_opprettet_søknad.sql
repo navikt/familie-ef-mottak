@@ -1,7 +1,6 @@
 ALTER TABLE soknad
-    ADD
-        task_opprettet BOOLEAN NOT NULL DEFAULT FALSE,
-        opprettet_tid TIMESTAMP(3) NOT NULL DEFAULT localtimestamp;
+    ADD task_opprettet BOOLEAN      NOT NULL DEFAULT FALSE,
+    ADD opprettet_tid  TIMESTAMP(3) NOT NULL DEFAULT localtimestamp;
 
 UPDATE soknad
 SET task_opprettet = TRUE
