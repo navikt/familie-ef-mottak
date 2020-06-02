@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface SoknadRepository : JpaRepository<Soknad, String> {
 
-    @Query("SELECT s FROM Soknad s WHERE NOT exists (SELECT t FROM Task t WHERE s.id = t.payload)")
+    @Query("SELECT s FROM Soknad s where s.taskOpprettet = false ")
     fun finnAlleSøknaderUtenTask(): List<Soknad>
 }

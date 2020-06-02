@@ -6,7 +6,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "SOKNAD")
+@Table(name = "soknad")
 data class Soknad(@Id
                   val id: String = UUID.randomUUID().toString(),
                   @Convert(converter = StringValCryptoConverter::class)
@@ -19,5 +19,6 @@ data class Soknad(@Id
                   @Column(name = "journalpost_id")
                   val journalpostId: String? = null,
                   val saksnummer: String? = null,
-                  val fnr: String
-)
+                  val fnr: String,
+                  @Column(name = "task_opprettet")
+                  val taskOpprettet: Boolean = false)

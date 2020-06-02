@@ -16,9 +16,9 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
 
     @Scheduled(initialDelay = 10000, fixedDelay = 60000)
     fun opprettTaskForSøknad() {
-//        soknadRepository.finnAlleSøknaderUtenTask().forEach {
-//            opprettTask(it)
-//        }
+        soknadRepository.finnAlleSøknaderUtenTask().forEach {
+            opprettTask(it)
+        }
     }
 
     @Transactional
@@ -26,5 +26,6 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
         taskRepository.save(Task.nyTask(LAG_PDF,
                                         soknad.id,
                                         Properties().apply { this["søkersFødselsnummer"] = soknad.fnr }))
+        soknadRepository.save(soknad.copy(taskOpprettet = true))
     }
 }
