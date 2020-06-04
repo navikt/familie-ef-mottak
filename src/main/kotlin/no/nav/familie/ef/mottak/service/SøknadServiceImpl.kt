@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.ef.sak.Sak
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
                         private val søknadClient: SøknadClient) : SøknadService {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
     override fun motta(søknad: Søknad): Kvittering {
@@ -48,11 +51,11 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     @Transactional
     override fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
-        soknadRepository.save(søknadDb)
+        val lagretSkjema = soknadRepository.save(søknadDb)
+        logger.info("Mottatt skjema med id ${lagretSkjema.id}")
+
         return Kvittering("Skjema er mottatt og lagret med id ${søknadDb.id}.")
     }
-
-    data class OkDto(val status: String = "OK")
 
     override fun lagreSøknad(soknad: Soknad) {
         soknadRepository.save(soknad)
