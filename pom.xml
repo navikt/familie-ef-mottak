@@ -25,7 +25,7 @@
         <fasterxml.version>2.11.0</fasterxml.version>
         <felles.version>1.20200605142849_484da0c</felles.version>
         <kontrakter.version>2.0_20200612142944_231bc7c</kontrakter.version>
-        <token-validation.version>1.1.5</token-validation.version>
+        <token-validation.version>1.1.6</token-validation.version>
         <spring-cloud.version>2.2.3.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
