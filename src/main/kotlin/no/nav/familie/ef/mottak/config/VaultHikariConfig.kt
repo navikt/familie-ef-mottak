@@ -29,7 +29,7 @@ class VaultHikariConfig(private val container: SecretLeaseContainer,
                 hikariDataSource.password = password
 
                 hikariDataSource.hikariPoolMXBean?.let {
-                    log.info("Prøv hikariPoolMXBean.softEvictConnections() ")
+                    log.info("Prøver hikariPoolMXBean.softEvictConnections()")
                     hikariDataSource.hikariConfigMXBean.setUsername(username)
                     hikariDataSource.hikariConfigMXBean.setPassword(password)
                     it.softEvictConnections()
