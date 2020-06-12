@@ -270,7 +270,7 @@ internal object Testdata {
                                    "Norge"))
     }
 
-    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", Dokument(byteArrayOf(12), tittel))
+    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", listOf(Dokument(byteArrayOf(12), tittel)))
 
     private fun personMinimum(): PersonMinimum {
         return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),
