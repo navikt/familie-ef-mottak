@@ -18,6 +18,12 @@ familie:
     pdfgenerator:
       url: https://familie-ef-dokgen.dev-adeo.no/
 
+funksjonsbrytere:
+  enabled: false
+  unleash:
+    uri: http://localhost:4242/api
+    environment: local
+    applicationName: familie-ef-mottak
 
 logging:
   config: "classpath:logback-test.xml"

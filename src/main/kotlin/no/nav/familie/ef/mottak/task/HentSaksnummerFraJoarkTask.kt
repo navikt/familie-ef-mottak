@@ -1,10 +1,12 @@
 package no.nav.familie.ef.mottak.task
 
+import FeatureToggleService
 import no.nav.familie.ef.mottak.service.HentJournalpostService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
@@ -15,7 +17,10 @@ import java.time.LocalDateTime
                      maxAntallFeil = 100,
                      beskrivelse = "Hent saksnummer fra joark")
 class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
-                                 private val hentJournalpostService: HentJournalpostService) : AsyncTaskStep {
+                                 private val hentJournalpostService: HentJournalpostService,
+                                 private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
+
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
         try {
@@ -30,9 +35,16 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task =
-                Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload, task.metadata)
-        taskRepository.save(nesteTask)
+
+        if (featureToggleService.isEnabled("familie.ef.mottak.send-til-sak")) {
+            val nesteTask: Task =
+                    Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload, task.metadata)
+            taskRepository.save(nesteTask)
+        } else {
+            logger.info("Sender ikke søknad til sak, feature familie.ef.mottak.send-til-sak er skrudd av i Unleash")
+        }
+
+
     }
 
     companion object {
