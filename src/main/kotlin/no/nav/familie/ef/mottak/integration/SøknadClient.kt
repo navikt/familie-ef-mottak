@@ -1,11 +1,9 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
-import no.nav.familie.ef.mottak.service.SøknadServiceImpl
 import no.nav.familie.http.client.AbstractRestClient
-import no.nav.familie.kontrakter.ef.sak.Sak
+import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
-import no.nav.familie.kontrakter.ef.søknad.Søknad
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -22,7 +20,7 @@ class SøknadClient(@Qualifier("restTemplateAzure") operations: RestOperations,
 
     private val sendInnSkjemasakUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_SKJEMASAK).build()
 
-    fun sendTilSak(sak: Sak): HttpStatus? {
+    fun sendTilSak(sak: SakRequest): HttpStatus? {
         log.info("Sender søknad til {}", sendInnSakUri)
 
         try {

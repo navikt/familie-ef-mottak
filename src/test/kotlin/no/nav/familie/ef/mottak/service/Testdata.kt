@@ -43,6 +43,10 @@ internal object Testdata {
                         Søknadsfelt("Mer om situasjonen din", situasjon()),
                         Søknadsfelt("Når søker du stønad fra?", stønadsstart()))
 
+    private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
+
+    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "tittel", "vedlegg".toByteArray()))
+
     private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST), Søknadsfelt("Fra år", 2018))
 
     @Suppress("LongLine")
@@ -237,7 +241,7 @@ internal object Testdata {
                                    "Norge"))
     }
 
-    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", listOf(Dokument(byteArrayOf(12), tittel)))
+    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", listOf(Dokument(vedleggId, tittel)))
 
     private fun personMinimum(): PersonMinimum {
         return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),

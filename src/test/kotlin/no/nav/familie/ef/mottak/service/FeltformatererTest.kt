@@ -32,6 +32,15 @@ internal class FeltformatererTest {
     }
 
     @Test
+    fun `mapEndenodeTilUtskriftMap formaterer liste med Boolean korrekt`() {
+        val testverdi = Søknadsfelt("label", listOf(true, false))
+
+        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+
+        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Ja\n\nNei"))
+    }
+
+    @Test
     fun `mapEndenodeTilUtskriftMap formaterer List korrekt`() {
         val testverdi = Søknadsfelt<List<*>>("label", listOf("Lille", "Grimme", "Arne", "Trenger", "Ris"))
 
@@ -84,6 +93,5 @@ internal class FeltformatererTest {
 
         assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra februar 2015 til juli 2018"))
     }
-
 
 }

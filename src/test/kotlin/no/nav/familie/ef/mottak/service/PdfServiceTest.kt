@@ -27,7 +27,8 @@ internal class PdfServiceTest {
                                 fnr = "654",
                                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                                 journalpostId = null,
-                                saksnummer = null)
+                                saksnummer = null,
+                                vedlegg = createValidVedleggJson())
 
     @BeforeEach
     private fun init() {
@@ -74,6 +75,11 @@ internal class PdfServiceTest {
     private fun createValidSøknadJson(): String {
         val søknadDto = Testdata.søknad
         return objectMapper.writeValueAsString(søknadDto)
+    }
+
+    private fun createValidVedleggJson(): String {
+        val vedlegg = Testdata.vedlegg
+        return objectMapper.writeValueAsString(vedlegg)
     }
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>) {
