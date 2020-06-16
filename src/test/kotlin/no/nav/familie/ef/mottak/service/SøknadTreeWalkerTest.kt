@@ -16,7 +16,6 @@ class SøknadTreeWalkerTest {
                                   "separertEllerSkiltIUtlandetDokumentasjon",
                                   "Skilsmisse- eller separasjonsbevilling",
                                   "Avtale om delt bosted for barna",
-                                  "Avtale om samvær",
                                   "Erklæring om samlivsbrudd",
                                   "Bekreftelse på ventet fødselsdato",
                                   "Legeerklæring",
@@ -45,7 +44,7 @@ class SøknadTreeWalkerTest {
 
         assertThat(mapSøknadsfelter).isNotEmpty
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(11)
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(10)
     }
 
     @Test
