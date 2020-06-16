@@ -1,4 +1,4 @@
-package no.nav.familie.ef.søknad.config
+package no.nav.familie.ef.mottak.config
 
 import ByEnvironmentStrategy
 import FeatureToggleService
@@ -25,7 +25,7 @@ class FeatureToggleConfig(private val enabled: Boolean,
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Bean
+    @Bean("FeatureToggleService")
     fun featureToggle(): FeatureToggleService =
             if (enabled)
                 lagUnleashFeatureToggleService()
