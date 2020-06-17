@@ -21,4 +21,6 @@ data class Soknad(@Id
                   val saksnummer: String? = null,
                   val fnr: String,
                   @Column(name = "task_opprettet")
-                  val taskOpprettet: Boolean = false)
+                  val taskOpprettet: Boolean = false,
+                  @Convert(converter = StringValCryptoConverter::class)
+                  val vedlegg: String?)

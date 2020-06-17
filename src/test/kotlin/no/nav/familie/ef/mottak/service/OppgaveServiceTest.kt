@@ -37,7 +37,8 @@ internal class OppgaveServiceTest {
         } returns Soknad(søknadJson = "{}",
                          dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                          journalpostId = "999",
-                         fnr = Testdata.randomFnr())
+                         fnr = Testdata.randomFnr(),
+                         vedlegg = "[]")
 
 
         oppgaveService.lagOppgave("123")
@@ -57,7 +58,9 @@ internal class OppgaveServiceTest {
         } returns Soknad(søknadJson = "{}",
                          dokumenttype = DOKUMENTTYPE_VEDLEGG,
                          journalpostId = "999",
-                         fnr = Testdata.randomFnr())
+                         fnr = Testdata.randomFnr(),
+                         vedlegg = "[]"
+        )
 
         oppgaveService.lagOppgave("123")
 
@@ -76,7 +79,8 @@ internal class OppgaveServiceTest {
         } returns Soknad(søknadJson = "{}",
                          dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                          journalpostId = "999",
-                         fnr = Testdata.randomFnr())
+                         fnr = Testdata.randomFnr(),
+                         vedlegg = null)
 
         oppgaveService.lagOppgave("123")
 

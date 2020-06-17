@@ -7,10 +7,10 @@ import no.nav.familie.ef.mottak.mapper.SakMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.kontrakter.ef.sak.Sak
+import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
-import no.nav.familie.kontrakter.ef.søknad.Søknad
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -23,7 +23,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun motta(søknad: Søknad): Kvittering {
+    override fun motta(søknad: SøknadMedVedlegg): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad)
         soknadRepository.save(søknadDb)
         return Kvittering("Søknad lagret med id ${søknadDb.id} er registrert mottatt.")
@@ -36,14 +36,13 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun sendTilSak(søknadId: String) {
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
-                if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-                    val sak: Sak = SakMapper.toSak(soknad)
-                    søknadClient.sendTilSak(sak)
-
-                } else {
-                    val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
-                    søknadClient.sendTilSak(skjemasak)
-                }
+        if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
+            val sak: SakRequest = SakMapper.toSak(soknad)
+            søknadClient.sendTilSak(sak)
+        } else {
+            val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
+            søknadClient.sendTilSak(skjemasak)
+        }
 
 
     }

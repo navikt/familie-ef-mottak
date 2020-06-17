@@ -18,27 +18,29 @@ object Feltformaterer {
      * Håndterer formatering utover vanlig toString for endenodene
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
+        return feltMap(entitet.label, mapVerdi(entitet.verdi!!))
+    }
 
-        return when (val verdi = entitet.verdi!!) {
+    private fun mapVerdi(verdi: Any): String {
+        return when (verdi) {
             is Month ->
-                feltMap(entitet.label, displayName(verdi))
+                displayName(verdi)
             is Boolean ->
-                feltMap(entitet.label, if (verdi) "Ja" else "Nei")
+                if (verdi) "Ja" else "Nei"
             is List<*> ->
-                feltMap(entitet.label, verdi.joinToString("\n\n"))
+                verdi.joinToString("\n\n") { mapVerdi(it!!) }
             is Fødselsnummer ->
-                feltMap(entitet.label, verdi.verdi)
+                verdi.verdi
             is Adresse ->
-                feltMap(entitet.label, adresseString(verdi))
+                adresseString(verdi)
             is LocalDate ->
-                feltMap(entitet.label, verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             is LocalDateTime ->
-                feltMap(entitet.label, verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+                verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
             is Periode ->
-                feltMap(entitet.label, periodeString(verdi))
+                periodeString(verdi)
             else ->
-                feltMap(entitet.label, verdi.toString())
-
+                verdi.toString()
         }
     }
 

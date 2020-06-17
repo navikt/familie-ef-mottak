@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.kontrakter.ef.søknad.Søknad
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.security.token.support.core.api.Protected
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping
-    fun sendInn(@RequestBody søknad: Søknad): Kvittering {
+    fun sendInn(@RequestBody søknad: SøknadMedVedlegg): Kvittering {
         return søknadService.motta(søknad)
     }
 

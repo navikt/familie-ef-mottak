@@ -3,11 +3,11 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
-import no.nav.familie.kontrakter.ef.søknad.Søknad
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 
 interface SøknadService {
 
-    fun motta(søknad: Søknad): Kvittering
+    fun motta(søknad: SøknadMedVedlegg): Kvittering
 
     fun get(id: String): Soknad
 

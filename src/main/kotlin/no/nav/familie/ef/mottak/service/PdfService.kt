@@ -4,6 +4,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
+import no.nav.familie.ef.mottak.mapper.VedleggMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -26,7 +27,8 @@ class PdfService(private val soknadRepository: SoknadRepository, private val pdf
     private fun lagFeltMap(innsending: Soknad): Map<String, Any> {
         return if (innsending.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val dto = SøknadMapper.toDto<Søknad>(innsending)
-            SøknadTreeWalker.mapSøknadsfelter(dto)
+            val vedlegg = VedleggMapper.toDto(innsending)
+            SøknadTreeWalker.mapSøknadsfelter(dto, vedlegg)
         } else if (innsending.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
             SøknadTreeWalker.mapSkjemafelter(dto)
