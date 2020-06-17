@@ -25,7 +25,7 @@ class FeatureToggleConfig(private val enabled: Boolean,
 
     private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-    @Bean("FeatureToggleService")
+    @Bean
     fun featureToggle(): FeatureToggleService =
             if (enabled)
                 lagUnleashFeatureToggleService()
@@ -62,9 +62,6 @@ class FeatureToggleConfig(private val enabled: Boolean,
     private fun lagDummyFeatureToggleService(): FeatureToggleService {
         return object : FeatureToggleService {
             override fun isEnabled(toggleId: String, defaultValue: Boolean): Boolean {
-                if (unleash.environment == "local") {
-                    return true
-                }
                 return defaultValue
             }
         }

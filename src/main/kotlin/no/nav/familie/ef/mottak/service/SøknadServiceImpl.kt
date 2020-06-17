@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import FeatureToggleService
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.SøknadClient
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
-                        private val søknadClient: SøknadClient) : SøknadService {
+                        private val søknadClient: SøknadClient,
+                        private val featureToggleService: FeatureToggleService) : SøknadService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -36,14 +38,17 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun sendTilSak(søknadId: String) {
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
-                if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-                    val sak: Sak = SakMapper.toSak(soknad)
-                    søknadClient.sendTilSak(sak)
-
-                } else {
-                    val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
-                    søknadClient.sendTilSak(skjemasak)
-                }
+        if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
+            if (featureToggleService.isEnabled("familie.ef.mottak.send-til-sak")) {
+                val sak: Sak = SakMapper.toSak(soknad)
+                søknadClient.sendTilSak(sak)
+            } else {
+                logger.info("Sender ikke søknad til sak, feature familie.ef.mottak.send-til-sak er skrudd av i Unleash ")
+            }
+        } else {
+            val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
+            søknadClient.sendTilSak(skjemasak)
+        }
 
 
     }
