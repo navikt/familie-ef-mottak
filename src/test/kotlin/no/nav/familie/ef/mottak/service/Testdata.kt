@@ -47,7 +47,9 @@ internal object Testdata {
 
     val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "tittel", "vedlegg".toByteArray()))
 
-    private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST), Søknadsfelt("Fra år", 2018))
+    private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST),
+                                              Søknadsfelt("Fra år", 2018),
+                                              Søknadsfelt("Søke fra bestemt mnd", "JA"))
 
     @Suppress("LongLine")
     private fun situasjon(): Situasjon {
