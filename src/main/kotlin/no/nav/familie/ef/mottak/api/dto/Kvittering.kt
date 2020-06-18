@@ -1,3 +1,3 @@
 package no.nav.familie.ef.mottak.api.dto
 
-data class Kvittering(val text: String)
+data class Kvittering(val id: String, val text: String)
