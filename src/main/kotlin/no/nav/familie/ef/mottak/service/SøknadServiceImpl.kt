@@ -25,8 +25,8 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     @Transactional
     override fun motta(søknad: SøknadMedVedlegg): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad)
-        soknadRepository.save(søknadDb)
-        return Kvittering("Søknad lagret med id ${søknadDb.id} er registrert mottatt.")
+        val lagretSkjema = soknadRepository.save(søknadDb)
+        return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
     override fun get(id: String): Soknad {
@@ -53,7 +53,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         val lagretSkjema = soknadRepository.save(søknadDb)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
 
-        return Kvittering("Skjema er mottatt og lagret med id ${søknadDb.id}.")
+        return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
     }
 
     override fun lagreSøknad(soknad: Soknad) {
