@@ -37,14 +37,12 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-                val sak: SakRequest = SakMapper.toSak(soknad)
-                søknadClient.sendTilSak(sak)
+            val sak: SakRequest = SakMapper.toSak(soknad)
+            søknadClient.sendTilSak(sak)
         } else {
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
             søknadClient.sendTilSak(skjemasak)
         }
-
-
     }
 
     @Transactional

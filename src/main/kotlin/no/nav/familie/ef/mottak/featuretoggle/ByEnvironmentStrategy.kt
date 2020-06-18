@@ -1,3 +1,5 @@
+package no.nav.familie.ef.mottak.featuretoggle
+
 import no.finn.unleash.UnleashContext
 import no.finn.unleash.strategy.Strategy
 
