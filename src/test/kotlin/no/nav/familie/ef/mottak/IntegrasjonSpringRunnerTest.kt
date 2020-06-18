@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import no.nav.familie.ef.mottak.ApplicationLocal
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -27,8 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 ])
 abstract class IntegrasjonSpringRunnerTest {
 
-    protected val listAppender =
-            initLoggingEventListAppender()
+    protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
     protected val restTemplate = TestRestTemplate()
     protected val headers = HttpHeaders()
