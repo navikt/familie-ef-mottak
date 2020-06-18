@@ -1,4 +1,4 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.mockapi
+package no.nav.familie.ef.mottak.mockapi
 
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.SøknadService
