@@ -19,10 +19,10 @@ class SøknadTreeWalkerTest {
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any?>>
         assertThat(verdiliste).hasSize(11)
 
-        val sivilstandsplaner = verdiliste.first { it["label"] == "Detaljer om sivilstand" }["verdiliste"]
-        assertThat(sivilstandsplaner as List<Any?>)
-                .withFailMessage("Skal ikke ha med dokumenter")
-                .hasSize(8)
+        val sivilstand = verdiliste.first { it["label"] == "Detaljer om sivilstand" }["verdiliste"]
+        val verdi = (sivilstand as List<Map<String, Any>>).first { it["label"] == "giftIUtlandetDokumentasjon" }["verdi"]
+        assertThat(verdi).isEqualTo("Har allerede sendt inn dokumentasjon: Nei")
+                .withFailMessage("Dokumentasjon skal kun mappe verdiet på om man har sendt inn data tidligere")
     }
 
     @Test

@@ -18,6 +18,7 @@ object SøknadTreeWalker {
             setOf<KClass<*>>(String::class,
                              Int::class,
                              Boolean::class,
+                             Dokumentasjon::class,
                              Fødselsnummer::class,
                              Periode::class,
                              Adresse::class,

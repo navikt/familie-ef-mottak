@@ -1,9 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.Adresse
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
-import no.nav.familie.kontrakter.ef.søknad.Periode
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -29,6 +26,8 @@ object Feltformaterer {
                 if (verdi) "Ja" else "Nei"
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
+            is Dokumentasjon ->
+                "Har allerede sendt inn dokumentasjon: ${if (verdi.harSendtInnTidligere) "Ja" else "Nei"}"
             is Fødselsnummer ->
                 verdi.verdi
             is Adresse ->

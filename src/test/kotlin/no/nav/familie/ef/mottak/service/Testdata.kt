@@ -243,7 +243,8 @@ internal object Testdata {
                                    "Norge"))
     }
 
-    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", listOf(Dokument(vedleggId, tittel)))
+    private fun dokumentfelt(tittel: String) =
+            Søknadsfelt(tittel, Dokumentasjon(false, listOf(Dokument(vedleggId, tittel))))
 
     private fun personMinimum(): PersonMinimum {
         return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),
