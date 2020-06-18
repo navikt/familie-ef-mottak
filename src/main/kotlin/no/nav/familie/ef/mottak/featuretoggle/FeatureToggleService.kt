@@ -1,3 +1,5 @@
+package no.nav.familie.ef.mottak.featuretoggle
+
 interface FeatureToggleService {
 
     fun isEnabled(toggleId: String): Boolean {

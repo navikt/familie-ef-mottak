@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.config
 
 import ByEnvironmentStrategy
-import FeatureToggleService
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.finn.unleash.DefaultUnleash
 import no.finn.unleash.UnleashContext
 import no.finn.unleash.UnleashContextProvider
