@@ -4,9 +4,6 @@ server:
     context-path: /
 
 spring:
-  h2:
-    console:
-      enabled: true
   datasource:
     username: postgres
     password: test
