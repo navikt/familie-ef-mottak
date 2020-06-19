@@ -14,6 +14,8 @@ spring:
     banner-mode: "off"
   flyway:
     enabled: true
+    baseline-version: 6
+    ignore-missing-migrations: true
   datasource:
     url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
     hikari:
