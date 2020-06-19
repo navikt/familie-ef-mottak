@@ -49,7 +49,7 @@ internal object Testdata {
 
     private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST),
                                               Søknadsfelt("Fra år", 2018),
-                                              Søknadsfelt("Søke fra bestemt mnd", "JA"))
+                                              Søknadsfelt("Søke fra bestemt mnd", true))
 
     @Suppress("LongLine")
     private fun situasjon(): Situasjon {
