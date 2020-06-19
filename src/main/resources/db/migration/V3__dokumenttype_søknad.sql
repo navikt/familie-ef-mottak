@@ -1,3 +1,0 @@
-ALTER TABLE soknad
-    ADD
-        dokumenttype VARCHAR(256) NOT NULL DEFAULT N'OVERGANGSSTØNAD_SØKNAD'

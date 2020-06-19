@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.*
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
