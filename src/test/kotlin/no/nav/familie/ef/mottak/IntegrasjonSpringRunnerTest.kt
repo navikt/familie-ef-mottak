@@ -19,11 +19,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [ApplicationLocal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = [
-    "spring.datasource.url=jdbc:tc:postgresql:11.1:///",
-    "spring.datasource.username=",
-    "spring.datasource.password=",
-    "spring.h2.console.enabled=false",
-    "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect"
+    "spring.datasource.url=jdbc:h2:mem:mottakdb;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE",
+    "spring.datasrouce.username=sa",
+    "spring.datasrouce.password=",
+    "spring.datasrouce.driver-class-name: org.h2.Driver"
 ])
 abstract class IntegrasjonSpringRunnerTest {
 
