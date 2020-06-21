@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.Periode
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -26,8 +29,6 @@ object Feltformaterer {
                 if (verdi) "Ja" else "Nei"
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
-            is Dokumentasjon -> // TODO denne må endres, nå blir label og verdi konkatenert (dokumenter skal ikke være med her)
-                "${verdi.harSendtInnTidligere.label}: ${if (verdi.harSendtInnTidligere.verdi) "Ja" else "Nei"}"
             is Fødselsnummer ->
                 verdi.verdi
             is Adresse ->

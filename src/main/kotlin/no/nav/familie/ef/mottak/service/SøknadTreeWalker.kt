@@ -65,11 +65,11 @@ object SøknadTreeWalker {
                 .toList()
 
         if (entitet is Søknadsfelt<*>) {
+            if (entitet.verdi!! is Dokumentasjon) {
+                return listOf(mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>))
+            }
             if (entitet.verdi!!::class in endNodes) {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
-            }
-            if (entitet.verdi!! is Dokumentasjon) {
-                return emptyList()
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
@@ -80,6 +80,10 @@ object SøknadTreeWalker {
             return listOf(feltlisteMap(entitet.label, list))
         }
         return list
+    }
+
+    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): Map<String, *> {
+        return feltlisteMap(entitet.label, listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)))
     }
 
     private fun feltlisteMap(label: String, verdi: List<*>) = mapOf("label" to label, "verdiliste" to verdi)

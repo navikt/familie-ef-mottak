@@ -51,7 +51,7 @@ class SøknadTreeWalkerTest {
     }
 
     @Test
-    fun `mapSøknadsfelter mot expected json slik det er mulig å se endringer i pdf`() {
+    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR`() {
         val søknad = Testdata.søknad
 
         val vedlegg = listOf(Vedlegg("id", "navn.pdf", "Dokumentasjon på at du er syk", byteArrayOf(12)))

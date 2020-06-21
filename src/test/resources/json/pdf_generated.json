@@ -34,13 +34,19 @@
       "verdi" : "Ja"
     }, {
       "label" : "giftIUtlandetDokumentasjon",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Er du separert eller skilt uten at dette er formelt registrert eller godkjent i Norge?",
       "verdi" : "Ja"
     }, {
       "label" : "separertEllerSkiltIUtlandetDokumentasjon",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?",
       "verdi" : "Ja"
@@ -49,13 +55,19 @@
       "verdi" : "23.12.2015"
     }, {
       "label" : "Skilsmisse- eller separasjonsbevilling",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Hva er grunnen til at du er alene med barn?",
       "verdi" : "Endring i samværsordning"
     }, {
       "label" : "Erklæring om samlivsbrudd",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Dato for samlivsbrudd",
       "verdi" : "03.10.2014"
@@ -145,7 +157,10 @@
       "verdi" : "16.05.2020"
     }, {
       "label" : "Bekreftelse på ventet fødselsdato",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Barnets andre forelder",
       "verdiliste" : [ {
@@ -162,7 +177,10 @@
         "verdi" : "Ja"
       }, {
         "label" : "Avtale om delt bosted for barna",
-        "verdi" : "harSendtInn: Nei"
+        "verdiliste" : [ {
+          "label" : "harSendtInn",
+          "verdi" : "Nei"
+        } ]
       }, {
         "label" : "Har den andre forelderen samvær med barnet",
         "verdi" : "Ja, men ikke mer enn vanlig samværsrett"
@@ -171,10 +189,16 @@
         "verdi" : "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"
       }, {
         "label" : "Avtale om samvær",
-        "verdi" : "harSendtInn: Nei"
+        "verdiliste" : [ {
+          "label" : "harSendtInn",
+          "verdi" : "Nei"
+        } ]
       }, {
         "label" : "Skal barnet bo hos deg",
-        "verdi" : "harSendtInn: Nei"
+        "verdiliste" : [ {
+          "label" : "harSendtInn",
+          "verdi" : "Nei"
+        } ]
       }, {
         "label" : "Hvordan praktiserer dere samværet?",
         "verdi" : "Litt hver for oss"
@@ -192,7 +216,10 @@
         "verdi" : "21.07.2018"
       }, {
         "label" : "Erklæring om samlivsbrudd",
-        "verdi" : "harSendtInn: Nei"
+        "verdiliste" : [ {
+          "label" : "harSendtInn",
+          "verdi" : "Nei"
+        } ]
       }, {
         "label" : "Hvor mye er du sammen med den andre forelderen til barnet?",
         "verdi" : "Vi møtes også uten at barnet er til stede"
@@ -270,7 +297,10 @@
         "verdi" : "Ja"
       }, {
         "label" : "Dokumentasjon - ikke villig til å ta import tilbud om arbeid",
-        "verdi" : "harSendtInn: Nei"
+        "verdiliste" : [ {
+          "label" : "harSendtInn",
+          "verdi" : "Nei"
+        } ]
       } ]
     }, {
       "label" : "Utdanningen du skal ta",
@@ -319,28 +349,49 @@
       "verdi" : "Barnet mitt er sykt\n\nJeg har søkt om barnepass, men ikke fått plass enda\n\nJeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer"
     }, {
       "label" : "Legeerklæring",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Legeattest for egen sykdom eller sykt barn",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Avslag på søknad om barnehageplass, skolefritidsordning e.l.",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Dokumentasjon av særlig tilsynsbehov",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Dokumentasjon av studieopptak",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Læringskontrakt",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Når skal du starte i ny jobb?",
       "verdi" : "16.12.2045"
     }, {
       "label" : "Dokumentasjon av jobbtilbud",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     }, {
       "label" : "Når skal du starte utdanningen?",
       "verdi" : "28.07.2025"
@@ -355,7 +406,10 @@
       "verdi" : "12.01.2014"
     }, {
       "label" : "Dokumentasjon av arbeidsforhold",
-      "verdi" : "harSendtInn: Nei"
+      "verdiliste" : [ {
+        "label" : "harSendtInn",
+        "verdi" : "Nei"
+      } ]
     } ]
   }, {
     "label" : "Når søker du stønad fra?",
