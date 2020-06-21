@@ -27,7 +27,7 @@ object Feltformaterer {
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
             is Dokumentasjon ->
-                "Har allerede sendt inn dokumentasjon: ${if (verdi.harSendtInnTidligere) "Ja" else "Nei"}"
+                "${verdi.harSendtInnTidligere.label}: ${if (verdi.harSendtInnTidligere.verdi) "Ja" else "Nei"}"
             is Fødselsnummer ->
                 verdi.verdi
             is Adresse ->

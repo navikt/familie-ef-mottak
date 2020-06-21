@@ -45,11 +45,11 @@ internal object Testdata {
 
     private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
-    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "tittel", "vedlegg".toByteArray()))
+    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk", "vedlegg".toByteArray()))
 
     private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST),
                                               Søknadsfelt("Fra år", 2018),
-                                              Søknadsfelt("Søke fra bestemt mnd", "JA"))
+                                              Søknadsfelt("Søke fra bestemt mnd", true))
 
     @Suppress("LongLine")
     private fun situasjon(): Situasjon {
@@ -244,7 +244,7 @@ internal object Testdata {
     }
 
     private fun dokumentfelt(tittel: String) =
-            Søknadsfelt(tittel, Dokumentasjon(false, listOf(Dokument(vedleggId, tittel))))
+            Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(vedleggId, tittel))))
 
     private fun personMinimum(): PersonMinimum {
         return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),

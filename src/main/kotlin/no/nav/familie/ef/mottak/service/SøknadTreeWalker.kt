@@ -30,8 +30,14 @@ object SøknadTreeWalker {
     fun mapSøknadsfelter(søknad: Søknad,
                          vedlegg: List<Vedlegg>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedleggFelter = mapOf("Vedlegg" to vedlegg.map { "${it.tittel}, ${it.navn}" })
-        return feltlisteMap("Søknad enslig forsørger", finnFelter + vedleggFelter)
+        return feltlisteMap("Søknad enslig forsørger", finnFelter + mapVedlegg(vedlegg))
+    }
+
+    fun mapVedlegg(vedlegg: List<Vedlegg>): Map<String, Any> {
+        val vedleggMap = vedlegg.groupBy { it.tittel }
+        val toList = vedleggMap.map { (key, value) ->
+            feltlisteMap(key, value.map { mapOf("label" to "Filnavn", "verdi" to it.navn) } ) }.toList()
+        return feltlisteMap("Vedlegg", toList)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
@@ -62,15 +68,11 @@ object SøknadTreeWalker {
             if (entitet.verdi!!::class in endNodes) {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
             }
-            if (entitet.verdi!! is Dokument) {
+            if (entitet.verdi!! is Dokumentasjon) {
                 return emptyList()
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
-                // filtrerer bort lister som er tomme, eller som inneholder Dokument
-                if (verdiliste.isEmpty() || verdiliste.first() is Dokument) {
-                    return emptyList()
-                }
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
