@@ -7,7 +7,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_VEDLEGG
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.junit.jupiter.api.BeforeEach

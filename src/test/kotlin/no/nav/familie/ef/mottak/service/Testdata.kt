@@ -1,4 +1,4 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
+package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
@@ -99,17 +99,22 @@ internal object Testdata {
                                      Virksomhet(Søknadsfelt("Beskriv virksomheten",
                                                             "Den kommer til å revolusjonere verden"))),
                          Søknadsfelt("Når du er arbeidssøker",
-                                     Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos NAV?", true),
-                                                  Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
+                                     Arbeidssøker(registrertSomArbeidssøkerNav = Søknadsfelt("Er du registrert som arbeidssøker hos NAV?",
+                                                                                             true),
+                                                  villigTilÅTaImotTilbudOmArbeid = Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
                                                               true),
-                                                  Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-                                                              true),
-                                                  Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-                                                              false),
-                                                  Søknadsfelt("Hvor ønsker du å søke arbeid?",
-                                                              "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"),
-                                                  Søknadsfelt("Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-                                                              true))),
+                                                  kanDuBegynneInnenEnUke = Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
+                                                                                       true),
+                                                  kanDuSkaffeBarnepassInnenEnUke = Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
+                                                                                               false),
+                                                  hvorØnskerDuArbeid = Søknadsfelt("Hvor ønsker du å søke arbeid?",
+                                                                                   "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"),
+                                                  ønskerDuMinst50ProsentStilling = Søknadsfelt("Ønsker du å stå som arbeidssøker til minst 50% stilling?",
+                                                                                               true),
+                                                  ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon = dokumentfelt("Dokumentasjon - ikke villig til å ta import tilbud om arbeid")
+                                     )
+
+                         ),
                          Søknadsfelt("Utdanningen du skal ta",
                                      UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
                                                     Søknadsfelt("Utdanning",

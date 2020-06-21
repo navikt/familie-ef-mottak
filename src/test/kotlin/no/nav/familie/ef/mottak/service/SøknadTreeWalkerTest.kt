@@ -1,4 +1,4 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
+package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils.readFile
 import no.nav.familie.ef.mottak.service.SøknadTreeWalker
