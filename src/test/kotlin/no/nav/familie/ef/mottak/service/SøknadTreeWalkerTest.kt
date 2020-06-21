@@ -20,11 +20,6 @@ class SøknadTreeWalkerTest {
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any?>>
         assertThat(verdiliste).hasSize(11)
-
-        val sivilstand = verdiliste.first { it["label"] == "Detaljer om sivilstand" }["verdiliste"]
-        val verdi = (sivilstand as List<Map<String, Any>>).first { it["label"] == "giftIUtlandetDokumentasjon" }["verdi"]
-        assertThat(verdi).isEqualTo("harSendtInn: Nei")
-                .withFailMessage("Dokumentasjon skal kun mappe verdiet på om man har sendt inn data tidligere")
     }
 
     @Test
