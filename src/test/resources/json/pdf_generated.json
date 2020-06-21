@@ -425,6 +425,9 @@
     } ]
   }, {
     "label" : "Vedlegg",
-    "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"
+    "verdiliste" : [ {
+      "label" : "Vedlegg",
+      "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"
+    } ]
   } ]
 }

@@ -30,7 +30,8 @@ object SøknadTreeWalker {
     fun mapSøknadsfelter(søknad: Søknad,
                          vedlegg: List<Vedlegg>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        return feltlisteMap("Søknad enslig forsørger", finnFelter + Feltformaterer.mapVedlegg(vedlegg))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedlegg)))
+        return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
