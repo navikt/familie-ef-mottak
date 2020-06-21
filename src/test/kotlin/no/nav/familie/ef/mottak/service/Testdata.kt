@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
 import java.util.*
 
@@ -10,6 +9,7 @@ internal object Testdata {
 
     fun randomFnr(): String = UUID.randomUUID().toString()
     fun randomAktørId(): String = UUID.randomUUID().toString()
+    private val mottat = LocalDate.of(2020, 1, 1).atStartOfDay()
 
     val skjemaForArbeidssøker =
             SkjemaForArbeidssøker(Søknadsfelt("Søker", lagPersonaliaForArbeidssøker()),
@@ -25,7 +25,7 @@ internal object Testdata {
 
                                                            Søknadsfelt("Ønsker du minst 50 prosent stilling?",
                                                                        true))),
-                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))))
+                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))))
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
         return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("18068124693")),
@@ -33,7 +33,7 @@ internal object Testdata {
     }
 
     val søknad = Søknad(Søknadsfelt("Søker", personalia()),
-                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))),
+                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
                         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
                         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
                         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -102,7 +102,7 @@ internal object Testdata {
                                      Arbeidssøker(registrertSomArbeidssøkerNav = Søknadsfelt("Er du registrert som arbeidssøker hos NAV?",
                                                                                              true),
                                                   villigTilÅTaImotTilbudOmArbeid = Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-                                                              true),
+                                                                                               true),
                                                   kanDuBegynneInnenEnUke = Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
                                                                                        true),
                                                   kanDuSkaffeBarnepassInnenEnUke = Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",

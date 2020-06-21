@@ -26,7 +26,7 @@ object Feltformaterer {
                 if (verdi) "Ja" else "Nei"
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
-            is Dokumentasjon ->
+            is Dokumentasjon -> // TODO denne må endres, nå blir label og verdi konkatenert (dokumenter skal ikke være med her)
                 "${verdi.harSendtInnTidligere.label}: ${if (verdi.harSendtInnTidligere.verdi) "Ja" else "Nei"}"
             is Fødselsnummer ->
                 verdi.verdi
