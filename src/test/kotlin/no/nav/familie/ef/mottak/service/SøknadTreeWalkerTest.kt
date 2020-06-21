@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils.readFile
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -49,10 +50,13 @@ class SøknadTreeWalkerTest {
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR`() {
         val søknad = Testdata.søknad
 
-        val vedlegg = listOf(Vedlegg("id", "navn.pdf", "Dokumentasjon på at du er syk", byteArrayOf(12)))
+        val vedlegg = listOf(Vedlegg("id", "navn.pdf", "Dokumentasjon på at du er syk", byteArrayOf(12)),
+                             Vedlegg("id", "navn.pdf", "Dokumentasjon på at du er syk", byteArrayOf(12)),
+                             Vedlegg("id", "navn.pdf", "Dokumentasjon på at kan arbeide", byteArrayOf(12)))
         val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
-        Files.write(Path.of("src/test/resources/json/pdf_generated.json"),
-                    objectMapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(mapSøknadsfelter))
+        val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
+        //Files.write(Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
+        assertThat(pdf).isEqualTo(readFile("pdf_generated.json"))
     }
 
 }

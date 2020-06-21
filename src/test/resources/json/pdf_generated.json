@@ -425,12 +425,6 @@
     } ]
   }, {
     "label" : "Vedlegg",
-    "verdiliste" : [ {
-      "label" : "Dokumentasjon på at du er syk",
-      "verdiliste" : [ {
-        "label" : "Filnavn",
-        "verdi" : "navn.pdf"
-      } ]
-    } ]
+    "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"
   } ]
 }

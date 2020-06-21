@@ -30,14 +30,7 @@ object SøknadTreeWalker {
     fun mapSøknadsfelter(søknad: Søknad,
                          vedlegg: List<Vedlegg>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        return feltlisteMap("Søknad enslig forsørger", finnFelter + mapVedlegg(vedlegg))
-    }
-
-    fun mapVedlegg(vedlegg: List<Vedlegg>): Map<String, Any> {
-        val vedleggMap = vedlegg.groupBy { it.tittel }
-        val toList = vedleggMap.map { (key, value) ->
-            feltlisteMap(key, value.map { mapOf("label" to "Filnavn", "verdi" to it.navn) } ) }.toList()
-        return feltlisteMap("Vedlegg", toList)
+        return feltlisteMap("Søknad enslig forsørger", finnFelter + Feltformaterer.mapVedlegg(vedlegg))
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
