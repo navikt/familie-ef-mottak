@@ -18,6 +18,7 @@ object SøknadTreeWalker {
             setOf<KClass<*>>(String::class,
                              Int::class,
                              Boolean::class,
+                             Dokumentasjon::class,
                              Fødselsnummer::class,
                              Periode::class,
                              Adresse::class,
@@ -29,8 +30,7 @@ object SøknadTreeWalker {
     fun mapSøknadsfelter(søknad: Søknad,
                          vedlegg: List<Vedlegg>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedleggFelter = mapOf("Vedlegg" to vedlegg.map { "${it.tittel}, ${it.navn}" })
-        return feltlisteMap("Søknad enslig forsørger", finnFelter + vedleggFelter)
+        return feltlisteMap("Søknad enslig forsørger", finnFelter + Feltformaterer.mapVedlegg(vedlegg))
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
@@ -58,18 +58,14 @@ object SøknadTreeWalker {
                 .toList()
 
         if (entitet is Søknadsfelt<*>) {
+            if (entitet.verdi!! is Dokumentasjon) {
+                return listOf(mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>))
+            }
             if (entitet.verdi!!::class in endNodes) {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
             }
-            if (entitet.verdi!! is Dokument) {
-                return emptyList()
-            }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
-                // filtrerer bort lister som er tomme, eller som inneholder Dokument
-                if (verdiliste.isEmpty() || verdiliste.first() is Dokument) {
-                    return emptyList()
-                }
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
@@ -77,6 +73,10 @@ object SøknadTreeWalker {
             return listOf(feltlisteMap(entitet.label, list))
         }
         return list
+    }
+
+    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): Map<String, *> {
+        return feltlisteMap(entitet.label, listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)))
     }
 
     private fun feltlisteMap(label: String, verdi: List<*>) = mapOf("label" to label, "verdiliste" to verdi)
