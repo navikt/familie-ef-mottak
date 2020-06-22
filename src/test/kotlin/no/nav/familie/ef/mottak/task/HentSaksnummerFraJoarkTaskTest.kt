@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,8 +12,12 @@ import java.util.*
 
 internal class HentSaksnummerFraJoarkTaskTest {
 
-    val taskRepository: TaskRepository = mockk()
-    val hentSaksnummerFraJoarkTask: HentSaksnummerFraJoarkTask = HentSaksnummerFraJoarkTask(taskRepository, mockk())
+    private val taskRepository: TaskRepository = mockk()
+    private val featureToggleService: FeatureToggleService = mockk()
+    private val hentSaksnummerFraJoarkTask: HentSaksnummerFraJoarkTask = HentSaksnummerFraJoarkTask(taskRepository,
+                                                                                                    mockk(),
+                                                                                                    featureToggleService)
+
 
     @Test
     fun `Skal gå til SendSøknadTilSakTask når HentSaksnummerFraJoark er utført`() {
@@ -22,6 +27,9 @@ internal class HentSaksnummerFraJoarkTaskTest {
         } answers {
             slot.captured
         }
+        every {
+            featureToggleService.isEnabled(any())
+        } returns true
 
         hentSaksnummerFraJoarkTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
 
