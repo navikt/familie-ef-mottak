@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
 import java.util.*
 
@@ -10,6 +9,7 @@ internal object Testdata {
 
     fun randomFnr(): String = UUID.randomUUID().toString()
     fun randomAktørId(): String = UUID.randomUUID().toString()
+    private val mottat = LocalDate.of(2020, 1, 1).atStartOfDay()
 
     val skjemaForArbeidssøker =
             SkjemaForArbeidssøker(Søknadsfelt("Søker", lagPersonaliaForArbeidssøker()),
@@ -25,7 +25,7 @@ internal object Testdata {
 
                                                            Søknadsfelt("Ønsker du minst 50 prosent stilling?",
                                                                        true))),
-                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))))
+                                  Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))))
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
         return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("18068124693")),
@@ -33,7 +33,7 @@ internal object Testdata {
     }
 
     val søknad = Søknad(Søknadsfelt("Søker", personalia()),
-                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", LocalDateTime.now()))),
+                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
                         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
                         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
                         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -45,7 +45,7 @@ internal object Testdata {
 
     private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
-    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "tittel", "vedlegg".toByteArray()))
+    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk", "vedlegg".toByteArray()))
 
     private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST),
                                               Søknadsfelt("Fra år", 2018),
@@ -99,17 +99,22 @@ internal object Testdata {
                                      Virksomhet(Søknadsfelt("Beskriv virksomheten",
                                                             "Den kommer til å revolusjonere verden"))),
                          Søknadsfelt("Når du er arbeidssøker",
-                                     Arbeidssøker(Søknadsfelt("Er du registrert som arbeidssøker hos NAV?", true),
-                                                  Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-                                                              true),
-                                                  Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-                                                              true),
-                                                  Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-                                                              false),
-                                                  Søknadsfelt("Hvor ønsker du å søke arbeid?",
-                                                              "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"),
-                                                  Søknadsfelt("Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-                                                              true))),
+                                     Arbeidssøker(registrertSomArbeidssøkerNav = Søknadsfelt("Er du registrert som arbeidssøker hos NAV?",
+                                                                                             true),
+                                                  villigTilÅTaImotTilbudOmArbeid = Søknadsfelt("Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
+                                                                                               true),
+                                                  kanDuBegynneInnenEnUke = Søknadsfelt("Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
+                                                                                       true),
+                                                  kanDuSkaffeBarnepassInnenEnUke = Søknadsfelt("Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
+                                                                                               false),
+                                                  hvorØnskerDuArbeid = Søknadsfelt("Hvor ønsker du å søke arbeid?",
+                                                                                   "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"),
+                                                  ønskerDuMinst50ProsentStilling = Søknadsfelt("Ønsker du å stå som arbeidssøker til minst 50% stilling?",
+                                                                                               true),
+                                                  ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon = dokumentfelt("Dokumentasjon - ikke villig til å ta import tilbud om arbeid")
+                                     )
+
+                         ),
                          Søknadsfelt("Utdanningen du skal ta",
                                      UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
                                                     Søknadsfelt("Utdanning",
@@ -243,7 +248,8 @@ internal object Testdata {
                                    "Norge"))
     }
 
-    private fun dokumentfelt(tittel: String) = Søknadsfelt("Dokument", listOf(Dokument(vedleggId, tittel)))
+    private fun dokumentfelt(tittel: String) =
+            Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(vedleggId, tittel))))
 
     private fun personMinimum(): PersonMinimum {
         return PersonMinimum(Søknadsfelt("Navn", "Bob Burger"),
