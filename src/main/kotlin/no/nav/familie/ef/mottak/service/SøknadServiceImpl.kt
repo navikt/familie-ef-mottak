@@ -43,8 +43,6 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
             søknadClient.sendTilSak(skjemasak)
         }
-
-
     }
 
     @Transactional
