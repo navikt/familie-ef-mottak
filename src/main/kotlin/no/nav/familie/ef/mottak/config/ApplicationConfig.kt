@@ -19,7 +19,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.web.client.RestOperations
-import springfox.documentation.swagger2.annotations.EnableSwagger2
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc
 
 @SpringBootConfiguration
 @ComponentScan("no.nav.familie.prosessering",
@@ -30,7 +30,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EntityScan(basePackages = ["no.nav.familie"])
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
-@EnableSwagger2
+@EnableSwagger2WebMvc
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
 @Import(BearerTokenClientInterceptor::class,
         MdcValuesPropagatingClientInterceptor::class,
