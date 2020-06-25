@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 
 @Service
 @TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
-                     maxAntallFeil = 100,
+                     maxAntallFeil = 15,
                      beskrivelse = "Hent saksnummer fra joark")
 class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
                                  private val hentJournalpostService: HentJournalpostService,
@@ -27,7 +27,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
         } catch (notFound: HttpClientErrorException.NotFound) {
             LOG.info("Hent saksnummer returnerte 404 response body={}",
                      notFound.responseBodyAsString)
-            val copy = task.copy(triggerTid = LocalDateTime.now().plusMinutes(15))
+            val copy = task.copy(triggerTid = LocalDateTime.now().plusHours(12))
             taskRepository.save(copy)
             throw notFound
         }
