@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface SoknadRepository : JpaRepository<Soknad, String> {
 
-    fun findFirstByTaskOpprettetIsFalse(): Soknad
+    fun findFirstByTaskOpprettetIsFalse(): Soknad?
 
 }

@@ -22,10 +22,12 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
     fun opprettTaskForSøknad() {
         val soknad = soknadRepository.findFirstByTaskOpprettetIsFalse()
         try {
-            opprettTask(soknad)
-            logger.info("Task opprettet for søknad med id ${soknad.id}")
+            soknad?.let {
+                opprettTask(it)
+                logger.info("Task opprettet for søknad med id ${it.id}")
+            }
         } catch (e: DataIntegrityViolationException) {
-            logger.info("ConstraintViolation ved forsøk på å opprette task for søknad med id ${soknad.id}")
+            logger.info("ConstraintViolation ved forsøk på å opprette task for søknad med id ${soknad?.id}")
         }
     }
 
