@@ -37,6 +37,6 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val soknadUtenTask = soknadRepository.findFirstByTaskOpprettetIsFalse()
 
-        assertThat(soknadUtenTask.taskOpprettet).isFalse()
+        assertThat(soknadUtenTask?.taskOpprettet).isFalse()
     }
 }
