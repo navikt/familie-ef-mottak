@@ -18,7 +18,7 @@ object SøknadMapper {
         return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad.søknad),
                       fnr = kontraktssøknad.søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                      vedlegg = null)
+                      vedlegg = objectMapper.writeValueAsString(kontraktssøknad.vedlegg))
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Soknad {
