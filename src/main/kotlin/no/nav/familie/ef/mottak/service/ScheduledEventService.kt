@@ -19,6 +19,7 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(initialDelay = 10000, fixedDelay = 60000)
+    @Transactional
     fun opprettTaskForSøknad() {
         val soknad = soknadRepository.findFirstByTaskOpprettetIsFalse()
         try {
@@ -31,7 +32,6 @@ class ScheduledEventService(private val taskRepository: TaskRepository,
         }
     }
 
-    @Transactional
     fun opprettTask(soknad: Soknad) {
         taskRepository.save(Task.nyTask(LAG_PDF, soknad.id, Properties().apply { this["søkersFødselsnummer"] = soknad.fnr }))
         soknadRepository.save(soknad.copy(taskOpprettet = true))
