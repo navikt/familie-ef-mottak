@@ -6,7 +6,10 @@ import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.mapper.SakMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
+                        private val vedleggRepository: VedleggRepository,
                         private val søknadClient: SøknadClient) : SøknadService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -26,6 +30,10 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun motta(søknad: SøknadMedVedlegg): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad)
         val lagretSkjema = soknadRepository.save(søknadDb)
+        val vedlegg = søknad.vedlegg.map {
+            Vedlegg(søknadId = lagretSkjema.id, navn = it.navn, tittel = it.tittel, innhold = Fil(it.bytes))
+        }
+        vedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
