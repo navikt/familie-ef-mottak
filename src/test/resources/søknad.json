@@ -296,10 +296,6 @@
           "label": "Barnets andre forelder",
           "verdiliste": [
             {
-              "label": "Jeg kan ikke oppgi den andre forelderen",
-              "verdi": "Ja"
-            },
-            {
               "label": "Hvorfor kan du ikke oppgi den andre forelderen?",
               "verdi": "Fordi jeg ikke liker hen."
             }
