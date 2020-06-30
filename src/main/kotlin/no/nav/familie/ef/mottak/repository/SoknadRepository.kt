@@ -13,7 +13,6 @@ interface SoknadRepository : JpaRepository<Soknad, String> {
 
     fun findFirstByVedleggIsNotNull(): Soknad?
 
-    @Query("""SELECT count(s.id) FROM Soknad s WHERE s.taskOpprettet = 'false' AND s.opprettetTid=:opprettetTid""")
-    fun finnAntallSoknaderSomIkkeHarOpprettetTask(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
+    fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
 }

@@ -15,6 +15,6 @@ class TaskMetricService(private val taskMetricRepository: TaskMetricRepository,
         taskMetricRepository.finnFeiledeTasks().forEach {
             Metrics.gauge("tasks_${it.taskStepType}_feilet", it.count)
         }
-        Metrics.gauge("soknad_task_ikke_opprettet", soknadRepository.finnAntallSoknaderSomIkkeHarOpprettetTask())
+        Metrics.gauge("soknad_task_ikke_opprettet", soknadRepository.countByTaskOpprettetFalseAndOpprettetTidBefore())
     }
 }
