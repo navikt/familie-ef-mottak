@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -23,4 +24,6 @@ data class Soknad(@Id
                   @Column(name = "task_opprettet")
                   val taskOpprettet: Boolean = false,
                   @Convert(converter = StringValCryptoConverter::class)
-                  val vedlegg: String?)
+                  val vedlegg: String?,
+                  @Column(name = "opprettet_tid")
+                  val opprettetTid: LocalDateTime = LocalDateTime.now())
