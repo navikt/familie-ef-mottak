@@ -10,12 +10,12 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ScheduledEventServiceTest {
+internal class TaskServiceTest {
 
     val taskRepository: TaskRepository = mockk(relaxed = true)
     val soknadRepository: SoknadRepository = mockk(relaxed = true)
 
-    val scheduledEventService = ScheduledEventService(taskRepository, soknadRepository)
+    val scheduledEventService = TaskService(taskRepository, soknadRepository)
 
     @Test
     fun `opprettTask oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
@@ -27,7 +27,7 @@ internal class ScheduledEventServiceTest {
         every { soknadRepository.save(capture(soknadSlot)) }
                 .answers { soknadSlot.captured }
 
-        scheduledEventService.opprettTask(soknad)
+        scheduledEventService.opprettTaskForSoknad(soknad)
 
         assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
         assertThat(soknadSlot.captured.taskOpprettet).isTrue()
