@@ -7,7 +7,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 
 interface SøknadService {
 
-    fun motta(søknad: SøknadMedVedlegg): Kvittering
+    fun motta(søknad: SøknadMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering
 
     fun get(id: String): Soknad
 
@@ -16,4 +16,5 @@ interface SøknadService {
     fun lagreSøknad(soknad: Soknad)
 
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering
+
 }

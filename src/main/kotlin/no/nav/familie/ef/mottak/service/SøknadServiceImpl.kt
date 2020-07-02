@@ -27,11 +27,14 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun motta(søknad: SøknadMedVedlegg): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad)
+    override fun motta(søknad: SøknadMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val lagretSkjema = soknadRepository.save(søknadDb)
         val vedlegg = søknad.vedlegg.map {
-            Vedlegg(søknadId = lagretSkjema.id, navn = it.navn, tittel = it.tittel, innhold = Fil(it.bytes))
+            Vedlegg(søknadId = lagretSkjema.id,
+                    navn = it.navn,
+                    tittel = it.tittel,
+                    innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
         }
         vedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
@@ -46,8 +49,10 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
+            val vedlegg = vedleggRepository.findBySøknadId(søknadId)
+                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel, it.innhold.bytes) }
             val sak: SakRequest = SakMapper.toSak(soknad)
-            søknadClient.sendTilSak(sak)
+            søknadClient.sendTilSak(sak.copy(søknad = sak.søknad.copy(vedlegg = vedlegg)))
         } else {
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
             søknadClient.sendTilSak(skjemasak)
