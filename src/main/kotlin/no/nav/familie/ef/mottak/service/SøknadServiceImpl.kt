@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
@@ -31,7 +32,8 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val lagretSkjema = soknadRepository.save(søknadDb)
         val vedlegg = søknad.vedlegg.map {
-            Vedlegg(søknadId = lagretSkjema.id,
+            Vedlegg(id = UUID.fromString(it.id),
+                    søknadId = lagretSkjema.id,
                     navn = it.navn,
                     tittel = it.tittel,
                     innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
@@ -50,9 +52,10 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val vedlegg = vedleggRepository.findBySøknadId(søknadId)
-                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel, it.innhold.bytes) }
-            val sak: SakRequest = SakMapper.toSak(soknad)
-            søknadClient.sendTilSak(sak.copy(søknad = sak.søknad.copy(vedlegg = vedlegg)))
+            val kontraktVedlegg = vedlegg
+                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel, null) }
+            val sak: SakRequest = SakMapper.toSak(soknad, kontraktVedlegg)
+            søknadClient.sendTilSak(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
         } else {
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
             søknadClient.sendTilSak(skjemasak)
