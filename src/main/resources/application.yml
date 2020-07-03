@@ -11,8 +11,8 @@ spring:
         enabled: true
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 21MB
+      max-file-size: 200MB
+      max-request-size: 200MB
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"
