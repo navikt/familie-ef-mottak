@@ -211,6 +211,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>util</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.mockk</groupId>
             <artifactId>mockk</artifactId>
             <version>${mockk.version}</version>

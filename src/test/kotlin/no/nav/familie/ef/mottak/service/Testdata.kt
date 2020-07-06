@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.util.FnrGenerator
 import java.time.LocalDate
 import java.time.Month
 import java.util.*
@@ -28,7 +29,7 @@ internal object Testdata {
                                   Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))))
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
-        return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("18068124693")),
+        return PersonaliaArbeidssøker(Søknadsfelt("fnr", Fødselsnummer("03125462714")), // random fnr anno 1854
                                       Søknadsfelt("Navn", "Navnesen"))
     }
 
@@ -153,7 +154,7 @@ internal object Testdata {
                     annenForelder = Søknadsfelt("Barnets andre forelder",
                                                 AnnenForelder(Søknadsfelt("Hvorfor kan du ikke oppgi den andre forelderen?",
                                                                           "Fordi jeg ikke liker hen."))),
-                    fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer("31081953069")),
+                    fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer("03125462714")), // random fnr anno 1854,
                     harSkalHaSammeAdresse = Søknadsfelt("Skal ha samme adresse", true),
                     ikkeRegistrertPåSøkersAdresseBeskrivelse = Søknadsfelt("Ikke registrert på søkers adresse", "Nei"),
                     samvær = Søknadsfelt("Samvær",
@@ -230,7 +231,7 @@ internal object Testdata {
     }
 
     private fun personalia(): Personalia {
-        return Personalia(Søknadsfelt("Fødselsnummer", Fødselsnummer("29080213156")),
+        return Personalia(Søknadsfelt("Fødselsnummer", Fødselsnummer("03125462714")), // random fnr anno 1854
                           Søknadsfelt("Navn", "Kari Nordmann"),
                           Søknadsfelt("Statsborgerskap", "Norsk"),
                           adresseSøknadsfelt(),

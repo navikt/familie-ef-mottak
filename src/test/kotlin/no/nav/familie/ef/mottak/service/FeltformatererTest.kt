@@ -4,6 +4,7 @@ import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.Periode
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -51,11 +52,12 @@ internal class FeltformatererTest {
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer Fødselsnummer korrekt`() {
-        val testverdi = Søknadsfelt("label", Fødselsnummer("26109524505"))
+       val fnr = FnrGenerator.generer()
+        val testverdi = Søknadsfelt("label", Fødselsnummer(fnr))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "26109524505"))
+        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to fnr))
     }
 
     @Test
