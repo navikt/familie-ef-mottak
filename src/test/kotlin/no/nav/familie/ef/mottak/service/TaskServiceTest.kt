@@ -5,8 +5,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

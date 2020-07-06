@@ -23,7 +23,7 @@
         <springfox.version>2.9.2</springfox.version>
         <mockk.version>1.10.0</mockk.version>
         <fasterxml.version>2.11.1</fasterxml.version>
-        <felles.version>1.20200629134442_aadbfc0</felles.version>
+        <felles.version>1.20200703104246_d66d421</felles.version>
         <kontrakter.version>2.0_20200630134323_9a99ccb</kontrakter.version>
         <token-validation.version>1.2.0</token-validation.version>
         <spring-cloud.version>2.2.3.RELEASE</spring-cloud.version>
@@ -209,6 +209,11 @@
             <artifactId>wiremock-jre8</artifactId>
             <version>2.27.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>util</artifactId>
+            <version>${felles.version}</version>
         </dependency>
         <dependency>
             <groupId>io.mockk</groupId>
