@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg as Kontraktssøknad
+import no.nav.familie.kontrakter.ef.søknad.Søknad as Kontraktssøknad
 
 object SøknadMapper {
 
@@ -15,8 +15,8 @@ object SøknadMapper {
     }
 
     fun fromDto(kontraktssøknad: Kontraktssøknad): Soknad {
-        return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad.søknad),
-                      fnr = kontraktssøknad.søknad.personalia.verdi.fødselsnummer.verdi.verdi,
+        return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad),
+                      fnr = kontraktssøknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                       vedlegg = null)
     }

@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.SakConfig
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.http.client.MultipartBuilder
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,11 +21,13 @@ class SøknadClient(@Qualifier("restTemplateAzure") operations: RestOperations,
 
     private val sendInnSkjemasakUri = DefaultUriBuilderFactory().uriString(sakConfig.url).path(PATH_SKJEMASAK).build()
 
-    fun sendTilSak(sak: SakRequest): HttpStatus? {
+    fun sendTilSak(sak: SakRequest, vedlegg: Map<String, ByteArray>): HttpStatus? {
         log.info("Sender søknad til {}", sendInnSakUri)
 
         try {
-            return postForEntity(sendInnSakUri, sak)
+            val multipartBuilder = MultipartBuilder().withJson("sak", sak)
+            vedlegg.forEach { multipartBuilder.withByteArray("vedlegg", it.key, it.value) }
+            return postForEntity(sendInnSakUri, multipartBuilder.build(), MultipartBuilder.MULTIPART_HEADERS)
         } catch (e: RestClientResponseException) {
             log.warn("Innsending til sak feilet. Responskode: {}, body: {}",
                      e.rawStatusCode,

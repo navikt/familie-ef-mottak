@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
@@ -27,11 +28,15 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun motta(søknad: SøknadMedVedlegg): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad)
+    override fun motta(søknad: SøknadMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val lagretSkjema = soknadRepository.save(søknadDb)
         val vedlegg = søknad.vedlegg.map {
-            Vedlegg(søknadId = lagretSkjema.id, navn = it.navn, tittel = it.tittel, innhold = Fil(it.bytes))
+            Vedlegg(id = UUID.fromString(it.id),
+                    søknadId = lagretSkjema.id,
+                    navn = it.navn,
+                    tittel = it.tittel,
+                    innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
         }
         vedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
@@ -46,8 +51,11 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-            val sak: SakRequest = SakMapper.toSak(soknad)
-            søknadClient.sendTilSak(sak)
+            val vedlegg = vedleggRepository.findBySøknadId(søknadId)
+            val kontraktVedlegg = vedlegg
+                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel, null) }
+            val sak: SakRequest = SakMapper.toSak(soknad, kontraktVedlegg)
+            søknadClient.sendTilSak(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
         } else {
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
             søknadClient.sendTilSak(skjemasak)
