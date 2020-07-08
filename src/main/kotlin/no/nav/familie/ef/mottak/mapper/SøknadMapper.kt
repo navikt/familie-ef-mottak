@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.mapper
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.api.BarnetilsynSøknadKontrakt
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYNSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.repository.domain.Soknad
@@ -25,6 +27,13 @@ object SøknadMapper {
         return Soknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+                      vedlegg = null)
+    }
+
+    fun fromDto(søknadOmBarnetilsyn: BarnetilsynSøknadKontrakt): Soknad {
+        return Soknad(søknadJson = objectMapper.writeValueAsString(søknadOmBarnetilsyn),
+                      fnr = søknadOmBarnetilsyn.personalia.verdi.fødselsnummer.verdi.verdi,
+                      dokumenttype = DOKUMENTTYPE_BARNETILSYNSTØNAD,
                       vedlegg = null)
     }
 }

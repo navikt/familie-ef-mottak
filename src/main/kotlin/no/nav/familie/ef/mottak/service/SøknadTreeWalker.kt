@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.api.BarnetilsynSøknadKontrakt
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,6 +34,13 @@ object SøknadTreeWalker {
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedlegg)))
         return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
     }
+
+    fun mapBarnetilsynsFelter(barnetilstnSøknad: BarnetilsynSøknadKontrakt, vedlegg: List<Vedlegg>): Map<String, Any> {
+        val finnFelter = finnFelter(barnetilstnSøknad)
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedlegg)))
+        return feltlisteMap("Søknad om barnetilsyn", finnFelter + vedlegg)
+    }
+
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
         val finnFelter = finnFelter(skjema)

@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.api.SøknadBarnetilsyn
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.SøknadClient
@@ -29,6 +30,21 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
     @Transactional
     override fun motta(søknad: SøknadMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val lagretSkjema = soknadRepository.save(søknadDb)
+        val vedlegg = søknad.vedlegg.map {
+            Vedlegg(id = UUID.fromString(it.id),
+                    søknadId = lagretSkjema.id,
+                    navn = it.navn,
+                    tittel = it.tittel,
+                    innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
+        }
+        vedleggRepository.saveAll(vedlegg)
+        logger.info("Mottatt søknad med id ${lagretSkjema.id}")
+        return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
+    }
+
+    override fun motta(søknad: SøknadBarnetilsyn, vedlegg: Map<String?, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val lagretSkjema = soknadRepository.save(søknadDb)
         val vedlegg = søknad.vedlegg.map {

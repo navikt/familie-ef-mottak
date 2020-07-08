@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.api.BarnetilsynSøknadKontrakt
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYNSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.PdfClient
@@ -32,6 +34,10 @@ class PdfService(private val soknadRepository: SoknadRepository, private val pdf
         } else if (innsending.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
             SøknadTreeWalker.mapSkjemafelter(dto)
+        } else if (innsending.dokumenttype == DOKUMENTTYPE_BARNETILSYNSTØNAD) {
+            val dto = SøknadMapper.toDto<BarnetilsynSøknadKontrakt>(innsending)
+            val vedlegg = VedleggMapper.toDto(innsending)
+            SøknadTreeWalker.mapBarnetilsynsFelter(dto, vedlegg)
         } else {
             error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
         }

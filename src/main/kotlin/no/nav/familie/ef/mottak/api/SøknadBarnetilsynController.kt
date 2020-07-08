@@ -2,10 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.FeilDto
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.kontrakter.ef.søknad.Barn
-import no.nav.familie.kontrakter.ef.søknad.Personalia
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
-import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -60,5 +57,7 @@ class SøknadBarnetilsynController(val søknadService: SøknadService) {
 
 // TODO Flyttes til kontrakter
 data class SøknadBarnetilsyn(val søknad: BarnetilsynSøknadKontrakt, val vedlegg: List<Vedlegg>)
-data class BarnetilsynSøknadKontrakt(val personalia: Søknadsfelt<Personalia>,
-                                     val barn: Søknadsfelt<List<Barn>>)
+data class BarnetilsynSøknadKontrakt(
+        val innsendingsdetaljer: Søknadsfelt<Innsendingsdetaljer>,
+        val personalia: Søknadsfelt<Personalia>,
+        val barn: Søknadsfelt<List<Barn>>)

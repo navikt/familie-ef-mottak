@@ -18,8 +18,6 @@ interface SøknadService {
 
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering
 
-    fun motta(søknad: SøknadBarnetilsyn, vedlegg: Map<String?, ByteArray>): Kvittering {
-        TODO("Not yet implemented")
-    }
+    fun motta(søknad: SøknadBarnetilsyn, vedlegg: Map<String?, ByteArray>): Kvittering
 
 }
