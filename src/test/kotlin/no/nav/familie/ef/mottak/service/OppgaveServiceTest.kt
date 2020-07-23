@@ -41,7 +41,7 @@ internal class OppgaveServiceTest {
                          vedlegg = "[]")
 
 
-        oppgaveService.lagOppgave("123")
+        oppgaveService.lagJournalføringsoppgave("123")
 
         verify(exactly = 1) {
             integrasjonerClient.lagOppgave(any())
@@ -62,7 +62,7 @@ internal class OppgaveServiceTest {
                          vedlegg = "[]"
         )
 
-        oppgaveService.lagOppgave("123")
+        oppgaveService.lagJournalføringsoppgave("123")
 
         verify(exactly = 0) {
             integrasjonerClient.lagOppgave(any())
@@ -82,7 +82,7 @@ internal class OppgaveServiceTest {
                          fnr = Testdata.randomFnr(),
                          vedlegg = null)
 
-        oppgaveService.lagOppgave("123")
+        oppgaveService.lagJournalføringsoppgave("123")
 
         verify(exactly = 0) {
             integrasjonerClient.lagOppgave(any())

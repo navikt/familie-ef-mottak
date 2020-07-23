@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.service.JournalføringService
+import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -8,12 +8,12 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = JournalførSøknadTask.JOURNALFØR_SØKNAD, beskrivelse = "Jornalfør søknad")
-class JournalførSøknadTask(private val journalføringService: JournalføringService,
-                           private val taskRepository: TaskRepository) : AsyncTaskStep {
+@TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
+class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
+                        private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        val journalpostId = journalføringService.journalførSøknad(task.payload)
+        val journalpostId = arkiveringService.journalførSøknad(task.payload)
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }
@@ -21,12 +21,12 @@ class JournalførSøknadTask(private val journalføringService: JournalføringSe
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task = Task.nyTask(LagOppgaveTask.LAG_OPPGAVE, task.payload, task.metadata)
+        val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 
     companion object {
-        const val JOURNALFØR_SØKNAD = "journalførSøknad"
+        const val TYPE = "arkiverSøknad"
     }
 
 }
