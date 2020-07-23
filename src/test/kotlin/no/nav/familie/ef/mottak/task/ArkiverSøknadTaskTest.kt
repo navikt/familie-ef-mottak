@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.*
 
-internal class JournalførSøknadTaskTest {
+internal class ArkiverSøknadTaskTest {
 
     val taskRepository: TaskRepository = mockk()
-    val journalførSøknadTaskTest: JournalførSøknadTask = JournalførSøknadTask(mockk(), taskRepository)
+    val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskRepository)
 
     @Test
     fun `Skal gå til LagOppgaveTask når journalføring er utført`() {
@@ -23,8 +23,8 @@ internal class JournalførSøknadTaskTest {
             slot.captured
         }
 
-        journalførSøknadTaskTest.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        arkiverSøknadTaskTest.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
 
-        assertEquals(LagOppgaveTask.LAG_OPPGAVE, slot.captured.taskStepType)
+        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured.taskStepType)
     }
 }

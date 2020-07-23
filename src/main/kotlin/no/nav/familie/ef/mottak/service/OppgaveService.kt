@@ -11,7 +11,7 @@ import java.time.LocalDate
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val søknadService: SøknadService) {
 
-    fun lagOppgave(søknadId: String) {
+    fun lagJournalføringsoppgave(søknadId: String) {
         val soknad: Soknad = søknadService.get(søknadId)
         if (soknad.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val aktørId = integrasjonerClient.hentAktørId(soknad.fnr)
@@ -29,7 +29,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     enhetsnummer = null
             )
 
-            integrasjonerClient.lagOppgave(opprettOppgave);
+            integrasjonerClient.lagOppgave(opprettOppgave)
         }
     }
 }
