@@ -8,9 +8,9 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import org.springframework.stereotype.Service
 
 @Service
-class JournalføringService(private val integrasjonerClient: IntegrasjonerClient,
-                           private val søknadService: SøknadService,
-                           private val vedleggRepository: VedleggRepository) {
+class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
+                        private val søknadService: SøknadService,
+                        private val vedleggRepository: VedleggRepository) {
 
     fun journalførSøknad(søknadId: String): String {
         val soknad: Soknad = søknadService.get(søknadId)
