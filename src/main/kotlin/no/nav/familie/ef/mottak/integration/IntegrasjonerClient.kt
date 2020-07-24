@@ -5,8 +5,8 @@ import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
-import no.nav.familie.kontrakter.felles.arkivering.ArkiverDokumentResponse
-import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
 import no.nav.familie.log.NavHttpHeaders
