@@ -6,9 +6,9 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_VEDLEGG
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.kontrakter.felles.arkivering.Dokument
-import no.nav.familie.kontrakter.felles.arkivering.FilType
-import no.nav.familie.kontrakter.felles.arkivering.v2.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.Dokument
+import no.nav.familie.kontrakter.felles.dokarkiv.FilType
+import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 
 object ArkiverDokumentRequestMapper {
 
