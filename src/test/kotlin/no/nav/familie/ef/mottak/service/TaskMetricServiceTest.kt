@@ -44,7 +44,6 @@ internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
             Soknad(søknadJson = "",
                    fnr = "11111122222",
                    dokumenttype = "type",
-                   vedlegg = null,
                    opprettetTid = opprettetTid,
                    taskOpprettet = taskOpprettet)
 }

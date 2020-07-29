@@ -12,8 +12,8 @@ internal class SoknadTest {
     fun testHashCode() {
         val uuid = UUID.randomUUID().toString()
         val opprettet = LocalDateTime.now()
-        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, "vedlegg", opprettet)
-        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, "vedlegg", opprettet)
+        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
         assertEquals(one.hashCode(), other.hashCode())
     }
 
@@ -21,8 +21,8 @@ internal class SoknadTest {
     fun testEquals() {
         val uuid = UUID.randomUUID().toString()
         val opprettet = LocalDateTime.now()
-        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, "vedlegg", opprettet)
-        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, "vedlegg", opprettet)
+        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
         assertTrue(one == other)
     }
 }

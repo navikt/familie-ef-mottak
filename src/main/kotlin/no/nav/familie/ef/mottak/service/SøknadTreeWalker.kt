@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime

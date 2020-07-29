@@ -21,16 +21,13 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         soknadRepository.save(Soknad(søknadJson = "bob",
                                      fnr = "ded",
-                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                     vedlegg = null))
+                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD))
+        soknadRepository.save(Soknad(søknadJson = "kåre",
+                                     fnr = "ded",
+                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD))
         soknadRepository.save(Soknad(søknadJson = "kåre",
                                      fnr = "ded",
                                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                     vedlegg = null))
-        soknadRepository.save(Soknad(søknadJson = "kåre",
-                                     fnr = "ded",
-                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                     vedlegg = null,
                                      taskOpprettet = true))
 
         val soknadUtenTask = soknadRepository.findFirstByTaskOpprettetIsFalse()
@@ -43,7 +40,6 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         soknadRepository.save(Soknad(søknadJson = "kåre",
                                      fnr = "ded",
                                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                     vedlegg = null,
                                      taskOpprettet = true))
 
         val soknadUtenTask = soknadRepository.findFirstByTaskOpprettetIsFalse()
