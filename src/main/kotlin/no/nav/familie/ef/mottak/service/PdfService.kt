@@ -28,7 +28,7 @@ class PdfService(private val soknadRepository: SoknadRepository,
         soknadRepository.saveAndFlush(oppdatertSoknad)
     }
 
-    protected fun lagFeltMap(innsending: Soknad, vedlegg: List<Vedlegg>): Map<String, Any> {
+    private fun lagFeltMap(innsending: Soknad, vedlegg: List<Vedlegg>): Map<String, Any> {
         return if (innsending.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val dto = SøknadMapper.toDto<Søknad>(innsending)
             SøknadTreeWalker.mapSøknadsfelter(dto, vedlegg)
