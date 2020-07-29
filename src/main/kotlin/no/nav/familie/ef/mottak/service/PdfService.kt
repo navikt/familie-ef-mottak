@@ -21,7 +21,7 @@ class PdfService(private val soknadRepository: SoknadRepository,
     fun lagPdf(id: String) {
 
         val innsending = soknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
-        val vedlegg = vedleggRepository.findBySøknadId(id)
+        val vedlegg = vedleggRepository.findBySøknadId(id).sortedBy { it.tittel }
         val feltMap = lagFeltMap(innsending, vedlegg)
         val søknadPdf = pdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = søknadPdf)

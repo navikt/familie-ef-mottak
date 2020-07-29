@@ -55,7 +55,7 @@ class SøknadTreeWalkerTest {
                              lagVedlegg("Dokumentasjon på at kan arbeide"))
         val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
-        //Files.write(Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
+        //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
         assertThat(pdf).isEqualTo(readFile("pdf_generated.json"))
     }
 
