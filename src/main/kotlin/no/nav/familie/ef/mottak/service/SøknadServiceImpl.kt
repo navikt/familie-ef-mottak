@@ -53,7 +53,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val vedlegg = vedleggRepository.findBySøknadId(søknadId)
             val kontraktVedlegg = vedlegg
-                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel, null) }
+                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel) }
             val sak: SakRequest = SakMapper.toSak(soknad, kontraktVedlegg)
             søknadClient.sendTilSak(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
         } else {

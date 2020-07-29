@@ -86,5 +86,5 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
-    private fun lagVedlegg(id: String) = Vedlegg(id, "navn", "tittel", null)
+    private fun lagVedlegg(id: String) = Vedlegg(id, "navn", "tittel")
 }
