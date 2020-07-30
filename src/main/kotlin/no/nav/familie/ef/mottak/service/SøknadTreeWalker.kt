@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,9 +28,9 @@ object SøknadTreeWalker {
                              Long::class)
 
     fun mapSøknadsfelter(søknad: Søknad,
-                         vedlegg: List<Vedlegg>): Map<String, Any> {
+                         vedleggTittler: List<String>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedlegg)))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTittler)))
         return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
     }
 

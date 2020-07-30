@@ -1,12 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils.readFile
-import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
 
 class SøknadTreeWalkerTest {
 
@@ -27,7 +24,7 @@ class SøknadTreeWalkerTest {
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden sammen med vedlegg`() {
         val søknad = Testdata.søknad
 
-        val vedlegg = listOf(lagVedlegg("Dokumentasjon på at du er syk"))
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
         val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
 
         assertThat(mapSøknadsfelter).isNotEmpty
@@ -50,16 +47,13 @@ class SøknadTreeWalkerTest {
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR`() {
         val søknad = Testdata.søknad
 
-        val vedlegg = listOf(lagVedlegg("Dokumentasjon på at du er syk"),
-                             lagVedlegg("Dokumentasjon på at du er syk"),
-                             lagVedlegg("Dokumentasjon på at kan arbeide"))
+        val vedlegg = listOf("Dokumentasjon på at du er syk",
+                             "Dokumentasjon på at du er syk",
+                             "Dokumentasjon på at kan arbeide")
         val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
         assertThat(pdf).isEqualTo(readFile("pdf_generated.json"))
     }
-
-    private fun lagVedlegg(tittel: String) = Vedlegg(UUID.randomUUID(),
-                                                     "søknadId", "navn.pdf", tittel, Fil(byteArrayOf(12)))
 
 }

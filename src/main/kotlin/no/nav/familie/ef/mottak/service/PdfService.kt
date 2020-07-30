@@ -7,7 +7,6 @@ import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.Søknad
 import org.springframework.data.repository.findByIdOrNull
@@ -21,17 +20,17 @@ class PdfService(private val soknadRepository: SoknadRepository,
     fun lagPdf(id: String) {
 
         val innsending = soknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
-        val vedlegg = vedleggRepository.findBySøknadId(id).sortedBy { it.tittel }
-        val feltMap = lagFeltMap(innsending, vedlegg)
+        val vedleggTittler = vedleggRepository.findTittlerBySøknadId(id).sorted()
+        val feltMap = lagFeltMap(innsending, vedleggTittler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = søknadPdf)
         soknadRepository.saveAndFlush(oppdatertSoknad)
     }
 
-    private fun lagFeltMap(innsending: Soknad, vedlegg: List<Vedlegg>): Map<String, Any> {
+    private fun lagFeltMap(innsending: Soknad, vedleggTittler: List<String>): Map<String, Any> {
         return if (innsending.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val dto = SøknadMapper.toDto<Søknad>(innsending)
-            SøknadTreeWalker.mapSøknadsfelter(dto, vedlegg)
+            SøknadTreeWalker.mapSøknadsfelter(dto, vedleggTittler)
         } else if (innsending.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
             SøknadTreeWalker.mapSkjemafelter(dto)
