@@ -32,7 +32,7 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    internal fun `findTittlerBySøknadId returnerer tittler`() {
+    internal fun `findTitlerBySøknadId returnerer titler`() {
         val søknadId = soknadRepository.save(Soknad(søknadJson = "bob",
                                                     fnr = "ded",
                                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id

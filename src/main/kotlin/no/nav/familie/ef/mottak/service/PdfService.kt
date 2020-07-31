@@ -20,17 +20,17 @@ class PdfService(private val soknadRepository: SoknadRepository,
     fun lagPdf(id: String) {
 
         val innsending = soknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
-        val vedleggTittler = vedleggRepository.findTitlerBySøknadId(id).sorted()
-        val feltMap = lagFeltMap(innsending, vedleggTittler)
+        val vedleggTitler = vedleggRepository.findTitlerBySøknadId(id).sorted()
+        val feltMap = lagFeltMap(innsending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = søknadPdf)
         soknadRepository.saveAndFlush(oppdatertSoknad)
     }
 
-    private fun lagFeltMap(innsending: Soknad, vedleggTittler: List<String>): Map<String, Any> {
+    private fun lagFeltMap(innsending: Soknad, vedleggTitler: List<String>): Map<String, Any> {
         return if (innsending.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val dto = SøknadMapper.toDto<Søknad>(innsending)
-            SøknadTreeWalker.mapSøknadsfelter(dto, vedleggTittler)
+            SøknadTreeWalker.mapSøknadsfelter(dto, vedleggTitler)
         } else if (innsending.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
             val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
             SøknadTreeWalker.mapSkjemafelter(dto)

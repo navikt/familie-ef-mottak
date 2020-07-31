@@ -21,8 +21,8 @@ object Feltformaterer {
         return feltMap(entitet.label, mapVerdi(entitet.verdi!!))
     }
 
-    fun mapVedlegg(vedleggTittler: List<String>): Map<String, String> {
-        val verdi = vedleggTittler.joinToString("\n\n")
+    fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
+        val verdi = vedleggTitler.joinToString("\n\n")
         return feltMap("Vedlegg", verdi)
     }
 

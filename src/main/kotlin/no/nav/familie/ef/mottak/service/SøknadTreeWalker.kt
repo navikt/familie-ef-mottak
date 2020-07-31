@@ -28,9 +28,9 @@ object SøknadTreeWalker {
                              Long::class)
 
     fun mapSøknadsfelter(søknad: Søknad,
-                         vedleggTittler: List<String>): Map<String, Any> {
+                         vedleggTitler: List<String>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTittler)))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
     }
 
