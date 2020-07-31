@@ -38,7 +38,7 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
                                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
         vedleggRepository.save(Vedlegg(UUID.randomUUID(), søknadId, "navn", "tittel1", Fil(byteArrayOf(12))))
 
-        val vedlegg = vedleggRepository.findTittlerBySøknadId(søknadId)
+        val vedlegg = vedleggRepository.findTitlerBySøknadId(søknadId)
 
         assertThat(vedlegg).hasSize(1)
     }

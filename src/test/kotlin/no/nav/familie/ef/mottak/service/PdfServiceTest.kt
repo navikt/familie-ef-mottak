@@ -7,14 +7,12 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
-import java.util.*
 
 internal class PdfServiceTest {
 
@@ -37,7 +35,7 @@ internal class PdfServiceTest {
     private fun init() {
         søknadsRepositoryVilReturnere(søknad)
         every {
-            vedleggRepository.findTittlerBySøknadId("søknadsId")
+            vedleggRepository.findTitlerBySøknadId("søknadsId")
         } returns vedlegg.map { it.tittel }
         pdfClientVilReturnere(pdf)
     }
@@ -61,7 +59,7 @@ internal class PdfServiceTest {
         // When
         pdfService.lagPdf("søknadsId")
         // Then
-        verify(exactly = 1) { vedleggRepository.findTittlerBySøknadId(any()) }
+        verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
         verify(exactly = 1) {
             soknadRepository.saveAndFlush(slot.captured)
         }

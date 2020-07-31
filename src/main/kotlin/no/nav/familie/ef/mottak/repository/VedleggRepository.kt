@@ -11,6 +11,6 @@ interface VedleggRepository : JpaRepository<Vedlegg, String> {
     fun findBySøknadId(søknadId: String): List<Vedlegg>
 
     @Query(nativeQuery= true, value="SELECT tittel FROM vedlegg WHERE soknad_id=:søknadId")
-    fun findTittlerBySøknadId(søknadId: String): List<String>
+    fun findTitlerBySøknadId(søknadId: String): List<String>
 
 }
