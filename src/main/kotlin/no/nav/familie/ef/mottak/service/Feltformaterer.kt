@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.Periode
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -18,8 +21,8 @@ object Feltformaterer {
         return feltMap(entitet.label, mapVerdi(entitet.verdi!!))
     }
 
-    fun mapVedlegg(vedlegg: List<Vedlegg>): Map<String, String> {
-        val verdi = vedlegg.sortedBy { it.tittel }.map { it.tittel }.joinToString("\n\n")
+    fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
+        val verdi = vedleggTitler.joinToString("\n\n")
         return feltMap("Vedlegg", verdi)
     }
 
