@@ -78,7 +78,7 @@ internal class PdfServiceTest {
     }
 
     private fun createValidSøknadJson(): String {
-        val søknadDto = Testdata.søknad
+        val søknadDto = Testdata.søknadOvergangsstønad
         return objectMapper.writeValueAsString(søknadDto)
     }
 

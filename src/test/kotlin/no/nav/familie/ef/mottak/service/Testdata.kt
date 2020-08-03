@@ -32,16 +32,29 @@ internal object Testdata {
                                       Søknadsfelt("Navn", "Navnesen"))
     }
 
-    val søknad = Søknad(Søknadsfelt("Søker", personalia()),
-                        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
-                        Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
-                        Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
-                        Søknadsfelt("Bosituasjonen din", bosituasjon()),
-                        Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-                        Søknadsfelt("Barn", listOf(barn())),
-                        Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
-                        Søknadsfelt("Mer om situasjonen din", situasjon()),
-                        Søknadsfelt("Når søker du stønad fra?", stønadsstart()))
+    val søknadOvergangsstønad = SøknadOvergangsstønad(Søknadsfelt("Søker", personalia()),
+                                                      Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+                                                      Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+                                                      Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+                                                      Søknadsfelt("Bosituasjonen din", bosituasjon()),
+                                                      Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+                                                      Søknadsfelt("Barn", listOf(barn())),
+                                                      Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+                                                      Søknadsfelt("Mer om situasjonen din", situasjon()),
+                                                      Søknadsfelt("Når søker du stønad fra?", stønadsstart()))
+
+    val søknadBarnetilsyn = SøknadBarnetilsyn(Søknadsfelt("Søker", personalia()),
+                                              Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+                                              Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+                                              Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+                                              Søknadsfelt("Bosituasjonen din", bosituasjon()),
+                                              Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+                                              Søknadsfelt("Barn", listOf(barn())),
+                                              Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+                                              Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+                                              tidligereFakturaer = dokumentfelt("Tidligere fakturaer"),
+                                              barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
+                                              avtaleBarnepasser = dokumentfelt("Avtale barnepasser"))
 
     private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
