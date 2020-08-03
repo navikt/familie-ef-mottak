@@ -8,5 +8,7 @@ import java.util.*
 @Repository
 interface HendelsesloggRepository : JpaRepository<Hendelseslogg, UUID> {
 
+    fun save(hendelseslogg: Hendelseslogg): Hendelseslogg
+
     fun existsByHendelseId(hendelseId: String): Boolean
 }

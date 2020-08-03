@@ -30,11 +30,11 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                              val hendelsesloggRepository: HendelsesloggRepository,
                              val featureToggleService: FeatureToggleService) {
 
-    val kanalNavnoCounter: Counter = Metrics.counter("barnetrygd.journalhendelse.kanal.navno")
-    val kanalSkannetsCounter: Counter = Metrics.counter("barnetrygd.journalhendelse.kanal.skannets")
-    val kanalAnnetCounter: Counter = Metrics.counter("barnetrygd.journalhendelse.kanal.annet")
-    val ignorerteCounter: Counter = Metrics.counter("barnetrygd.journalhendelse.ignorerte")
-    val feilCounter: Counter = Metrics.counter("barnetrygd.journalhendelse.feilet")
+    val kanalNavnoCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.navno")
+    val kanalSkannetsCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.skannets")
+    val kanalAnnetCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.annet")
+    val ignorerteCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.ignorerte")
+    val feilCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.feilet")
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -78,7 +78,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     private fun erGyldigHendelsetype(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
         return GYLDIGE_HENDELSE_TYPER.contains(hendelseRecord.getHendelsesType().toString())
-               && (hendelseRecord.getTemaNytt() != null && hendelseRecord.getTemaNytt().toString() == "BAR")
+               && (hendelseRecord.getTemaNytt() != null && hendelseRecord.getTemaNytt().toString() == "ENF")
     }
 
     fun behandleJournalhendelse(hendelseRecord: JournalfoeringHendelseRecord) {
@@ -142,7 +142,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     }
 
     private fun skalBehandleJournalpost(journalpost: Journalpost) =
-            journalpost.tema == "BAR" && journalpost.journalposttype == Journalposttype.I
+            journalpost.tema == "ENF" && journalpost.journalposttype == Journalposttype.I
 
 
     private fun opprettMetadata(journalpost: Journalpost): Properties {

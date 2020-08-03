@@ -1,19 +1,25 @@
 package no.nav.familie.ef.mottak.service
 
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_VEDLEGG
+import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -21,7 +27,9 @@ internal class OppgaveServiceTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val oppgaveService: OppgaveService = OppgaveService(integrasjonerClient, søknadService)
+    private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient)
+    private val oppgaveService: OppgaveService = OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper)
+
 
     @BeforeEach
     private fun init() {
@@ -47,7 +55,7 @@ internal class OppgaveServiceTest {
                                      null,
                                      null,
                                      null,
-                                     null,
+                                     listOf(DokumentInfo("1", "", "", null, null, null)),
                                      null))
         every { integrasjonerClient.finnOppgaver(any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
@@ -58,53 +66,12 @@ internal class OppgaveServiceTest {
                          fnr = Testdata.randomFnr(),
                          vedlegg = "[]")
 
-
-        oppgaveService.lagJournalføringsoppgave("123")
+        oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
 
         verify(exactly = 1) {
             integrasjonerClient.lagOppgave(any())
         }
     }
 
-    @Test
-    fun `Skal ikke opprette oppgave for vedlegg`() {
-        every {
-            integrasjonerClient.lagOppgave(any())
-        } returns OppgaveResponse(oppgaveId = 1)
-        every {
-            søknadService.get("123")
-        } returns Soknad(søknadJson = "{}",
-                         dokumenttype = DOKUMENTTYPE_VEDLEGG,
-                         journalpostId = "999",
-                         fnr = Testdata.randomFnr(),
-                         vedlegg = "[]"
-        )
-
-        oppgaveService.lagJournalføringsoppgave("123")
-
-        verify(exactly = 0) {
-            integrasjonerClient.lagOppgave(any())
-        }
-    }
-
-    @Test
-    fun `Skal ikke opprette oppgave for overgangsstønad før vi støtter dette hos oss`() {
-        every {
-            integrasjonerClient.lagOppgave(any())
-        } returns OppgaveResponse(oppgaveId = 1)
-        every {
-            søknadService.get("123")
-        } returns Soknad(søknadJson = "{}",
-                         dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                         journalpostId = "999",
-                         fnr = Testdata.randomFnr(),
-                         vedlegg = null)
-
-        oppgaveService.lagJournalføringsoppgave("123")
-
-        verify(exactly = 0) {
-            integrasjonerClient.lagOppgave(any())
-        }
-    }
 
 }

@@ -21,7 +21,6 @@ data class Hendelseslogg(
         @Id
         val id: UUID = UUID.randomUUID(),
 
-
         @Column(name = "opprettet_tid", nullable = false, updatable = false)
         val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
 
