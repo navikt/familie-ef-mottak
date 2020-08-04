@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.*
-import no.nav.familie.util.FnrGenerator
 import java.time.LocalDate
 import java.time.Month
 import java.util.*
@@ -46,7 +45,7 @@ internal object Testdata {
 
     private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
-    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk", "vedlegg".toByteArray()))
+    val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk"))
 
     private fun stønadsstart() = Stønadsstart(Søknadsfelt("Fra måned", Month.AUGUST),
                                               Søknadsfelt("Fra år", 2018),

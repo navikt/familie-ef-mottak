@@ -17,7 +17,7 @@ class LagPdfTask(private val pdfService: PdfService,
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task.nyTask(JournalførSøknadTask.JOURNALFØR_SØKNAD,
+        taskRepository.save(Task.nyTask(ArkiverSøknadTask.TYPE,
                                         task.payload,
                                         task.metadata))
     }

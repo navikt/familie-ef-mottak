@@ -9,15 +9,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagOppgaveTask.LAG_OPPGAVE,
+@TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
                      maxAntallFeil = 100,
                      beskrivelse = "Lager oppgave i GoSys")
-class LagOppgaveTask(private val taskRepository: TaskRepository,
-                     private val oppgaveService: OppgaveService) : AsyncTaskStep {
+class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
+                                   private val oppgaveService: OppgaveService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         LOG.debug("Oppretter oppgave for søknad={}", task.payload)
-        oppgaveService.lagOppgave(task.payload)
+        oppgaveService.lagJournalføringsoppgave(task.payload)
     }
 
     override fun onCompletion(task: Task) {
@@ -27,7 +27,7 @@ class LagOppgaveTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(LagOppgaveTask::class.java)
-        const val LAG_OPPGAVE = "lagOppgave"
+        private val LOG = LoggerFactory.getLogger(LagJournalføringsoppgaveTask::class.java)
+        const val TYPE = "lagJournalføringsoppgave"
     }
 }
