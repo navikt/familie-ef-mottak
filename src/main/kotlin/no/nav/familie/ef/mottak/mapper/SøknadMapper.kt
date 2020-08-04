@@ -19,15 +19,13 @@ object SøknadMapper {
     fun fromDto(kontraktssøknad: Kontraktssøknad): Soknad {
         return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad),
                       fnr = kontraktssøknad.personalia.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                      vedlegg = null)
+                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Soknad {
         return Soknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-                      vedlegg = null)
+                      dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER)
     }
 
     fun fromDto(søknadOmBarnetilsyn: BarnetilsynSøknadKontrakt): Soknad {

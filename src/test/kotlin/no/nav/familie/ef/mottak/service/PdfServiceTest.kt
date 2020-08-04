@@ -3,10 +3,11 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.*
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -16,8 +17,9 @@ import org.springframework.data.repository.findByIdOrNull
 internal class PdfServiceTest {
 
     private val soknadRepository: SoknadRepository = mockk()
+    private val vedleggRepository: VedleggRepository = mockk()
     private val pdfClient: PdfClient = mockk()
-    private val pdfService: PdfService = PdfService(soknadRepository, pdfClient)
+    private val pdfService: PdfService = PdfService(soknadRepository, vedleggRepository, pdfClient)
 
     private val serializedSoknad = createValidSøknadJson()
     private val pdf = Fil("321".toByteArray())
@@ -27,12 +29,14 @@ internal class PdfServiceTest {
                                 fnr = "654",
                                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                                 journalpostId = null,
-                                saksnummer = null,
-                                vedlegg = createValidVedleggJson())
+                                saksnummer = null)
 
     @BeforeEach
     private fun init() {
         søknadsRepositoryVilReturnere(søknad)
+        every {
+            vedleggRepository.findTitlerBySøknadId("søknadsId")
+        } returns vedlegg.map { it.tittel }
         pdfClientVilReturnere(pdf)
     }
 
@@ -55,6 +59,7 @@ internal class PdfServiceTest {
         // When
         pdfService.lagPdf("søknadsId")
         // Then
+        verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
         verify(exactly = 1) {
             soknadRepository.saveAndFlush(slot.captured)
         }
@@ -75,11 +80,6 @@ internal class PdfServiceTest {
     private fun createValidSøknadJson(): String {
         val søknadDto = Testdata.søknad
         return objectMapper.writeValueAsString(søknadDto)
-    }
-
-    private fun createValidVedleggJson(): String {
-        val vedlegg = Testdata.vedlegg
-        return objectMapper.writeValueAsString(vedlegg)
     }
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>) {
