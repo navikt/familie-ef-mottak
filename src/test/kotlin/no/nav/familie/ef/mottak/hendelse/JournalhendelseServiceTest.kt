@@ -13,7 +13,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -46,6 +45,10 @@ class JournalføringHendelseServiceTest {
     internal fun setUp() {
         MockKAnnotations.init(this)
         clearAllMocks()
+
+        every {
+            mockHendelsesloggRepository.save(any<Hendelseslogg>())
+        } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         //Inngående papirsøknad, Mottatt
         every {

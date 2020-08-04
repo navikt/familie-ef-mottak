@@ -30,11 +30,11 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                              val hendelsesloggRepository: HendelsesloggRepository,
                              val featureToggleService: FeatureToggleService) {
 
-    val kanalNavnoCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.navno")
-    val kanalSkannetsCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.skannets")
-    val kanalAnnetCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.kanal.annet")
-    val ignorerteCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.ignorerte")
-    val feilCounter: Counter = Metrics.counter("alene.meed.barn.journalhendelse.feilet")
+    val kanalNavnoCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.navno")
+    val kanalSkannetsCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.skannets")
+    val kanalAnnetCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.annet")
+    val ignorerteCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.ignorerte")
+    val feilCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.feilet")
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
