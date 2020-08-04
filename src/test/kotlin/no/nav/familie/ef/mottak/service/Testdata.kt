@@ -52,9 +52,12 @@ internal object Testdata {
                                               Søknadsfelt("Barn", listOf(barn())),
                                               Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
                                               Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
-                                              tidligereFakturaer = dokumentfelt("Tidligere fakturaer"),
-                                              barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
-                                              avtaleBarnepasser = dokumentfelt("Avtale barnepasser"))
+                                              dokumentasjon = BarnetilsynDokumentasjon(
+                                                      tidligereFakturaer = dokumentfelt("Tidligere fakturaer"),
+                                                      barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
+                                                      avtaleBarnepasser = dokumentfelt("Avtale barnepasser"),
+                                                      arbeidstid = dokumentfelt("Arbeidstid"),
+                                                      spesielleBehov = dokumentfelt("Spesielle behov")))
 
     private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
