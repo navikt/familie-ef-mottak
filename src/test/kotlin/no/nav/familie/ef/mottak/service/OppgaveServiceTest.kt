@@ -1,25 +1,19 @@
 package no.nav.familie.ef.mottak.service
 
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.Testdata
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -63,8 +57,8 @@ internal class OppgaveServiceTest {
         } returns Soknad(søknadJson = "{}",
                          dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                          journalpostId = "999",
-                         fnr = Testdata.randomFnr(),
-                         vedlegg = "[]")
+                         fnr = Testdata.randomFnr())
+
 
         oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
 

@@ -9,7 +9,7 @@ import javax.persistence.Id
 
 @Entity
 data class Vedlegg(@Id
-                   val id: UUID = UUID.randomUUID(),
+                   val id: UUID,
                    @Column(name = "soknad_id")
                    val søknadId: String,
                    val navn: String,

@@ -21,7 +21,7 @@ internal class TaskServiceTest {
 
     @Test
     fun `opprettTask oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
-        val soknad = Soknad(dokumenttype = "søknad", søknadJson = "json", fnr = "fnr", taskOpprettet = false, vedlegg = "vedlegg")
+        val soknad = Soknad(dokumenttype = "søknad", søknadJson = "json", fnr = "fnr", taskOpprettet = false)
         val taskSlot = slot<Task>()
         val soknadSlot = slot<Soknad>()
         every { taskRepository.save(capture(taskSlot)) }
