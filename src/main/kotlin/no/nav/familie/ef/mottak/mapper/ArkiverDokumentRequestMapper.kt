@@ -22,7 +22,21 @@ object ArkiverDokumentRequestMapper {
         return ArkiverDokumentRequest(soknad.fnr,
                                       false,
                                       hoveddokumentvarianter,
-                                      mapVedlegg(vedlegg, mapDokumenttype(soknad.dokumenttype)))
+                                      mapVedlegg(vedlegg, soknad.dokumenttype))
+    }
+
+    private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
+        if(vedlegg.isEmpty()) return emptyList()
+        val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
+        return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
+    }
+
+    private fun tilDokument(vedlegg: Vedlegg, dokumenttypeVedlegg: String): Dokument {
+        return Dokument(dokument = vedlegg.innhold.bytes,
+                        filType = FilType.PDFA,
+                        tittel = vedlegg.tittel,
+                        filnavn = vedlegg.navn,
+                        dokumentType = dokumenttypeVedlegg)
     }
 
     private fun mapDokumenttype(dokumenttype: String): String {
@@ -32,18 +46,5 @@ object ArkiverDokumentRequestMapper {
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
     }
-
-    private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttypeVedlegg: String): List<Dokument> {
-        return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
-    }
-
-    private fun tilDokument(vedlegg: Vedlegg, dokumenttypeVedlegg: String): Dokument {
-        return Dokument(dokument = vedlegg.innhold.bytes,
-                        filType = FilType.PDFA,
-                        tittel = vedlegg.tittel,
-                        filnavn = vedlegg.navn,
-                        dokumentType = DOKUMENTTYPE_OVERGANGSSTØNAD_VEDLEGG)
-    }
-
 
 }
