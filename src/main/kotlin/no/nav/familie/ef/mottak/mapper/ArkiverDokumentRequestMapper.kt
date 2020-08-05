@@ -26,7 +26,7 @@ object ArkiverDokumentRequestMapper {
     }
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
-        if(vedlegg.isEmpty()) return emptyList()
+        if (vedlegg.isEmpty()) return emptyList()
         val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
         return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
     }
