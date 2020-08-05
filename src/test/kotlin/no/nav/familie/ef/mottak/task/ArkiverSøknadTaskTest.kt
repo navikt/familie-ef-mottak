@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,11 +12,13 @@ import java.util.*
 
 internal class ArkiverSøknadTaskTest {
 
-    val taskRepository: TaskRepository = mockk()
-    val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskRepository)
+    private val taskRepository: TaskRepository = mockk()
+    private val featureToggleService: FeatureToggleService = mockk()
+    private val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskRepository, featureToggleService)
 
     @Test
     fun `Skal gå til LagOppgaveTask når journalføring er utført`() {
+        every { featureToggleService.isEnabled(any()) } returns false
         val slot = slot<Task>()
         every {
             taskRepository.save(capture(slot))

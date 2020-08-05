@@ -5,14 +5,18 @@ import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
-import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
 import no.nav.familie.log.NavHttpHeaders
-import org.apache.http.client.utils.URIBuilder
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
@@ -27,7 +31,33 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val sendInnUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_SEND_INN).build().toUri()
     private val opprettOppgaveUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_OPPRETT_OPPGAVE).build().toUri()
+
     private val aktørUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
+
+    private fun finnOppgaveUri(finnOppgaveRequest: FinnOppgaveRequest) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment(PATH_HENT_OPPGAVE)
+                    .queryParams(finnOppgaveRequest.toQueryParams())
+                    .build()
+                    .toUri()
+
+    private fun journalPostUri(journalpostId: String) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment(PATH_JOURNALPOST)
+                    .queryParam("journalPostId", journalpostId)
+                    .build()
+                    .toUri()
+
+    @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
+    fun hentJournalpost(journalpostId: String): Journalpost {
+        val uri = journalPostUri(journalpostId)
+        return getForEntity<Ressurs<Journalpost>>(uri).getDataOrThrow()
+    }
+
+    fun finnOppgaver(finnOppgaveRequest: FinnOppgaveRequest): FinnOppgaveResponseDto {
+        return getForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri(finnOppgaveRequest)).getDataOrThrow()
+    }
+
 
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
@@ -50,7 +80,6 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
         return response.getDataOrThrow()["aktørId"].toString()
     }
-
 
     private fun hentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
@@ -77,7 +106,9 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_SEND_INN = "arkiv/v3"
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave"
+        const val PATH_HENT_OPPGAVE = "oppgave/v3"
         const val PATH_AKTØR = "aktoer/v1"
+        const val PATH_JOURNALPOST = "journalpost"
     }
 
 }

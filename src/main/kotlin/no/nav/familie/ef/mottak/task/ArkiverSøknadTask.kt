@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
 class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
-                        private val taskRepository: TaskRepository) : AsyncTaskStep {
+                        private val taskRepository: TaskRepository,
+                        private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val journalpostId = arkiveringService.journalførSøknad(task.payload)
@@ -21,8 +23,11 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
-        taskRepository.save(nesteTask)
+        // Når vi begynner å lytte på jouurnalføringshendelser så trenger vi ikke denne tasen.
+        if (!featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
+            val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
+            taskRepository.save(nesteTask)
+        }
     }
 
     companion object {
