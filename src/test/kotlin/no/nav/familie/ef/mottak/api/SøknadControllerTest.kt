@@ -4,6 +4,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.http.client.MultipartBuilder
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
@@ -39,9 +40,23 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    internal fun `ok request`() {
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
+    internal fun `overgangsstønad ok request`() {
         val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("1"), lagVedlegg("2")))
+        okSøknadMedVedleggRequest(søknad, "/api/soknad")
+        okSøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad")
+        verify(exactly = 2) { søknadService.mottaOvergangsstønad(søknad, any()) }
+    }
+
+    @Test
+    internal fun `barnetilsyn ok request`() {
+        val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg("1"), lagVedlegg("2")))
+        okSøknadMedVedleggRequest(søknad, "/api/soknad/barnetilsyn")
+        verify(exactly = 1) { søknadService.mottaBarnetilsyn(søknad, any()) }
+    }
+
+    private fun <T> okSøknadMedVedleggRequest(søknad: SøknadMedVedlegg<T>,
+                                              url: String) {
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
         val request = MultipartBuilder()
                 .withJson("søknad", søknad)
                 .withByteArray("vedlegg", "1", byteArrayOf(12))
@@ -49,12 +64,11 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
                 .build()
 
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost("/api/soknad"),
+                restTemplate.exchange(localhost(url),
                                       HttpMethod.POST,
                                       HttpEntity(request, headers))
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        verify(exactly = 1) { søknadService.mottaOvergangsstønad(søknad, any()) }
     }
 
     @Test
