@@ -7,7 +7,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
@@ -18,19 +17,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun doTask(task: Task) {
         LOG.debug("Oppretter oppgave for søknad={}", task.payload)
-        val uuid = try {
-            UUID.fromString(task.payload)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-
-        if (uuid == null) {
-            // Task fra hendelse
-            oppgaveService.lagJournalføringsoppgaveForJournalpostId(task.payload)
-        } else {
-            // Task opprettet av ArkiverSøknadTask
-            oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
-        }
+        oppgaveService.lagJournalføringsoppgave(task.payload)
     }
 
     override fun onCompletion(task: Task) {
