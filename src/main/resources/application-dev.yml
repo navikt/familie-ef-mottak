@@ -5,7 +5,7 @@ spring:
 familie:
   ef:
     pdfgenerator:
-      url: https://familie-ef-dokgen.dev-adeo.no/
+      url: https://familie-ef-dokgen/
 
 no.nav.security.jwt:
   issuer:
