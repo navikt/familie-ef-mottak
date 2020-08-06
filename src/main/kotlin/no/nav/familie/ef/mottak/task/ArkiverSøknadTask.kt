@@ -21,9 +21,9 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
-        taskRepository.save(nesteTask)
-    }
+            val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
+            taskRepository.save(nesteTask)
+        }
 
     companion object {
         const val TYPE = "arkiverSøknad"
