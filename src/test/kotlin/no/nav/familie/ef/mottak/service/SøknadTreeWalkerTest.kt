@@ -44,16 +44,31 @@ class SøknadTreeWalkerTest {
     }
 
     @Test
-    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR`() {
+    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - overgangsstønad`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val vedlegg = listOf("Dokumentasjon på at du er syk",
                              "Dokumentasjon på at du er syk",
                              "Dokumentasjon på at kan arbeide")
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad.json")
+    }
+
+    @Test
+    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - barnetilsyn`() {
+        val søknad = Testdata.søknadBarnetilsyn
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk",
+                             "Dokumentasjon på at du er syk",
+                             "Dokumentasjon på at kan arbeide")
+        val mapSøknadsfelter = SøknadTreeWalker.mapBarnetilsyn(søknad, vedlegg)
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn.json")
+    }
+
+    private fun generatePdfAndAssert(mapSøknadsfelter: Map<String, Any>, filename: String) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
-        //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
-        assertThat(pdf).isEqualTo(readFile("pdf_generated.json"))
+        //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray()) //kommentere ut for å skrive over fila
+        assertThat(pdf).isEqualTo(readFile(filename))
     }
 
 }
