@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import io.mockk.*
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
@@ -21,21 +22,31 @@ internal class PdfServiceTest {
     private val pdfClient: PdfClient = mockk()
     private val pdfService: PdfService = PdfService(soknadRepository, vedleggRepository, pdfClient)
 
-    private val serializedSoknad = createValidSøknadJson()
     private val pdf = Fil("321".toByteArray())
-    private val søknad = Soknad(id = "randomUUID",
-                                søknadJson = serializedSoknad,
-                                søknadPdf = null,
-                                fnr = "654",
-                                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                journalpostId = null,
-                                saksnummer = null)
+    private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
+    private val søknadOvergangsstønad = Soknad(id = søknadOvergangsstønadId,
+                                               søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
+                                               søknadPdf = null,
+                                               fnr = "654",
+                                               dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                               journalpostId = null,
+                                               saksnummer = null)
+
+    val søknadBarnetilsynId = "søknadBarnetilsynId"
+    private val søknadBarnetilsyn = Soknad(id = søknadBarnetilsynId,
+                                           søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
+                                           søknadPdf = null,
+                                           fnr = "654",
+                                           dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                                           journalpostId = null,
+                                           saksnummer = null)
+
 
     @BeforeEach
     private fun init() {
-        søknadsRepositoryVilReturnere(søknad)
+        søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn)
         every {
-            vedleggRepository.findTitlerBySøknadId("søknadsId")
+            vedleggRepository.findTitlerBySøknadId(any())
         } returns vedlegg.map { it.tittel }
         pdfClientVilReturnere(pdf)
     }
@@ -46,7 +57,7 @@ internal class PdfServiceTest {
         val slot = slot<Soknad>()
         capturePdfAddedToSøknad(slot)
         // When
-        pdfService.lagPdf("søknadsId")
+        pdfService.lagPdf(søknadOvergangsstønadId)
         // Then
         assertThat(pdf).isEqualTo(slot.captured.søknadPdf)
     }
@@ -57,7 +68,7 @@ internal class PdfServiceTest {
         val slot = slot<Soknad>()
         capturePdfAddedToSøknad(slot)
         // When
-        pdfService.lagPdf("søknadsId")
+        pdfService.lagPdf(søknadBarnetilsynId)
         // Then
         verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
         verify(exactly = 1) {
@@ -71,15 +82,16 @@ internal class PdfServiceTest {
         } returns pdf
     }
 
-    private fun søknadsRepositoryVilReturnere(søknad: Soknad) {
-        every {
-            soknadRepository.findByIdOrNull("søknadsId")
-        } returns søknad
+    private fun søknadsRepositoryVilReturnere(vararg søknad: Soknad) {
+        søknad.forEach {
+            every {
+                soknadRepository.findByIdOrNull(it.id)
+            } returns it
+        }
     }
 
-    private fun createValidSøknadJson(): String {
-        val søknadDto = Testdata.søknad
-        return objectMapper.writeValueAsString(søknadDto)
+    private fun createValidSøknadJson(søknad: Any): String {
+        return objectMapper.writeValueAsString(søknad)
     }
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>) {

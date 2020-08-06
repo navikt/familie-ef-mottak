@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.mapper.SakMapper
@@ -13,12 +14,15 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
@@ -28,20 +32,38 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun motta(søknad: SøknadMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
+    override fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
+                                      vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
+        return motta(søknadDb, vedlegg)
+    }
+
+    @Transactional
+    override fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
+        return motta(søknadDb, vedlegg)
+    }
+
+    private fun motta(søknadDb: Soknad,
+                      vedlegg: List<Vedlegg>): Kvittering {
         val lagretSkjema = soknadRepository.save(søknadDb)
-        val vedlegg = søknad.vedlegg.map {
-            Vedlegg(id = UUID.fromString(it.id),
-                    søknadId = lagretSkjema.id,
-                    navn = it.navn,
-                    tittel = it.tittel,
-                    innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
-        }
         vedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
+
+    private fun mapVedlegg(søknadDbId: String,
+                           vedleggMetadata: List<VedleggKontrakt>,
+                           vedlegg: Map<String, ByteArray>): List<Vedlegg> =
+            vedleggMetadata.map {
+                Vedlegg(id = UUID.fromString(it.id),
+                        søknadId = søknadDbId,
+                        navn = it.navn,
+                        tittel = it.tittel,
+                        innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
+            }
 
     override fun get(id: String): Soknad {
         return soknadRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
@@ -53,12 +75,18 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
             val vedlegg = vedleggRepository.findBySøknadId(søknadId)
             val kontraktVedlegg = vedlegg
-                    .map { no.nav.familie.kontrakter.ef.søknad.Vedlegg(it.id.toString(), it.navn, it.tittel) }
-            val sak: SakRequest = SakMapper.toSak(soknad, kontraktVedlegg)
-            søknadClient.sendTilSak(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
+                    .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
+            val sak: SakRequest<SøknadOvergangsstønad> = SakMapper.toOvergangsstønadSak(soknad, kontraktVedlegg)
+            søknadClient.sendOvergangsstønad(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
+        } else if (soknad.dokumenttype == DOKUMENTTYPE_BARNETILSYN) {
+            val vedlegg = vedleggRepository.findBySøknadId(søknadId)
+            val kontraktVedlegg = vedlegg
+                    .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
+            val sak: SakRequest<SøknadBarnetilsyn> = SakMapper.toBarnetilsynSak(soknad, kontraktVedlegg)
+            søknadClient.sendBarnetilsyn(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
         } else {
             val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
-            søknadClient.sendTilSak(skjemasak)
+            søknadClient.send(skjemasak)
         }
     }
 

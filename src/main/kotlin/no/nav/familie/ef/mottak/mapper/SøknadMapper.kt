@@ -1,12 +1,14 @@
 package no.nav.familie.ef.mottak.mapper
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.ef.søknad.Søknad as Kontraktssøknad
 
 object SøknadMapper {
 
@@ -14,10 +16,16 @@ object SøknadMapper {
         return objectMapper.readValue(soknad.søknadJson)
     }
 
-    fun fromDto(kontraktssøknad: Kontraktssøknad): Soknad {
-        return Soknad(søknadJson = objectMapper.writeValueAsString(kontraktssøknad),
-                      fnr = kontraktssøknad.personalia.verdi.fødselsnummer.verdi.verdi,
+    fun fromDto(søknad: SøknadOvergangsstønad): Soknad {
+        return Soknad(søknadJson = objectMapper.writeValueAsString(søknad),
+                      fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
+    }
+
+    fun fromDto(søknad: SøknadBarnetilsyn): Soknad {
+        return Soknad(søknadJson = objectMapper.writeValueAsString(søknad),
+                      fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
+                      dokumenttype = DOKUMENTTYPE_BARNETILSYN)
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Soknad {
