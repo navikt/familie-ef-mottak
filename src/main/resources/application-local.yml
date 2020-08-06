@@ -16,7 +16,7 @@ familie:
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
-      url: https://familie-ef-dokgen.dev.adeo.no/
+      url: https://familie-ef-dokgen.dev-adeo.no/
 
 funksjonsbrytere:
   enabled: false
