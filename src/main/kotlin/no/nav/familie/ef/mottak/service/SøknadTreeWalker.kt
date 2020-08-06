@@ -27,11 +27,18 @@ object SøknadTreeWalker {
                              Month::class,
                              Long::class)
 
-    fun mapSøknadsfelter(søknad: Søknad,
-                         vedleggTitler: List<String>): Map<String, Any> {
+    fun mapOvergangsstønad(søknad: SøknadOvergangsstønad,
+                           vedleggTitler: List<String>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
+    }
+
+    fun mapBarnetilsyn(søknad: SøknadBarnetilsyn,
+                       vedleggTitler: List<String>): Map<String, Any> {
+        val finnFelter = finnFelter(søknad)
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        return feltlisteMap("Søknad barnetilsyn", finnFelter + vedlegg)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {

@@ -1,10 +1,13 @@
 package no.nav.familie.ef.mottak.api
 
-import no.nav.familie.ef.mottak.api.dto.FeilDto
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
@@ -21,20 +24,40 @@ class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun sendInn(@RequestPart("søknad") søknad: SøknadMedVedlegg,
-                @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
+    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["", "overgangsstonad"])
+    fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
+                        @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
     ): ResponseEntity<Any> {
-        val vedleggMetadata = søknad.vedlegg.map { it.id to it }.toMap()
-        val vedlegg = vedleggListe.map { it.originalFilename to it.bytes }.toMap()
+        val vedleggData = vedleggData(vedleggListe)
 
-        if (vedleggMetadata.keys.size != vedlegg.keys.size || !vedleggMetadata.keys.containsAll(vedlegg.keys)) {
+        validerVedlegg(søknad.vedlegg, vedleggData)
+
+        return ResponseEntity.ok(søknadService.mottaOvergangsstønad(søknad, vedleggData))
+    }
+
+    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["barnetilsyn"])
+    fun barnetilsyn(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
+                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
+    ): ResponseEntity<Any> {
+        val vedleggData = vedleggData(vedleggListe)
+
+        validerVedlegg(søknad.vedlegg, vedleggData)
+
+        return ResponseEntity.ok(søknadService.mottaBarnetilsyn(søknad, vedleggData))
+    }
+
+    private fun vedleggData(vedleggListe: List<MultipartFile>) =
+            vedleggListe.map { it.originalFilename to it.bytes }.toMap()
+
+    private fun validerVedlegg(vedlegg: List<Vedlegg>,
+                               vedleggData: Map<String?, ByteArray>) {
+        val vedleggMetadata = vedlegg.map { it.id to it }.toMap()
+        if (vedleggMetadata.keys.size != vedleggData.keys.size || !vedleggMetadata.keys.containsAll(vedleggData.keys)) {
             logger.error("Søknad savner: [{}], vedleggListe:[{}]",
-                         vedleggMetadata.keys.toMutableSet().removeAll(vedlegg.keys),
-                         vedlegg.keys.toMutableSet().removeAll(vedleggMetadata.keys))
-            return ResponseEntity.badRequest().body(FeilDto("Savner vedlegg, se logg for mer informasjon"))
+                         vedleggMetadata.keys.toMutableSet().removeAll(vedleggData.keys),
+                         vedleggData.keys.toMutableSet().removeAll(vedleggMetadata.keys))
+            throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
         }
-        return ResponseEntity.ok(søknadService.motta(søknad, vedlegg))
     }
 
 }

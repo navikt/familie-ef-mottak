@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.PdfClient
@@ -8,7 +9,8 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
-import no.nav.familie.kontrakter.ef.søknad.Søknad
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -28,14 +30,22 @@ class PdfService(private val soknadRepository: SoknadRepository,
     }
 
     private fun lagFeltMap(innsending: Soknad, vedleggTitler: List<String>): Map<String, Any> {
-        return if (innsending.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-            val dto = SøknadMapper.toDto<Søknad>(innsending)
-            SøknadTreeWalker.mapSøknadsfelter(dto, vedleggTitler)
-        } else if (innsending.dokumenttype == DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER) {
-            val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
-            SøknadTreeWalker.mapSkjemafelter(dto)
-        } else {
-            error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
+        return when (innsending.dokumenttype) {
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> {
+                val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
+                SøknadTreeWalker.mapOvergangsstønad(dto, vedleggTitler)
+            }
+            DOKUMENTTYPE_BARNETILSYN -> {
+                val dto = SøknadMapper.toDto<SøknadBarnetilsyn>(innsending)
+                SøknadTreeWalker.mapBarnetilsyn(dto, vedleggTitler)
+            }
+            DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER -> {
+                val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
+                SøknadTreeWalker.mapSkjemafelter(dto)
+            }
+            else -> {
+                error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
+            }
         }
     }
 }
