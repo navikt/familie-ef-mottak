@@ -23,7 +23,5 @@ data class Soknad(@Id
                   val fnr: String,
                   @Column(name = "task_opprettet")
                   val taskOpprettet: Boolean = false,
-                  @Convert(converter = StringValCryptoConverter::class)
-                  val vedlegg: String? = null,
                   @Column(name = "opprettet_tid")
                   val opprettetTid: LocalDateTime = LocalDateTime.now())
