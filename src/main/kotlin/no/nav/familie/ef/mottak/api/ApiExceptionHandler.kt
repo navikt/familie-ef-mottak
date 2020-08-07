@@ -25,4 +25,11 @@ class ApiExceptionHandler {
                 .body(FeilDto("Uventet feil"))
     }
 
+    @ExceptionHandler(ApiFeil::class)
+    fun handleThrowable(e: ApiFeil): ResponseEntity<FeilDto> {
+        return ResponseEntity
+                .status(e.httpStatus)
+                .body(FeilDto(e.feil))
+    }
+
 }

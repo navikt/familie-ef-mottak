@@ -4,7 +4,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.service.Testdata.søknad
+import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
+import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.http.client.MultipartBuilder
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
@@ -39,9 +40,23 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    internal fun `ok request`() {
+    internal fun `overgangsstønad ok request`() {
+        val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("1"), lagVedlegg("2")))
+        okSøknadMedVedleggRequest(søknad, "/api/soknad")
+        okSøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad")
+        verify(exactly = 2) { søknadService.mottaOvergangsstønad(søknad, any()) }
+    }
+
+    @Test
+    internal fun `barnetilsyn ok request`() {
+        val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg("1"), lagVedlegg("2")))
+        okSøknadMedVedleggRequest(søknad, "/api/soknad/barnetilsyn")
+        verify(exactly = 1) { søknadService.mottaBarnetilsyn(søknad, any()) }
+    }
+
+    private fun <T> okSøknadMedVedleggRequest(søknad: SøknadMedVedlegg<T>,
+                                              url: String) {
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
-        val søknad = SøknadMedVedlegg(søknad, listOf(lagVedlegg("1"), lagVedlegg("2")))
         val request = MultipartBuilder()
                 .withJson("søknad", søknad)
                 .withByteArray("vedlegg", "1", byteArrayOf(12))
@@ -49,19 +64,18 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
                 .build()
 
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost("/api/soknad"),
+                restTemplate.exchange(localhost(url),
                                       HttpMethod.POST,
                                       HttpEntity(request, headers))
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        verify(exactly = 1) { søknadService.motta(søknad, any()) }
     }
 
     @Test
     internal fun `vedlegg savnes i json`() {
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
         val request = MultipartBuilder()
-                .withJson("søknad", SøknadMedVedlegg(søknad, listOf(lagVedlegg("1"))))
+                .withJson("søknad", SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("1"))))
                 .build()
         val response: ResponseEntity<Any> =
                 restTemplate.exchange(localhost("/api/soknad"),
@@ -74,7 +88,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     internal fun `vedlegg savnes i listen med vedlegg`() {
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
         val request = MultipartBuilder()
-                .withJson("søknad", SøknadMedVedlegg(søknad, listOf(lagVedlegg("1"))))
+                .withJson("søknad", SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("1"))))
                 .withByteArray("vedlegg", "1", byteArrayOf(12))
                 .withByteArray("vedlegg", "2", byteArrayOf(12))
                 .build()

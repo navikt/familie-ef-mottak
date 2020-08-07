@@ -9,9 +9,9 @@ class SøknadTreeWalkerTest {
 
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden`() {
-        val søknad = Testdata.søknad
+        val søknad = Testdata.søknadOvergangsstønad
 
-        val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, emptyList())
+        val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, emptyList())
 
         assertThat(mapSøknadsfelter).isNotEmpty
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
@@ -22,10 +22,10 @@ class SøknadTreeWalkerTest {
 
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden sammen med vedlegg`() {
-        val søknad = Testdata.søknad
+        val søknad = Testdata.søknadOvergangsstønad
 
         val vedlegg = listOf("Dokumentasjon på at du er syk")
-        val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
+        val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
 
         assertThat(mapSøknadsfelter).isNotEmpty
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
@@ -45,12 +45,12 @@ class SøknadTreeWalkerTest {
 
     @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR`() {
-        val søknad = Testdata.søknad
+        val søknad = Testdata.søknadOvergangsstønad
 
         val vedlegg = listOf("Dokumentasjon på at du er syk",
                              "Dokumentasjon på at du er syk",
                              "Dokumentasjon på at kan arbeide")
-        val mapSøknadsfelter = SøknadTreeWalker.mapSøknadsfelter(søknad, vedlegg)
+        val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/pdf_generated.json"), pdf.toByteArray()) //kommentere ut for å skrive over fila
         assertThat(pdf).isEqualTo(readFile("pdf_generated.json"))
