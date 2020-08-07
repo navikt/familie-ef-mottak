@@ -28,7 +28,7 @@ spring:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvfamilie-ef-mottak
+      group-id: srvfamilie-ef-mot
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
