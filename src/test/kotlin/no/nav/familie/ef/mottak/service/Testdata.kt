@@ -49,7 +49,7 @@ internal object Testdata {
                                               Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
                                               Søknadsfelt("Bosituasjonen din", bosituasjon()),
                                               Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-                                              Søknadsfelt("Barn", listOf(barn())),
+                                              Søknadsfelt("Barn", listOf(barn(barnetilsyn = true))),
                                               Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
                                               Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
                                               dokumentasjon = BarnetilsynDokumentasjon(
@@ -161,7 +161,7 @@ internal object Testdata {
     }
 
     @Suppress("LongLine")
-    private fun barn(): Barn {
+    private fun barn(barnetilsyn: Boolean = false): Barn {
         return Barn(navn = Søknadsfelt("Barnets fulle navn, hvis dette er bestemt", "Sorgløs"),
                     erBarnetFødt = Søknadsfelt("Er barnet født?", false),
                     fødselTermindato = Søknadsfelt("Termindato", LocalDate.of(2020, 5, 16)),
@@ -196,7 +196,20 @@ internal object Testdata {
                                                 Søknadsfelt("Hvor mye er du sammen med den andre forelderen til barnet?",
                                                             "Vi møtes også uten at barnet er til stede"),
                                                 Søknadsfelt("Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
-                                                            "Vi sees stadig vekk"))))
+                                                            "Vi sees stadig vekk"))),
+                    skalHaBarnepass = if (barnetilsyn) Søknadsfelt("Skal ha barnepass", true) else null,
+                    barnepass = if (barnetilsyn) barnepass() else null)
+    }
+
+    private fun barnepass(): Søknadsfelt<Barnepass> {
+        return Søknadsfelt("Barnepass", Barnepass(
+                årsakBarnepass = Søknadsfelt("Årsak Barnepass", "Årsak"),
+                barnepassordninger = Søknadsfelt("Ordninger", listOf(BarnepassOrdning(
+                        hvaSlagsBarnepassOrdning = Søknadsfelt("Hva slags barnepassordning?", "En"),
+                        navn = Søknadsfelt("Navn", "navn"),
+                        periode = Søknadsfelt("Periode", Periode(Month.JANUARY, 2020, Month.JULY, 2020)),
+                        belop = Søknadsfelt("Beløp", 1000.213))
+                ))))
     }
 
     private fun sivilstandsplaner(): Sivilstandsplaner {
