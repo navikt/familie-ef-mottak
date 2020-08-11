@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
 
-
 object Feltformaterer {
 
     /**
@@ -32,6 +31,8 @@ object Feltformaterer {
                 displayName(verdi)
             is Boolean ->
                 if (verdi) "Ja" else "Nei"
+            is Double ->
+                String.format("%.2f", verdi).replace(".", ",")
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
             is Fødselsnummer ->
