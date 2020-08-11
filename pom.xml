@@ -24,7 +24,7 @@
         <mockk.version>1.10.0</mockk.version>
         <fasterxml.version>2.11.2</fasterxml.version>
         <felles.version>1.20200724074856_d12948e</felles.version>
-        <kontrakter.version>2.0_20200805091108_f1de007</kontrakter.version>
+        <kontrakter.version>2.0_20200810084454_e1f6fb2</kontrakter.version>
         <token-validation.version>1.2.0</token-validation.version>
         <spring-cloud.version>2.2.4.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
