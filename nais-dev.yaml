@@ -21,6 +21,13 @@ spec:
     path: /internal/prometheus
   vault:
     enabled: true
+      paths:
+        - kvPath: /kv/preprod/fss/familie-ef-mottak/default
+          mountPath: /var/run/secrets/nais.io/vault
+        - kvPath: /azuread/data/dev/creds/familie-ef-mottak
+          mountPath: /var/run/secrets/nais.io/azuread
+        - kvPath: /serviceuser/data/dev/srvfamilie-ef-mot
+          mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
   replicas:
     min: 1
     max: 1
@@ -46,3 +53,4 @@ spec:
     - name: CREDENTIAL_PASSWORD
       value: /run/secrets/nais.io/azuread/srvfamilie-ef-mot/password
   leaderElection: true
+
