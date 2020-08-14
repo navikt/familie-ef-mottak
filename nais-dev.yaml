@@ -46,9 +46,5 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
-    - name: SRV_CREDENTIAL_USERNAME
-      value: /var/run/secrets/nais.io/srvfamilie-ef-mot/username
-    - name: SRV_CREDENTIAL_PASSWORD
-      value: /var/run/secrets/nais.io/srvfamilie-ef-mot/password
   leaderElection: true
 
