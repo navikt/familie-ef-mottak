@@ -113,5 +113,6 @@ database:
     key: ${DATABASEKEY}
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
-
+CREDENTIAL_USERNAME: ${SRV_CREDENTIAL_USERNAME}
+CREDENTIAL_PASSWORD: ${SRV_CREDENTIAL_PASSWORD}
 #STS_URL: http://security-token-service.default.svc.nais.local
