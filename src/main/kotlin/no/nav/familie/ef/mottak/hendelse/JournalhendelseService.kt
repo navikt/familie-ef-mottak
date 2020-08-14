@@ -84,6 +84,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     fun behandleJournalhendelse(hendelseRecord: JournalfoeringHendelseRecord) {
         //hent journalpost fra saf
         val journalpostId = hendelseRecord.getJournalpostId().toString()
+        logger.info("Ny journalhendelse med journalpostId: $journalpostId")
         val journalpost = journalpostClient.hentJournalpost(journalpostId)
         if (skalBehandleJournalpost(journalpost)) {
 

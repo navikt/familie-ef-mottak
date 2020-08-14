@@ -44,7 +44,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private fun journalPostUri(journalpostId: String) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
                     .pathSegment(PATH_JOURNALPOST)
-                    .queryParam("journalPostId", journalpostId)
+                    .queryParam("journalpostId", journalpostId)
                     .build()
                     .toUri()
 
