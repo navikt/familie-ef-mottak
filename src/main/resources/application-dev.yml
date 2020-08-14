@@ -5,6 +5,10 @@ spring:
     bootstrap-servers: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     properties:
       schema.registry.url: https://kafka-schema-registry.nais.preprod.local
+      security.protocol: SASL_SSL
+      sasl:
+        mechanism: PLAIN
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CREDENTIAL_USERNAME}" password="${CREDENTIAL_PASSWORD}";
 
 familie:
   ef:
@@ -45,3 +49,5 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
+CREDENTIAL_USERNAME: ${SRV_CREDENTIAL_USERNAME}
+CREDENTIAL_PASSWORD: ${SRV_CREDENTIAL_PASSWORD}
