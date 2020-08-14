@@ -1,4 +1,4 @@
 FROM navikt/java:11
-COPY srvinit.sh /init-scripts/srvinit.sh
-RUN chmod +x /init-scripts/srvinit.sh
+COPY init.sh /init-scripts/init.sh
+RUN chmod +x /init-scripts/init.sh
 COPY ./target/familie-ef-mottak.jar "app.jar"
