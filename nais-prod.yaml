@@ -21,6 +21,11 @@ spec:
     path: /internal/prometheus
   vault:
     enabled: true
+    paths:
+      - kvPath: /kv/prod/fss/familie-ef-mottak/default
+        mountPath: /var/run/secrets/nais.io/vault
+      - kvPath: serviceuser/data/prod/srvfamilie-ef-mot
+        mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
   replicas:
     min: 1
     max: 1
