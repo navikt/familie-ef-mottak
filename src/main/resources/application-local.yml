@@ -81,5 +81,5 @@ database:
     key: Det finnes mange gode eksempler.
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q1
-CREDENTIAL_USERNAME: test
-CREDENTIAL_PASSWORD: test
+SRV_CREDENTIAL_USERNAME: test
+SRV_CREDENTIAL_PASSWORD: test
