@@ -8,6 +8,15 @@ spring:
     username: postgres
     password: test
     url: jdbc:postgresql://localhost:5432/familie-ef-mottak
+  kafka:
+    bootstrap-servers: http://localhost:9092
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl:
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="igroup" password="itest";
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: srvc01
 
 familie:
   ef:
@@ -71,3 +80,6 @@ database:
     # 16, 24 or 32 bytes
     key: Det finnes mange gode eksempler.
 
+JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q1
+SRV_CREDENTIAL_USERNAME: test
+SRV_CREDENTIAL_PASSWORD: test
