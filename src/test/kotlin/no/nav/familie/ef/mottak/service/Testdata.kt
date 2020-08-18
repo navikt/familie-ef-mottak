@@ -53,13 +53,12 @@ internal object Testdata {
                                               Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
                                               Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
                                               dokumentasjon = BarnetilsynDokumentasjon(
-                                                      tidligereFakturaer = dokumentfelt("Tidligere fakturaer"),
                                                       barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
                                                       avtaleBarnepasser = dokumentfelt("Avtale barnepasser"),
                                                       arbeidstid = dokumentfelt("Arbeidstid"),
                                                       spesielleBehov = dokumentfelt("Spesielle behov")))
 
-    private val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
+    private const val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
     val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk"))
 
