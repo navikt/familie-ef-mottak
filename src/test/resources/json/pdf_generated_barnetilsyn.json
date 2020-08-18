@@ -376,12 +376,6 @@
       "verdi" : "Ja"
     } ]
   }, {
-    "label" : "Tidligere fakturaer",
-    "verdiliste" : [ {
-      "label" : "harSendtInn",
-      "verdi" : "Nei"
-    } ]
-  }, {
     "label" : "Barnepassordning faktura",
     "verdiliste" : [ {
       "label" : "harSendtInn",

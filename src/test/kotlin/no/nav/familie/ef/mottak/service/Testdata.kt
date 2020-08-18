@@ -53,7 +53,6 @@ internal object Testdata {
                                               Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
                                               Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
                                               dokumentasjon = BarnetilsynDokumentasjon(
-                                                      tidligereFakturaer = dokumentfelt("Tidligere fakturaer"),
                                                       barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
                                                       avtaleBarnepasser = dokumentfelt("Avtale barnepasser"),
                                                       arbeidstid = dokumentfelt("Arbeidstid"),
