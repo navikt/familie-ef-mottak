@@ -70,15 +70,6 @@ internal object Testdata {
                                               )
     )
 
-    //  constructor(personalia: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Personalia>,
-//  innsendingsdetaljer: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer>,
-//  sivilstandsdetaljer: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Sivilstandsdetaljer>,
-//  medlemskapsdetaljer: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Medlemskapsdetaljer>,
-//  bosituasjon: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Bosituasjon>,
-//  sivilstandsplaner: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.Sivilstandsplaner>? /* = compiled code */,
-//  utdanning: no.nav.familie.kontrakter.ef.søknad.Søknadsfelt<no.nav.familie.kontrakter.ef.søknad.UnderUtdanning>,
-//  dokumentasjon: no.nav.familie.kontrakter.ef.søknad.SkolepengerDokumentasjon) {
-
     private fun utdanning(): UnderUtdanning {
         return UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
                               Søknadsfelt("Utdanning",
