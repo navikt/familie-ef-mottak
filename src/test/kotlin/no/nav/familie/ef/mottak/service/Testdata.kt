@@ -65,10 +65,7 @@ internal object Testdata {
                                               Søknadsfelt("Bosituasjonen din", bosituasjon()),
                                               Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
                                               Søknadsfelt("Arbeid, utdanning og andre aktiviteter", utdanning()),
-                                              dokumentasjon = SkolepengerDokumentasjon(
-
-                                              )
-    )
+                                              dokumentasjon = SkolepengerDokumentasjon())
 
     private fun utdanning(): UnderUtdanning {
         return UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
@@ -95,8 +92,7 @@ internal object Testdata {
                                                                        Periode(Month.JANUARY,
                                                                                1999,
                                                                                Month.OCTOBER,
-                                                                               2004))))
-                              ))
+                                                                               2004))))))
     }
 
 

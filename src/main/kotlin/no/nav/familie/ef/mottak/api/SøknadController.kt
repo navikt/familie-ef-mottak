@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
+import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.security.token.support.core.api.Protected
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
 @Protected
 class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["", "overgangsstonad"])
+    @PostMapping(path = ["", "overgangsstonad"])
     fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                         @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
     ): ResponseEntity<Any> {
@@ -32,7 +33,7 @@ class SøknadController(val søknadService: SøknadService) {
         return ResponseEntity.ok(søknadService.mottaOvergangsstønad(søknad, vedleggData))
     }
 
-    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["barnetilsyn"])
+    @PostMapping(path = ["barnetilsyn"])
     fun barnetilsyn(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
                     @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
     ): ResponseEntity<Any> {
@@ -43,10 +44,10 @@ class SøknadController(val søknadService: SøknadService) {
         return ResponseEntity.ok(søknadService.mottaBarnetilsyn(søknad, vedleggData))
     }
 
-    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["skolepenger"])
+    @PostMapping(path = ["skolepenger"])
     fun skolepenger(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
                     @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
