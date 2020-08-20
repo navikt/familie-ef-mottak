@@ -9,6 +9,7 @@ import org.springframework.kafka.listener.MessageListenerContainer
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
 import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
@@ -49,9 +50,8 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
             counter.set(0)
         }
         val numErrors = counter.incrementAndGet()
-        val stopTime =
-                if (numErrors > SLOW_ERROR_COUNT) LONG_TIME else SHORT_TIME * numErrors
-        taskScheduler.scheduleWithFixedDelay(
+        val delayTime = if (numErrors > SLOW_ERROR_COUNT) LONG_TIME else SHORT_TIME * numErrors
+        taskScheduler.schedule(
                 {
                     try {
                         logger.warn("Starter kafka container for {}", topic)
@@ -60,8 +60,8 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
                         logger.error("Feil oppstod ved venting og oppstart av kafka container", exception)
                     }
                 },
-                stopTime)
-        logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime).toString())
+                Instant.ofEpochMilli(now + delayTime))
+        logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(delayTime).toString())
         super.handle(e, records, consumer, container)
     }
 
