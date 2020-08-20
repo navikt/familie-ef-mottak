@@ -76,8 +76,7 @@ internal object Testdata {
                                                                 Periode(Month.JANUARY,
                                                                         1999,
                                                                         Month.OCTOBER,
-                                                                        2004))
-                                          )),
+                                                                        2004)))),
                               Søknadsfelt("Er utdanningen offentlig eller privat?",
                                           "Offentlig"),
                               Søknadsfelt("Heltid, eller deltid", "Deltid"),
