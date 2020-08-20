@@ -35,7 +35,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
         val nesteTask: Task =
-                Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+                Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 
