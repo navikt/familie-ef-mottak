@@ -1,10 +1,7 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
-import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
-import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -44,6 +41,17 @@ class SøknadController(val søknadService: SøknadService) {
         validerVedlegg(søknad.vedlegg, vedleggData)
 
         return ResponseEntity.ok(søknadService.mottaBarnetilsyn(søknad, vedleggData))
+    }
+
+    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["skolepenger"])
+    fun skolepenger(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
+                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
+    ): ResponseEntity<Any> {
+        val vedleggData = vedleggData(vedleggListe)
+
+        validerVedlegg(søknad.vedlegg, vedleggData)
+
+        return ResponseEntity.ok(søknadService.mottaSkolepenger(søknad, vedleggData))
     }
 
     private fun vedleggData(vedleggListe: List<MultipartFile>) =

@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
+import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.http.client.MultipartBuilder
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
@@ -52,6 +53,13 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
         val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg("1"), lagVedlegg("2")))
         okSøknadMedVedleggRequest(søknad, "/api/soknad/barnetilsyn")
         verify(exactly = 1) { søknadService.mottaBarnetilsyn(søknad, any()) }
+    }
+
+    @Test
+    internal fun `skolepenger ok request`() {
+        val søknad = SøknadMedVedlegg(søknadSkolepenger, listOf(lagVedlegg("1"), lagVedlegg("2")))
+        okSøknadMedVedleggRequest(søknad, "/api/soknad/skolepenger")
+        verify(exactly = 1) { søknadService.mottaSkolepenger(søknad, any()) }
     }
 
     private fun <T> okSøknadMedVedleggRequest(søknad: SøknadMedVedlegg<T>,
