@@ -72,7 +72,8 @@ class SøknadTreeWalkerTest {
 
         val vedlegg = listOf("Utgifter til utdanning")
         val mapSøknadsfelter = SøknadTreeWalker.mapSkolepenger(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger.json")
+        val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
+        assertThat(pdf).isEqualToIgnoringWhitespace(readFile("pdf_generated_skolepenger.json"))
     }
 
     @Test
