@@ -72,8 +72,8 @@ class SøknadTreeWalkerTest {
 
         val vedlegg = listOf("Utgifter til utdanning")
         val mapSøknadsfelter = SøknadTreeWalker.mapSkolepenger(søknad, vedlegg)
-        val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
-        assertThat(pdf).isEqualToIgnoringWhitespace(readFile("pdf_generated_skolepenger.json"))
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger.json")
+
     }
 
     @Test
@@ -90,7 +90,7 @@ class SøknadTreeWalkerTest {
     private fun generatePdfAndAssert(mapSøknadsfelter: Map<String, Any>, filename: String) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray()) //kommentere ut for å skrive over fila
-        assertThat(pdf).isEqualTo(readFile(filename))
+        assertThat(pdf).isEqualToIgnoringWhitespace(readFile(filename))
     }
 
 }
