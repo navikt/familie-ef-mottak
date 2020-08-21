@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.*
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
@@ -32,6 +33,15 @@ internal class PdfServiceTest {
                                                journalpostId = null,
                                                saksnummer = null)
 
+    private val søknadSkolepengerId = "søknadSkolepengerId"
+    private val søknadSkolepenger = Soknad(id = søknadSkolepengerId,
+                                           søknadJson = createValidSøknadJson(Testdata.søknadSkolepenger),
+                                           søknadPdf = null,
+                                           fnr = "654",
+                                           dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+                                           journalpostId = null,
+                                           saksnummer = null)
+
     val søknadBarnetilsynId = "søknadBarnetilsynId"
     private val søknadBarnetilsyn = Soknad(id = søknadBarnetilsynId,
                                            søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
@@ -44,7 +54,7 @@ internal class PdfServiceTest {
 
     @BeforeEach
     private fun init() {
-        søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn)
+        søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn, søknadSkolepenger)
         every {
             vedleggRepository.findTitlerBySøknadId(any())
         } returns vedlegg.map { it.tittel }
@@ -58,6 +68,17 @@ internal class PdfServiceTest {
         capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf(søknadOvergangsstønadId)
+        // Then
+        assertThat(pdf).isEqualTo(slot.captured.søknadPdf)
+    }
+
+    @Test
+    fun `Skolepengesøknad skal oppdateres med pdf når pdf genereres`() {
+        // Given
+        val slot = slot<Soknad>()
+        capturePdfAddedToSøknad(slot)
+        // When
+        pdfService.lagPdf(søknadSkolepengerId)
         // Then
         assertThat(pdf).isEqualTo(slot.captured.søknadPdf)
     }

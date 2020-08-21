@@ -1,0 +1,262 @@
+{
+  "label": "Søknad skolepenger - 15-00.04",
+  "verdiliste": [
+    {
+      "label": "Søker",
+      "verdiliste": [
+        {
+          "label": "Fødselsnummer",
+          "verdi": "03125462714"
+        },
+        {
+          "label": "Navn",
+          "verdi": "Kari Nordmann"
+        },
+        {
+          "label": "Statsborgerskap",
+          "verdi": "Norsk"
+        },
+        {
+          "label": "Adresse",
+          "verdi": "Jerpefaret 5C\n\n1440 Drøbak\n\nNorge"
+        },
+        {
+          "label": "Telefonnummer",
+          "verdi": "12345678"
+        },
+        {
+          "label": "Sivilstand",
+          "verdi": "Ugift"
+        }
+      ]
+    },
+    {
+      "label": "detaljer",
+      "verdiliste": [
+        {
+          "label": "mottat",
+          "verdi": "01.01.2020 00:00:00"
+        }
+      ]
+    },
+    {
+      "label": "Detaljer om sivilstand",
+      "verdiliste": [
+        {
+          "label": "Er du gift uten at dette er formelt registrert eller godkjent i Norge?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "giftIUtlandetDokumentasjon",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
+        },
+        {
+          "label": "Er du separert eller skilt uten at dette er formelt registrert eller godkjent i Norge?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "separertEllerSkiltIUtlandetDokumentasjon",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
+        },
+        {
+          "label": "Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "Når søkte dere eller reiste sak?",
+          "verdi": "23.12.2015"
+        },
+        {
+          "label": "Skilsmisse- eller separasjonsbevilling",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
+        },
+        {
+          "label": "Hva er grunnen til at du er alene med barn?",
+          "verdi": "Endring i samværsordning"
+        },
+        {
+          "label": "Erklæring om samlivsbrudd",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
+        },
+        {
+          "label": "Dato for samlivsbrudd",
+          "verdi": "03.10.2014"
+        },
+        {
+          "label": "Når flyttet dere fra hverandre?",
+          "verdi": "04.10.2014"
+        },
+        {
+          "label": "Når skjedde endringen / når skal endringen skje?",
+          "verdi": "17.04.2013"
+        }
+      ]
+    },
+    {
+      "label": "Opphold i Norge",
+      "verdiliste": [
+        {
+          "label": "Oppholder du deg i Norge?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "Har du bodd i Norge de siste tre årene?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "Utenlandsopphold",
+          "verdiliste": [
+            {
+              "label": "Fra",
+              "verdi": "04.12.2012"
+            },
+            {
+              "label": "Til",
+              "verdi": "18.12.2012"
+            },
+            {
+              "label": "Hvorfor bodde du i utlandet?",
+              "verdi": "Granca, Granca, Granca"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Bosituasjonen din",
+      "verdiliste": [
+        {
+          "label": "Deler du bolig med andre voksne?",
+          "verdi": "Ja, jeg har samboer og lever i et ekteskapslignende forhold"
+        },
+        {
+          "label": "Om samboeren din",
+          "verdiliste": [
+            {
+              "label": "Navn",
+              "verdi": "Bob Burger"
+            },
+            {
+              "label": "Fødselsdato",
+              "verdi": "18.02.1992"
+            }
+          ]
+        },
+        {
+          "label": "Når flyttet dere sammen?",
+          "verdi": "12.08.2018"
+        }
+      ]
+    },
+    {
+      "label": "Sivilstandsplaner",
+      "verdiliste": [
+        {
+          "label": "Har du konkrete planer om å gifte deg eller bli samboer",
+          "verdi": "Ja"
+        },
+        {
+          "label": "Når skal dette skje?",
+          "verdi": "15.04.2021"
+        },
+        {
+          "label": "Hvem skal du gifte deg eller bli samboer med?",
+          "verdiliste": [
+            {
+              "label": "Navn",
+              "verdi": "Bob Burger"
+            },
+            {
+              "label": "Fødselsdato",
+              "verdi": "18.02.1992"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Arbeid, utdanning og andre aktiviteter",
+      "verdiliste": [
+        {
+          "label": "Skole/utdanningssted",
+          "verdi": "UiO"
+        },
+        {
+          "label": "Utdanning",
+          "verdiliste": [
+            {
+              "label": "Linje/kurs/grad",
+              "verdi": "Profesjonsstudium Informatikk"
+            },
+            {
+              "label": "Når skal du være elev/student?",
+              "verdi": "Fra januar 1999 til oktober 2004"
+            }
+          ]
+        },
+        {
+          "label": "Er utdanningen offentlig eller privat?",
+          "verdi": "Offentlig"
+        },
+        {
+          "label": "Heltid, eller deltid",
+          "verdi": "Deltid"
+        },
+        {
+          "label": "Hvor mye skal du studere?",
+          "verdi": "300"
+        },
+        {
+          "label": "Hva er målet med utdanningen?",
+          "verdi": "Økonomisk selvstendighet"
+        },
+        {
+          "label": "Har du tatt utdanning etter grunnskolen?",
+          "verdi": "Ja"
+        },
+        {
+          "label": "Tidligere Utdanning",
+          "verdiliste": [
+            {
+              "label": "Linje/kurs/grad",
+              "verdi": "Master Fysikk"
+            },
+            {
+              "label": "Når var du elev/student?",
+              "verdi": "Fra januar 1999 til oktober 2004"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Vedlegg",
+      "verdiliste": [
+        {
+          "label": "Vedlegg",
+          "verdi": "Utgifter til utdanning"
+        }
+      ]
+    }
+  ]
+}

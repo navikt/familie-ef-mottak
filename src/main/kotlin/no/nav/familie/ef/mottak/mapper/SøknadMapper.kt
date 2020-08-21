@@ -4,10 +4,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object SøknadMapper {
@@ -33,4 +35,11 @@ object SøknadMapper {
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER)
     }
+
+    fun fromDto(søknadSkolepenger: SøknadSkolepenger): Soknad {
+        return Soknad(søknadJson = objectMapper.writeValueAsString(søknadSkolepenger),
+                      fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
+                      dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
+    }
+
 }

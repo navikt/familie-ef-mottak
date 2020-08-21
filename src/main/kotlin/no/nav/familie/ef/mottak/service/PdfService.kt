@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SoknadRepository
@@ -11,6 +12,7 @@ import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -42,6 +44,10 @@ class PdfService(private val soknadRepository: SoknadRepository,
             DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER -> {
                 val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
                 SøknadTreeWalker.mapSkjemafelter(dto)
+            }
+            DOKUMENTTYPE_SKOLEPENGER -> {
+                val dto = SøknadMapper.toDto<SøknadSkolepenger>(innsending)
+                SøknadTreeWalker.mapSkolepenger(dto, vedleggTitler)
             }
             else -> {
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")

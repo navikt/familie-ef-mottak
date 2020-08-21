@@ -1,9 +1,6 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN_VEDLEGG
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_VEDLEGG
+import no.nav.familie.ef.mottak.config.*
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
@@ -43,6 +40,7 @@ object ArkiverDokumentRequestMapper {
         return when (dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> DOKUMENTTYPE_OVERGANGSSTØNAD_VEDLEGG
             DOKUMENTTYPE_BARNETILSYN -> DOKUMENTTYPE_BARNETILSYN_VEDLEGG
+            DOKUMENTTYPE_SKOLEPENGER -> DOKUMENTTYPE_SKOLEPENGER_VEDLEGG
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
     }

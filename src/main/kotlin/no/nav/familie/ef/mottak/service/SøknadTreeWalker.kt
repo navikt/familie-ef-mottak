@@ -42,6 +42,13 @@ object SøknadTreeWalker {
         return feltlisteMap("Søknad barnetilsyn", finnFelter + vedlegg)
     }
 
+    fun mapSkolepenger(søknad: SøknadSkolepenger,
+                       vedleggTitler: List<String>): Map<String, Any> {
+        val finnFelter = finnFelter(søknad)
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        return feltlisteMap("Søknad skolepenger - 15-00.04", finnFelter + vedlegg)
+    }
+
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
         val finnFelter = finnFelter(skjema)
         return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
