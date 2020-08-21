@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
+import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import org.assertj.core.api.Assertions.assertThat
@@ -40,6 +41,21 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
         assertThat(søknad).isNotNull
     }
 
+
+    @Test
+    internal fun `lagre skjema for skolepenger`() {
+        val kvittering = søknadService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, emptyList()), emptyMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+    }
+
+    @Test
+    internal fun `lagre skjema for søknad skolepenger med vedlegg`() {
+        val kvittering = søknadService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, vedlegg),
+                                                        vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+    }
     @Test
     internal fun `lagre skjema for søknad barnetilsyn`() {
         val kvittering = søknadService.mottaBarnetilsyn(SøknadMedVedlegg(søknadBarnetilsyn, emptyList()), emptyMap())

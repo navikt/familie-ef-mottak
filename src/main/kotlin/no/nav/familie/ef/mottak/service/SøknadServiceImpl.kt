@@ -13,10 +13,7 @@ import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
-import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
-import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
-import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -41,6 +38,13 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
     @Transactional
     override fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
+        return motta(søknadDb, vedlegg)
+    }
+
+    @Transactional
+    override fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg)

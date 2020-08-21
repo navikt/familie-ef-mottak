@@ -29,6 +29,13 @@ internal class ArkiverDokumentRequestMapperTest {
     }
 
     @Test
+    internal fun `skolepenger toDto`() {
+        val dto = toDto(lagSøknad(Testdata.søknadSkolepenger, DOKUMENTTYPE_SKOLEPENGER), listOf(lagVedlegg()))
+        assertThat(dto.vedleggsdokumenter.first().dokumentType)
+                .isEqualTo(DOKUMENTTYPE_SKOLEPENGER_VEDLEGG)
+    }
+
+    @Test
     internal fun `arbeidssøker toDto`() {
         toDto(lagSøknad(Testdata.skjemaForArbeidssøker, DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER), emptyList())
     }

@@ -58,6 +58,45 @@ internal object Testdata {
                                                       arbeidstid = dokumentfelt("Arbeidstid"),
                                                       spesielleBehov = dokumentfelt("Spesielle behov")))
 
+    val søknadSkolepenger = SøknadSkolepenger(Søknadsfelt("Søker", personalia()),
+                                              Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+                                              Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+                                              Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+                                              Søknadsfelt("Bosituasjonen din", bosituasjon()),
+                                              Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+                                              Søknadsfelt("Arbeid, utdanning og andre aktiviteter", utdanning()),
+                                              dokumentasjon = SkolepengerDokumentasjon())
+
+    private fun utdanning(): UnderUtdanning {
+        return UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
+                              Søknadsfelt("Utdanning",
+                                          Utdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                "Profesjonsstudium Informatikk"),
+                                                    Søknadsfelt("Når skal du være elev/student?",
+                                                                Periode(Month.JANUARY,
+                                                                        1999,
+                                                                        Month.OCTOBER,
+                                                                        2004)))),
+                              Søknadsfelt("Er utdanningen offentlig eller privat?",
+                                          "Offentlig"),
+                              Søknadsfelt("Heltid, eller deltid", "Deltid"),
+                              Søknadsfelt("Hvor mye skal du studere?", 300),
+                              Søknadsfelt("Hva er målet med utdanningen?",
+                                          "Økonomisk selvstendighet"),
+                              Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
+                              Søknadsfelt("Tidligere Utdanning",
+                                          listOf(Utdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                       "Master Fysikk"),
+                                                           Søknadsfelt("Når var du elev/student?",
+                                                                       Periode(Month.JANUARY,
+                                                                               1999,
+                                                                               Month.OCTOBER,
+                                                                               2004))))))
+    }
+
+
+
+
     private const val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
     val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk"))
