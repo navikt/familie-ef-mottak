@@ -33,6 +33,18 @@ class SøknadTreeWalkerTest {
     }
 
     @Test
+    fun `mapSøknadsfelter returnerer en map-struktur med feltene fra skolepengesøknaden sammen med vedlegg`() {
+        val søknad = Testdata.søknadSkolepenger
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTreeWalker.mapSkolepenger(søknad, vedlegg)
+
+        assertThat(mapSøknadsfelter).isNotEmpty
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad skolepenger - 15-00.04")
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(8)
+    }
+
+    @Test
     fun `mapSkjemafelter returnerer en map-struktur med feltene fra skjema`() {
         val skjemaForArbeidssøker = Testdata.skjemaForArbeidssøker
 
