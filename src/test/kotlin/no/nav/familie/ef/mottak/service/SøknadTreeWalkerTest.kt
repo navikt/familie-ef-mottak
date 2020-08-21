@@ -67,6 +67,15 @@ class SøknadTreeWalkerTest {
     }
 
     @Test
+    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - skolepenger`() {
+        val søknad = Testdata.søknadSkolepenger
+
+        val vedlegg = listOf("Utgifter til utdanning")
+        val mapSøknadsfelter = SøknadTreeWalker.mapSkolepenger(søknad, vedlegg)
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger.json")
+    }
+
+    @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - barnetilsyn`() {
         val søknad = Testdata.søknadBarnetilsyn
 
