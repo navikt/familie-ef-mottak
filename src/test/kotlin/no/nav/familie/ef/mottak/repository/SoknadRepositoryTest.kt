@@ -2,10 +2,8 @@ package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
@@ -33,7 +31,7 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val soknadUtenTask = soknadRepository.findFirstByTaskOpprettetIsFalse()
 
-        assertThat(soknadUtenTask?.taskOpprettet).isFalse()
+        assertThat(soknadUtenTask?.taskOpprettet).isFalse
     }
 
     @Test

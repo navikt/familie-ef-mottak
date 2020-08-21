@@ -43,10 +43,10 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                             ack: Acknowledgment) {
         try {
             val hendelseRecord = consumerRecord.value()
-            val callId = hendelseRecord.getKanalReferanseId().toStringOrNull() ?: IdUtils.generateId()
+            val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
             MDC.put(MDCConstants.MDC_CALL_ID, callId)
 
-            if (hendelsesloggRepository.existsByHendelseId(hendelseRecord.getHendelsesId().toString())) {
+            if (hendelsesloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())) {
                 ack.acknowledge()
                 return
             }
@@ -58,9 +58,9 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
             hendelsesloggRepository
                     .save(Hendelseslogg(consumerRecord.offset(),
-                                        hendelseRecord.getHendelsesId().toString(),
-                                        mapOf("journalpostId" to hendelseRecord.getJournalpostId().toString(),
-                                              "hendelsesType" to hendelseRecord.getHendelsesType().toString()).toProperties()))
+                                        hendelseRecord.hendelsesId.toString(),
+                                        mapOf("journalpostId" to hendelseRecord.journalpostId.toString(),
+                                              "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties()))
             ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved lesing av journalhendelser ", e)
@@ -77,13 +77,13 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
 
     private fun erGyldigHendelsetype(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
-        return GYLDIGE_HENDELSE_TYPER.contains(hendelseRecord.getHendelsesType().toString())
-               && (hendelseRecord.getTemaNytt() != null && hendelseRecord.getTemaNytt().toString() == "ENF")
+        return GYLDIGE_HENDELSE_TYPER.contains(hendelseRecord.hendelsesType.toString())
+               && (hendelseRecord.temaNytt != null && hendelseRecord.temaNytt.toString() == "ENF")
     }
 
     fun behandleJournalhendelse(hendelseRecord: JournalfoeringHendelseRecord) {
         //hent journalpost fra saf
-        val journalpostId = hendelseRecord.getJournalpostId().toString()
+        val journalpostId = hendelseRecord.journalpostId.toString()
         val journalpost = journalpostClient.hentJournalpost(journalpostId)
         if (skalBehandleJournalpost(journalpost)) {
 
@@ -158,6 +158,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     }
 
     companion object {
+
         private val GYLDIGE_HENDELSE_TYPER = arrayOf("MidlertidigJournalført", "TemaEndret")
     }
 }

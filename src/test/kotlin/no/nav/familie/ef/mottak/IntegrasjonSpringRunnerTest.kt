@@ -71,6 +71,7 @@ abstract class IntegrasjonSpringRunnerTest {
     }
 
     companion object {
+
         private const val LOCALHOST = "http://localhost:"
         protected fun initLoggingEventListAppender(): ListAppender<ILoggingEvent> {
             val listAppender = ListAppender<ILoggingEvent>()

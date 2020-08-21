@@ -24,8 +24,7 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["", "overgangsstonad"])
     fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-                        @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
-    ): ResponseEntity<Kvittering> {
+                        @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -35,8 +34,7 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["barnetilsyn"])
     fun barnetilsyn(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
-    ): ResponseEntity<Kvittering> {
+                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -46,8 +44,7 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["skolepenger"])
     fun skolepenger(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>
-    ): ResponseEntity<Kvittering> {
+                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)

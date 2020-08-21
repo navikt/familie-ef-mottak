@@ -13,9 +13,10 @@ import java.util.*
 
 internal class LagJournalføringsoppgaveTaskTest {
 
-    val taskRepository: TaskRepository = mockk()
-    val oppgaveService: OppgaveService = mockk(relaxed = true)
-    val lagJournalføringsoppgaveTask: LagJournalføringsoppgaveTask = LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
+    private val taskRepository: TaskRepository = mockk()
+    private val oppgaveService: OppgaveService = mockk(relaxed = true)
+    private val lagJournalføringsoppgaveTask: LagJournalføringsoppgaveTask =
+            LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
 
     @Test
     fun `Skal gå til HentSaksnummerFraJoarkTask når LagOppgaveTask er utført`() {
@@ -46,8 +47,6 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         verify { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid) }
     }
-
-
 
 
 }

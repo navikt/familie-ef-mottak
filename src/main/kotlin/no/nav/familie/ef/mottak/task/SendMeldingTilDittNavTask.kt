@@ -18,6 +18,7 @@ class SendMeldingTilDittNavTask : AsyncTaskStep {
     }
 
     companion object {
+
         const val SEND_MELDING_TIL_DITT_NAV = "sendMeldingTilDittNav"
     }
 

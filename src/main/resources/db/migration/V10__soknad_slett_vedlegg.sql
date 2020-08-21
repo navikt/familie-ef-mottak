@@ -1,1 +1,2 @@
-ALTER TABLE soknad DROP COLUMN vedlegg;
+ALTER TABLE soknad
+    DROP COLUMN vedlegg;

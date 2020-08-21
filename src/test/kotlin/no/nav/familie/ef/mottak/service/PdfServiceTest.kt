@@ -42,7 +42,7 @@ internal class PdfServiceTest {
                                            journalpostId = null,
                                            saksnummer = null)
 
-    val søknadBarnetilsynId = "søknadBarnetilsynId"
+    private val søknadBarnetilsynId = "søknadBarnetilsynId"
     private val søknadBarnetilsyn = Soknad(id = søknadBarnetilsynId,
                                            søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
                                            søknadPdf = null,
