@@ -27,7 +27,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<String, Stri
             val producerRecord = ProducerRecord(topic, lagNøkkel(eventId), beskjed)
             val response = kafkaTemplate.send(producerRecord).get()
             val recordMetadata = response.recordMetadata
-            logger.debug("Melding sent to Kafka." +
+            logger.info("Melding sent to Kafka." +
                          " partition=${recordMetadata.partition()}" +
                          " offset=${recordMetadata.offset()}" +
                          " key=${response.producerRecord.key()}")
