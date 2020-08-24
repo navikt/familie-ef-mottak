@@ -113,4 +113,5 @@ database:
     key: ${DATABASEKEY}
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
+KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1-testing
 #STS_URL: http://security-token-service.default.svc.nais.local

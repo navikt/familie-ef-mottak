@@ -26,6 +26,7 @@
         <felles.version>1.20200724074856_d12948e</felles.version>
         <confluent.version>5.5.1</confluent.version>
         <kontrakter.version>2.0_20200820134637_1c0ce5d</kontrakter.version>
+        <brukernotifikasjon-skjemas.version>1.2020.08.21-11.47-631516352cc5</brukernotifikasjon-skjemas.version>
         <token-validation.version>1.3.0</token-validation.version>
         <spring-cloud.version>2.2.4.RELEASE</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -42,6 +43,10 @@
         <repository>
             <id>confluent</id>
             <url>http://packages.confluent.io/maven/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <id>github</id>
@@ -143,6 +148,11 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
             <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>brukernotifikasjon-schemas</artifactId>
+            <version>${brukernotifikasjon-skjemas.version}</version>
         </dependency>
 
         <dependency>
