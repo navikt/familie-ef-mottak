@@ -95,8 +95,6 @@ internal object Testdata {
     }
 
 
-
-
     private const val vedleggId = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
     val vedlegg = listOf(Vedlegg(vedleggId, "navn.pdf", "Dokumentasjon på at du er syk"))
@@ -144,12 +142,12 @@ internal object Testdata {
                          null,
                          Søknadsfelt("Om firmaet du driver",
                                      listOf(Selvstendig(Søknadsfelt("Navn på firma", "Bobs burgers"),
-                                                 Søknadsfelt("Organisasjonsnummer", "987654321"),
-                                                 Søknadsfelt("Når etablerte du firmaet?",
-                                                             LocalDate.of(2018, 4, 5)),
-                                                 Søknadsfelt("Hvor mye jobber du?", 150),
-                                                 Søknadsfelt("Hvordan ser arbeidsuken din ut?",
-                                                             "Veldig tung")))),
+                                                        Søknadsfelt("Organisasjonsnummer", "987654321"),
+                                                        Søknadsfelt("Når etablerte du firmaet?",
+                                                                    LocalDate.of(2018, 4, 5)),
+                                                        Søknadsfelt("Hvor mye jobber du?", 150),
+                                                        Søknadsfelt("Hvordan ser arbeidsuken din ut?",
+                                                                    "Veldig tung")))),
                          Søknadsfelt("Om virksomheten du etablerer",
                                      Virksomhet(Søknadsfelt("Beskriv virksomheten",
                                                             "Den kommer til å revolusjonere verden"))),

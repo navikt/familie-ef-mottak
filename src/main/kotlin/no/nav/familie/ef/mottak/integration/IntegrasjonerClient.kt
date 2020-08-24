@@ -103,6 +103,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     companion object {
+
         const val PATH_SEND_INN = "arkiv/v3"
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave"

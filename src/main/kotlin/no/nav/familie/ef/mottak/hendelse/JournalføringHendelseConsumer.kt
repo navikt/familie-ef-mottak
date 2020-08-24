@@ -13,7 +13,7 @@ class JournalføringHendelseConsumer(val journalhendelseService: Journalhendelse
     @KafkaListener(id = "familie-ef-mottak",
                    topics = ["\${JOURNALFOERINGHENDELSE_V1_TOPIC_URL}"],
                    containerFactory = "kafkaJournalføringHendelseListenerContainerFactory",
-                   idIsGroup = false    )
+                   idIsGroup = false)
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         journalhendelseService.prosesserNyHendelse(consumerRecord, ack)
     }

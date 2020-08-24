@@ -7,7 +7,6 @@ import java.io.IOException
 import javax.servlet.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.jvm.Throws
 
 class RequestTimeFilter : Filter {
 
@@ -26,6 +25,7 @@ class RequestTimeFilter : Filter {
     }
 
     companion object {
+
         private val LOG = LoggerFactory.getLogger(RequestTimeFilter::class.java)
 
         private fun log(request: HttpServletRequest, code: Int, timer: StopWatch) {

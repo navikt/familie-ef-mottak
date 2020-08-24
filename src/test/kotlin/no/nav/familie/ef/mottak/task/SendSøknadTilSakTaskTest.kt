@@ -11,8 +11,8 @@ import java.util.*
 
 internal class SendSøknadTilSakTaskTest {
 
-    val taskRepository: TaskRepository = mockk()
-    val sendSøknadTilSakTask: SendSøknadTilSakTask = SendSøknadTilSakTask(mockk(), taskRepository)
+    private val taskRepository: TaskRepository = mockk()
+    private val sendSøknadTilSakTask: SendSøknadTilSakTask = SendSøknadTilSakTask(mockk(), taskRepository)
 
     @Test
     fun `Skal gå til SendMeldingTilDittNavTask når SendSøknadTilSakTask er utført`() {

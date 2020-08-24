@@ -12,6 +12,7 @@ class KeyProperty {
     }
 
     companion object {
+
         var DATABASE_ENCRYPTION_KEY: ByteArray = ByteArray(0)
     }
 }

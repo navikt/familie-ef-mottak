@@ -5,19 +5,17 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class TaskServiceTest {
 
-    val taskRepository: TaskRepository = mockk(relaxed = true)
-    val soknadRepository: SoknadRepository = mockk(relaxed = true)
+    private val taskRepository: TaskRepository = mockk(relaxed = true)
+    private val soknadRepository: SoknadRepository = mockk(relaxed = true)
 
-    val scheduledEventService = TaskService(taskRepository, soknadRepository)
+    private val scheduledEventService = TaskService(taskRepository, soknadRepository)
 
     @Test
     fun `opprettTask oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
@@ -32,6 +30,6 @@ internal class TaskServiceTest {
         scheduledEventService.opprettTaskForSoknad(soknad)
 
         assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
-        assertThat(soknadSlot.captured.taskOpprettet).isTrue()
+        assertThat(soknadSlot.captured.taskOpprettet).isTrue
     }
 }

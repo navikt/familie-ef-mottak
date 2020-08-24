@@ -72,6 +72,7 @@ class SøknadClient(@Qualifier("restTemplateAzure") operations: RestOperations,
     private fun urlBuilder(sakConfig: SakConfig) = DefaultUriBuilderFactory().uriString(sakConfig.url)
 
     companion object {
+
         const val PATH_OVERGANGSSTØNAD = "external/sak/overgangsstonad"
         const val PATH_BARNETILSYN = "external/sak/barnetilsyn"
         const val PATH_ARBEIDSSØKER = "external/sak/arbeidssoker"

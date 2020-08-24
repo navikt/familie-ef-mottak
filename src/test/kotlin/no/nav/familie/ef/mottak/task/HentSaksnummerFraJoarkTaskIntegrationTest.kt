@@ -8,17 +8,15 @@ import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.familie.prosessering.internal.TaskStepExecutorService
-import no.nav.familie.prosessering.internal.TaskWorker
-import no.nav.security.token.support.test.spring.TokenGeneratorConfiguration
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.*
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.web.client.HttpClientErrorException
 import java.time.LocalDateTime
 import java.util.*
@@ -32,7 +30,7 @@ class HentSaksnummerFraJoarkTestConfig {
 }
 
 @ActiveProfiles("local", "test-hent-saksnummer-fra-joark")
-internal class HentSaksnummerFraJoarkTaskIntegrationTest : IntegrasjonSpringRunnerTest(){
+internal class HentSaksnummerFraJoarkTaskIntegrationTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var taskRepository: TaskRepository
     @Autowired lateinit var hentJournalpostService: HentJournalpostService
@@ -57,14 +55,14 @@ internal class HentSaksnummerFraJoarkTaskIntegrationTest : IntegrasjonSpringRunn
                 if (taskAfterUpdate.status == Status.KLAR_TIL_PLUKK
                     && taskAfterUpdate.triggerTid?.isAfter(LocalDateTime.now().plusHours(1)) == true) {
                     return
-                } else if(System.currentTimeMillis() - start < 1_000) {
+                } else if (System.currentTimeMillis() - start < 1_000) {
                     taskStepExecutorService.pollAndExecute()
                     Thread.sleep(100)
                 } else {
                     throw RuntimeException("For lang tid...")
                 }
             } catch (e: Exception) {
-                if(System.currentTimeMillis() - start > 1_000) {
+                if (System.currentTimeMillis() - start > 1_000) {
                     throw RuntimeException("For lang tid...", e)
                 } else {
                     Thread.sleep(100)

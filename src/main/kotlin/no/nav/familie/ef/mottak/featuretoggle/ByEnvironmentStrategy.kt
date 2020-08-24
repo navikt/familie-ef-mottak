@@ -6,6 +6,7 @@ import no.finn.unleash.strategy.Strategy
 class ByEnvironmentStrategy : Strategy {
 
     companion object {
+
         private const val miljøKey = "miljø"
     }
 

@@ -20,6 +20,7 @@ class CipherInitializer {
     }
 
     companion object {
+
         private const val CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding"
         private const val SECRET_KEY_ALGORITHM = "AES"
     }
