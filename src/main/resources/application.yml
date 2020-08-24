@@ -32,6 +32,11 @@ spring:
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
+    producer:
+      acks: all
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+
   flyway:
     enabled: true
     baseline-version: 6
