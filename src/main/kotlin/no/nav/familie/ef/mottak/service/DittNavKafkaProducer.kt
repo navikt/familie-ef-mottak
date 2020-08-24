@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Beskjed>) {
+class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<String, String>) {
 
     @Value("\${SRV_CREDENTIAL_USERNAME}")
     private lateinit var systembruker: String
@@ -24,7 +24,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
         logger.debug("Sending to Kafka topic: {}", topic)
         secureLogger.debug("Sending to Kafka topic: {}\nDittNav: {}", topic, beskjed)
         runCatching {
-            val producerRecord = ProducerRecord<Nokkel, Beskjed>(topic, lagNøkkel(eventId), beskjed)
+            val producerRecord = ProducerRecord(topic, lagNøkkel(eventId), beskjed)
             val response = kafkaTemplate.send(producerRecord).get()
             val recordMetadata = response.recordMetadata
             logger.debug("Melding sent to Kafka. partition=${recordMetadata.partition()} offset=${recordMetadata.offset()}")
@@ -38,7 +38,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
 
     private fun lagBeskjed(fnr: String,
                            grupperingsnummer: String,
-                           melding: String): Beskjed {
+                           melding: String): String {
         val beskjed = Beskjed(System.currentTimeMillis(),
                               null,
                               fnr,
@@ -46,14 +46,14 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
                               melding,
                               "https://www.vg.no", // TODO ???
                               2)
-        return beskjed
+        return objectMapper.writeValueAsString(beskjed)
     }
 
-    private fun lagNøkkel(eventId: String): Nokkel {
-        return Nokkel(systembruker, eventId)
-    }
+    private fun lagNøkkel(eventId: String): String =
+            objectMapper.writeValueAsString(Nokkel(systembruker, eventId))
 
     companion object {
+
         private val logger = LoggerFactory.getLogger(this::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
