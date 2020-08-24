@@ -19,7 +19,7 @@ internal class LagJournalføringsoppgaveTaskTest {
             LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
 
     @Test
-    fun `Skal gå til HentSaksnummerFraJoarkTask når LagOppgaveTask er utført`() {
+    fun `Skal gå til SendMeldingTilDittNavTask når SendMeldingTilDittNavTask er utført`() {
         val slot = slot<Task>()
         every {
             taskRepository.save(capture(slot))
@@ -29,7 +29,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
 
-        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured.taskStepType)
+        assertEquals(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured.taskStepType)
     }
 
     @Test
