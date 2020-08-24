@@ -89,7 +89,8 @@ class SøknadTreeWalkerTest {
 
     private fun generatePdfAndAssert(mapSøknadsfelter: Map<String, Any>, filename: String) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
-        //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray()) //kommentere ut for å skrive over fila
+        //kommentere ut for å skrive over fila
+        //java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray())
         assertThat(pdf).isEqualToIgnoringWhitespace(readFile(filename))
     }
 

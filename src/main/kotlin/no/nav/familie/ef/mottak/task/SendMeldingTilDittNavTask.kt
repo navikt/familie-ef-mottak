@@ -23,6 +23,7 @@ class SendMeldingTilDittNavTask(private val taskRepository: TaskRepository) : As
     }
 
     companion object {
+
         const val SEND_MELDING_TIL_DITT_NAV = "sendMeldingTilDittNav"
     }
 

@@ -21,6 +21,7 @@ class SendSøknadTilSakTask(private val søknadService: SøknadService,
     }
 
     companion object {
+
         const val SEND_SØKNAD_TIL_SAK = "sendSøknadTilSak"
     }
 }

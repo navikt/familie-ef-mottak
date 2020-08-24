@@ -23,6 +23,7 @@ class LagPdfTask(private val pdfService: PdfService,
     }
 
     companion object {
+
         const val LAG_PDF = "lagPdf"
     }
 

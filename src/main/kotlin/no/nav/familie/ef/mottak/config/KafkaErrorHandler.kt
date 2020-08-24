@@ -66,6 +66,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
     }
 
     companion object {
+
         private val LONG_TIME = Duration.ofHours(3).toMillis()
         private val SHORT_TIME = Duration.ofSeconds(20).toMillis()
         private const val SLOW_ERROR_COUNT = 10

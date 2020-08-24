@@ -52,7 +52,7 @@ internal class FeltformatererTest {
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer Fødselsnummer korrekt`() {
-       val fnr = FnrGenerator.generer()
+        val fnr = FnrGenerator.generer()
         val testverdi = Søknadsfelt("label", Fødselsnummer(fnr))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)

@@ -35,7 +35,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(HentSaksnummerFraJoarkTask::class.java)
+
         const val HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark"
     }
 }

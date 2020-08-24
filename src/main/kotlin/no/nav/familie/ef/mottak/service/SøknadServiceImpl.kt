@@ -76,21 +76,25 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
     override fun sendTilSak(søknadId: String) {
         val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
 
-        if (soknad.dokumenttype == DOKUMENTTYPE_OVERGANGSSTØNAD) {
-            val vedlegg = vedleggRepository.findBySøknadId(søknadId)
-            val kontraktVedlegg = vedlegg
-                    .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
-            val sak: SakRequest<SøknadOvergangsstønad> = SakMapper.toOvergangsstønadSak(soknad, kontraktVedlegg)
-            søknadClient.sendOvergangsstønad(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
-        } else if (soknad.dokumenttype == DOKUMENTTYPE_BARNETILSYN) {
-            val vedlegg = vedleggRepository.findBySøknadId(søknadId)
-            val kontraktVedlegg = vedlegg
-                    .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
-            val sak: SakRequest<SøknadBarnetilsyn> = SakMapper.toBarnetilsynSak(soknad, kontraktVedlegg)
-            søknadClient.sendBarnetilsyn(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
-        } else {
-            val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
-            søknadClient.send(skjemasak)
+        when (soknad.dokumenttype) {
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> {
+                val vedlegg = vedleggRepository.findBySøknadId(søknadId)
+                val kontraktVedlegg = vedlegg
+                        .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
+                val sak: SakRequest<SøknadOvergangsstønad> = SakMapper.toOvergangsstønadSak(soknad, kontraktVedlegg)
+                søknadClient.sendOvergangsstønad(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
+            }
+            DOKUMENTTYPE_BARNETILSYN -> {
+                val vedlegg = vedleggRepository.findBySøknadId(søknadId)
+                val kontraktVedlegg = vedlegg
+                        .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
+                val sak: SakRequest<SøknadBarnetilsyn> = SakMapper.toBarnetilsynSak(soknad, kontraktVedlegg)
+                søknadClient.sendBarnetilsyn(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
+            }
+            else -> {
+                val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
+                søknadClient.send(skjemasak)
+            }
         }
     }
 

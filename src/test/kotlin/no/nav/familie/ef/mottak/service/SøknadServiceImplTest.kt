@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
@@ -17,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles
 internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired(required = true) lateinit var søknadService: SøknadService
-    @Autowired(required = true) lateinit var soknadRepository: SoknadRepository
 
     @Test
     internal fun `lagre skjema for arbeidssøker`() {
@@ -56,6 +54,7 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
         val søknad = søknadService.get(kvittering.id)
         assertThat(søknad).isNotNull
     }
+
     @Test
     internal fun `lagre skjema for søknad barnetilsyn`() {
         val kvittering = søknadService.mottaBarnetilsyn(SøknadMedVedlegg(søknadBarnetilsyn, emptyList()), emptyMap())

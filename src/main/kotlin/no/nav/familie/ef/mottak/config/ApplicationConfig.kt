@@ -24,8 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @SpringBootConfiguration
 @ComponentScan("no.nav.familie.prosessering",
                "no.nav.familie.sikkerhet",
-               "no.nav.familie.ef.mottak"
-)
+               "no.nav.familie.ef.mottak")
 @EnableJpaRepositories("no.nav.familie")
 @EntityScan(basePackages = ["no.nav.familie"])
 @ConfigurationPropertiesScan

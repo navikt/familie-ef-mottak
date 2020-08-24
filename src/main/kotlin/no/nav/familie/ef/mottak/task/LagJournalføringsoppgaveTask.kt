@@ -40,6 +40,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
+
         private val LOG = LoggerFactory.getLogger(LagJournalføringsoppgaveTask::class.java)
         const val TYPE = "lagJournalføringsoppgave"
     }

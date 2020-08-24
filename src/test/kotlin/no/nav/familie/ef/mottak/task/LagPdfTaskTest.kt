@@ -11,8 +11,8 @@ import java.util.*
 
 internal class LagPdfTaskTest {
 
-    val taskRepository: TaskRepository = mockk()
-    val lagPdfTask: LagPdfTask = LagPdfTask(mockk(), taskRepository)
+    private val taskRepository: TaskRepository = mockk()
+    private val lagPdfTask: LagPdfTask = LagPdfTask(mockk(), taskRepository)
 
     @Test
     fun `Skal gå til JournalførSøknadTask når LagPdfTask er utført`() {

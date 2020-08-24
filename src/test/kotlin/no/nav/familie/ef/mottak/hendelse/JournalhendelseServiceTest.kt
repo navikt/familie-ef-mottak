@@ -47,7 +47,7 @@ class JournalføringHendelseServiceTest {
         clearAllMocks()
 
         every {
-            mockHendelsesloggRepository.save(any<Hendelseslogg>())
+            mockHendelsesloggRepository.save(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         //Inngående papirsøknad, Mottatt
@@ -151,7 +151,6 @@ class JournalføringHendelseServiceTest {
     }
 
 
-
     @Test
     fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg`() {
         val consumerRecord = ConsumerRecord("topic", 1,
@@ -166,7 +165,7 @@ class JournalføringHendelseServiceTest {
         verify { ack.acknowledge() }
 
         verify(exactly = 0) {
-            mockHendelsesloggRepository.save(any<Hendelseslogg>())
+            mockHendelsesloggRepository.save(any())
         }
     }
 
@@ -252,6 +251,7 @@ class JournalføringHendelseServiceTest {
     }
 
     companion object {
+
         const val JOURNALPOST_PAPIRSØKNAD = "111"
         const val JOURNALPOST_DIGITALSØKNAD = "222"
         const val JOURNALPOST_UTGÅENDE_DOKUMENT = "333"
