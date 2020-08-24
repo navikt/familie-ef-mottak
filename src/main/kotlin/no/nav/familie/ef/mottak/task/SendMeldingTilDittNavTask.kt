@@ -4,6 +4,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Service
                      beskrivelse = "Send melding til ditt nav")
 class SendMeldingTilDittNavTask(private val taskRepository: TaskRepository) : AsyncTaskStep {
 
-
+    private val logger = LoggerFactory.getLogger(this::class.java)
     override fun doTask(task: Task) {
-
+        logger.info("Send melding til ditt nav")
     }
 
     override fun onCompletion(task: Task) {
