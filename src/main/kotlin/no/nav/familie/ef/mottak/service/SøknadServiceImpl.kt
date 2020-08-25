@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.SøknadClient
 import no.nav.familie.ef.mottak.mapper.SakMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
+import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
@@ -24,6 +25,7 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
                         private val vedleggRepository: VedleggRepository,
+                        private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
                         private val søknadClient: SøknadClient) : SøknadService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -33,25 +35,26 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
                                       vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     private fun motta(søknadDb: Soknad,
-                      vedlegg: List<Vedlegg>): Kvittering {
+                      vedlegg: List<Vedlegg>,
+                      dokumentasjonsbehov: List<Dokumentasjonsbehov>): Kvittering {
         val lagretSkjema = soknadRepository.save(søknadDb)
         vedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
