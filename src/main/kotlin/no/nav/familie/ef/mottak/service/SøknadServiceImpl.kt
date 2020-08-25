@@ -15,11 +15,13 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 
 @Service
@@ -57,6 +59,10 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
                       dokumentasjonsbehov: List<Dokumentasjonsbehov>): Kvittering {
         val lagretSkjema = soknadRepository.save(søknadDb)
         vedleggRepository.saveAll(vedlegg)
+
+        val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(søknadId = lagretSkjema.id,
+                                                                      data = objectMapper.writeValueAsString(dokumentasjonsbehov))
+        dokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
