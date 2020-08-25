@@ -1,9 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.Adresse
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
-import no.nav.familie.kontrakter.ef.søknad.Periode
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -88,12 +85,21 @@ internal class FeltformatererTest {
     }
 
     @Test
-    fun `mapEndenodeTilUtskriftMap formaterer Periode korrekt`() {
-        val testverdi = Søknadsfelt("label", Periode(Month.FEBRUARY, 2015, Month.JULY, 2018))
+    fun `mapEndenodeTilUtskriftMap formaterer MånedÅrPeriode korrekt`() {
+        val testverdi = Søknadsfelt("label", MånedÅrPeriode(Month.FEBRUARY, 2015, Month.JULY, 2018))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
         assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra februar 2015 til juli 2018"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap formaterer Datoperiode korrekt`() {
+        val testverdi = Søknadsfelt("label", Datoperiode(LocalDate.of(2015, 2, 1), LocalDate.of(2018,7,14)))
+
+        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+
+        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra 01.02.2015 til 14.07.2018"))
     }
 
 }

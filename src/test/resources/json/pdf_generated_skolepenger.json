@@ -215,6 +215,16 @@
           ]
         },
         {
+          "label" : "Utdanning",
+          "verdiliste" : [ {
+            "label" : "Linje/kurs/grad",
+            "verdi" : "Profesjonsstudium Informatikk"
+          }, {
+            "label" : "Når skal du være elev/student?",
+            "verdi" : "Fra 01.01.1999 til 01.10.2004"
+          } ]
+        },
+        {
           "label": "Er utdanningen offentlig eller privat?",
           "verdi": "Offentlig"
         },

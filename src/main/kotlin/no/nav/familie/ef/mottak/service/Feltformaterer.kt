@@ -1,9 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.Adresse
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
-import no.nav.familie.kontrakter.ef.søknad.Periode
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -40,11 +37,13 @@ object Feltformaterer {
             is Adresse ->
                 adresseString(verdi)
             is LocalDate ->
-                verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                datoverdi(verdi)
             is LocalDateTime ->
                 verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-            is Periode ->
-                periodeString(verdi)
+            is MånedÅrPeriode ->
+                månedÅrPeriodeString(verdi)
+            is Datoperiode ->
+                datoPeriodeString(verdi)
             else ->
                 verdi.toString()
         }
@@ -52,8 +51,16 @@ object Feltformaterer {
 
     private fun displayName(verdi: Month) = verdi.getDisplayName(TextStyle.FULL, Locale("no"))
 
-    private fun periodeString(verdi: Periode): String {
+    private fun månedÅrPeriodeString(verdi: MånedÅrPeriode): String {
         return "Fra ${displayName(verdi.fraMåned)} ${verdi.fraÅr} til ${displayName(verdi.tilMåned)} ${verdi.tilÅr}"
+    }
+
+    private fun datoPeriodeString(verdi: Datoperiode): String {
+        return "Fra ${datoverdi(verdi.fra)} til ${datoverdi(verdi.til)}"
+    }
+
+    private fun datoverdi(verdi: LocalDate): String {
+        return verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     }
 
     private fun adresseString(adresse: Adresse): String {
