@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.config
 
+import no.nav.brukernotifikasjon.schemas.Beskjed
+import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
@@ -29,7 +31,7 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaTemplate(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): KafkaTemplate<String, String> {
+    fun kafkaTemplate(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): KafkaTemplate<Nokkel, Beskjed> {
         return KafkaTemplate(DefaultKafkaProducerFactory(properties.buildProducerProperties()))
     }
 
