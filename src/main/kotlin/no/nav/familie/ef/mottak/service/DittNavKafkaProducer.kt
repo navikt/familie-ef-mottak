@@ -17,8 +17,9 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
     @Value("\${KAFKA_TOPIC_DITTNAV}")
     private lateinit var topic: String
 
-    fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String) {
-        val beskjed = lagBeskjed(fnr, grupperingsnummer, melding)
+
+    fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String, link: String) {
+        val beskjed = lagBeskjed(fnr, grupperingsnummer, melding, link)
 
         logger.debug("Sending to Kafka topic: {}", topic)
         secureLogger.debug("Sending to Kafka topic: {}: {}", topic, beskjed)
@@ -40,13 +41,14 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
 
     private fun lagBeskjed(fnr: String,
                            grupperingsnummer: String,
-                           melding: String): Beskjed {
+                           melding: String,
+                           link: String): Beskjed {
         return Beskjed(System.currentTimeMillis(),
                        null,
                        fnr,
                        grupperingsnummer,
                        melding,
-                       "https://www.vg.no", // TODO ???
+                       link, // TODO ???
                        3)
     }
 

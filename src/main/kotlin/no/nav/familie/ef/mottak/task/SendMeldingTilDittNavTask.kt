@@ -1,20 +1,39 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.familie.ef.mottak.config.DittNavConfig
+import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
                      beskrivelse = "Send melding til ditt nav")
-class SendMeldingTilDittNavTask(private val taskRepository: TaskRepository) : AsyncTaskStep {
+class SendMeldingTilDittNavTask(
+        private val taskRepository: TaskRepository,
+        private val producer: DittNavKafkaProducer,
+        private val søknadService: SøknadService,
+        private val dittNavConfig: DittNavConfig
+) : AsyncTaskStep {
+
+    @Value("\${dittnav.søknadfrontendurl}")
+    private lateinit var topic: String
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     override fun doTask(task: Task) {
-        logger.info("Send melding til ditt nav")
+        val søknad = søknadService.get(task.payload)
+        val link = "${dittNavConfig.søknadfrontendUrl}/meldingmottatt/${task.payload}"
+        producer.sendToKafka(søknad.fnr,
+                             "Vi har mottatt søknad ",
+                             task.payload,
+                             task.id.toString(),
+                             link) //TODO - bedre melding, ny link
+        logger.info("Send melding til ditt nav ${task.payload}")
     }
 
     override fun onCompletion(task: Task) {

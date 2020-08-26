@@ -21,7 +21,7 @@ class KafkaTestController(private val producer: DittNavKafkaProducer) {
     fun ping(): String {
         val eventId = UUID.randomUUID().toString()
         logger.info("Sender melding til bruker $eventId")
-        producer.sendToKafka("21057822284", "hei", "21057822284-test", eventId)
+        producer.sendToKafka("21057822284", "hei", "21057822284-test", eventId, "https://www.vg.no")
         return "OK"
     }
 

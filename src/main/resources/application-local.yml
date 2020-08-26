@@ -83,3 +83,4 @@ database:
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q1
 SRV_CREDENTIAL_USERNAME: test
 SRV_CREDENTIAL_PASSWORD: test
+dittnav.søknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
