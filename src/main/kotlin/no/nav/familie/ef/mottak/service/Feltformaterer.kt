@@ -1,9 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.Adresse
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
-import no.nav.familie.kontrakter.ef.søknad.Periode
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -28,35 +25,49 @@ object Feltformaterer {
     private fun mapVerdi(verdi: Any): String {
         return when (verdi) {
             is Month ->
-                displayName(verdi)
+                tilUtskriftsformat(verdi)
             is Boolean ->
-                if (verdi) "Ja" else "Nei"
+                tilUtskriftsformat(verdi)
             is Double ->
-                String.format("%.2f", verdi).replace(".", ",")
+                tilUtskriftsformat(verdi)
             is List<*> ->
                 verdi.joinToString("\n\n") { mapVerdi(it!!) }
             is Fødselsnummer ->
                 verdi.verdi
             is Adresse ->
-                adresseString(verdi)
+                tilUtskriftsformat(verdi)
             is LocalDate ->
-                verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                tilUtskriftsformat(verdi)
             is LocalDateTime ->
-                verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-            is Periode ->
-                periodeString(verdi)
+                tilUtskriftsformat(verdi)
+            is MånedÅrPeriode ->
+                tilUtskriftsformat(verdi)
+            is Datoperiode ->
+                tilUtskriftsformat(verdi)
             else ->
                 verdi.toString()
         }
     }
 
-    private fun displayName(verdi: Month) = verdi.getDisplayName(TextStyle.FULL, Locale("no"))
 
-    private fun periodeString(verdi: Periode): String {
-        return "Fra ${displayName(verdi.fraMåned)} ${verdi.fraÅr} til ${displayName(verdi.tilMåned)} ${verdi.tilÅr}"
+    private fun tilUtskriftsformat(verdi: Boolean) = if (verdi) "Ja" else "Nei"
+    private fun tilUtskriftsformat(verdi: Double) = String.format("%.2f", verdi).replace(".", ",")
+    private fun tilUtskriftsformat(verdi: Month) = verdi.getDisplayName(TextStyle.FULL, Locale("no"))
+    private fun tilUtskriftsformat(verdi: LocalDateTime) = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
+
+    private fun tilUtskriftsformat(verdi: MånedÅrPeriode): String {
+        return "Fra ${tilUtskriftsformat(verdi.fraMåned)} ${verdi.fraÅr} til ${tilUtskriftsformat(verdi.tilMåned)} ${verdi.tilÅr}"
     }
 
-    private fun adresseString(adresse: Adresse): String {
+    private fun tilUtskriftsformat(verdi: Datoperiode): String {
+        return "Fra ${tilUtskriftsformat(verdi.fra)} til ${tilUtskriftsformat(verdi.til)}"
+    }
+
+    private fun tilUtskriftsformat(verdi: LocalDate): String {
+        return verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+    }
+
+    private fun tilUtskriftsformat(adresse: Adresse): String {
         return listOf(adresse.adresse,
                       listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
                       adresse.land).joinToString("\n\n")

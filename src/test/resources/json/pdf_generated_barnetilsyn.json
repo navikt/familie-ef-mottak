@@ -347,6 +347,10 @@
                   "verdi": "Fra januar 2020 til juli 2020"
                 },
                 {
+                  "label" : "Periode",
+                  "verdi" : "Fra 12.01.2020 til 15.02.2020"
+                },
+                {
                   "label": "Beløp",
                   "verdi": "1000,21"
                 }
@@ -476,7 +480,7 @@
                 },
                 {
                   "label": "Når skal du være elev/student?",
-                  "verdi": "Fra januar 1999 til oktober 2004"
+                  "verdi" : "Fra 01.01.1999 til 01.10.2004"
                 }
               ]
             },

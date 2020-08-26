@@ -70,13 +70,19 @@ internal object Testdata {
     private fun utdanning(): UnderUtdanning {
         return UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
                               Søknadsfelt("Utdanning",
-                                          Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                "Profesjonsstudium Informatikk"),
-                                                    Søknadsfelt("Når skal du være elev/student?",
-                                                                Periode(Month.JANUARY,
-                                                                        1999,
-                                                                        Month.OCTOBER,
-                                                                        2004)))),
+                                          TidligereUtdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                         "Profesjonsstudium Informatikk"),
+                                                             Søknadsfelt("Når skal du være elev/student?",
+                                                                         MånedÅrPeriode(Month.JANUARY,
+                                                                                        1999,
+                                                                                        Month.OCTOBER,
+                                                                                        2004)))),
+                              Søknadsfelt("Utdanning",
+                                          GjeldendeUtdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                         "Profesjonsstudium Informatikk"),
+                                                             Søknadsfelt("Når skal du være elev/student?",
+                                                                         Datoperiode(LocalDate.of(1999, 1, 1),
+                                                                                     LocalDate.of(2004, 10, 1))))),
                               Søknadsfelt("Er utdanningen offentlig eller privat?",
                                           "Offentlig"),
                               Søknadsfelt("Heltid, eller deltid", "Deltid"),
@@ -85,13 +91,13 @@ internal object Testdata {
                                           "Økonomisk selvstendighet"),
                               Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
                               Søknadsfelt("Tidligere Utdanning",
-                                          listOf(Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                       "Master Fysikk"),
-                                                           Søknadsfelt("Når var du elev/student?",
-                                                                       Periode(Month.JANUARY,
-                                                                               1999,
-                                                                               Month.OCTOBER,
-                                                                               2004))))))
+                                          listOf(TidligereUtdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                                "Master Fysikk"),
+                                                                    Søknadsfelt("Når var du elev/student?",
+                                                                                MånedÅrPeriode(Month.JANUARY,
+                                                                                               1999,
+                                                                                               Month.OCTOBER,
+                                                                                               2004))))))
     }
 
 
@@ -170,15 +176,17 @@ internal object Testdata {
                          ),
                          Søknadsfelt("Utdanningen du skal ta",
                                      UnderUtdanning(Søknadsfelt("Skole/utdanningssted", "UiO"),
+                                                    null,
                                                     Søknadsfelt("Utdanning",
-                                                                Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                                      "Profesjonsstudium Informatikk"),
-                                                                          Søknadsfelt("Når skal du være elev/student?",
-                                                                                      Periode(Month.JANUARY,
-                                                                                              1999,
-                                                                                              Month.OCTOBER,
-                                                                                              2004))
-                                                                )),
+                                                                GjeldendeUtdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                                               "Profesjonsstudium Informatikk"),
+                                                                                   Søknadsfelt("Når skal du være elev/student?",
+                                                                                               Datoperiode(LocalDate.of(1999,
+                                                                                                                        1,
+                                                                                                                        1),
+                                                                                                           LocalDate.of(2004,
+                                                                                                                        10,
+                                                                                                                        1))))),
                                                     Søknadsfelt("Er utdanningen offentlig eller privat?",
                                                                 "Offentlig"),
                                                     Søknadsfelt("Heltid, eller deltid", "Deltid"),
@@ -187,13 +195,13 @@ internal object Testdata {
                                                                 "Økonomisk selvstendighet"),
                                                     Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
                                                     Søknadsfelt("Tidligere Utdanning",
-                                                                listOf(Utdanning(Søknadsfelt("Linje/kurs/grad",
-                                                                                             "Master Fysikk"),
-                                                                                 Søknadsfelt("Når var du elev/student?",
-                                                                                             Periode(Month.JANUARY,
-                                                                                                     1999,
-                                                                                                     Month.OCTOBER,
-                                                                                                     2004))
+                                                                listOf(TidligereUtdanning(Søknadsfelt("Linje/kurs/grad",
+                                                                                                      "Master Fysikk"),
+                                                                                          Søknadsfelt("Når var du elev/student?",
+                                                                                                      MånedÅrPeriode(Month.JANUARY,
+                                                                                                                     1999,
+                                                                                                                     Month.OCTOBER,
+                                                                                                                     2004))
                                                                 ))))))
     }
 
@@ -244,7 +252,8 @@ internal object Testdata {
                 barnepassordninger = Søknadsfelt("Ordninger", listOf(BarnepassOrdning(
                         hvaSlagsBarnepassOrdning = Søknadsfelt("Hva slags barnepassordning?", "En"),
                         navn = Søknadsfelt("Navn", "navn"),
-                        periode = Søknadsfelt("Periode", Periode(Month.JANUARY, 2020, Month.JULY, 2020)),
+                        periode = Søknadsfelt("Periode", MånedÅrPeriode(Month.JANUARY, 2020, Month.JULY, 2020)),
+                        datoperiode = Søknadsfelt("Periode", Datoperiode(LocalDate.of(2020, 1, 12), LocalDate.of(2020, 2, 15))),
                         belop = Søknadsfelt("Beløp", 1000.213))
                 ))))
     }
