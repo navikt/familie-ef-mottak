@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
@@ -15,9 +17,11 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.sak.SakRequest
 import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -114,6 +118,21 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
 
         return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
+    }
+
+    override fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto {
+        val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
+                objectMapper.readValue(dokumentasjonsbehovRepository.findBySøknadId(søknadId)?.data
+                                       ?: throw ApiFeil("Fant ikke dokumentasjonsbehov for søknad $søknadId",
+                                                        HttpStatus.BAD_REQUEST))
+        val søknad: Soknad =
+                soknadRepository.findByIdOrNull(søknadId.toString()) ?: throw ApiFeil("Fant ikke søknad for id $søknadId",
+                                                                                      HttpStatus.BAD_REQUEST)
+
+        return DokumentasjonsbehovDto(dokumentasjonsbehov = dokumentasjonsbehov,
+                                      innsendingstidspunkt = søknad.opprettetTid,
+                                      personIdent = søknad.fnr,
+                                      søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype))
     }
 
     override fun lagreSøknad(soknad: Soknad) {
