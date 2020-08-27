@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface DokumentasjonsbehovRepository : JpaRepository<Dokumentasjonsbehov, UUID> {
-
-    fun findBySøknadId(søknadId: UUID): Dokumentasjonsbehov?
-}
+interface DokumentasjonsbehovRepository : JpaRepository<Dokumentasjonsbehov, String>

@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import org.junit.jupiter.api.AfterEach
@@ -34,6 +35,7 @@ abstract class IntegrasjonSpringRunnerTest {
 
     @Autowired private lateinit var soknadRepository: SoknadRepository
     @Autowired private lateinit var vedleggRepository: VedleggRepository
+    @Autowired private lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
 
     @LocalServerPort
     private var port: Int? = 0
@@ -41,6 +43,7 @@ abstract class IntegrasjonSpringRunnerTest {
     @AfterEach
     fun reset() {
         loggingEvents.clear()
+        dokumentasjonsbehovRepository.deleteAllInBatch()
         vedleggRepository.deleteAllInBatch()
         soknadRepository.deleteAllInBatch()
     }
