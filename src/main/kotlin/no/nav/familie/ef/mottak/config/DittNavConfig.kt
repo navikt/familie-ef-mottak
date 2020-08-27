@@ -5,4 +5,4 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties("dittnav")
 @ConstructorBinding
-data class DittNavConfig(val søknadfrontendUrl: String)
+data class DittNavConfig(val soknadfrontendUrl: String)

@@ -21,13 +21,10 @@ class SendMeldingTilDittNavTask(
         private val dittNavConfig: DittNavConfig
 ) : AsyncTaskStep {
 
-    @Value("\${dittnav.søknadfrontendurl}")
-    private lateinit var topic: String
-
     private val logger = LoggerFactory.getLogger(this::class.java)
     override fun doTask(task: Task) {
         val søknad = søknadService.get(task.payload)
-        val link = "${dittNavConfig.søknadfrontendUrl}/meldingmottatt/${task.payload}"
+        val link = "${dittNavConfig.soknadfrontendUrl}/meldingmottatt/${task.payload}"
         producer.sendToKafka(søknad.fnr,
                              "Vi har mottatt søknad ",
                              task.payload,

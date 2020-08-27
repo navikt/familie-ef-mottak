@@ -122,7 +122,7 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
     override fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto {
         val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
-                objectMapper.readValue(dokumentasjonsbehovRepository.findBySøknadId(søknadId)?.data
+                objectMapper.readValue(dokumentasjonsbehovRepository.findByIdOrNull(søknadId.toString())?.data
                                        ?: throw ApiFeil("Fant ikke dokumentasjonsbehov for søknad $søknadId",
                                                         HttpStatus.BAD_REQUEST))
         val søknad: Soknad =

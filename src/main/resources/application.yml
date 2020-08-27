@@ -120,4 +120,4 @@ database:
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
 KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local
-dittnav.søknadfrontendUrl: https://www.nav.no/familie/alene-med-barn/soknad
+dittnav.soknadfrontendUrl: https://www.nav.no/familie/alene-med-barn/soknad
