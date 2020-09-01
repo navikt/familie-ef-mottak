@@ -27,14 +27,14 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
             val producerRecord = ProducerRecord(topic, lagNøkkel(eventId), beskjed)
             val response = kafkaTemplate.send(producerRecord).get()
             val recordMetadata = response.recordMetadata
-            logger.info("Melding sent to Kafka." + //TODO debug
-                        " partition=${recordMetadata.partition()}" +
-                        " offset=${recordMetadata.offset()}" +
-                        " key=${response.producerRecord.key()}")
+            logger.debug("Melding sent to Kafka." +
+                         " partition=${recordMetadata.partition()}" +
+                         " offset=${recordMetadata.offset()}" +
+                         " key=${response.producerRecord.key()}")
         }.onFailure {
             val errorMessage = "Could not send DittNav to Kafka. Check secure logs for more information."
             logger.error(errorMessage)
-            secureLogger.error("Could not send DittNav to Kafka", it)
+            secureLogger.error("Could not send DittNav to Kafka melding={}", beskjed, it)
             throw RuntimeException(errorMessage)
         }
     }
@@ -48,7 +48,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
                        fnr,
                        grupperingsnummer,
                        melding,
-                       link, // TODO ???
+                       link,
                        3)
     }
 
