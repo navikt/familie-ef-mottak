@@ -3,17 +3,17 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.søknad.*
-import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
-import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
 
 @RestController
 @RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
@@ -21,7 +21,6 @@ import java.util.*
 class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping(path = ["", "overgangsstonad"])
     fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
@@ -51,18 +50,6 @@ class SøknadController(val søknadService: SøknadService) {
         validerVedlegg(søknad.vedlegg, vedleggData)
 
         return ResponseEntity.ok(søknadService.mottaSkolepenger(søknad, vedleggData))
-    }
-
-    @GetMapping("dokumentasjonsbehov/{søknadId}", consumes = [APPLICATION_JSON_VALUE])
-    fun hentDokumentasjonsbehov(@PathVariable("søknadId") søknadId: UUID): ResponseEntity<DokumentasjonsbehovDto> {
-        val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId)
-        val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
-        if (fnrFraToken != dokumentasjonsbehov.personIdent) {
-            logger.warn("Fnr fra token matcher ikke fnr på søknaden")
-            secureLogger.info("TokenFnr={} matcher ikke søknadFnr={}", fnrFraToken, dokumentasjonsbehov.personIdent)
-            throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.BAD_REQUEST)
-        }
-        return ResponseEntity.ok(dokumentasjonsbehov)
     }
 
     private fun vedleggData(vedleggListe: List<MultipartFile>) =
