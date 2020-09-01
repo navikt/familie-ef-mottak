@@ -21,16 +21,10 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Besk
     fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String, link: String) {
         val beskjed = lagBeskjed(fnr, grupperingsnummer, melding, link)
 
-        logger.debug("Sending to Kafka topic: {}", topic)
         secureLogger.debug("Sending to Kafka topic: {}: {}", topic, beskjed)
         runCatching {
             val producerRecord = ProducerRecord(topic, lagNøkkel(eventId), beskjed)
-            val response = kafkaTemplate.send(producerRecord).get()
-            val recordMetadata = response.recordMetadata
-            logger.debug("Melding sent to Kafka." +
-                         " partition=${recordMetadata.partition()}" +
-                         " offset=${recordMetadata.offset()}" +
-                         " key=${response.producerRecord.key()}")
+            kafkaTemplate.send(producerRecord).get()
         }.onFailure {
             val errorMessage = "Could not send DittNav to Kafka. Check secure logs for more information."
             logger.error(errorMessage)
