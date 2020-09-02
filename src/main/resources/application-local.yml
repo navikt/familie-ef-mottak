@@ -47,6 +47,11 @@ no.nav.security.jwt:
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
       proxyurl:
+    azuread:
+      discoveryurl: http://metadata
+      accepted_audience: aud-localhost
+      cookie_name: localhost-idtoken
+      proxyurl:
   client:
     registration:
       ef-sak-client-credentials:
