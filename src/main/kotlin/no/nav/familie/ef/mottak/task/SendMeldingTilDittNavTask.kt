@@ -31,7 +31,7 @@ class SendMeldingTilDittNavTask(
 
         val melding = lagMelding(dokumentasjonsbehovForSøknad, søknad)
 
-        val link = "${dittNavConfig.soknadfrontendUrl}/meldingmottatt/${task.payload}"
+        val link = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad/${task.payload}"
         producer.sendToKafka(søknad.fnr,
                              melding,
                              task.payload,
