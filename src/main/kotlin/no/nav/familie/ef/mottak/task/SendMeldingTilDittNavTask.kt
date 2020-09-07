@@ -1,11 +1,10 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.DittNavConfig
-import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
-import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -27,37 +26,45 @@ class SendMeldingTilDittNavTask(
 
 
         val søknad = søknadService.get(task.payload)
-        val dokumentasjonsbehovForSøknad = søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(søknad.id))
+        val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
 
-        val melding = lagMelding(dokumentasjonsbehovForSøknad, søknad)
+        val melding = lagMelding(UUID.fromString(søknad.id), søknadType)
 
-        val link = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad/${task.payload}"
+        val link = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=${task.payload}"
         producer.sendToKafka(søknad.fnr,
                              melding,
                              task.payload,
                              task.id.toString(),
-                             link) //TODO - bedre melding, ny link
+                             link)
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 
-    private fun lagMelding(dokumentasjonsbehovForSøknad: DokumentasjonsbehovDto, søknad: Soknad): String {
-        val søknadstype = when (SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)) {
+    private fun lagMelding(søknadId: UUID, søknadType: SøknadType): String {
+        val søknadstekst = søknadstypeTekst(søknadType)
+
+        if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
+            return "Vi har mottatt søknaden din om $søknadstekst"
+        }
+
+        val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId).dokumentasjonsbehov
+        return when {
+            dokumentasjonsbehov.isEmpty() -> "Vi har mottatt søknaden din om $søknadstekst."
+            manglerVedlegg(dokumentasjonsbehov) ->
+                "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
+                " Se hva som mangler og last opp vedlegg."
+            else -> "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp."
+        }
+    }
+
+    private fun manglerVedlegg(dokumentasjonsbehov: List<Dokumentasjonsbehov>) =
+            dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
+
+    private fun søknadstypeTekst(søknadType: SøknadType): String {
+        return when (søknadType) {
             SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
             SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
             SøknadType.SKOLEPENGER -> "stønad til skolepenger"
-            else -> error("Kan mappe dokumenttype (SøknadType) til dittnav tekst")
-        }
-
-        return if (dokumentasjonsbehovForSøknad.dokumentasjonsbehov.isEmpty()) {
-            "Vi har mottatt søknaden din om $søknadstype"
-        } else {
-            val manglerVedlegg =
-                    dokumentasjonsbehovForSøknad.dokumentasjonsbehov.none { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
-            if (manglerVedlegg) {
-                "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstype. Se hva som mangler og last opp vedlegg."
-            } else {
-                "Vi har mottatt søknaden din om $søknadstype. Se vedleggene du lastet opp."
-            }
+            SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER -> "enslig mor eller far som er arbeidssøker"
         }
     }
 
