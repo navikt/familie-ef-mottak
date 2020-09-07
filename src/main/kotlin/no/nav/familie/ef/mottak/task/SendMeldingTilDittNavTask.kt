@@ -49,14 +49,14 @@ class SendMeldingTilDittNavTask(
         }
 
         return if (dokumentasjonsbehovForSøknad.dokumentasjonsbehov.isEmpty()) {
-            "Vi har mottatt søknaden din om $søknadstype, ${søknad.opprettetTid}"
+            "Vi har mottatt søknaden din om $søknadstype"
         } else {
             val manglerVedlegg =
                     dokumentasjonsbehovForSøknad.dokumentasjonsbehov.none { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
             if (manglerVedlegg) {
-                "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstype, ${søknad.opprettetTid}. Se hva som mangler og last opp vedlegg."
+                "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstype. Se hva som mangler og last opp vedlegg."
             } else {
-                "Vi har mottatt søknaden din om $søknadstype, ${søknad.opprettetTid}. Se vedleggene du lastet opp."
+                "Vi har mottatt søknaden din om $søknadstype. Se vedleggene du lastet opp."
             }
         }
     }
