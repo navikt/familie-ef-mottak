@@ -42,9 +42,9 @@ class SendMeldingTilDittNavTask(
 
     private fun lagMelding(dokumentasjonsbehovForSøknad: DokumentasjonsbehovDto, søknad: Soknad): String {
         val søknadstype = when (SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)) {
-            SøknadType.BARNETILSYN -> "barnetilsyn"
+            SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
             SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
-            SøknadType.SKOLEPENGER -> "skolepenger"
+            SøknadType.SKOLEPENGER -> "stønad til skolepenger"
             else -> error("Kan mappe dokumenttype (SøknadType) til dittnav tekst")
         }
 
