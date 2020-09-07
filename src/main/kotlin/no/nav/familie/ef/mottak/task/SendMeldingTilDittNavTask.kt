@@ -40,12 +40,11 @@ class SendMeldingTilDittNavTask(
     }
 
     private fun lagMelding(søknadId: UUID, søknadType: SøknadType): String {
-        val søknadstekst = søknadstypeTekst(søknadType)
-
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
-            return "Vi har mottatt søknaden din om $søknadstekst"
+            return "Vi har mottatt skjema enslig mor eller far som er arbeidssøker"
         }
 
+        val søknadstekst = søknadstypeTekst(søknadType)
         val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId).dokumentasjonsbehov
         return when {
             dokumentasjonsbehov.isEmpty() -> "Vi har mottatt søknaden din om $søknadstekst."
@@ -64,7 +63,7 @@ class SendMeldingTilDittNavTask(
             SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
             SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
             SøknadType.SKOLEPENGER -> "stønad til skolepenger"
-            SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER -> "enslig mor eller far som er arbeidssøker"
+            else -> error("Kan mappe dokumenttype $søknadType til dittnav tekst")
         }
     }
 

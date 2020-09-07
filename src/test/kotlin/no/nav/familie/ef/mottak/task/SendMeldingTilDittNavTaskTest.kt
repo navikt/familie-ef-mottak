@@ -66,6 +66,21 @@ internal class SendMeldingTilDittNavTaskTest {
                                "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp.")
     }
 
+    @Test
+    internal fun `arbeidssøker skal ikke sjekke dokumentasjonsrepository`() {
+        mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
+
+        sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+
+        verify(exactly = 1) {
+            søknadService.get(any())
+            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), any())
+        }
+        verify(exactly = 0) {
+            søknadService.hentDokumentasjonsbehovForSøknad(any())
+        }
+    }
+
     private fun testOgVerifiserMelding(dokumentasjonsbehov: List<Dokumentasjonsbehov>,
                                        forventetMelding: String) {
         mockSøknad()
@@ -75,21 +90,6 @@ internal class SendMeldingTilDittNavTaskTest {
 
         verify(exactly = 1) {
             dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), any())
-        }
-    }
-
-    @Test
-    internal fun `arbeidssøker skal ikke sjekke dokumentasjonsrepository`() {
-        mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
-
-        sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
-
-        verify(exactly = 1) {
-            søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), any(), any())
-        }
-        verify(exactly = 0) {
-            søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
     }
 
