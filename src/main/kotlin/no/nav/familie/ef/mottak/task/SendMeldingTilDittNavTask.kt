@@ -30,13 +30,22 @@ class SendMeldingTilDittNavTask(
 
         val melding = lagMelding(UUID.fromString(søknad.id), søknadType)
 
-        val link = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=${task.payload}"
+        val link = link(søknadType, task.payload)
         producer.sendToKafka(søknad.fnr,
                              melding,
                              task.payload,
                              task.id.toString(),
                              link)
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
+    }
+
+    private fun link(søknadType: SøknadType,
+                     søknadId: String): String? {
+        return if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
+            null
+        } else {
+            "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=$søknadId"
+        }
     }
 
     private fun lagMelding(søknadId: UUID, søknadType: SøknadType): String {

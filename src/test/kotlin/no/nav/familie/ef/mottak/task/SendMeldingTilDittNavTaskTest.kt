@@ -39,7 +39,7 @@ internal class SendMeldingTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
             søknadService.hentDokumentasjonsbehovForSøknad(any())
-            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), any(), any())
+            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), any(), isNull(true))
         }
     }
 
@@ -74,7 +74,7 @@ internal class SendMeldingTilDittNavTaskTest {
 
         verify(exactly = 1) {
             søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), any())
+            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), isNull())
         }
         verify(exactly = 0) {
             søknadService.hentDokumentasjonsbehovForSøknad(any())
