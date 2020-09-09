@@ -47,11 +47,6 @@ no.nav.security.jwt:
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
       proxyurl:
-    azuread:
-      discoveryurl: http://metadata
-      accepted_audience: aud-localhost
-      cookie_name: localhost-idtoken
-      proxyurl:
   client:
     registration:
       ef-sak-client-credentials:
@@ -83,3 +78,5 @@ database:
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q1
 SRV_CREDENTIAL_USERNAME: test
 SRV_CREDENTIAL_PASSWORD: test
+
+dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad

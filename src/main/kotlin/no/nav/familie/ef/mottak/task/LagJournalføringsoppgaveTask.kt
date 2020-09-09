@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -14,7 +15,8 @@ import java.util.*
                      maxAntallFeil = 100,
                      beskrivelse = "Lager oppgave i GoSys")
 class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
-                                   private val oppgaveService: OppgaveService) : AsyncTaskStep {
+                                   private val oppgaveService: OppgaveService,
+                                   private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         LOG.debug("Oppretter oppgave for søknad={}", task.payload)
@@ -34,9 +36,16 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask: Task =
+        val hentSaksnummerFraJoarkTask: Task =
                 Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
-        taskRepository.save(nesteTask)
+
+        if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
+            val sendMeldingTilDittNavTask: Task =
+                    Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payload, task.metadata)
+            taskRepository.saveAll(listOf(hentSaksnummerFraJoarkTask, sendMeldingTilDittNavTask))
+        } else {
+            taskRepository.save(hentSaksnummerFraJoarkTask)
+        }
     }
 
     companion object {

@@ -17,7 +17,6 @@ class SendSøknadTilSakTask(private val søknadService: SøknadService,
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payload, task.metadata))
     }
 
     companion object {

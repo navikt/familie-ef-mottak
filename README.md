@@ -11,6 +11,38 @@ docker build -t local:oidc-test-support .
 docker run -it -p 8080:8080 local:oidc-test-support 
 Token kan da genereres ved å gå til url: http://localhost:8080/jwt
 
+## Kafka
+Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
+
+```
+{
+  "topics": [
+    {
+      "topicName": "aapen-brukernotifikasjon-nyBeskjed-v1",
+      "members": [
+        {"member":"srvc01", "role":"PRODUCER"}
+      ],
+      "numPartitions": 3
+    },
+    {
+      "topicName": "aapen-dok-journalfoering-v1-q1",
+      "members": [
+        {"member":"srvc01", "role":"CONSUMER"}
+      ],
+      "numPartitions": 3
+    },
+  ]
+}
+```
+Dette kan enkelt gjøres via følgende kommandoer:
+
+```
+curl -X POST "http://igroup:itest@localhost:8840/api/v1/topics" -H "Accept: application/json" -H "Content-Type: application/json" --data "{"name": "aapen-brukernotifikasjon-nyBeskjed-v1", "members": [{ "member": "srvc01", "role": "PRODUCER" }], "numPartitions": 3 }"
+
+curl -X POST "http://igroup:itest@localhost:8840/api/v1/topics" -H "Accept: application/json" -H "Content-Type: application/json" --data "{"name": "aapen-dok-journalfoering-v1-q1", "members": [{ "member": "srvc01", "role": "CONSUMER" }], "numPartitions": 3 }"
+```
+Se README i navkafka-docker-compose for mer info om hvordan man kjører den og kaller apiet.
+
 ## Database
 
 For å sette opp Postgres-database lokalt med Docker:
