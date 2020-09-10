@@ -43,7 +43,7 @@ class SendMeldingTilDittNavTask(
 
     private fun lagLinkMelding(søknadId: UUID, søknadType: SøknadType): LinkMelding {
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
-            return LinkMelding("", "Vi har mottatt skjema enslig mor eller far som er arbeidssøker")
+            return LinkMelding("", "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.")
         }
 
         val søknadstekst = søknadstypeTekst(søknadType)
