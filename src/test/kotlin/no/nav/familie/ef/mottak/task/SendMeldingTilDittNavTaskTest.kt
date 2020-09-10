@@ -45,7 +45,7 @@ internal class SendMeldingTilDittNavTaskTest {
 
     @Test
     internal fun `overgangsstønad - uten dokumentasjonsbehov`() {
-        testOgVerifiserMelding(emptyList(), "Vi har mottatt søknaden din om overgangsstønad.")
+        testOgVerifiserMelding(emptyList(), "Vi har mottatt søknaden din om overgangsstønad.", "")
     }
 
     @Test
@@ -74,7 +74,7 @@ internal class SendMeldingTilDittNavTaskTest {
 
         verify(exactly = 1) {
             søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), isNull())
+            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), "")
         }
         verify(exactly = 0) {
             søknadService.hentDokumentasjonsbehovForSøknad(any())
@@ -82,14 +82,15 @@ internal class SendMeldingTilDittNavTaskTest {
     }
 
     private fun testOgVerifiserMelding(dokumentasjonsbehov: List<Dokumentasjonsbehov>,
-                                       forventetMelding: String) {
+                                       forventetMelding: String,
+                                       link: String? = null) {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov)
 
         sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
         verify(exactly = 1) {
-            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), any())
+            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), link ?: any())
         }
     }
 
