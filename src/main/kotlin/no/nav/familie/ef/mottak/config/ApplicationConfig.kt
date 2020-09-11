@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
+import no.nav.familie.http.config.RestTemplateBuilderBean
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
@@ -32,6 +33,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger.web.ApiResourceController"])
 @Import(BearerTokenClientInterceptor::class,
+        RestTemplateBuilderBean::class,
         MdcValuesPropagatingClientInterceptor::class,
         ConsumerIdClientInterceptor::class)
 class ApplicationConfig {
@@ -54,11 +56,6 @@ class ApplicationConfig {
                      mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
         return restTemplateBuilder.interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
-    }
-
-    @Bean("restTemplateBuilder")
-    fun restTemplateBuilder(): RestTemplateBuilder {
-        return RestTemplateBuilder().additionalCustomizers(NaisProxyCustomizer())
     }
 
     @Bean
