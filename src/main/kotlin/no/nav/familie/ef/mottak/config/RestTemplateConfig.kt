@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.config
 
-import no.nav.familie.http.config.NaisProxyCustomizer
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
