@@ -11,6 +11,15 @@ docker build -t local:oidc-test-support .
 docker run -it -p 8080:8080 local:oidc-test-support 
 Token kan da genereres ved å gå til url: http://localhost:8080/jwt
 
+## Kommunisere med ef-sak lokalt
+Dersom man ønsker å sende søknader til ef-sak, må man sette opp noen miljøvariabler fordi ef-sak krever preprod-autentisering
+også lokalt. Følgende miljøvariabler må hentes fra applikasjonens mappe i preprod i vault:
+* `CLIENT_ID`
+* `CLIENT_SECRET`
+* `EF_SAK_SCOPE`
+
+Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables. 
+
 ## Kafka
 Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
 

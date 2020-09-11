@@ -21,7 +21,7 @@ spring:
 familie:
   ef:
     sak:
-      url: http://localhost:8092/mockapi/
+      url: http://localhost:8093/api/
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
@@ -37,9 +37,6 @@ funksjonsbrytere:
 logging:
   config: "classpath:logback-test.xml"
 
-#http://localhost:8080/metadata
-#https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-
 no.nav.security.jwt:
   issuer:
     selvbetjening:
@@ -51,12 +48,12 @@ no.nav.security.jwt:
     registration:
       ef-sak-client-credentials:
         resource-url: ${familie.ef.sak.url}
-        token-endpoint-url: http://localhost:8092/mockapi/token
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: anything0
+        scope: ${EF_SAK_SCOPE}
         authentication:
-          client-id: anything1
-          client-secret: anything2
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
       integrasjoner-client-credentials:
         resource-url: ${familie.ef.integrasjoner.url}
@@ -68,7 +65,6 @@ no.nav.security.jwt:
           client-secret: anything6
           client-auth-method: client_secret_basic
 
-      #  ef-arkiv-client-credentials:
 
 database:
   encryption:
