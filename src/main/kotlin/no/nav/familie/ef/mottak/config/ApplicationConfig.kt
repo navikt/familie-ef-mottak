@@ -56,6 +56,11 @@ class ApplicationConfig {
         return restTemplateBuilder.interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
+    @Bean("restTemplateBuilder")
+    fun restTemplateBuilder(): RestTemplateBuilder {
+        return RestTemplateBuilder().additionalCustomizers(NaisProxyCustomizer())
+    }
+
     @Bean
     fun kotlinModule(): KotlinModule = KotlinModule()
 
