@@ -22,45 +22,39 @@ class SendMeldingTilDittNavTask(
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    private data class LinkMelding(val link: String, val melding: String)
+
     override fun doTask(task: Task) {
-
-
         val søknad = søknadService.get(task.payload)
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
 
-        val melding = lagMelding(UUID.fromString(søknad.id), søknadType)
+        val linkMelding = lagLinkMelding(UUID.fromString(søknad.id), søknadType)
 
-        val link = link(søknadType, task.payload)
         producer.sendToKafka(søknad.fnr,
-                             melding,
+                             linkMelding.melding,
                              task.payload,
                              task.id.toString(),
-                             link)
+                             linkMelding.link)
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 
-    private fun link(søknadType: SøknadType,
-                     søknadId: String): String? {
-        return if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
-            null
-        } else {
-            "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=$søknadId"
-        }
-    }
+    private fun link(søknadId: UUID) = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=$søknadId"
 
-    private fun lagMelding(søknadId: UUID, søknadType: SøknadType): String {
+    private fun lagLinkMelding(søknadId: UUID, søknadType: SøknadType): LinkMelding {
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
-            return "Vi har mottatt skjema enslig mor eller far som er arbeidssøker"
+            return LinkMelding("", "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.")
         }
 
         val søknadstekst = søknadstypeTekst(søknadType)
         val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId).dokumentasjonsbehov
         return when {
-            dokumentasjonsbehov.isEmpty() -> "Vi har mottatt søknaden din om $søknadstekst."
+            dokumentasjonsbehov.isEmpty() -> LinkMelding("", "Vi har mottatt søknaden din om $søknadstekst.")
             manglerVedlegg(dokumentasjonsbehov) ->
-                "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
-                " Se hva som mangler og last opp vedlegg."
-            else -> "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp."
+                LinkMelding(link(søknadId),
+                            "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
+                            " Se hva som mangler og last opp vedlegg.")
+            else -> LinkMelding(link(søknadId), "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
         }
     }
 
