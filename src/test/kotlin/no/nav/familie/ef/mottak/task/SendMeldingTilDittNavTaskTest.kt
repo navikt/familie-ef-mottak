@@ -74,7 +74,7 @@ internal class SendMeldingTilDittNavTaskTest {
 
         verify(exactly = 1) {
             søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker", any(), any(), "")
+            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.", any(), any(), "")
         }
         verify(exactly = 0) {
             søknadService.hentDokumentasjonsbehovForSøknad(any())
