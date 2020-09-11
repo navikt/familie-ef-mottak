@@ -8,9 +8,11 @@ import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.TransactionSystemException
 import java.util.*
 
 @ActiveProfiles("local")
@@ -43,4 +45,25 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
         assertThat(vedlegg).hasSize(1)
     }
 
+    @Test
+    internal fun `det skal ikke være mulig å oppdatere et vedlegg med ny søknadId`() {
+        val vedleggId = UUID.randomUUID()
+        val søknadId = soknadRepository.save(Soknad(søknadJson = "bob",
+                                                    fnr = "ded",
+                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        vedleggRepository.save(Vedlegg(vedleggId, søknadId, "navn", "tittel1", Fil(byteArrayOf(12))))
+
+        val søknad2Id = soknadRepository.save(Soknad(søknadJson = "bob",
+                                                     fnr = "ded",
+                                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        assertThat(catchThrowable {
+            vedleggRepository.save(Vedlegg(vedleggId, søknad2Id, "navn", "tittel1", Fil(byteArrayOf(12))))
+        }).isInstanceOf(TransactionSystemException::class.java)
+                .hasRootCauseMessage("Det går ikke å oppdatere vedlegg")
+
+        assertThat(catchThrowable {
+            vedleggRepository.saveAll(listOf(Vedlegg(vedleggId, søknad2Id, "navn", "tittel1", Fil(byteArrayOf(12)))))
+        }).isInstanceOf(TransactionSystemException::class.java)
+                .hasRootCauseMessage("Det går ikke å oppdatere vedlegg")
+    }
 }
