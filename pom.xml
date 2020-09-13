@@ -16,7 +16,7 @@
 
     <properties>
         <revision>1.0</revision>
-        <sha1></sha1>
+        <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <jvmTarget>11</jvmTarget>
         <kotlin.version>1.4.10</kotlin.version>
@@ -210,7 +210,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.16</version>
+            <version>42.2.16.jre7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
