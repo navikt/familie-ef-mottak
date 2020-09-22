@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-internal class SendMeldingTilDittNavTaskTest {
+internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
-    private lateinit var sendMeldingTilDittNavTask: SendMeldingTilDittNavTask
+    private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
 
@@ -26,15 +26,19 @@ internal class SendMeldingTilDittNavTaskTest {
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
-        sendMeldingTilDittNavTask = SendMeldingTilDittNavTask(dittNavKafkaProducer, søknadService, mockk(relaxed = true))
+        sendDokumentasjonsbehovMeldingTilDittNavTask =
+                SendDokumentasjonsbehovMeldingTilDittNavTask(dittNavKafkaProducer, søknadService, mockk(relaxed = true))
     }
 
     @Test
     internal fun `overgangsstønad riktige intergasjoner`() {
         mockSøknad()
-        mockDokumentasjonsbehov()
 
-        sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        val dokumentasjonsBehov =
+                listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
+        mockDokumentasjonsbehov(dokumentasjonsBehov)
+
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
         verify(exactly = 1) {
             søknadService.get(any())
@@ -44,8 +48,17 @@ internal class SendMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `overgangsstønad - uten dokumentasjonsbehov`() {
-        testOgVerifiserMelding(emptyList(), "Vi har mottatt søknaden din om overgangsstønad.", "")
+    internal fun `overgangsstønad - uten dokumentasjonsbehov skal ikke kalle sendToKafka`() {
+        mockSøknad()
+        mockDokumentasjonsbehov(emptyList())
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        verify(exactly = 0) {
+            dittNavKafkaProducer.sendToKafka(any(),
+                                             any(),
+                                             any(),
+                                             any(),
+                                             any())
+        }
     }
 
     @Test
@@ -69,15 +82,21 @@ internal class SendMeldingTilDittNavTaskTest {
     @Test
     internal fun `arbeidssøker skal ikke sjekke dokumentasjonsrepository`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
+        mockDokumentasjonsbehov(emptyList())
 
-        sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
         verify(exactly = 1) {
             søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR, "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.", any(), any(), "")
+            søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
         verify(exactly = 0) {
-            søknadService.hentDokumentasjonsbehovForSøknad(any())
+            dittNavKafkaProducer.sendToKafka(FNR,
+                                             "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.",
+                                             any(),
+                                             any(),
+                                             "")
+
         }
     }
 
@@ -87,7 +106,7 @@ internal class SendMeldingTilDittNavTaskTest {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov)
 
-        sendMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
         verify(exactly = 1) {
             dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), link ?: any())
@@ -99,6 +118,7 @@ internal class SendMeldingTilDittNavTaskTest {
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
         }
+
         every { søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(SØKNAD_ID)) } returns
                 DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
     }

@@ -27,7 +27,7 @@ internal class TaskServiceTest {
         every { soknadRepository.save(capture(soknadSlot)) }
                 .answers { soknadSlot.captured }
 
-        scheduledEventService.opprettTaskForSoknad(soknad)
+        scheduledEventService.opprettPdfTaskForSoknad(soknad)
 
         assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
         assertThat(soknadSlot.captured.taskOpprettet).isTrue

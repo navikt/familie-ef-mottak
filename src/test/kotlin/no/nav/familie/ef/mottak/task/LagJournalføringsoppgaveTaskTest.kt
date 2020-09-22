@@ -33,7 +33,7 @@ internal class LagJournalføringsoppgaveTaskTest {
         lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
 
         assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].taskStepType)
-        assertEquals(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
     }
 
     @Test
