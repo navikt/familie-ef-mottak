@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
-                     beskrivelse = "Send søknad mottatt til ditt nav")
+                     beskrivelse = "Send 'søknad mottatt' til ditt nav")
 class SendSøknadMottattTilDittNavTask(
         private val producer: DittNavKafkaProducer,
         private val søknadService: SøknadService) : AsyncTaskStep {
@@ -49,7 +49,6 @@ class SendSøknadMottattTilDittNavTask(
 
 
     companion object {
-
         const val SEND_SØKNAD_MOTTATT_TIL_DITT_NAV = "sendSøknadMottattTilDittNav"
     }
 }

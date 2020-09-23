@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -52,12 +53,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         mockSøknad()
         mockDokumentasjonsbehov(emptyList())
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
-        verify(exactly = 0) {
-            dittNavKafkaProducer.sendToKafka(any(),
-                                             any(),
-                                             any(),
-                                             any(),
-                                             any())
+        verify {
+            dittNavKafkaProducer wasNot called
         }
     }
 
@@ -80,7 +77,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `arbeidssøker skal ikke sjekke dokumentasjonsrepository`() {
+    internal fun `arbeidssøker skal ikke sende melding til ditt nav`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
         mockDokumentasjonsbehov(emptyList())
 
@@ -90,13 +87,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
-        verify(exactly = 0) {
-            dittNavKafkaProducer.sendToKafka(FNR,
-                                             "Vi har mottatt skjema enslig mor eller far som er arbeidssøker.",
-                                             any(),
-                                             any(),
-                                             "")
-
+        verify {
+            dittNavKafkaProducer wasNot called
         }
     }
 
