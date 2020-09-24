@@ -15,7 +15,7 @@ import java.util.*
 
 @Service
 @TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
-                     beskrivelse = "Send melding til ditt nav")
+                     beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
 class SendDokumentasjonsbehovMeldingTilDittNavTask(
         private val producer: DittNavKafkaProducer,
         private val søknadService: SøknadService,

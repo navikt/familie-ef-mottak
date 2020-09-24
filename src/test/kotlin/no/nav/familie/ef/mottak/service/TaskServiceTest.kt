@@ -15,7 +15,7 @@ internal class TaskServiceTest {
     private val taskRepository: TaskRepository = mockk(relaxed = true)
     private val soknadRepository: SoknadRepository = mockk(relaxed = true)
 
-    private val scheduledEventService = TaskService(taskRepository, soknadRepository)
+    private val scheduledEventService = TaskService(taskRepository, soknadRepository, mockk())
 
     @Test
     fun `opprettTask oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
