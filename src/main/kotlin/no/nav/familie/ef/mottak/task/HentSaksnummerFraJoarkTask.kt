@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
-                     maxAntallFeil = 15,
+                     maxAntallFeil = 20,
                      beskrivelse = "Hent saksnummer fra joark",
                      triggerTidVedFeilISekunder = 60 * 60 * 12)
 class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,

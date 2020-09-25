@@ -15,10 +15,10 @@ internal class TaskServiceTest {
     private val taskRepository: TaskRepository = mockk(relaxed = true)
     private val soknadRepository: SoknadRepository = mockk(relaxed = true)
 
-    private val scheduledEventService = TaskService(taskRepository, soknadRepository)
+    private val scheduledEventService = TaskService(taskRepository, soknadRepository, mockk(relaxed = true))
 
     @Test
-    fun `opprettTask oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
+    fun `startTaskProsessering oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
         val soknad = Soknad(dokumenttype = "søknad", søknadJson = "json", fnr = "fnr", taskOpprettet = false)
         val taskSlot = slot<Task>()
         val soknadSlot = slot<Soknad>()
@@ -27,7 +27,7 @@ internal class TaskServiceTest {
         every { soknadRepository.save(capture(soknadSlot)) }
                 .answers { soknadSlot.captured }
 
-        scheduledEventService.opprettTaskForSoknad(soknad)
+        scheduledEventService.startTaskProsessering(soknad)
 
         assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
         assertThat(soknadSlot.captured.taskOpprettet).isTrue

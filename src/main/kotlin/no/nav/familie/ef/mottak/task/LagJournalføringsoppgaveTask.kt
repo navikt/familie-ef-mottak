@@ -41,7 +41,9 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
         if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
             val sendMeldingTilDittNavTask: Task =
-                    Task.nyTask(SendMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, task.payload, task.metadata)
+                    Task.nyTask(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
+                                task.payload,
+                                task.metadata)
             taskRepository.saveAll(listOf(hentSaksnummerFraJoarkTask, sendMeldingTilDittNavTask))
         } else {
             taskRepository.save(hentSaksnummerFraJoarkTask)

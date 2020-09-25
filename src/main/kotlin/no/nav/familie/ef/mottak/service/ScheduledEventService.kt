@@ -17,7 +17,7 @@ class ScheduledEventService(private val soknadRepository: SoknadRepository,
         val soknad = soknadRepository.findFirstByTaskOpprettetIsFalse()
         try {
             soknad?.let {
-                taskService.opprettTaskForSoknad(it)
+                taskService.startTaskProsessering(it)
                 logger.info("Task opprettet for søknad med id ${it.id}")
             }
         } catch (e: DataIntegrityViolationException) {
