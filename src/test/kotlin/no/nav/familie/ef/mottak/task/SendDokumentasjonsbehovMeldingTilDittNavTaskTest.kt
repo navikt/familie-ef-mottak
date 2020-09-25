@@ -37,7 +37,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
         val dokumentasjonsBehov =
                 listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
-        mockDokumentasjonsbehov(dokumentasjonsBehov)
+        mockDokumentasjonsbehov(dokumentasjonsBehov, SøknadType.OVERGANGSSTØNAD)
 
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
@@ -51,7 +51,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @Test
     internal fun `overgangsstønad - uten dokumentasjonsbehov skal ikke kalle sendToKafka`() {
         mockSøknad()
-        mockDokumentasjonsbehov(emptyList())
+        mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
         verify {
             dittNavKafkaProducer wasNot called
@@ -79,15 +79,14 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @Test
     internal fun `arbeidssøker skal ikke sende melding til ditt nav`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
-        mockDokumentasjonsbehov(emptyList())
 
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
         verify(exactly = 1) {
             søknadService.get(any())
-            søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
         verify {
+            søknadService.hentDokumentasjonsbehovForSøknad(any()) wasNot called
             dittNavKafkaProducer wasNot called
         }
     }
@@ -96,7 +95,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                                        forventetMelding: String,
                                        link: String? = null) {
         mockSøknad()
-        mockDokumentasjonsbehov(dokumentasjonsbehov)
+        mockDokumentasjonsbehov(dokumentasjonsbehov, SøknadType.OVERGANGSSTØNAD)
 
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
 
@@ -106,7 +105,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     private fun mockDokumentasjonsbehov(dokumentasjonsbehov: List<Dokumentasjonsbehov> = emptyList(),
-                                        søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
+                                        søknadType: SøknadType) {
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
         }

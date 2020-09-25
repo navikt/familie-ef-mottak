@@ -28,6 +28,10 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
 
     override fun doTask(task: Task) {
         val søknad = søknadService.get(task.payload)
+        val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
+        if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
+            return
+        }
         val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(søknad.id)).dokumentasjonsbehov
         if (dokumentasjonsbehov.isNotEmpty()) {
             val linkMelding = lagLinkMelding(søknad, dokumentasjonsbehov)
