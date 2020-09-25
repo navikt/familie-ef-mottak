@@ -17,26 +17,20 @@ class TaskService(private val taskRepository: TaskRepository,
                   private val featureToggleService: FeatureToggleService) {
 
     @Transactional
-    fun opprettPdfTaskForSoknad(it: Soknad) {
+    fun startTaskProsessering(søknad: Soknad) {
         val properties =
-                Properties().apply { this["søkersFødselsnummer"] = it.fnr }.apply { this["dokumenttype"] = it.dokumenttype }
+                Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
+                        .apply { this["dokumenttype"] = søknad.dokumenttype }
         taskRepository.save(Task.nyTask(LagPdfTask.LAG_PDF,
-                                        it.id,
+                                        søknad.id,
                                         properties))
-
-        soknadRepository.save(it.copy(taskOpprettet = true))
-    }
-
-    @Transactional
-    fun sendSøknadMottattTilDittNavTask(søknad: Soknad) {
         if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
-            val properties =
-                    Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
-                            .apply { this["dokumenttype"] = søknad.dokumenttype }
+
             taskRepository.save(Task.nyTask(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
                                             søknad.id,
                                             properties))
         }
+        soknadRepository.save(søknad.copy(taskOpprettet = true))
     }
 
 }
