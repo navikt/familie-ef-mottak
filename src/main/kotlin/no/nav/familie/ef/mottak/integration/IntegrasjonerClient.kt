@@ -3,15 +3,17 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
+import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
+import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
-import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
-import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
+import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
+import no.nav.familie.kontrakter.felles.oppgave.*
 import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import javax.swing.text.html.parser.Entity
 
 
 @Service
@@ -34,6 +37,14 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     private val aktørUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
 
+    private val behandlendeEnhetUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
+
+    private val journalpostsøkUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).build().toUri()
+
+    private val infotrygdsakUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_INFOTRYGDSAK).build().toUri()
+
     private fun finnOppgaveUri(finnOppgaveRequest: FinnOppgaveRequest) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
                     .pathSegment(PATH_HENT_OPPGAVE)
@@ -41,7 +52,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                     .build()
                     .toUri()
 
-    private fun journalPostUri(journalpostId: String) =
+    private fun journalpostUri(journalpostId: String) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
                     .pathSegment(PATH_JOURNALPOST)
                     .queryParam("journalpostId", journalpostId)
@@ -50,11 +61,26 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun hentJournalpost(journalpostId: String): Journalpost {
-        val uri = journalPostUri(journalpostId)
+        val uri = journalpostUri(journalpostId)
         return getForEntity<Ressurs<Journalpost>>(uri).getDataOrThrow()
     }
 
-    fun finnOppgaver(finnOppgaveRequest: FinnOppgaveRequest): FinnOppgaveResponseDto {
+    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
+        return postForEntity<Ressurs<List<Journalpost>>>(journalpostsøkUri, journalposterForBrukerRequest).getDataOrThrow()
+    }
+
+    fun opprettInfotrygdsak(opprettInfotrygdSakRequest: OpprettInfotrygdSakRequest): OpprettInfotrygdSakResponse {
+        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(infotrygdsakUri, opprettInfotrygdSakRequest).getDataOrThrow()
+    }
+
+    fun finnBehandlendeEnhet(fnr: String): Enhet {
+        return postForEntity<Ressurs<Enhet>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
+    }
+
+    fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {
+        val finnOppgaveRequest = FinnOppgaveRequest(tema = Tema.ENF,
+                                                    journalpostId = journalpostId,
+                                                    oppgavetype = oppgavetype)
         return getForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri(finnOppgaveRequest)).getDataOrThrow()
     }
 
@@ -110,6 +136,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_HENT_OPPGAVE = "oppgave/v3"
         const val PATH_AKTØR = "aktoer/v1"
         const val PATH_JOURNALPOST = "journalpost"
+        const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
+        const val PATH_INFOTRYGDSAK = "infotrygdsak"
     }
 
 }
