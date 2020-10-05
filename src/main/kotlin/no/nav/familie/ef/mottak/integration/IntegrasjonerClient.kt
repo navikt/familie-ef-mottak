@@ -73,8 +73,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(infotrygdsakUri, opprettInfotrygdSakRequest).getDataOrThrow()
     }
 
-    fun finnBehandlendeEnhet(fnr: String): Enhet {
-        return postForEntity<Ressurs<Enhet>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
+    fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
+        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
     }
 
     fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {

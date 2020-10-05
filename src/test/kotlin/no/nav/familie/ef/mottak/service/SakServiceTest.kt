@@ -61,7 +61,7 @@ internal class SakServiceTest {
         every { integrasjonerClient.finnOppgaver("15", Oppgavetype.Journalføring) }
                 .returns(FinnOppgaveResponseDto(1L, listOf(Oppgave(id = 987))))
         every { integrasjonerClient.finnBehandlendeEnhet("123") }
-                .returns(Enhet("654", "Flekkefjord"))
+                .returns(listOf(Enhet("654", "Flekkefjord")))
         every { integrasjonerClient.opprettInfotrygdsak(capture(slot)) }
                 .returns(OpprettInfotrygdSakResponse())
 
