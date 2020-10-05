@@ -155,44 +155,6 @@
               "verdi": "Vi sees stadig vekk"
             }
           ]
-        },
-        {
-          "label": "Skal ha barnepass",
-          "verdi": "Ja"
-        },
-        {
-          "label": "Barnepass",
-          "verdiliste": [
-            {
-              "label": "Årsak Barnepass",
-              "verdi": "Årsak"
-            },
-            {
-              "label": "Ordninger",
-              "verdiliste": [
-                {
-                  "label": "Hva slags barnepassordning?",
-                  "verdi": "En"
-                },
-                {
-                  "label": "Navn",
-                  "verdi": "navn"
-                },
-                {
-                  "label": "Periode",
-                  "verdi": "Fra januar 2020 til juli 2020"
-                },
-                {
-                  "label": "Periode",
-                  "verdi": "Fra 12.01.2020 til 15.02.2020"
-                },
-                {
-                  "label": "Beløp",
-                  "verdi": "1000,21"
-                }
-              ]
-            }
-          ]
         }
       ]
     },
