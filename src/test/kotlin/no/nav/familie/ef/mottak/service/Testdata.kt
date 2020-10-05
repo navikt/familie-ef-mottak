@@ -59,6 +59,7 @@ internal object Testdata {
                                                       spesielleBehov = dokumentfelt("Spesielle behov")))
 
     val søknadSkolepenger = SøknadSkolepenger(Søknadsfelt("Søker", personalia()),
+                                              Søknadsfelt("Barn", listOf(barn(barnetilsyn = true))),
                                               Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
                                               Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
                                               Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
