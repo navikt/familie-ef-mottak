@@ -5,10 +5,7 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
-import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.Tema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -36,13 +33,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
-                finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L -> {
+                integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L -> {
                     log.info("Skipper oppretting av journalførings-oppgave. " +
                              "Fant åpen oppgave av type ${Oppgavetype.Journalføring} for " +
                              "journalpostId=${journalpost.journalpostId}")
                     null
                 }
-                finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L -> {
+                integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L -> {
                     log.info("Skipper oppretting av journalførings-oppgave. " +
                              "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
                              "journalpostId=${journalpost.journalpostId}")
@@ -64,11 +61,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
-    }
-
-    fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {
-        val finnOppgaveRequest = FinnOppgaveRequest(tema = Tema.ENF, journalpostId = journalpostId, oppgavetype = oppgavetype)
-        return integrasjonerClient.finnOppgaver(finnOppgaveRequest)
     }
 
 }

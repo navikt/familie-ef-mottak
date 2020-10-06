@@ -50,7 +50,7 @@ internal class OppgaveServiceTest {
                                      null,
                                      listOf(DokumentInfo("1", "", "", null, null, null)),
                                      null))
-        every { integrasjonerClient.finnOppgaver(any()) } returns FinnOppgaveResponseDto(0L, emptyList())
+        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
             søknadService.get("123")
         } returns Soknad(søknadJson = "{}",
