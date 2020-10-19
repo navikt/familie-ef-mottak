@@ -26,6 +26,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
 
     fun opprettSakOmIngenFinnes(søknadId: String) {
+        logger.info("Forsøker å opprette sak i Infotrygd")
 
         val soknad = søknadService.get(søknadId)
 
@@ -39,12 +40,13 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val fagsakOpprettet = journalposter.any { it.sak?.fagsaksystem == INFOTRYGD && it.sak?.fagsakId != null }
 
         if (fagsakOpprettet) {
+            logger.info("Minst en av journalpostene er allerede knyttet til en infotrygd-sak")
             return
         }
 
         val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad)
 
-
+        logger.info("Kaller familie-integrasjoner for å opprette infotrygd-sak")
         val opprettInfotrygdSakResponse =
                 integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
