@@ -6,8 +6,8 @@ server:
 spring:
   datasource:
     username: postgres
-    password: test
-    url: jdbc:postgresql://localhost:5432/familie-ef-mottak
+    password: Test
+    url: jdbc:postgresql://localhost:5431/familie-ef-mottak
   kafka:
     bootstrap-servers: http://localhost:9092
     properties:
@@ -25,7 +25,8 @@ familie:
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
-      url: https://familie-ef-dokgen.dev-adeo.no/
+      url: http://localhost:8081/
+      #url: https://familie-ef-dokgen.dev-adeo.no/
 
 funksjonsbrytere:
   enabled: false
