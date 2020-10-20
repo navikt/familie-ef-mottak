@@ -29,6 +29,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         logger.info("Forsøker å opprette sak i Infotrygd")
 
         val soknad = søknadService.get(søknadId)
+        logger.info("Infotrygd-sak for søknad: ${soknad.id}")
 
 
         val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(soknad.fnr, BrukerIdType.FNR),
@@ -36,6 +37,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                                                                           listOf(Tema.ENF),
                                                                           listOf(Journalposttype.I))
         val journalposter = integrasjonerClient.finnJournalposter(journalposterForBrukerRequest)
+        logger.info("Fant følgende journalposter: ${journalposter.map { it.journalpostId }}")
 
         val fagsakOpprettet = journalposter.any { it.sak?.fagsaksystem == INFOTRYGD && it.sak?.fagsakId != null }
 
