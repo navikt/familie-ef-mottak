@@ -24,6 +24,7 @@
         <mockk.version>1.10.2</mockk.version>
         <fasterxml.version>2.11.3</fasterxml.version>
         <felles.version>1.20201007050123_6456f31</felles.version>
+        <prosessering.version>1.20201020115926_abf8d37</prosessering.version>
         <confluent.version>6.0.0</confluent.version>
         <kontrakter.version>2.0_20201019114215_23568f6</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.08.21-11.47-631516352cc5</brukernotifikasjon-skjemas.version>
@@ -177,11 +178,6 @@
         </dependency>
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
-            <artifactId>prosessering</artifactId>
-            <version>${felles.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.felles</groupId>
             <artifactId>http-client</artifactId>
             <version>${felles.version}</version>
         </dependency>
@@ -199,6 +195,11 @@
             <groupId>no.nav.familie.kontrakter</groupId>
             <artifactId>enslig-forsorger</artifactId>
             <version>${kontrakter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie</groupId>
+            <artifactId>prosessering-jpa</artifactId>
+            <version>${prosessering.version}</version>
         </dependency>
 
         <!-- Database -->

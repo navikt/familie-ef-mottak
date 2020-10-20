@@ -32,7 +32,7 @@ internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
         soknadRepository.save(soknad(true))
         soknadRepository.save(soknad(true))
 
-        taskRepository.save(Task.nyTask("test2", UUID.randomUUID().toString()).copy(status = Status.FEILET))
+        taskRepository.save(Task("test2", UUID.randomUUID().toString()).copy(status = Status.FEILET))
 
         assertThat(soknadRepository.countByTaskOpprettetFalseAndOpprettetTidBefore()).isEqualTo(1)
         assertThat(taskMetricRepository.finnFeiledeTasks()).hasSize(1)

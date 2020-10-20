@@ -31,8 +31,8 @@ internal class HentSaksnummerFraJoarkTaskTest {
             featureToggleService.isEnabled(any())
         } returns true
 
-        hentSaksnummerFraJoarkTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        hentSaksnummerFraJoarkTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        assertEquals(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, slot.captured.taskStepType)
+        assertEquals(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, slot.captured.type)
     }
 }

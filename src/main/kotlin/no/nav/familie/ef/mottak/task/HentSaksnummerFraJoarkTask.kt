@@ -27,7 +27,7 @@ class HentSaksnummerFraJoarkTask(private val taskRepository: TaskRepository,
     override fun onCompletion(task: Task) {
         if (featureToggleService.isEnabled("familie.ef.mottak.send-til-sak")) {
             val nesteTask: Task =
-                    Task.nyTask(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload, task.metadata)
+                    Task(SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, task.payload, task.metadata)
             taskRepository.save(nesteTask)
         } else {
             logger.info("Sender ikke til sak, feature familie.ef.mottak.send-til-sak er skrudd av i Unleash ")

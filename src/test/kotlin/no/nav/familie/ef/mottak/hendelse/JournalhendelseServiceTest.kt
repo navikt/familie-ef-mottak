@@ -123,7 +123,7 @@ class JournalføringHendelseServiceTest {
         assertThat(taskSlot.captured).isNotNull
         assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.taskStepType).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
     }
 
     @Test

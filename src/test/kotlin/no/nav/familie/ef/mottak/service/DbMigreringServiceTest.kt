@@ -31,22 +31,22 @@ internal class DbMigreringServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `dbMigrering oppdaterer task med korrekt verdi`() {
-        taskRepository.saveAndFlush(Task.nyTask("lagOppgave", "1", Properties()))
-        taskRepository.saveAndFlush(Task.nyTask("lagOppgave", "2", Properties()))
-        taskRepository.saveAndFlush(Task.nyTask("journalførSøknad", "3", Properties()))
-        taskRepository.saveAndFlush(Task.nyTask("journalførSøknad", "4", Properties()))
+        taskRepository.save(Task("lagOppgave", "1", Properties()))
+        taskRepository.save(Task("lagOppgave", "2", Properties()))
+        taskRepository.save(Task("journalførSøknad", "3", Properties()))
+        taskRepository.save(Task("journalførSøknad", "4", Properties()))
 
         val alleFør = taskRepository.findAll()
-        assertThat(alleFør.filter { it.taskStepType == "lagOppgave" }.size).isEqualTo(2)
-        assertThat(alleFør.filter { it.taskStepType == "journalførSøknad" }.size).isEqualTo(2)
+        assertThat(alleFør.filter { it.type == "lagOppgave" }.size).isEqualTo(2)
+        assertThat(alleFør.filter { it.type == "journalførSøknad" }.size).isEqualTo(2)
 
         dbMigreringService.dbMigrering()
 
         val alleEtter = taskRepository.findAll()
-        assertThat(alleEtter.filter { it.taskStepType == "lagOppgave" }).isEmpty()
-        assertThat(alleEtter.filter { it.taskStepType == "journalførSøknad" }).isEmpty()
-        assertThat(alleEtter.filter { it.taskStepType == LagJournalføringsoppgaveTask.TYPE }.size).isEqualTo(2)
-        assertThat(alleEtter.filter { it.taskStepType == ArkiverSøknadTask.TYPE }.size).isEqualTo(2)
+        assertThat(alleEtter.filter { it.type == "lagOppgave" }).isEmpty()
+        assertThat(alleEtter.filter { it.type == "journalførSøknad" }).isEmpty()
+        assertThat(alleEtter.filter { it.type == LagJournalføringsoppgaveTask.TYPE }.size).isEqualTo(2)
+        assertThat(alleEtter.filter { it.type == ArkiverSøknadTask.TYPE }.size).isEqualTo(2)
 
     }
 }

@@ -9,14 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = SendSøknadTilSakTask.SEND_SØKNAD_TIL_SAK, beskrivelse = "Send søknad til sak")
-class SendSøknadTilSakTask(private val søknadService: SøknadService,
-                           private val taskRepository: TaskRepository) : AsyncTaskStep {
+class SendSøknadTilSakTask(private val søknadService: SøknadService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         søknadService.sendTilSak(task.payload)
-    }
-
-    override fun onCompletion(task: Task) {
     }
 
     companion object {

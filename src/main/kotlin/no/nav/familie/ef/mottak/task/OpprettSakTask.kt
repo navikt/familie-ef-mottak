@@ -19,7 +19,7 @@ private val sakService: SakService) : AsyncTaskStep {
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+        val nesteTask = Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         taskRepository.save(nesteTask)
 
     }

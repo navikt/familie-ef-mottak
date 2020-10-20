@@ -12,21 +12,21 @@ import java.util.*
 import javax.transaction.Transactional
 
 @Service
-class TaskService(private val taskRepository: TaskRepository,
-                  private val soknadRepository: SoknadRepository,
-                  private val featureToggleService: FeatureToggleService) {
+class TaskProsesseringService(private val taskRepository: TaskRepository,
+                              private val soknadRepository: SoknadRepository,
+                              private val featureToggleService: FeatureToggleService) {
 
     @Transactional
     fun startTaskProsessering(søknad: Soknad) {
         val properties =
                 Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
                         .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskRepository.save(Task.nyTask(LagPdfTask.LAG_PDF,
+        taskRepository.save(Task(LagPdfTask.LAG_PDF,
                                         søknad.id,
                                         properties))
         if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
 
-            taskRepository.save(Task.nyTask(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
+            taskRepository.save(Task(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
                                             søknad.id,
                                             properties))
         }

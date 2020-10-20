@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ScheduledEventService(private val soknadRepository: SoknadRepository,
-                            private val taskService: TaskService) {
+                            private val taskService: TaskProsesseringService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
