@@ -79,7 +79,7 @@ internal class SakServiceTest {
                                        opprettetAv = "MOTTAK",
                                        opprettetAvOrganisasjonsEnhetsId = null,
                                        mottakerOrganisasjonsEnhetsId = "654",
-                                       motattdato = LocalDate.of(2014, 1, 16),
+                                       mottattdato = LocalDate.of(2014, 1, 16),
                                        sendBekreftelsesbrev = false,
                                        oppgaveId = "987",
                                        oppgaveOrganisasjonsenhetId = null)

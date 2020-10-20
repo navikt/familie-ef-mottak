@@ -57,7 +57,7 @@ object SøknadTreeWalker {
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {
 
-        // Det går ike å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
+        // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
         if (entitet is List<Any?>) {
             return entitet.filterNotNull()
                     .map { finnFelter(it) }
