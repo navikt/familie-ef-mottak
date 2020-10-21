@@ -14,7 +14,7 @@ object Feltformaterer {
      * Håndterer formatering utover vanlig toString for endenodene
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
-        return feltMap(entitet.label, mapVerdi(entitet.verdi!!))
+        return feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
     }
 
     fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
@@ -73,6 +73,12 @@ object Feltformaterer {
                       adresse.land).joinToString("\n\n")
     }
 
-    private fun feltMap(label: String, verdi: String) = mapOf("label" to label, "verdi" to verdi)
+    private fun feltMap(label: String, verdi: String, alternativer: List<String>? = null): Map<String, String> {
+        return if (alternativer != null) {
+            mapOf("label" to label, "verdi" to verdi, "alternativer" to alternativer.joinToString(" / "))
+        } else {
+            mapOf("label" to label, "verdi" to verdi)
+        }
+    }
 
 }

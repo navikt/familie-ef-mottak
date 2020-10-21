@@ -81,7 +81,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                                            opprettetAv = "MOTTAK",
                                            opprettetAvOrganisasjonsEnhetsId = null,
                                            mottakerOrganisasjonsEnhetsId = enhet.firstOrNull()?.enhetId,
-                                           motattdato = soknad.opprettetTid.toLocalDate(),
+                                           mottattdato = soknad.opprettetTid.toLocalDate(),
                                            sendBekreftelsesbrev = false,
                                            oppgaveId = oppgave.id?.toString(),
                                            oppgaveOrganisasjonsenhetId = oppgave.opprettetAvEnhetsnr)
