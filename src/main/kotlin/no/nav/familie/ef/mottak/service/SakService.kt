@@ -29,7 +29,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
         val soknad = søknadService.get(søknadId)
 
-
         val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(soknad.fnr, BrukerIdType.FNR),
                                                                           50,
                                                                           listOf(Tema.ENF),
@@ -44,12 +43,10 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
         val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad)
 
-
         val opprettInfotrygdSakResponse =
                 integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
         logger.info("Infotrygdsak opprettet", opprettInfotrygdSakResponse)
-
     }
 
     private fun lagOpprettInfotrygdSakRequest(soknad: Soknad): OpprettInfotrygdSakRequest {
