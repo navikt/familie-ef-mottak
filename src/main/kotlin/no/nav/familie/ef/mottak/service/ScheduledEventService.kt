@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ScheduledEventService(private val soknadRepository: SoknadRepository,
-                            private val taskService: TaskProsesseringService) {
+                            private val taskProsesseringService: TaskProsesseringService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -17,7 +17,7 @@ class ScheduledEventService(private val soknadRepository: SoknadRepository,
         val soknad = soknadRepository.findFirstByTaskOpprettetIsFalse()
         try {
             soknad?.let {
-                taskService.startTaskProsessering(it)
+                taskProsesseringService.startTaskProsessering(it)
                 logger.info("Task opprettet for søknad med id ${it.id}")
             }
         } catch (e: DataIntegrityViolationException) {
