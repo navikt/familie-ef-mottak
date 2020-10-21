@@ -1,1 +1,0 @@
-ALTER TABLE task_logg ALTER COLUMN task_id DROP NOT NULL;
