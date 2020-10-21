@@ -5,7 +5,9 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.springframework.stereotype.Service
 
+@Service
 @TaskStepBeskrivelse(taskStepType = OpprettSakTask.TYPE,
                      maxAntallFeil = 100,
                      beskrivelse = "Oppretter oppgave i GoSys/Infotrygd")

@@ -40,7 +40,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val behandlendeEnhetUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
 
-    private val journalpostsøkUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).build().toUri()
+    private val journalpostsøkUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_JOURNALPOST).build().toUri()
 
     private val infotrygdsakUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_INFOTRYGDSAK).build().toUri()
