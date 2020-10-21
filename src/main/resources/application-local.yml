@@ -4,9 +4,10 @@ server:
     context-path: /
 
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
+  datasource:
+    username: postgres
+    password: test
+    url: jdbc:postgresql://localhost:5432/familie-ef-mottak
   kafka:
     bootstrap-servers: http://localhost:9092
     properties:
