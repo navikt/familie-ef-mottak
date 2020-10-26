@@ -47,3 +47,5 @@ spec:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
   leaderElection: true
+  envFrom:
+    - configmap: loginservice-idporten
