@@ -72,8 +72,6 @@ funksjonsbrytere:
 
 familie:
   ef:
-    sak:
-      url: http://familie-ef-sak/api/
     integrasjoner:
       url: http://familie-integrasjoner/api/
     pdfgenerator:

@@ -20,8 +20,6 @@ spring:
 
 familie:
   ef:
-    sak:
-      url: http://localhost:8093/api/
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
