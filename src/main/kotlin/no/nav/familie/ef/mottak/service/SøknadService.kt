@@ -16,8 +16,6 @@ interface SøknadService {
 
     fun get(id: String): Soknad
 
-    fun sendTilSak(søknadId: String)
-
     fun lagreSøknad(soknad: Soknad)
 
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering
