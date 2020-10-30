@@ -17,10 +17,6 @@ class HentSaksnummerFraJoarkTask(private val hentJournalpostService: HentJournal
         hentJournalpostService.hentSaksnummer(task.payload)
     }
 
-    override fun onCompletion(task: Task) {
-
-    }
-
     companion object {
         const val HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark"
     }
