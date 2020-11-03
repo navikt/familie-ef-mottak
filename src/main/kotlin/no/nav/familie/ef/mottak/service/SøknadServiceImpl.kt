@@ -3,10 +3,6 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.integration.SøknadClient
-import no.nav.familie.ef.mottak.mapper.SakMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
@@ -14,8 +10,6 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.kontrakter.ef.sak.SakRequest
-import no.nav.familie.kontrakter.ef.sak.Skjemasak
 import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -31,8 +25,7 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 @Service
 class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
                         private val vedleggRepository: VedleggRepository,
-                        private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
-                        private val søknadClient: SøknadClient) : SøknadService {
+                        private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository) : SøknadService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -84,31 +77,6 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
 
     override fun get(id: String): Soknad {
         return soknadRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
-    }
-
-    override fun sendTilSak(søknadId: String) {
-        val soknad: Soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("")
-
-        when (soknad.dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> {
-                val vedlegg = vedleggRepository.findBySøknadId(søknadId)
-                val kontraktVedlegg = vedlegg
-                        .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
-                val sak: SakRequest<SøknadOvergangsstønad> = SakMapper.toOvergangsstønadSak(soknad, kontraktVedlegg)
-                søknadClient.sendOvergangsstønad(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
-            }
-            DOKUMENTTYPE_BARNETILSYN -> {
-                val vedlegg = vedleggRepository.findBySøknadId(søknadId)
-                val kontraktVedlegg = vedlegg
-                        .map { VedleggKontrakt(it.id.toString(), it.navn, it.tittel) }
-                val sak: SakRequest<SøknadBarnetilsyn> = SakMapper.toBarnetilsynSak(soknad, kontraktVedlegg)
-                søknadClient.sendBarnetilsyn(sak, vedlegg.map { it.id.toString() to it.innhold.bytes }.toMap())
-            }
-            else -> {
-                val skjemasak: Skjemasak = SakMapper.toSkjemasak(soknad)
-                søknadClient.send(skjemasak)
-            }
-        }
     }
 
     @Transactional

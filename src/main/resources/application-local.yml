@@ -20,8 +20,6 @@ spring:
 
 familie:
   ef:
-    sak:
-      url: http://localhost:8093/api/
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
@@ -47,15 +45,6 @@ no.nav.security.jwt:
       proxyurl:
   client:
     registration:
-      ef-sak-client-credentials:
-        resource-url: ${familie.ef.sak.url}
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: ${EF_SAK_SCOPE}
-        authentication:
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
-          client-auth-method: client_secret_basic
       integrasjoner-client-credentials:
         resource-url: ${familie.ef.integrasjoner.url}
         token-endpoint-url: http://localhost:8092/mockapi/token
