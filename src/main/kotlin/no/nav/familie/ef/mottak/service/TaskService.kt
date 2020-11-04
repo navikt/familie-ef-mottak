@@ -24,12 +24,10 @@ class TaskService(private val taskRepository: TaskRepository,
         taskRepository.save(Task.nyTask(LagPdfTask.LAG_PDF,
                                         søknad.id,
                                         properties))
-        if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
 
-            taskRepository.save(Task.nyTask(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
-                                            søknad.id,
-                                            properties))
-        }
+        taskRepository.save(Task.nyTask(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
+                                        søknad.id,
+                                        properties))
         soknadRepository.save(søknad.copy(taskOpprettet = true))
     }
 

@@ -22,7 +22,6 @@ internal class LagJournalføringsoppgaveTaskTest {
 
     @Test
     fun `Skal opprette SendMeldingTilDittNavTask og HentSaksnummerFraJoark når LagJournalføringsoppgaveTask er utført`() {
-        every { featureToggleService.isEnabled("familie.ef.mottak.task-dittnav") } returns true
         val slot = slot<List<Task>>()
         every {
             taskRepository.saveAll(capture(slot))
