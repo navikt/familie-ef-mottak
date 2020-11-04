@@ -17,7 +17,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                                          oppgavetype = Oppgavetype.Journalføring,
                                                          fristFerdigstillelse = LocalDate.now(),
                                                          beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
-                                                         behandlingstema = null,
+                                                         behandlingstema = journalpost.behandlingstema,
                                                          enhetsnummer = null)
 
     private fun hentHoveddokumentTittel(journalpost: Journalpost): String? {
