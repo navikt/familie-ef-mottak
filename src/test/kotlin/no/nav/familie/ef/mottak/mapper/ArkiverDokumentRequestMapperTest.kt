@@ -16,9 +16,11 @@ internal class ArkiverDokumentRequestMapperTest {
 
     @Test
     internal fun `overgangsstønad toDto`() {
-        val dto = toDto(lagSøknad(Testdata.søknadOvergangsstønad, DOKUMENTTYPE_OVERGANGSSTØNAD), listOf(lagVedlegg()))
+        val vedlegg = lagVedlegg()
+        val dto = toDto(lagSøknad(Testdata.søknadOvergangsstønad, DOKUMENTTYPE_OVERGANGSSTØNAD), listOf(vedlegg))
         assertThat(dto.vedleggsdokumenter.first().dokumentType)
                 .isEqualTo(DOKUMENTTYPE_OVERGANGSSTØNAD_VEDLEGG)
+        assertThat(dto.vedleggsdokumenter.first().filnavn).isEqualTo(vedlegg.id.toString())
     }
 
     @Test
