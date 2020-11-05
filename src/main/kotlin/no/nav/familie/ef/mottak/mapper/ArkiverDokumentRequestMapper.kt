@@ -32,7 +32,7 @@ object ArkiverDokumentRequestMapper {
         return Dokument(dokument = vedlegg.innhold.bytes,
                         filType = FilType.PDFA,
                         tittel = vedlegg.tittel,
-                        filnavn = vedlegg.navn,
+                        filnavn = vedlegg.id.toString(),
                         dokumentType = dokumenttypeVedlegg)
     }
 
