@@ -104,8 +104,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun hentAktørId(personident: String): String {
-        val response = getForEntity<Ressurs<MutableMap
-        <*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
+        val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
