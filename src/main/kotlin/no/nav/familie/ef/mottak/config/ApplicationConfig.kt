@@ -1,12 +1,12 @@
 package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import no.nav.familie.ef.mottak.api.filter.RequestTimeFilter
 import no.nav.familie.http.config.RestTemplateBuilderBean
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.log.filter.LogFilter
+import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
