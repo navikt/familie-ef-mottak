@@ -48,6 +48,7 @@ internal class OppgaveServiceTest {
                                      null,
                                      null,
                                      null,
+                                     null,
                                      listOf(DokumentInfo("1", "", "", null, null, null)),
                                      null))
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
