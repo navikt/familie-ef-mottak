@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.task.LagPdfTask
@@ -13,8 +12,7 @@ import javax.transaction.Transactional
 
 @Service
 class TaskProsesseringService(private val taskRepository: TaskRepository,
-                              private val soknadRepository: SoknadRepository,
-                              private val featureToggleService: FeatureToggleService) {
+                              private val soknadRepository: SoknadRepository) {
 
     @Transactional
     fun startTaskProsessering(søknad: Soknad) {
@@ -22,14 +20,12 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                 Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
                         .apply { this["dokumenttype"] = søknad.dokumenttype }
         taskRepository.save(Task(LagPdfTask.LAG_PDF,
-                                        søknad.id,
-                                        properties))
-        if (featureToggleService.isEnabled("familie.ef.mottak.task-dittnav")) {
+                                 søknad.id,
+                                 properties))
 
-            taskRepository.save(Task(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
-                                            søknad.id,
-                                            properties))
-        }
+        taskRepository.save(Task(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
+                                 søknad.id,
+                                 properties))
         soknadRepository.save(søknad.copy(taskOpprettet = true))
     }
 
