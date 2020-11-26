@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 
 const val INFOTRYGD = "IT01"
 
-const val FAGOMRÅDE_ENSLIG_FORSØRGER = "EF"
+const val FAGOMRÅDE_ENSLIG_FORSØRGER = "ENF"
 
 const val SAKSTYPE_SØKNAD = "S"
 
@@ -56,24 +56,25 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val oppgave = finnOppgaver.oppgaver.first()
 
         val stønadsklassifisering = when (soknad.dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> "OG"
-            DOKUMENTTYPE_BARNETILSYN -> "BT"
-            DOKUMENTTYPE_SKOLEPENGER -> "UT"
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> "OG" //13
+            DOKUMENTTYPE_BARNETILSYN -> "BT" // 11
+            DOKUMENTTYPE_SKOLEPENGER -> "UT" //14
             else -> error("Ukjent dokumenttype")
         }
 
         val enhet = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
+
+        val mottagendeEnhet = enhet.firstOrNull()?.enhetId
+                              ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
 
 
         val opprettInfotrygdSakRequest =
                 OpprettInfotrygdSakRequest(fnr = soknad.fnr,
                                            fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
                                            stonadsklassifisering2 = stønadsklassifisering,
-                                           stonadsklassifisering3 = null,
                                            type = SAKSTYPE_SØKNAD,
-                                           opprettetAv = "MOTTAK",
-                                           opprettetAvOrganisasjonsEnhetsId = null,
-                                           mottakerOrganisasjonsEnhetsId = enhet.firstOrNull()?.enhetId,
+                                           opprettetAvOrganisasjonsEnhetsId = mottagendeEnhet,
+                                           mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
                                            mottattdato = soknad.opprettetTid.toLocalDate(),
                                            sendBekreftelsesbrev = false,
                                            oppgaveId = oppgave.id?.toString(),

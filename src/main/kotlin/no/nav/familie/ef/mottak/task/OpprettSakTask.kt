@@ -9,21 +9,18 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = OpprettSakTask.TYPE,
-                     maxAntallFeil = 100,
-                     beskrivelse = "Oppretter oppgave i GoSys/Infotrygd")
+                     beskrivelse = "Oppretter sak iInfotrygd")
 class OpprettSakTask(private val taskRepository: TaskRepository,
-private val sakService: SakService) : AsyncTaskStep {
+                     private val sakService: SakService) : AsyncTaskStep {
 
 
     override fun doTask(task: Task) {
-
         sakService.opprettSakOmIngenFinnes(task.payload)
     }
 
     override fun onCompletion(task: Task) {
         val nesteTask = Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         taskRepository.save(nesteTask)
-
     }
 
     companion object {
