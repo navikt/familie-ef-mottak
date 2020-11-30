@@ -57,9 +57,9 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val oppgave = finnOppgaver.oppgaver.first()
 
         val stønadsklassifisering = when (soknad.dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> "OG" //13
-            DOKUMENTTYPE_BARNETILSYN -> "BT" // 11
-            DOKUMENTTYPE_SKOLEPENGER -> "UT" //14
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> "OG"
+            DOKUMENTTYPE_BARNETILSYN -> "BT"
+            DOKUMENTTYPE_SKOLEPENGER -> "UT"
             else -> error("Ukjent dokumenttype")
         }
 
