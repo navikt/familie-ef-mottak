@@ -25,7 +25,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
 
-    fun opprettSakOmIngenFinnes(søknadId: String) {
+    fun opprettSakOmIngenFinnes(søknadId: String): String? {
 
         val soknad = søknadService.get(søknadId)
 
@@ -38,7 +38,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val fagsakOpprettet = journalposter.any { it.sak?.fagsaksystem == INFOTRYGD && it.sak?.fagsakId != null }
 
         if (fagsakOpprettet) {
-            return
+            return null
         }
 
         val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad)
@@ -46,7 +46,8 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val opprettInfotrygdSakResponse =
                 integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
-        logger.info("Infotrygdsak opprettet", opprettInfotrygdSakResponse)
+        logger.info("Infotrygdsak opprettet med saksnummer ", opprettInfotrygdSakResponse.saksId)
+        return opprettInfotrygdSakResponse.saksId
     }
 
     private fun lagOpprettInfotrygdSakRequest(soknad: Soknad): OpprettInfotrygdSakRequest {
