@@ -21,10 +21,15 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         return journalpostId
     }
 
-    private fun send(soknad: Soknad,
-                     vedlegg: List<Vedlegg>): String {
+    fun ferdigstillJournalpost(søknadId: String) {
+        val soknad: Soknad = søknadService.get(søknadId)
+        val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
+        integrasjonerClient.ferdigstillJournalpost(journalpostId)
+    }
+
+    private fun send(soknad: Soknad, vedlegg: List<Vedlegg>): String {
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.toDto(soknad, vedlegg)
-        val ressurs = integrasjonerClient.arkiver(arkiverDokumentRequest)
-        return ressurs.journalpostId
+        val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
+        return dokumentResponse.journalpostId
     }
 }
