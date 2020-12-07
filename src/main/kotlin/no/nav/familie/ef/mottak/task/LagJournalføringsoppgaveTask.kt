@@ -12,7 +12,6 @@ import java.util.*
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
-                     maxAntallFeil = 100,
                      beskrivelse = "Lager oppgave i GoSys")
 class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                    private val oppgaveService: OppgaveService,

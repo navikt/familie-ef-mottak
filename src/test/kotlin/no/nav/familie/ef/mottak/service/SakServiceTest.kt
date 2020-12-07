@@ -70,14 +70,12 @@ internal class SakServiceTest {
         assertThat(slot.captured).isEqualToComparingFieldByField(opprettInfotrygdSakRequest)
     }
 
-    val opprettInfotrygdSakRequest =
+    private val opprettInfotrygdSakRequest =
             OpprettInfotrygdSakRequest(fnr = "123",
                                        fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
                                        stonadsklassifisering2 = "OG",
-                                       stonadsklassifisering3 = null,
                                        type = SAKSTYPE_SØKNAD,
-                                       opprettetAv = "MOTTAK",
-                                       opprettetAvOrganisasjonsEnhetsId = null,
+                                       opprettetAvOrganisasjonsEnhetsId = "654",
                                        mottakerOrganisasjonsEnhetsId = "654",
                                        mottattdato = LocalDate.of(2014, 1, 16),
                                        sendBekreftelsesbrev = false,

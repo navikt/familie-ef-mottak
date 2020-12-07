@@ -16,11 +16,9 @@ import java.util.*
 @Service
 @TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
                      beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
-class SendDokumentasjonsbehovMeldingTilDittNavTask(
-        private val producer: DittNavKafkaProducer,
-        private val søknadService: SøknadService,
-        private val dittNavConfig: DittNavConfig
-) : AsyncTaskStep {
+class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNavKafkaProducer,
+                                                   private val søknadService: SøknadService,
+                                                   private val dittNavConfig: DittNavConfig) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -75,6 +73,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
     }
 
     companion object {
+
         const val SEND_MELDING_TIL_DITT_NAV = "sendMeldingTilDittNav"
     }
 

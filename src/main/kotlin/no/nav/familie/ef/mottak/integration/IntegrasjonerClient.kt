@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import javax.swing.text.html.parser.Entity
 
 
 @Service
@@ -60,6 +59,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                     .build()
                     .toUri()
 
+    private fun ferdigstillJournalpostUri(journalpostId: String) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
+                    .build()
+                    .toUri()
+
     @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun hentJournalpost(journalpostId: String): Journalpost {
         val uri = journalpostUri(journalpostId)
@@ -89,6 +94,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
         val response =
                 postForEntity<Ressurs<ArkiverDokumentResponse>>(sendInnUri, arkiverDokumentRequest)
+        return response.getDataOrThrow()
+    }
+
+    fun ferdigstillJournalpost(journalpostId: String): HashMap<String, String> {
+        val response =
+                putForEntity<Ressurs<HashMap<String, String>>>(ferdigstillJournalpostUri(journalpostId), "ENF")
         return response.getDataOrThrow()
     }
 
