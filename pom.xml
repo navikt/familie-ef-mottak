@@ -23,7 +23,7 @@
         <springfox.version>3.0.0</springfox.version>
         <mockk.version>1.10.3</mockk.version>
         <felles.version>1.20201123131335_671787f</felles.version>
-        <prosessering.version>1.20201116145947_63cf900</prosessering.version>
+        <prosessering.version>1.20201207095749_fecab6b</prosessering.version>
         <confluent.version>6.0.1</confluent.version>
         <kontrakter.version>2.0_20201203142041_46fb8fb</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
