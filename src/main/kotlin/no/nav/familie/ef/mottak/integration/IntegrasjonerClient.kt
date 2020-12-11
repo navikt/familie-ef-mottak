@@ -9,6 +9,8 @@ import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -66,6 +68,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                     .build()
                     .toUri()
 
+    private fun oppdaterJournalpostUri(journalpostId: String) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment("arkiv", "v2", journalpostId)
+                    .build()
+                    .toUri()
+
     @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun hentJournalpost(journalpostId: String): Journalpost {
         val uri = journalpostUri(journalpostId)
@@ -104,10 +112,22 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()
     }
 
+    fun oppdaterJournalpost(oppdaterJournalpostRequest: OppdaterJournalpostRequest,
+                            journalpostId: String): OppdaterJournalpostResponse {
+        return putForEntity<Ressurs<OppdaterJournalpostResponse>>(oppdaterJournalpostUri(journalpostId),
+                                                                  oppdaterJournalpostRequest).getDataOrThrow()
+    }
+
+
     fun lagOppgave(opprettOppgave: OpprettOppgave): OppgaveResponse {
         val response =
                 postForEntity<Ressurs<OppgaveResponse>>(opprettOppgaveUri, opprettOppgave)
         return response.getDataOrThrow()
+    }
+
+    fun ferdigstillOppgave(oppgaveId: Long): OppgaveResponse {
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(ferdigstillOppgaveUri(oppgaveId), "")
+        return respons.getDataOrThrow()
     }
 
     fun hentSaksnummer(journalPostId: String): String {
@@ -120,6 +140,13 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
+    private fun ferdigstillOppgaveUri(oppgaveId: Long): URI {
+        return UriComponentsBuilder
+                .fromUri(opprettOppgaveUri)
+                .path("$oppgaveId/ferdigstill")
+                .build()
+                .toUri()
+    }
     private fun hentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
                 .fromUri(integrasjonerConfig.url)

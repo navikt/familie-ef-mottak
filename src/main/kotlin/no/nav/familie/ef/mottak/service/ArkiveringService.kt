@@ -5,6 +5,10 @@ import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.felles.dokarkiv.DokarkivBruker
+import no.nav.familie.kontrakter.felles.dokarkiv.IdType
+import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.Sak
 import org.springframework.stereotype.Service
 
 @Service
@@ -26,9 +30,26 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
         val enhet = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
         val journalførendeEnhet = enhet.firstOrNull()?.enhetId
-                              ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
+                                  ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
 
         integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
+    }
+
+    fun oppdaterJournalpost(søknadId: String) {
+        val soknad: Soknad = søknadService.get(søknadId)
+        val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
+        val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
+
+        val oppdatertJournalpost = OppdaterJournalpostRequest(
+                bruker = journalpost.bruker?.let {
+                    DokarkivBruker(idType = IdType.valueOf(it.type.toString()), id = it.id)
+                },
+                sak = Sak(fagsakId = soknad.saksnummer,
+                          fagsaksystem = INFOTRYGD,
+                          sakstype = "FAGSAK"),
+        )
+
+        integrasjonerClient.oppdaterJournalpost(oppdatertJournalpost, journalpostId)
     }
 
     private fun send(soknad: Soknad, vedlegg: List<Vedlegg>): String {
