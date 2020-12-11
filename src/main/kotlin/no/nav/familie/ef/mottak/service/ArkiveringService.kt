@@ -24,7 +24,11 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
     fun ferdigstillJournalpost(søknadId: String) {
         val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
-        integrasjonerClient.ferdigstillJournalpost(journalpostId)
+        val enhet = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
+        val journalførendeEnhet = enhet.firstOrNull()?.enhetId
+                              ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
+
+        integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
     }
 
     private fun send(soknad: Soknad, vedlegg: List<Vedlegg>): String {

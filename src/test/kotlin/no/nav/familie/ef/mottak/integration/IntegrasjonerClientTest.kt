@@ -72,12 +72,13 @@ internal class IntegrasjonerClientTest {
     @Test
     fun `ferdigstillJournalpost sender melding om ferdigstilling parser payload og returnerer saksnummer`() {
         val journalpostId = "321"
+        val journalførendeEnhet = "9999"
         val json = objectMapper.writeValueAsString(success(mapOf("journalpostId" to journalpostId),
                                                            "Ferdigstilt journalpost $journalpostId"))
-        wireMockServer.stubFor(put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill"))
+        wireMockServer.stubFor(put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
                                        .willReturn(okJson(json)))
 
-        val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId)
+        val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
 
         assertThat(testresultat["journalpostId"]).isEqualTo(journalpostId)
     }

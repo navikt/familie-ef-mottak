@@ -59,9 +59,10 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                     .build()
                     .toUri()
 
-    private fun ferdigstillJournalpostUri(journalpostId: String) =
+    private fun ferdigstillJournalpostUri(journalpostId: String, journalfoerendeEnhet: String) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
                     .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
+                    .queryParam("journalfoerendeEnhet", journalfoerendeEnhet)
                     .build()
                     .toUri()
 
@@ -97,9 +98,9 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()
     }
 
-    fun ferdigstillJournalpost(journalpostId: String): HashMap<String, String> {
+    fun ferdigstillJournalpost(journalpostId: String, journalførendeEnhet: String): HashMap<String, String> {
         val response =
-                putForEntity<Ressurs<HashMap<String, String>>>(ferdigstillJournalpostUri(journalpostId), "ENF")
+                putForEntity<Ressurs<HashMap<String, String>>>(ferdigstillJournalpostUri(journalpostId, journalførendeEnhet), "ENF")
         return response.getDataOrThrow()
     }
 
