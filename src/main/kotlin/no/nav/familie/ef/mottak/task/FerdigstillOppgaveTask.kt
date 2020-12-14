@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = FerdigstillOppgaveTask.TYPE, beskrivelse = "FerdigstillerOppgave")
-class FerdigstillOppgaveTask(private val oppgaveService: OppgaveService, private val søknadService: SøknadService, private val taskRepository: TaskRepository) : AsyncTaskStep {
+class FerdigstillOppgaveTask(private val oppgaveService: OppgaveService,
+                             private val søknadService: SøknadService,
+                             private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val soknad: Soknad = søknadService.get(task.payload)
@@ -27,6 +29,7 @@ class FerdigstillOppgaveTask(private val oppgaveService: OppgaveService, private
 
 
     companion object {
+
         const val TYPE = "ferdigstillOppgave"
     }
 }
