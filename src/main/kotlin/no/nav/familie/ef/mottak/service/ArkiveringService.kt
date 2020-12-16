@@ -53,7 +53,7 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
                 },
                 sak = Sak(fagsakId = soknad.saksnummer,
                           fagsaksystem = INFOTRYGD,
-                          sakstype = "FAGSAK"),
+                          sakstype = SAKSTYPE_SØKNAD),
                 tema = journalpost.tema,
         )
 

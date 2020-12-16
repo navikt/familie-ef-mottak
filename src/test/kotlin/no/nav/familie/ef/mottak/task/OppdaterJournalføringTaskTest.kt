@@ -8,6 +8,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.ef.mottak.service.INFOTRYGD
+import no.nav.familie.ef.mottak.service.SAKSTYPE_SØKNAD
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.FerdigstillJournalføringTask
 import no.nav.familie.ef.mottak.task.OppdaterJournalføringTask
@@ -69,7 +70,7 @@ internal class OppdaterJournalføringTaskTest {
         assertThat(journalpostIdSlot.captured).isEqualTo(JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = saksnummer,
                                                                               fagsaksystem = INFOTRYGD,
-                                                                              sakstype = "FAGSAK"))
+                                                                              sakstype = SAKSTYPE_SØKNAD))
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.id).isEqualTo("123456789012")
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.idType).isEqualTo(IdType.AKTOERID)
     }
