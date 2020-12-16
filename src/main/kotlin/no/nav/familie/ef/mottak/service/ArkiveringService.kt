@@ -9,12 +9,15 @@ import no.nav.familie.kontrakter.felles.dokarkiv.DokarkivBruker
 import no.nav.familie.kontrakter.felles.dokarkiv.IdType
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.Sak
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
                         private val søknadService: SøknadService,
                         private val vedleggRepository: VedleggRepository) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun journalførSøknad(søknadId: String): String {
         val soknad: Soknad = søknadService.get(søknadId)
@@ -29,8 +32,11 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = soknad.journalpostId ?: error("Søknad=$søknadId mangler journalpostId")
 
-        val enhet = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
-        val journalførendeEnhet = enhet.firstOrNull()?.enhetId
+        val enheter = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
+        if (enheter.size > 1) {
+            logger.warn("Fant mer enn 1 enhet for $søknadId: $enheter")
+        }
+        val journalførendeEnhet = enheter.firstOrNull()?.enhetId
                                   ?: error("Ingen behandlende enhet funnet for søknad=${søknadId} ")
 
         integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)

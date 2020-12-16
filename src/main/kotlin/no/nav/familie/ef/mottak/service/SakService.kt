@@ -74,8 +74,12 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
         val oppgave = finnOppgaver.oppgaver.first()
         val stønadsklassifisering = stønadsklassifiseringMap[soknad.dokumenttype]
-        val enhet = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
-        val mottagendeEnhet = enhet.firstOrNull()?.enhetId
+        val enheter = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
+        if (enheter.size > 1) {
+            logger.warn("Fant mer enn 1 enhet for ${soknad.id}: $enheter")
+        }
+
+        val mottagendeEnhet = enheter.firstOrNull()?.enhetId
                               ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
 
         return OpprettInfotrygdSakRequest(fnr = soknad.fnr,
@@ -86,7 +90,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                                   mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
                                   mottattdato = soknad.opprettetTid.toLocalDate(),
                                   sendBekreftelsesbrev = false,
-                                  oppgaveId = oppgave.id?.toString(),
-                                  oppgaveOrganisasjonsenhetId = oppgave.opprettetAvEnhetsnr)
+                                  oppgaveId = oppgave.id?.toString())
     }
 }
