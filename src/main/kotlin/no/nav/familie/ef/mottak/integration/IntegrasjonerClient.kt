@@ -143,7 +143,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private fun ferdigstillOppgaveUri(oppgaveId: Long): URI {
         return UriComponentsBuilder
                 .fromUri(opprettOppgaveUri)
-                .path("$oppgaveId/ferdigstill")
+                .pathSegment(oppgaveId.toString())
+                .pathSegment("ferdigstill")
                 .build()
                 .toUri()
     }
