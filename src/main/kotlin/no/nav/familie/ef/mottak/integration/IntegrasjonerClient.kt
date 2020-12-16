@@ -126,12 +126,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun ferdigstillOppgave(oppgaveId: Long): OppgaveResponse {
-        val respons = patchForEntity<Ressurs<OppgaveResponse>>(ferdigstillOppgaveUri(oppgaveId), "")
+        val respons = patchForEntity<Ressurs<OppgaveResponse>>(lagFerdigstillOppgaveUri(oppgaveId), "")
         return respons.getDataOrThrow()
     }
 
     fun hentSaksnummer(journalPostId: String): String {
-        val response = getForEntity<Ressurs<Map<*, *>>>(hentSaksnummerUri(journalPostId))
+        val response = getForEntity<Ressurs<Map<*, *>>>(lagHentSaksnummerUri(journalPostId))
         return response.getDataOrThrow()["saksnummer"].toString()
     }
 
@@ -140,7 +140,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
-    private fun ferdigstillOppgaveUri(oppgaveId: Long): URI {
+    private fun lagFerdigstillOppgaveUri(oppgaveId: Long): URI {
         return UriComponentsBuilder
                 .fromUri(opprettOppgaveUri)
                 .pathSegment(oppgaveId.toString())
@@ -148,7 +148,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                 .build()
                 .toUri()
     }
-    private fun hentSaksnummerUri(id: String): URI {
+    private fun lagHentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
                 .fromUri(integrasjonerConfig.url)
                 .path(PATH_HENT_SAKSNUMMER)
