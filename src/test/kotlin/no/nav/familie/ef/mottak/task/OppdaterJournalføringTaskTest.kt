@@ -70,7 +70,7 @@ internal class OppdaterJournalføringTaskTest {
         assertThat(journalpostIdSlot.captured).isEqualTo(JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = saksnummer,
                                                                               fagsaksystem = INFOTRYGD,
-                                                                              sakstype = SAKSTYPE_SØKNAD))
+                                                                              sakstype = "FAGSAK"))
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.id).isEqualTo("123456789012")
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.idType).isEqualTo(IdType.AKTOERID)
     }
