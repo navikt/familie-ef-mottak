@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -18,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestOperations
 import java.net.URI
@@ -107,6 +109,27 @@ internal class IntegrasjonerClientTest {
 
         assertFailsWith(IllegalStateException::class) {
             integrasjonerClient.arkiver(arkiverSøknadRequest)
+        }
+    }
+    @Test
+    fun `Skal finne infotrygdsaksnummer`() {
+        // Gitt
+        val fnr = "12345678901"
+        val registrertNavEnhetId = "0304"
+        val fagomrade = "ENF"
+        val infotrygdSaker = listOf(
+                InfotrygdSak(fnr, "A01", registrertNavEnhetId, fagomrade),
+                InfotrygdSak(fnr, "A03", registrertNavEnhetId, fagomrade),
+                InfotrygdSak(fnr, "A02", registrertNavEnhetId, fagomrade)
+        )
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                                       .willReturn(okJson(success(infotrygdSaker).toJson())))
+        // Vil gi resultat
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0304A01")
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A02", fagomrade, fnr)).isEqualTo("0304A02")
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A03", fagomrade, fnr)).isEqualTo("0304A03")
+        assertThrows<IllegalStateException> {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
         }
     }
 

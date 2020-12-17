@@ -11,6 +11,8 @@ import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
+import no.nav.familie.kontrakter.felles.infotrygdsak.FinnInfotrygdSakerRequest
+import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -85,7 +87,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun opprettInfotrygdsak(opprettInfotrygdSakRequest: OpprettInfotrygdSakRequest): OpprettInfotrygdSakResponse {
-        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(infotrygdsakUri, opprettInfotrygdSakRequest).getDataOrThrow()
+        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(lagOpprettInfotrygdsakUri(), opprettInfotrygdSakRequest).getDataOrThrow()
     }
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
@@ -108,7 +110,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     fun ferdigstillJournalpost(journalpostId: String, journalførendeEnhet: String): HashMap<String, String> {
         val response =
-                putForEntity<Ressurs<HashMap<String, String>>>(ferdigstillJournalpostUri(journalpostId, journalførendeEnhet), "ENF")
+                putForEntity<Ressurs<HashMap<String, String>>>(ferdigstillJournalpostUri(journalpostId, journalførendeEnhet),
+                                                               "ENF")
         return response.getDataOrThrow()
     }
 
@@ -140,6 +143,24 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
+    fun finnInfotrygdSaksnummerForSak(saksnummer: String?, fagområdeEnsligForsørger: String, fnr: String): String {
+        val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
+        val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri(), request).getDataOrThrow()
+
+        return infotrygdSaker.find { it.saksnr == saksnummer }?.let {
+            it.registrertNavEnhetId + it.saksnr
+        } ?: error("Kunne ikke finne infotrygdsaker med saksnr=$saksnummer")
+
+    }
+
+    private fun lagFinnInfotrygdSakerUri(): URI {
+        return UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
+    }
+
+    private fun lagOpprettInfotrygdsakUri(): URI {
+        return UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
+    }
+
     private fun lagFerdigstillOppgaveUri(oppgaveId: Long): URI {
         return UriComponentsBuilder
                 .fromUri(opprettOppgaveUri)
@@ -148,6 +169,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                 .build()
                 .toUri()
     }
+
     private fun lagHentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
                 .fromUri(integrasjonerConfig.url)
@@ -168,6 +190,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         this.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
         return this
     }
+
 
     companion object {
 

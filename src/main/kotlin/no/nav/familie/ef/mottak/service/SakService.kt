@@ -64,7 +64,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val opprettInfotrygdSakResponse =
                 integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
-        logger.info("Infotrygdsak opprettet med saksnummer ", opprettInfotrygdSakResponse.saksId)
+        logger.info("Infotrygdsak opprettet med saksnummer ${opprettInfotrygdSakResponse.saksId}")
         return opprettInfotrygdSakResponse.saksId
     }
 

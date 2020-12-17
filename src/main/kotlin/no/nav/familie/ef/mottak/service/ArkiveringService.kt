@@ -46,12 +46,14 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val soknad: Soknad = søknadService.get(søknadId)
         val journalpostId: String = soknad.journalpostId ?: error("Søknad=$søknadId mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
+        val infotrygdSaksnummer = integrasjonerClient.finnInfotrygdSaksnummerForSak(soknad.saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, soknad.fnr)
+        logger.info("Fant infotrygdsak med saksnummer=$infotrygdSaksnummer for søknad=$søknadId")
 
         val oppdatertJournalpost = OppdaterJournalpostRequest(
                 bruker = journalpost.bruker?.let {
                     DokarkivBruker(idType = IdType.valueOf(it.type.toString()), id = it.id)
                 },
-                sak = Sak(fagsakId = soknad.saksnummer,
+                sak = Sak(fagsakId = infotrygdSaksnummer,
                           fagsaksystem = INFOTRYGD,
                           sakstype = "FAGSAK"),
                 tema = journalpost.tema,

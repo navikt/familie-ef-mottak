@@ -7,12 +7,11 @@ import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
+import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.INFOTRYGD
-import no.nav.familie.ef.mottak.service.SAKSTYPE_SØKNAD
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.FerdigstillJournalføringTask
 import no.nav.familie.ef.mottak.task.OppdaterJournalføringTask
-import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.*
 import no.nav.familie.kontrakter.felles.dokarkiv.Sak
 import no.nav.familie.kontrakter.felles.journalpost.*
@@ -23,7 +22,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.collections.HashMap
 
 internal class OppdaterJournalføringTaskTest {
 
@@ -35,9 +33,14 @@ internal class OppdaterJournalføringTaskTest {
 
     @Test
     internal fun `skal ferdigstille journalføring med riktig id og enhet`() {
-        val saksnummer = "A1B2C3"
+        val saksnummer = "A01"
+        val infotrygdSaksnummer = "0305A01"
         val journalpostIdSlot = slot<String>()
         val oppdaterJournalpostRequestSlot = slot<OppdaterJournalpostRequest>()
+
+        every {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, any())
+        } returns infotrygdSaksnummer
 
         every {
             søknadService.get("123")
@@ -68,7 +71,7 @@ internal class OppdaterJournalføringTaskTest {
         oppdaterJournalføringTask.doTask(Task.nyTask(type = "", payload = "123", properties = Properties()))
 
         assertThat(journalpostIdSlot.captured).isEqualTo(JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
-        assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = saksnummer,
+        assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
                                                                               fagsaksystem = INFOTRYGD,
                                                                               sakstype = "FAGSAK"))
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.id).isEqualTo("123456789012")
