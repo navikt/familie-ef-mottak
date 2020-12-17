@@ -133,6 +133,36 @@ internal class IntegrasjonerClientTest {
         }
     }
 
+    @Test
+    fun `Skal finne infotrygdsaksnummer med jsondata og unødige whitespaces`() {
+        // Gitt
+        val fnr = "04087420901"
+        val fagomrade = "ENF"
+        val infotrygdData = """
+            {
+                "data": [
+                    {
+                        "fnr": "04087420901",
+                        "saksnr": "A01       ",
+                        "registrertNavEnhetId": "0314",
+                        "fagomrade": "EF"
+                    }
+                ],
+                "status": "SUKSESS",
+                "melding": "Innhenting av data var vellykket",
+                "frontendFeilmelding": null,
+                "stacktrace": null
+            }
+        """.trimIndent()
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                                       .willReturn(okJson(infotrygdData)))
+        // Vil gi resultat
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0314A01")
+        assertThrows<IllegalStateException> {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
+        }
+    }
+
     private fun readFile(filnavn: String): String {
         return this::class.java.getResource("/json/$filnavn").readText()
     }

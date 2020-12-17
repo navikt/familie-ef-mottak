@@ -147,8 +147,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
         val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri(), request).getDataOrThrow()
 
-        return infotrygdSaker.find { it.saksnr == saksnummer }?.let {
-            it.registrertNavEnhetId + it.saksnr
+        return infotrygdSaker.find { it.saksnr.trim() == saksnummer }?.let {
+            it.registrertNavEnhetId + saksnummer
         } ?: error("Kunne ikke finne infotrygdsaker med saksnr=$saksnummer")
 
     }
