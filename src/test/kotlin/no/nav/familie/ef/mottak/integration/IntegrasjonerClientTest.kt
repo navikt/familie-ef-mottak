@@ -63,7 +63,7 @@ internal class IntegrasjonerClientTest {
                                                                     stonadsklassifisering2 = "OG",
                                                                     type = "K")
         val opprettInfotrygdSakResponse = OpprettInfotrygdSakResponse(saksId = "OG65")
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}"))
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/opprett"))
                                        .willReturn(okJson(objectMapper.writeValueAsString(success(opprettInfotrygdSakResponse)))))
 
         val testresultat = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
