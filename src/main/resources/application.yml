@@ -77,6 +77,11 @@ familie:
     pdfgenerator:
       url: https://familie-ef-dokgen.nais.adeo.no/
 
+prosessering:
+  fixedDelayString:
+    in:
+      milliseconds: 10000
+
 database:
   encryption:
     # 16, 24 or 32 bytes
