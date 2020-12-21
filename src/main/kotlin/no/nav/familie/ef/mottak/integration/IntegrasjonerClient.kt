@@ -143,7 +143,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
-    fun finnInfotrygdSaksnummerForSak(saksnummer: String?, fagområdeEnsligForsørger: String, fnr: String): String {
+    fun finnInfotrygdSaksnummerForSak(saksnummer: String, fagområdeEnsligForsørger: String, fnr: String): String {
         val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
         val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri(), request).getDataOrThrow()
 
