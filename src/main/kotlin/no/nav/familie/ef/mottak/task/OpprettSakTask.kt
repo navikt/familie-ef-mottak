@@ -34,8 +34,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
         val nesteTask = if (soknad.saksnummer == null) {
             Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         } else {
-            // Ferdigstill journalføringTask
-            Task.nyTask(FerdigstillJournalføringTask.TYPE, task.payload, task.metadata)
+            Task.nyTask(OppdaterJournalføringTask.TYPE, task.payload, task.metadata)
         }
 
         taskRepository.save(nesteTask)

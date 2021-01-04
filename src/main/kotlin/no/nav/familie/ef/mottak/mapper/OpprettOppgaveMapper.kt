@@ -20,6 +20,15 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                                          behandlingstema = journalpost.behandlingstema,
                                                          enhetsnummer = null)
 
+    fun toBehandleSakOppgave(journalpost: Journalpost, saksId: String) = OpprettOppgave(ident = tilOppgaveIdent(journalpost),
+                                                         saksId = saksId,
+                                                         tema = Tema.ENF,
+                                                         oppgavetype = Oppgavetype.BehandleSak,
+                                                         fristFerdigstillelse = LocalDate.now().plusDays(2),
+                                                         beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
+                                                         behandlingstema = journalpost.behandlingstema,
+                                                         enhetsnummer = null)
+
     private fun hentHoveddokumentTittel(journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
         return journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel

@@ -11,6 +11,7 @@ import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -18,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestOperations
 import java.net.URI
@@ -61,7 +63,7 @@ internal class IntegrasjonerClientTest {
                                                                     stonadsklassifisering2 = "OG",
                                                                     type = "K")
         val opprettInfotrygdSakResponse = OpprettInfotrygdSakResponse(saksId = "OG65")
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}"))
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/opprett"))
                                        .willReturn(okJson(objectMapper.writeValueAsString(success(opprettInfotrygdSakResponse)))))
 
         val testresultat = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
@@ -72,12 +74,13 @@ internal class IntegrasjonerClientTest {
     @Test
     fun `ferdigstillJournalpost sender melding om ferdigstilling parser payload og returnerer saksnummer`() {
         val journalpostId = "321"
+        val journalførendeEnhet = "9999"
         val json = objectMapper.writeValueAsString(success(mapOf("journalpostId" to journalpostId),
                                                            "Ferdigstilt journalpost $journalpostId"))
-        wireMockServer.stubFor(put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill"))
+        wireMockServer.stubFor(put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
                                        .willReturn(okJson(json)))
 
-        val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId)
+        val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
 
         assertThat(testresultat["journalpostId"]).isEqualTo(journalpostId)
     }
@@ -106,6 +109,57 @@ internal class IntegrasjonerClientTest {
 
         assertFailsWith(IllegalStateException::class) {
             integrasjonerClient.arkiver(arkiverSøknadRequest)
+        }
+    }
+    @Test
+    fun `Skal finne infotrygdsaksnummer`() {
+        // Gitt
+        val fnr = "12345678901"
+        val registrertNavEnhetId = "0304"
+        val fagomrade = "ENF"
+        val infotrygdSaker = listOf(
+                InfotrygdSak(fnr, "A01", registrertNavEnhetId, fagomrade),
+                InfotrygdSak(fnr, "A03", registrertNavEnhetId, fagomrade),
+                InfotrygdSak(fnr, "A02", registrertNavEnhetId, fagomrade)
+        )
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                                       .willReturn(okJson(success(infotrygdSaker).toJson())))
+        // Vil gi resultat
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0304A01")
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A02", fagomrade, fnr)).isEqualTo("0304A02")
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A03", fagomrade, fnr)).isEqualTo("0304A03")
+        assertThrows<IllegalStateException> {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
+        }
+    }
+
+    @Test
+    fun `Skal finne infotrygdsaksnummer med jsondata og unødige whitespaces`() {
+        // Gitt
+        val fnr = "04087420901"
+        val fagomrade = "ENF"
+        val infotrygdData = """
+            {
+                "data": [
+                    {
+                        "fnr": "04087420901",
+                        "saksnr": "A01       ",
+                        "registrertNavEnhetId": "0314",
+                        "fagomrade": "EF"
+                    }
+                ],
+                "status": "SUKSESS",
+                "melding": "Innhenting av data var vellykket",
+                "frontendFeilmelding": null,
+                "stacktrace": null
+            }
+        """.trimIndent()
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                                       .willReturn(okJson(infotrygdData)))
+        // Vil gi resultat
+        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0314A01")
+        assertThrows<IllegalStateException> {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
         }
     }
 
