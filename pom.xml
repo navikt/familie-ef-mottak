@@ -21,7 +21,7 @@
         <jvmTarget>11</jvmTarget>
         <kotlin.version>1.4.21-2</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
-        <mockk.version>1.10.3</mockk.version>
+        <mockk.version>1.10.4</mockk.version>
         <felles.version>1.20201123131335_671787f</felles.version>
         <confluent.version>6.0.1</confluent.version>
         <kontrakter.version>2.0_20201210133152_ac0e089</kontrakter.version>
