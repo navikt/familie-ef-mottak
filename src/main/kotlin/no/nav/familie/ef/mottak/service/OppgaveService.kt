@@ -5,7 +5,7 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -27,6 +27,16 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         return lagJournalføringsoppgave(journalpost)
+    }
+
+    fun lagBehandleSakOppgave(journalpost: Journalpost, saksnummer: String): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, saksnummer)
+        val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
+
+        log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
+                 "for journalpost journalpostId=${journalpost.journalpostId}")
+
+        return nyOppgave.oppgaveId
     }
 
     fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
@@ -60,6 +70,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                               "fra MOTTATT til ${journalpost.journalstatus.name}")
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
+        }
+    }
+
+    fun ferdigstillOppgaveForJournalpost(journalpostId: String) {
+        val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
+        when (oppgaver.antallTreffTotalt) {
+            1L -> {
+                val oppgaveId = oppgaver.oppgaver.first().id ?: error("Finner ikke oppgaveId for journalpost=$journalpostId")
+                integrasjonerClient.ferdigstillOppgave(oppgaveId)
+            }
+            else -> {
+                val error = IllegalStateException("Fant ${oppgaver.antallTreffTotalt} oppgaver for journalpost=$journalpostId")
+                log.warn("Kan ikke ferdigstille oppgave", error)
+                throw error
+            }
         }
     }
 

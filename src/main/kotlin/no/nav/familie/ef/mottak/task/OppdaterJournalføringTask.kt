@@ -8,19 +8,22 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = FerdigstillJournalføringTask.TYPE, beskrivelse = "FerdigstillerJournalføring")
-class FerdigstillJournalføringTask(private val arkiveringService: ArkiveringService, private val taskRepository: TaskRepository) : AsyncTaskStep {
+@TaskStepBeskrivelse(taskStepType = OppdaterJournalføringTask.TYPE,
+                     beskrivelse = "Oppdaterer journalføring med saksinfo")
+class OppdaterJournalføringTask(private val taskRepository: TaskRepository,
+                                private val arkiveringService: ArkiveringService) : AsyncTaskStep {
+
 
     override fun doTask(task: Task) {
-        arkiveringService.ferdigstillJournalpost(task.payload)
+        arkiveringService.oppdaterJournalpost(task.payload)
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task(FerdigstillOppgaveTask.TYPE, task.payload, task.metadata)
+        val nesteTask = Task(FerdigstillJournalføringTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 
     companion object {
-        const val TYPE = "FerdigstillJournalføringTask"
+        const val TYPE = "oppdaterJournalføring"
     }
 }
