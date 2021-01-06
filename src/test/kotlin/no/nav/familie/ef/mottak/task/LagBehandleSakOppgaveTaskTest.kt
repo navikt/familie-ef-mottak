@@ -54,7 +54,7 @@ internal class LagBehandleSakOppgaveTaskTest {
             oppgaveService.lagBehandleSakOppgave(any(), capture(saksnummerSlot))
         } returns 1L
 
-        lagBehandleSakOppgaveTask.doTask(Task.nyTask(type = "", payload = "123L", properties = Properties()))
+        lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         assertThat(saksnummerSlot.captured).isEqualTo(saksnummer)
     }
 

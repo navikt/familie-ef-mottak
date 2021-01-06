@@ -28,7 +28,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                 SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         task = Task(id = 1,
                     payload = SØKNAD_ID,
-                    taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV)
+                    type = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV)
     }
 
     @Test

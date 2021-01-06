@@ -37,17 +37,16 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     override fun onCompletion(task: Task) {
 
         val nesteTask: Task = if (featureToggleService.isEnabled("familie.ef.mottak.opprett-sak")) {
-            Task.nyTask(OpprettSakTask.TYPE, task.payload, task.metadata)
+            Task(OpprettSakTask.TYPE, task.payload, task.metadata)
         } else {
-            Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         }
 
         val sendMeldingTilDittNavTask: Task =
-                Task.nyTask(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
-                            task.payload,
-                            task.metadata)
+                Task(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
+                     task.payload,
+                     task.metadata)
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
-
     }
 
     companion object {

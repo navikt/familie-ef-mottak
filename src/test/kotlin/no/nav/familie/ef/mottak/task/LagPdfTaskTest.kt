@@ -23,8 +23,8 @@ internal class LagPdfTaskTest {
             slot.captured
         }
 
-        lagPdfTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        lagPdfTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        assertEquals(ArkiverSøknadTask.TYPE, slot.captured.taskStepType)
+        assertEquals(ArkiverSøknadTask.TYPE, slot.captured.type)
     }
 }

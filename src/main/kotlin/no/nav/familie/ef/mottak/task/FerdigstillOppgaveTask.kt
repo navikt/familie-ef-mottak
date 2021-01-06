@@ -23,7 +23,7 @@ class FerdigstillOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task.nyTask(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
+        val nesteTask = Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

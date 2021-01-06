@@ -40,7 +40,7 @@ internal class HentSaksnummerFraJoarkTaskIntegrationTest : IntegrasjonSpringRunn
     @Test
     internal fun `skal sette triggerTid frem i tid`() {
         val payloadId = UUID.randomUUID().toString()
-        val task = taskRepository.save(Task.nyTask(
+        val task = taskRepository.save(Task(
                 type = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
                 payload = payloadId
         ))

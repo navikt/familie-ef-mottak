@@ -26,8 +26,8 @@ internal class ArkiverSøknadTaskTest {
             slot.captured
         }
 
-        arkiverSøknadTaskTest.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured.taskStepType)
+        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured.type)
     }
 }

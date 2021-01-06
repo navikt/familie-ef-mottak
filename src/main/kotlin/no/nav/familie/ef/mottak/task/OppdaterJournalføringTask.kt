@@ -19,7 +19,7 @@ class OppdaterJournalføringTask(private val taskRepository: TaskRepository,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task.nyTask(FerdigstillJournalføringTask.TYPE, task.payload, task.metadata)
+        val nesteTask = Task(FerdigstillJournalføringTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 interface DbMigreringRepository : JpaRepository<Task, Long> {
 
     @Modifying
-    @Query("update Task t set t.taskStepType = :newType where t.taskStepType = :oldType")
+    @Query("update Task t set t.type = :newType where t.type = :oldType")
     @Transactional
     fun updateTaskSetTypeForOldTypeUserSetStatusForName(newType: String,
                                                         oldType: String): Int

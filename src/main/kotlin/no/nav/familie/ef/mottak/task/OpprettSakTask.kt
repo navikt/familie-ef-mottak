@@ -32,9 +32,9 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
         val soknad = soknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
 
         val nesteTask = if (soknad.saksnummer == null) {
-            Task.nyTask(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         } else {
-            Task.nyTask(OppdaterJournalføringTask.TYPE, task.payload, task.metadata)
+            Task(FerdigstillJournalføringTask.TYPE, task.payload, task.metadata)
         }
 
         taskRepository.save(nesteTask)

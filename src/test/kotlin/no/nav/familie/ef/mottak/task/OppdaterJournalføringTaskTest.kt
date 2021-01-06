@@ -68,7 +68,7 @@ internal class OppdaterJournalføringTaskTest {
                               sak = null)
 
 
-        oppdaterJournalføringTask.doTask(Task.nyTask(type = "", payload = "123", properties = Properties()))
+        oppdaterJournalføringTask.doTask(Task(type = "", payload = "123", properties = Properties()))
 
         assertThat(journalpostIdSlot.captured).isEqualTo(JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
@@ -87,9 +87,9 @@ internal class OppdaterJournalføringTaskTest {
             slot.captured
         }
 
-        oppdaterJournalføringTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        oppdaterJournalføringTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        Assertions.assertEquals(FerdigstillJournalføringTask.TYPE, slot.captured.taskStepType)
+        Assertions.assertEquals(FerdigstillJournalføringTask.TYPE, slot.captured.type)
     }
 
 }
