@@ -19,13 +19,13 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }
-        taskRepository.saveAndFlush(task)
+        taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {
         // Når vi begynner å lytte på journalføringshendelser så trenger vi ikke denne tasen.
         if (!featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
-            val nesteTask: Task = Task.nyTask(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
+            val nesteTask: Task = Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
             taskRepository.save(nesteTask)
         }
     }

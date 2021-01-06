@@ -10,12 +10,12 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class TaskServiceTest {
+internal class TaskProsesseringServiceTest {
 
     private val taskRepository: TaskRepository = mockk(relaxed = true)
     private val soknadRepository: SoknadRepository = mockk(relaxed = true)
 
-    private val scheduledEventService = TaskService(taskRepository, soknadRepository, mockk(relaxed = true))
+    private val scheduledEventService = TaskProsesseringService(taskRepository, soknadRepository)
 
     @Test
     fun `startTaskProsessering oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {

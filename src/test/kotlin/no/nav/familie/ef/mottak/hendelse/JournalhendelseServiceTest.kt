@@ -26,7 +26,7 @@ class JournalføringHendelseServiceTest {
     @MockK
     lateinit var integrasjonerClient: IntegrasjonerClient
 
-    @MockK(relaxed = true)
+    @MockK
     lateinit var mockTaskRepository: TaskRepository
 
     @MockK(relaxed = true)
@@ -49,6 +49,10 @@ class JournalføringHendelseServiceTest {
         every {
             mockHendelsesloggRepository.save(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
+
+        every {
+            mockTaskRepository.save(any())
+        } answers { it.invocation.args[0] as Task }
 
         //Inngående papirsøknad, Mottatt
         every {
@@ -123,7 +127,7 @@ class JournalføringHendelseServiceTest {
         assertThat(taskSlot.captured).isNotNull
         assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.taskStepType).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
     }
 
     @Test

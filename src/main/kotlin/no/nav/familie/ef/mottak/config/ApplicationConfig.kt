@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
 
 @SpringBootConfiguration
@@ -30,6 +31,7 @@ import org.springframework.web.client.RestOperations
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
+@EnableScheduling
 @Import(BearerTokenClientInterceptor::class,
         RestTemplateBuilderBean::class,
         MdcValuesPropagatingClientInterceptor::class,

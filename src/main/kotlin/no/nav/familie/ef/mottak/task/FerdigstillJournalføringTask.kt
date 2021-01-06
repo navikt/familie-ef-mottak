@@ -16,7 +16,7 @@ class FerdigstillJournalføringTask(private val arkiveringService: ArkiveringSer
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task.nyTask(FerdigstillOppgaveTask.TYPE, task.payload, task.metadata)
+        val nesteTask = Task(FerdigstillOppgaveTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

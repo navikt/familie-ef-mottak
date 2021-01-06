@@ -130,7 +130,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.jfr")) {
             val metadata = opprettMetadata(journalpost)
-            val journalføringsTask = Task.nyTask(LagJournalføringsoppgaveTask.TYPE,
+            val journalføringsTask = Task(LagJournalføringsoppgaveTask.TYPE,
                                                  journalpost.journalpostId,
                                                  metadata)
             taskRepository.save(journalføringsTask)

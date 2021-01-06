@@ -37,10 +37,10 @@ internal class LagJournalføringsoppgaveTaskTest {
             slot.captured
         }
 
-        lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].taskStepType)
-        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
@@ -101,7 +101,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
     @Test
     fun `skal kalle lagJournalføringsoppgaveForJournalpostId hvis task payload ikke er gyldig uuid`() {
-        lagJournalføringsoppgaveTask.doTask(Task.nyTask(type = "", payload = "123", properties = Properties()))
+        lagJournalføringsoppgaveTask.doTask(Task(type = "", payload = "123", properties = Properties()))
 
         verify { oppgaveService.lagJournalføringsoppgaveForJournalpostId("123") }
     }
@@ -110,7 +110,7 @@ internal class LagJournalføringsoppgaveTaskTest {
     fun `skal kalle lagJournalføringsoppgaveForSøknadId hvis task payload er gyldig uuid`() {
         val uuid = UUID.randomUUID().toString()
 
-        lagJournalføringsoppgaveTask.doTask(Task.nyTask(type = "", payload = uuid, properties = Properties()))
+        lagJournalføringsoppgaveTask.doTask(Task(type = "", payload = uuid, properties = Properties()))
 
         verify { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid) }
     }

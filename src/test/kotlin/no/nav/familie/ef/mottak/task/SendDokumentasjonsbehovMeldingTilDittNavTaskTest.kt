@@ -39,7 +39,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
         mockDokumentasjonsbehov(dokumentasjonsBehov, SøknadType.OVERGANGSSTØNAD)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
 
         verify(exactly = 1) {
             søknadService.get(any())
@@ -52,7 +52,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - uten dokumentasjonsbehov skal ikke kalle sendToKafka`() {
         mockSøknad()
         mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
         verify {
             dittNavKafkaProducer wasNot called
         }
@@ -80,7 +80,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `arbeidssøker skal ikke sende melding til ditt nav`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
 
         verify(exactly = 1) {
             søknadService.get(any())
@@ -97,7 +97,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov, SøknadType.OVERGANGSSTØNAD)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task.nyTask("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
 
         verify(exactly = 1) {
             dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), link ?: any())

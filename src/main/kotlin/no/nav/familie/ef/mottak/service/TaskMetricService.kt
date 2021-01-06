@@ -13,7 +13,7 @@ class TaskMetricService(private val taskMetricRepository: TaskMetricRepository,
     @Scheduled(initialDelay = 5_000, fixedDelay = 5 * 60_000)
     fun oppdaterMetrikker() {
         taskMetricRepository.finnFeiledeTasks().forEach {
-            Metrics.gauge("tasks_${it.taskStepType}_feilet", it.count)
+            Metrics.gauge("tasks_${it.type}_feilet", it.count)
         }
         Metrics.gauge("soknad_task_ikke_opprettet", soknadRepository.countByTaskOpprettetFalseAndOpprettetTidBefore())
     }

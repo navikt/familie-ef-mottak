@@ -47,7 +47,7 @@ internal class FerdigstillJournalføringTaskTest {
             integrasjonerClient.ferdigstillJournalpost(capture(journalpostIdSlot), capture(enhetSlot))
         } returns HashMap()
 
-        ferdigstillJournalføringTask.doTask(Task.nyTask(type = "", payload = "123L", properties = Properties()))
+        ferdigstillJournalføringTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
 
         assertThat(journalpostIdSlot.captured).isEqualTo(journalpostId)
         assertThat(enhetSlot.captured).isEqualTo(enhetId)
@@ -62,9 +62,9 @@ internal class FerdigstillJournalføringTaskTest {
             slot.captured
         }
 
-        ferdigstillJournalføringTask.onCompletion(Task.nyTask(type = "", payload = "", properties = Properties()))
+        ferdigstillJournalføringTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        Assertions.assertEquals(FerdigstillOppgaveTask.TYPE, slot.captured.taskStepType)
+        Assertions.assertEquals(FerdigstillOppgaveTask.TYPE, slot.captured.type)
     }
 
 }
