@@ -51,10 +51,10 @@ internal class LagJournalføringsoppgaveTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
 
-        lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = soknad.id, properties = Properties()))
+        lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].taskStepType)
-        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
@@ -65,10 +65,10 @@ internal class LagJournalføringsoppgaveTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
 
-        lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = soknad.id, properties = Properties()))
+        lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].taskStepType)
-        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
@@ -79,10 +79,10 @@ internal class LagJournalføringsoppgaveTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
 
-        lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = soknad.id, properties = Properties()))
+        lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].taskStepType)
-        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
@@ -93,10 +93,10 @@ internal class LagJournalføringsoppgaveTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
 
-        lagJournalføringsoppgaveTask.onCompletion(Task.nyTask(type = "", payload = soknad.id, properties = Properties()))
+        lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].taskStepType)
-        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].taskStepType)
+        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
+        assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
