@@ -26,8 +26,10 @@ internal class LagBehandleSakOppgaveTaskTest {
 
     @Test
     internal fun `skal lage oppgave som skal saksbehandles`() {
-        val saksnummer="12345"
+        val saksnummer="A01"
+        val infotrygdSaksnummer="0315A01"
         val saksnummerSlot = slot<String>()
+        val saksblokkSlot = slot<String>()
 
         every {
             søknadService.get("123L")
@@ -37,6 +39,9 @@ internal class LagBehandleSakOppgaveTaskTest {
                          journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                          fnr = FnrGenerator.generer())
 
+        every {
+            integrasjonerClient.finnInfotrygdSaksnummerForSak(any(), any(), any())
+        } returns infotrygdSaksnummer
         every {
             integrasjonerClient.hentJournalpost(any())
         } returns Journalpost(journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
@@ -51,11 +56,12 @@ internal class LagBehandleSakOppgaveTaskTest {
                               sak = null)
 
         every {
-            oppgaveService.lagBehandleSakOppgave(any(), capture(saksnummerSlot))
+            oppgaveService.lagBehandleSakOppgave(any(), capture(saksblokkSlot), capture(saksnummerSlot))
         } returns 1L
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
-        assertThat(saksnummerSlot.captured).isEqualTo(saksnummer)
+        assertThat(saksblokkSlot.captured).isEqualTo(saksnummer)
+        assertThat(saksnummerSlot.captured).isEqualTo(infotrygdSaksnummer)
     }
 
 }
