@@ -29,8 +29,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return lagJournalføringsoppgave(journalpost)
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost, saksnummer: String): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, saksnummer)
+    fun lagBehandleSakOppgave(journalpost: Journalpost, saksblokk:String, saksnummer: String): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, saksblokk, saksnummer)
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
