@@ -3,12 +3,14 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.net.URI
 
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
@@ -29,14 +31,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return lagJournalføringsoppgave(journalpost)
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost, saksblokk:String, saksnummer: String): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, saksblokk, saksnummer)
+    fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost)
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
                  "for journalpost journalpostId=${journalpost.journalpostId}")
 
         return nyOppgave.oppgaveId
+    }
+
+    fun oppdaterOppgave(oppgaveId: Long, saksblokk:String, saksnummer: String): Long {
+        val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
+        val oppdatertOppgave = oppgave.copy(saksreferanse = saksnummer,
+                                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer")
+        return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
     fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {

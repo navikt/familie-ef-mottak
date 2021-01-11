@@ -8,7 +8,6 @@ import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.journalpost.*
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -27,11 +26,6 @@ val stønadsklassifiseringMap =
         mapOf(DOKUMENTTYPE_OVERGANGSSTØNAD to STØNADSKLASSIFISERING_OVERGANGSSTØNAD,
               DOKUMENTTYPE_BARNETILSYN to STØNADSKLASSIFISERING_BARNETILSYN,
               DOKUMENTTYPE_SKOLEPENGER to STØNADSKLASSIFISERING_SKOLEPENGER)
-val behandlingstemaMap =
-        mapOf(DOKUMENTTYPE_OVERGANGSSTØNAD to BEHANDLINGSTEMA_OVERGANGSSTØNAD,
-              DOKUMENTTYPE_BARNETILSYN to BEHANDLINGSTEMA_BARNETILSYN,
-              DOKUMENTTYPE_SKOLEPENGER to BEHANDLINGSTEMA_SKOLEPENGER)
-
 
 @Service
 class SakService(private val integrasjonerClient: IntegrasjonerClient,
@@ -40,33 +34,28 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
 
-    fun opprettSakOmIngenFinnes(søknadId: String): String? {
-
+    fun opprettSak(søknadId: String, oppgaveId: String): String? {
         val soknad = søknadService.get(søknadId)
+        val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad, oppgaveId)
+        val opprettInfotrygdSakResponse = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
+        logger.info("Infotrygdsak opprettet med saksnummer ${opprettInfotrygdSakResponse.saksId}")
+        return opprettInfotrygdSakResponse.saksId
+    }
+
+    fun kanOppretteInfotrygdSak(soknad: Soknad): Boolean {
         val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(soknad.fnr, BrukerIdType.FNR),
                                                                           50,
                                                                           listOf(Tema.ENF),
                                                                           listOf(Journalposttype.I))
         val journalposter = integrasjonerClient.finnJournalposter(journalposterForBrukerRequest)
 
-        val fagsakOpprettet = journalposter.any {
+        val fagsakFinnesForStønad = journalposter.any {
             it.sak?.fagsaksystem in listOf(INFOTRYGD, EF_SAK)
             && it.sak?.fagsakId != null
             && gjelderStønad(soknad, it)
         }
-
-        if (fagsakOpprettet) {
-            return null
-        }
-
-        val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad)
-
-        val opprettInfotrygdSakResponse =
-                integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
-
-        logger.info("Infotrygdsak opprettet med saksnummer ${opprettInfotrygdSakResponse.saksId}")
-        return opprettInfotrygdSakResponse.saksId
+        return !fagsakFinnesForStønad
     }
 
     private fun gjelderStønad(soknad: Soknad, journalpost: Journalpost): Boolean {
@@ -90,11 +79,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
 
-    private fun lagOpprettInfotrygdSakRequest(soknad: Soknad): OpprettInfotrygdSakRequest {
-        val finnOppgaver =
-                integrasjonerClient.finnOppgaver(soknad.journalpostId!!, Oppgavetype.Journalføring)
-
-        val oppgave = finnOppgaver.oppgaver.first()
+    private fun lagOpprettInfotrygdSakRequest(soknad: Soknad, oppgaveId: String): OpprettInfotrygdSakRequest {
         val stønadsklassifisering = stønadsklassifiseringMap[soknad.dokumenttype]
         val enheter = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
         if (enheter.size > 1) {
@@ -112,6 +97,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                                           mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
                                           mottattdato = soknad.opprettetTid.toLocalDate(),
                                           sendBekreftelsesbrev = false,
-                                          oppgaveId = oppgave.id?.toString())
+                                          oppgaveId = oppgaveId)
     }
 }

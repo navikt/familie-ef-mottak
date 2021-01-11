@@ -44,7 +44,7 @@ internal class LagJournalføringsoppgaveTaskTest {
     }
 
     @Test
-    fun `Skal opprette sak hvis det er en ny søknad om overgangsstønad`() {
+    fun `Skal lage behandle-sak-oppgave-task hvis det er en ny søknad om overgangsstønad`() {
         val slot = slot<List<Task>>()
         val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
@@ -53,12 +53,12 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
-    fun `Skal opprette sak hvis det er en ny søknad om barnetilsyn`() {
+    fun `Skal opprette behandle-sak-oppgave-task hvis det er en ny søknad om barnetilsyn`() {
         val slot = slot<List<Task>>()
         val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_BARNETILSYN)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
@@ -67,12 +67,12 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
     @Test
-    fun `Skal opprette sak hvis det er en ny søknad om skolepenger`() {
+    fun `Skal opprette behandle-sak-oppgave-task hvis det er en ny søknad om skolepenger`() {
         val slot = slot<List<Task>>()
         val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
@@ -81,7 +81,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(OpprettSakTask.TYPE, slot.captured[0].type)
+        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 

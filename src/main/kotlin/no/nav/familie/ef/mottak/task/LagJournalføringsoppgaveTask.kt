@@ -34,8 +34,8 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
 
-        val nesteTask: Task = if (skalOppretteSak(task)) {
-            Task(OpprettSakTask.TYPE, task.payload, task.metadata)
+        val nesteTask: Task = if (skalForsøkeÅOppretteSak(task)) {
+            Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         } else {
             Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         }
@@ -47,7 +47,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
     }
 
-    private fun skalOppretteSak(task: Task): Boolean {
+    private fun skalForsøkeÅOppretteSak(task: Task): Boolean {
         return gjelderSøknad(task) && erSøknadOmStønad(task.payload) && featureToggleService.isEnabled("familie.ef.mottak.opprett-sak")
     }
 
