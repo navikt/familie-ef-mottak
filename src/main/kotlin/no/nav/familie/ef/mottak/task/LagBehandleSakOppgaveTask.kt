@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -21,7 +22,10 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         soknad.saksnummer?.let {
-            oppgaveService.lagBehandleSakOppgave(journalpost, it)
+            val infotrygdSaksnummer = it.trim().let {
+                integrasjonerClient.finnInfotrygdSaksnummerForSak(it, FAGOMRÅDE_ENSLIG_FORSØRGER, soknad.fnr)
+            }
+            oppgaveService.lagBehandleSakOppgave(journalpost, it, infotrygdSaksnummer)
         } ?: error("Kan ikke opprette behandle-sak-oppgave ettersom søknad=${soknad.id} mangler saksnummer")
     }
 
