@@ -30,8 +30,11 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         if (sakService.kanOppretteInfotrygdSak(soknad)) {
-            task.metadata[behandleSakOppgaveIdKey] = oppgaveService.lagBehandleSakOppgave(journalpost)
-            taskRepository.save(task)
+            val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost)
+            task.metadata.apply {
+                this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
+            }
+                taskRepository.save(task)
         }
     }
 

@@ -21,7 +21,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
 
     override fun doTask(task: Task) {
         val soknad: Soknad = søknadService.get(task.payload)
-        val oppgaveId: Long? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as Long?
+        val oppgaveId: String? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as String?
         soknad.saksnummer?.let { saksnummer ->
             oppgaveId?.let {
                 val infotrygdSaksnummer = saksnummer.trim().let {

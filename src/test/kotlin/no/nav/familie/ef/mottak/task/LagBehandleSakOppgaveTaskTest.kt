@@ -45,7 +45,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         verify(exactly = 1) {
             oppgaveService.lagBehandleSakOppgave(any())
         }
-        assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo(99L)
+        assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
     }
 
     @Test

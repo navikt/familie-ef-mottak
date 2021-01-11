@@ -29,7 +29,7 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
     internal fun `Skal oppdatere behandle-sak-oppgave med saksnummer fra infotrygd`() {
         val properties = Properties()
         val oppgaveId = 12L
-        properties.put(LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey, oppgaveId)
+        properties.put(LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey, oppgaveId.toString())
         val saksblokk = "A01"
         val saksnummer = "12345A01"
         val saksblokkSlot = slot<String>()

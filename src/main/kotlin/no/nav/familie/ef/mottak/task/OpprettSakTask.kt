@@ -18,7 +18,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
 
 
     override fun doTask(task: Task) {
-        val oppgaveId: Long? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as Long?
+        val oppgaveId: String? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as String?
         oppgaveId?.let {
             val sakId = sakService.opprettSak(task.payload, it.toString())
             val soknad = soknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
