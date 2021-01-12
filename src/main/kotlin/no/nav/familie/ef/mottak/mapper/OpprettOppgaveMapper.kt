@@ -20,12 +20,12 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                                          behandlingstema = journalpost.behandlingstema,
                                                          enhetsnummer = null)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost, saksBlokk: String, saksId: String) = OpprettOppgave(ident = tilOppgaveIdent(journalpost),
-                                                         saksId = saksId,
+    fun toBehandleSakOppgave(journalpost: Journalpost) = OpprettOppgave(ident = tilOppgaveIdent(journalpost),
+                                                         saksId = null,
                                                          tema = Tema.ENF,
                                                          oppgavetype = Oppgavetype.BehandleSak,
                                                          fristFerdigstillelse = LocalDate.now().plusDays(2),
-                                                         beskrivelse = "${hentHoveddokumentTittel(journalpost)} - Saksblokk: $saksId" ?: "",
+                                                         beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                                          behandlingstema = journalpost.behandlingstema,
                                                          enhetsnummer = null)
 

@@ -1,7 +1,5 @@
 package no.nav.familie.ef.mottak.task
 
-import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -18,31 +16,21 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
                      private val sakService: SakService,
                      private val soknadRepository: SoknadRepository) : AsyncTaskStep {
 
-    val antallJournalposterAutomatiskBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.automatisk.behandlet")
-    val antallJournalposterManueltBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.manuelt.behandlet")
 
     override fun doTask(task: Task) {
-        val sakId = sakService.opprettSakOmIngenFinnes(task.payload)
-
-        if (sakId != null) {
+        val oppgaveId: String? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as String?
+        oppgaveId?.let {
+            val sakId = sakService.opprettSak(task.payload, it)?.trim()
             val soknad = soknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
             val soknadMedSaksnummer = soknad.copy(saksnummer = sakId)
             soknadRepository.save(soknadMedSaksnummer)
-        }
+        } ?: error("Fant ikke oppgaveId for behandle-sak-oppgave i tasken")
+
 
     }
 
     override fun onCompletion(task: Task) {
-        val soknad = soknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
-
-        val nesteTask = if (soknad.saksnummer == null) {
-            antallJournalposterManueltBehandlet.increment()
-            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
-        } else {
-            antallJournalposterAutomatiskBehandlet.increment()
-            Task(OppdaterJournalføringTask.TYPE, task.payload, task.metadata)
-        }
-
+        val nesteTask = Task(OppdaterBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

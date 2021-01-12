@@ -29,14 +29,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return lagJournalføringsoppgave(journalpost)
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost, saksblokk:String, saksnummer: String): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, saksblokk, saksnummer)
+    fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost)
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
                  "for journalpost journalpostId=${journalpost.journalpostId}")
 
         return nyOppgave.oppgaveId
+    }
+
+    fun oppdaterOppgave(oppgaveId: Long, saksblokk:String, saksnummer: String): Long {
+        val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
+        val oppdatertOppgave = oppgave.copy(saksreferanse = saksnummer,
+                                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer")
+        return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
     fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {

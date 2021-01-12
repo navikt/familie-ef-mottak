@@ -51,8 +51,20 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     private fun finnOppgaveUri(finnOppgaveRequest: FinnOppgaveRequest) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
-                    .pathSegment(PATH_HENT_OPPGAVE)
+                    .pathSegment(PATH_FINN_OPPGAVE)
                     .queryParams(finnOppgaveRequest.toQueryParams())
+                    .build()
+                    .toUri()
+
+    private fun hentOppgaveUri(oppgaveId: Long) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString())
+                    .build()
+                    .toUri()
+
+    private fun patchOppgaveUri(oppgaveId: Long) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString(), "oppdater")
                     .build()
                     .toUri()
 
@@ -121,6 +133,15 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
                                                                   oppdaterJournalpostRequest).getDataOrThrow()
     }
 
+
+    fun hentOppgave(oppgaveId: Long): Oppgave {
+        return getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
+    }
+
+    fun oppdaterOppgave(oppgaveId: Long, oppgave: Oppgave) : Long {
+        val response = patchForEntity<Ressurs<OppgaveResponse>>(patchOppgaveUri(oppgaveId), oppgave).getDataOrThrow()
+        return response.oppgaveId
+    }
 
     fun lagOppgave(opprettOppgave: OpprettOppgave): OppgaveResponse {
         val response =
@@ -197,7 +218,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_SEND_INN = "arkiv/v3"
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave"
-        const val PATH_HENT_OPPGAVE = "oppgave/v3"
+        const val PATH_FINN_OPPGAVE = "oppgave/v3"
+        const val PATH_HENT_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v1"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
