@@ -22,7 +22,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     override fun doTask(task: Task) {
         val soknad: Soknad = søknadService.get(task.payload)
         val oppgaveId: String? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as String?
-        soknad.saksnummer?.let { saksnummer ->
+        soknad.saksnummer?.trim()?.let { saksnummer ->
             oppgaveId?.let {
                 val infotrygdSaksnummer = saksnummer.trim().let {
                     integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, soknad.fnr)
