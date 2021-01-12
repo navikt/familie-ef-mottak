@@ -90,7 +90,7 @@ internal class SakServiceTest {
                                 fnr = "123",
                                 opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)))
         every { integrasjonerClient.finnBehandlendeEnhet("123") }
-                .returns(listOf(Enhet("654", "Flekkefjord")))
+                .returns(listOf(Enhet("0315", "Flekkefjord")))
         every { integrasjonerClient.opprettInfotrygdsak(capture(slot)) }
                 .returns(OpprettInfotrygdSakResponse())
 
@@ -172,8 +172,8 @@ internal class SakServiceTest {
                                        fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
                                        stonadsklassifisering2 = stønadsklassifisering,
                                        type = SAKSTYPE_SØKNAD,
-                                       opprettetAvOrganisasjonsEnhetsId = "654",
-                                       mottakerOrganisasjonsEnhetsId = "654",
+                                       opprettetAvOrganisasjonsEnhetsId = "0315",
+                                       mottakerOrganisasjonsEnhetsId = "0315",
                                        mottattdato = LocalDate.of(2014, 1, 16),
                                        sendBekreftelsesbrev = false,
                                        oppgaveId = "987",
