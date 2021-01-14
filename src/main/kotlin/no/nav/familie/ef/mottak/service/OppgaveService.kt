@@ -5,7 +5,8 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -39,10 +40,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return nyOppgave.oppgaveId
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, saksblokk:String, saksnummer: String): Long {
+    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-        val oppdatertOppgave = oppgave.copy(saksreferanse = saksnummer,
-                                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer")
+        val oppdatertOppgave = oppgave.copy(
+                saksreferanse = saksnummer,
+                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]"
+        )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
