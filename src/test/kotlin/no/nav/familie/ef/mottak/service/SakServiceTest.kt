@@ -12,9 +12,6 @@ import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.*
-import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
-import no.nav.familie.kontrakter.felles.oppgave.Oppgave
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -44,6 +41,27 @@ internal class SakServiceTest {
                 )))
 
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
+    }
+
+    @Test
+    fun `skal ikke opprette sak `() {
+
+        val soknad = Soknad(id = "1",søknadJson = "", dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, journalpostId = "15", fnr = "123")
+        every { integrasjonerClient.finnJournalposter(any()) }
+                .returns(listOf(Journalpost(journalpostId = "15",
+                                            journalposttype = Journalposttype.I,
+                                            journalstatus = Journalstatus.FERDIGSTILT,
+                                            sak = Sak(fagsakId = "23",
+                                                      fagsaksystem = INFOTRYGD),
+                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                                                                DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"))
+                )))
+
+        every {
+            søknadService.get("1")
+        } returns soknad
+
+        assertThat(sakService.opprettSak(soknad.id, "12")).isNull()
     }
 
 
@@ -80,7 +98,7 @@ internal class SakServiceTest {
     }
 
     @Test
-    fun `skal opprette for overgangsstønad`() {
+    fun `skal opprette sak for overgangsstønad`() {
 
         val slot = slot<OpprettInfotrygdSakRequest>()
         every { søknadService.get("1") }
@@ -93,6 +111,9 @@ internal class SakServiceTest {
                 .returns(listOf(Enhet("0315", "Flekkefjord")))
         every { integrasjonerClient.opprettInfotrygdsak(capture(slot)) }
                 .returns(OpprettInfotrygdSakResponse())
+        every {
+            integrasjonerClient.finnJournalposter(any())
+        } returns emptyList()
 
         sakService.opprettSak("1", "987")
 
