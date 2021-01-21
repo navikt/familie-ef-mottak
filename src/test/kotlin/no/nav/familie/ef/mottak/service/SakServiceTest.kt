@@ -44,7 +44,7 @@ internal class SakServiceTest {
     }
 
     @Test
-    fun `skal ikke opprette sak `() {
+    fun `skal ikke opprette sak dersom den har blitt opprettet manuelt av saksbehandler`() {
 
         val soknad = Soknad(id = "1",søknadJson = "", dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, journalpostId = "15", fnr = "123")
         every { integrasjonerClient.finnJournalposter(any()) }
