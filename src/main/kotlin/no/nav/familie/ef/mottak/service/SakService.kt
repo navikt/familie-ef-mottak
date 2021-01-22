@@ -36,11 +36,16 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun opprettSak(søknadId: String, oppgaveId: String): String? {
         val soknad = søknadService.get(søknadId)
-        val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad, oppgaveId)
-        val opprettInfotrygdSakResponse = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
+        return if (kanOppretteInfotrygdSak(soknad)) {
+            val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad, oppgaveId)
+            val opprettInfotrygdSakResponse = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
-        logger.info("Infotrygdsak opprettet med saksnummer ${opprettInfotrygdSakResponse.saksId}")
-        return opprettInfotrygdSakResponse.saksId
+            logger.info("Infotrygdsak opprettet med saksnummer ${opprettInfotrygdSakResponse.saksId}")
+            opprettInfotrygdSakResponse.saksId
+        } else {
+            null
+        }
+
     }
 
     fun kanOppretteInfotrygdSak(soknad: Soknad): Boolean {
