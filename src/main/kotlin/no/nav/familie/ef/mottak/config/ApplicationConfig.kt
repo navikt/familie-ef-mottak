@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ComponentScan("no.nav.familie.prosessering",
@@ -55,7 +57,10 @@ class ApplicationConfig {
     fun restTemplate(restTemplateBuilder: RestTemplateBuilder,
                      mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
-        return restTemplateBuilder.interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
+        return restTemplateBuilder
+                .setConnectTimeout(Duration.of(30, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(180, ChronoUnit.SECONDS))
+                .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
     @Bean

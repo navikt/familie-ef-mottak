@@ -9,10 +9,16 @@ internal class StringValCryptoConverterTest {
     private val stringValCryptoConverter: StringValCryptoConverter
 
     init {
-        KeyProperty("kdjeuyfjkekhndlknvfdekljnolrhsdo")
+        KeyProperty("jeiyYHGRQM95Gr29HzWBVhgqe32DFRTg")
         stringValCryptoConverter = StringValCryptoConverter()
     }
 
+
+
+    @Test
+    internal fun jallaballa() {
+        stringValCryptoConverter.byteArrayToEntityAttribute()
+    }
 
     @Test
     internal fun `convertToDatabaseColumn konverterer input til String for lagring i base og tilbake til identisk string`() {
