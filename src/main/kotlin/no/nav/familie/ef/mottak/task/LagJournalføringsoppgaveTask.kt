@@ -22,24 +22,12 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                    private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        LOG.debug("Oppretter oppgave for søknad={}", task.payload)
-        if (gjelderSøknad(task)) {
-            // Task opprettet av ArkiverSøknadTask
-            oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
-        } else {
-            // Task fra hendelse
-            oppgaveService.lagJournalføringsoppgaveForJournalpostId(task.payload)
-        }
+        require(gjelderSøknad(task))
+        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
+
     }
 
     override fun onCompletion(task: Task) {
-
-//        val nesteTask: Task = if (skalForsøkeÅOppretteSak(task)) {
-//            Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
-//        } else {
-//            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
-//        }
-
         val nesteTask: Task = when (skalForsøkeÅOppretteSak(task)) {
             true -> Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
             false -> Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)

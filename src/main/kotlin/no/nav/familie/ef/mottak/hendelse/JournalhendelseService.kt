@@ -5,7 +5,10 @@ import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
+import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
+import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
@@ -26,7 +29,8 @@ import javax.transaction.Transactional
 class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                              val taskRepository: TaskRepository,
                              val hendelsesloggRepository: HendelsesloggRepository,
-                             val featureToggleService: FeatureToggleService) {
+                             val featureToggleService: FeatureToggleService,
+                             val soknadRepository: SoknadRepository) {
 
     val kanalNavnoCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.navno")
     val kanalSkannetsCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.skannets")
@@ -109,19 +113,27 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     private fun behandleNavnoHendelser(journalpost: Journalpost) {
 
-        // TODO sjekk om dette er vår? Har vi en søknad med denne Journalpost.journalpostId
-
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
-            // TODO Sjekk om det finnes sak på brukeren før (Gsak-sak i Joark).
-            // Sak finnes LagJournalføringsoppgaveTask
-            // sak finne ikke ny linjesak i Infotrygd-task
-
+            when (val søknad = soknadRepository.findByJournalpostId(journalpost.journalpostId)) {
+                null -> lagEksternJournalføringsTask(journalpost)
+                else -> lagJournalføringsoppgaveTask(søknad)
+            }
             logger.info("Oppretter task OppdaterOgFerdigstillJournalpostTask, feature skrudd på")
         } else {
             logger.info("Behandler ikke journalhendelse, feature familie-ef-mottak.journalhendelse.behsak er skrudd av i Unleash")
         }
 
         kanalNavnoCounter.increment()
+    }
+
+    private fun lagJournalføringsoppgaveTask(søknad: Soknad) {
+        val properties =
+                Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
+                        .apply { this["dokumenttype"] = søknad.dokumenttype }
+
+        taskRepository.save(Task(LagJournalføringsoppgaveTask.TYPE,
+                                 søknad.id,
+                                 properties))
     }
 
     private fun behandleSkanningHendelser(journalpost: Journalpost) {
@@ -131,16 +143,20 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                     "kanal=${journalpost.kanal}]")
 
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.jfr")) {
-            val metadata = opprettMetadata(journalpost)
-            val journalføringsTask = Task(LagJournalføringsoppgaveTask.TYPE,
-                                          journalpost.journalpostId,
-                                          metadata)
-            taskRepository.save(journalføringsTask)
+            lagEksternJournalføringsTask(journalpost)
         } else {
             logger.info("Behandler ikke journalhendelse, feature familie-ef-mottak.journalhendelse.jfr er skrudd av i Unleash")
         }
 
         kanalSkannetsCounter.increment()
+    }
+
+    private fun lagEksternJournalføringsTask(journalpost: Journalpost) {
+        val metadata = opprettMetadata(journalpost)
+        val journalføringsTask = Task(LagEksternJournalføringsoppgaveTask.TYPE,
+                                      journalpost.journalpostId,
+                                      metadata)
+        taskRepository.save(journalføringsTask)
     }
 
     private fun skalBehandleJournalpost(journalpost: Journalpost) =

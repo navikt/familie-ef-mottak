@@ -10,6 +10,8 @@ interface SoknadRepository : JpaRepository<Soknad, String> {
 
     fun findFirstByTaskOpprettetIsFalse(): Soknad?
 
+    fun findByJournalpostId(jounalpostId: String): Soknad?
+
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
 }

@@ -6,8 +6,9 @@ import io.mockk.impl.annotations.MockK
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
+import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.slf4j.MDC
-import org.springframework.kafka.support.Acknowledgment
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JournalføringHendelseServiceTest {
@@ -36,7 +36,7 @@ class JournalføringHendelseServiceTest {
     lateinit var mockHendelsesloggRepository: HendelsesloggRepository
 
     @MockK(relaxed = true)
-    lateinit var ack: Acknowledgment
+    lateinit var mockSøknadRepository: SoknadRepository
 
     @InjectMockKs
     lateinit var service: JournalhendelseService
@@ -127,7 +127,7 @@ class JournalføringHendelseServiceTest {
         assertThat(taskSlot.captured).isNotNull
         assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
     }
 
     @Test
