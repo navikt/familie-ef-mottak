@@ -34,13 +34,19 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
 
-        val nesteTask: Task = if (skalForsøkeÅOppretteSak(task)) {
-            Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
-        } else {
-            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+//        val nesteTask: Task = if (skalForsøkeÅOppretteSak(task)) {
+//            Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
+//        } else {
+//            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+//        }
+
+        val nesteTask: Task = when (skalForsøkeÅOppretteSak(task)) {
+            true -> Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
+            false -> Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
         }
 
-        val sendMeldingTilDittNavTask: Task =
+
+        val sendMeldingTilDittNavTask =
                 Task(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
                      task.payload,
                      task.metadata)
@@ -58,7 +64,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     private fun gjelderSøknad(task: Task): Boolean {
         return try {
-            UUID.fromString(task.payload)
+            UUID.fromString(task.payload) // TODO AU! Kan dette gjøres mer elegant?
             true
         } catch (e: IllegalArgumentException) {
             false

@@ -64,7 +64,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                              "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
                              "journalpostId=${journalpost.journalpostId}")
                     null
-                }
+                } // TODO trenger vi en "behandle sak sjekk også?
                 else -> {
                     val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
 

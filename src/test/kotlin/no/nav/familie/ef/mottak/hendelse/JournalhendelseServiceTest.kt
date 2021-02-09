@@ -164,9 +164,10 @@ class JournalføringHendelseServiceTest {
             mockHendelsesloggRepository.existsByHendelseId("hendelseId")
         } returns true
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
-        verify { ack.acknowledge() }
+        //  verify { ack.acknowledge() } // TODO flytt/lag test av JournalføringHendelseConsumer
 
         verify(exactly = 0) {
             mockHendelsesloggRepository.save(any())
@@ -179,9 +180,10 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
-        verify { ack.acknowledge() }
+        // TODO flytt/lag test av JournalføringHendelseConsumer  verify { ack.acknowledge() }
 
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
@@ -202,10 +204,11 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, ugyldigHendelsetypeRecord)
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
 
-        verify { ack.acknowledge() }
+        //   verify { ack.acknowledge() }  TODO flytt/lag test av JournalføringHendelseConsumer
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
             mockHendelsesloggRepository.save(capture(slot))
@@ -225,9 +228,10 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, ukjentTemaRecord)
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
-        verify { ack.acknowledge() }
+// TODO flytt/lag test av JournalføringHendelseConsumer        verify { ack.acknowledge() }
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
             mockHendelsesloggRepository.save(capture(slot))

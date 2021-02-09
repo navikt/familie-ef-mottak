@@ -15,11 +15,9 @@ import no.nav.familie.log.mdc.MDCConstants
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -34,52 +32,53 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     val kanalSkannetsCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.skannets")
     val kanalAnnetCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.kanal.annet")
     val ignorerteCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.ignorerte")
-    val feilCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.feilet")
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     @Transactional
-    fun prosesserNyHendelse(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>,
-                            ack: Acknowledgment) {
-        try {
-            val hendelseRecord = consumerRecord.value()
-            val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
-            MDC.put(MDCConstants.MDC_CALL_ID, callId)
+    fun prosesserNyHendelse(
+            hendelseRecord: JournalfoeringHendelseRecord,
+            offset: Long) {
 
-            if (hendelsesloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())) {
-                ack.acknowledge()
-                return
-            }
-
-            if (erGyldigHendelsetype(hendelseRecord)) {
-                secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
-                behandleJournalhendelse(hendelseRecord)
-            }
-
-            hendelsesloggRepository
-                    .save(Hendelseslogg(consumerRecord.offset(),
-                                        hendelseRecord.hendelsesId.toString(),
-                                        mapOf("journalpostId" to hendelseRecord.journalpostId.toString(),
-                                              "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties()))
-            ack.acknowledge()
-        } catch (e: Exception) {
-            logger.error("Feil ved lesing av journalhendelser ", e)
-            feilCounter.count()
-            throw e
-        } finally {
-            MDC.clear()
+        if (hendelseRegistrertIHendelseslogg(hendelseRecord)) {
+            return
         }
+
+        if (hendelseRecord.skalProsessereHendelse()) {
+            secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
+            behandleJournalhendelse(hendelseRecord)
+
+        }
+
+        lagreHendelseslogg(hendelseRecord, offset)
+
     }
 
-    fun CharSequence.toStringOrNull(): String? {
-        return if (!this.isBlank()) this.toString() else null
+
+    fun JournalfoeringHendelseRecord.skalProsessereHendelse() = erRiktigTemaNytt(this)
+                                                                && erGyldigHendelsetype(this)
+
+    fun hendelseRegistrertIHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord) =
+            hendelsesloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
+
+    // TODO Får vi en kopi av alle hendeler
+    @Transactional
+    fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord,
+                           offset: Long) {
+        hendelsesloggRepository
+                .save(Hendelseslogg(offset,
+                                    hendelseRecord.hendelsesId.toString(),
+                                    mapOf("journalpostId" to hendelseRecord.journalpostId.toString(),
+                                          "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties()))
     }
 
 
     private fun erGyldigHendelsetype(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
         return GYLDIGE_HENDELSE_TYPER.contains(hendelseRecord.hendelsesType.toString())
-               && (hendelseRecord.temaNytt != null && hendelseRecord.temaNytt.toString() == "ENF")
     }
+
+    private fun erRiktigTemaNytt(hendelseRecord: JournalfoeringHendelseRecord) =
+            (hendelseRecord.temaNytt != null && hendelseRecord.temaNytt.toString() == "ENF")
 
     fun behandleJournalhendelse(hendelseRecord: JournalfoeringHendelseRecord) {
         //hent journalpost fra saf
@@ -109,6 +108,9 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     }
 
     private fun behandleNavnoHendelser(journalpost: Journalpost) {
+
+        // TODO sjekk om dette er vår? Har vi en søknad med denne Journalpost.journalpostId
+
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
             // TODO Sjekk om det finnes sak på brukeren før (Gsak-sak i Joark).
             // Sak finnes LagJournalføringsoppgaveTask
@@ -131,8 +133,8 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.jfr")) {
             val metadata = opprettMetadata(journalpost)
             val journalføringsTask = Task(LagJournalføringsoppgaveTask.TYPE,
-                                                 journalpost.journalpostId,
-                                                 metadata)
+                                          journalpost.journalpostId,
+                                          metadata)
             taskRepository.save(journalføringsTask)
         } else {
             logger.info("Behandler ikke journalhendelse, feature familie-ef-mottak.journalhendelse.jfr er skrudd av i Unleash")
