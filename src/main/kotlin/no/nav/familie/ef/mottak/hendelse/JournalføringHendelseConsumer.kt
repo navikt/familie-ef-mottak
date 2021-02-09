@@ -31,16 +31,13 @@ class JournalføringHendelseConsumer(val journalhendelseService: Journalhendelse
             val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
             MDC.put(MDCConstants.MDC_CALL_ID, callId)
             journalhendelseService.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
-
-
-
-            MDC.clear()
+            ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved lesing av journalhendelser ", e)
             feilCounter.count()
             throw e
         } finally {
-            ack.acknowledge()
+            MDC.clear()
         }
     }
 
