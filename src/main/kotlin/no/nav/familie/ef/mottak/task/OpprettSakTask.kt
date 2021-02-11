@@ -38,8 +38,9 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
             soknadRepository.save(soknadMedSaksnummer)
             opprettNesteTask(task, soknadMedSaksnummer)
         } catch (e: Exception) {
-            if (mellom21Og6()) {
-                taskRepository.save(task.copy(id = 0L, triggerTid = kl6IdagEllerNesteDag()))
+            if (erKlokkenMellom21Og06()) {
+                logger.info("Oppretter en ny task som kjører kl 06 id=${task.id} callId=${task.callId}")
+                taskRepository.save(task.copy(id = 0L, triggerTid = kl06IdagEllerNesteDag()))
             } else {
                 throw e
             }
@@ -57,12 +58,12 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
         taskRepository.save(nesteTask)
     }
 
-    private fun mellom21Og6(): Boolean {
+    private fun erKlokkenMellom21Og06(): Boolean {
         val localTime = dateTimeService.now().toLocalTime()
         return localTime.isAfter(LocalTime.of(21, 0)) || localTime.isBefore(LocalTime.of(6, 0))
     }
 
-    private fun kl6IdagEllerNesteDag(): LocalDateTime {
+    private fun kl06IdagEllerNesteDag(): LocalDateTime {
         val now = dateTimeService.now()
         return if (now.toLocalTime().isBefore(LocalTime.of(6, 0))) {
             now.toLocalDate().atTime(6, 0)
