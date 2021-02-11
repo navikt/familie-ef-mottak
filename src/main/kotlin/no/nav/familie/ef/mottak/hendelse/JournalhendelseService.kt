@@ -140,9 +140,9 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     private fun lagEksternJournalføringsTask(journalpost: Journalpost) {
         val metadata = opprettMetadata(journalpost)
-        val journalføringsTask = Task(LagEksternJournalføringsoppgaveTask.TYPE,
-                                      journalpost.journalpostId,
-                                      metadata)
+        val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
+                                      payload = journalpost.journalpostId,
+                                      metadata = metadata)
         taskRepository.save(journalføringsTask)
     }
 

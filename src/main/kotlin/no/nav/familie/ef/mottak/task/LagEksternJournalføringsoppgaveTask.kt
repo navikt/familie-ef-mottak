@@ -19,7 +19,7 @@ class LagEksternJournalføringsoppgaveTask(private val taskRepository: TaskRepos
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata))
+        taskRepository.save(Task(SjekkOmJournalpostHarFåttEnSak.HENT_EKSTERN_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata))
         // TODO sende melding til ditt nav om mottatt søknad? SendSøknadMottattTilDittNavTask
     }
 
