@@ -7,9 +7,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -115,7 +113,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
         if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
             when (val søknad = soknadRepository.findByJournalpostId(journalpost.journalpostId)) {
                 null -> lagEksternJournalføringsTask(journalpost)
-                else -> lagJournalføringsoppgaveTask(søknad)
+                else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
             }
             logger.info("Oppretter task OppdaterOgFerdigstillJournalpostTask, feature skrudd på")
         } else {
@@ -123,16 +121,6 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
         }
 
         kanalNavnoCounter.increment()
-    }
-
-    private fun lagJournalføringsoppgaveTask(søknad: Soknad) {
-        val properties =
-                Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
-                        .apply { this["dokumenttype"] = søknad.dokumenttype }
-
-        taskRepository.save(Task(LagJournalføringsoppgaveTask.TYPE,
-                                 søknad.id,
-                                 properties))
     }
 
     private fun behandleSkanningHendelser(journalpost: Journalpost) {
