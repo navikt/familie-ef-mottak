@@ -108,10 +108,8 @@ internal class OpprettSakTaskTest {
     @Test
     internal fun `skal opprette ny task hvis opprett task feiler og det er natt`() {
         val slot = slot<Task>()
-        every { dateTimeService.now() } returns LocalDate.of(2021, 1,1).atTime(22, 0)
-        every {
-            sakService.opprettSak(any(), any())
-        } answers {throw RuntimeException("test-feil")}
+        every { dateTimeService.now() } returns LocalDate.of(2021, 1, 1).atTime(22, 0)
+        every { sakService.opprettSak(any(), any()) } throws RuntimeException("test-feil")
 
         every {
             taskRepository.save(capture(slot))
@@ -134,8 +132,8 @@ internal class OpprettSakTaskTest {
     @Test
     internal fun `skal opprette ny task hvis opprett task feiler og det er natt kl 02 - sett ny task til samme dag`() {
         val slot = slot<Task>()
-        every { dateTimeService.now() } returns LocalDate.of(2021, 1,1).atTime(2, 0)
-        every { sakService.opprettSak(any(), any()) } answers { throw RuntimeException("Feil") }
+        every { dateTimeService.now() } returns LocalDate.of(2021, 1, 1).atTime(2, 0)
+        every { sakService.opprettSak(any(), any()) } throws RuntimeException("Feil")
         every {
             taskRepository.save(capture(slot))
         } answers {
