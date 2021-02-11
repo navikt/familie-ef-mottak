@@ -110,14 +110,14 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     private fun behandleNavnoHendelser(journalpost: Journalpost) {
 
-        if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
+        if (featureToggleService.isEnabled("familie.ef.mottak.journalhendelse-behsak")) {
             when (val søknad = soknadRepository.findByJournalpostId(journalpost.journalpostId)) {
                 null -> lagEksternJournalføringsTask(journalpost)
                 else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
             }
-            logger.info("Oppretter task OppdaterOgFerdigstillJournalpostTask, feature skrudd på")
+            logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
         } else {
-            logger.info("Behandler ikke journalhendelse, feature familie-ef-mottak.journalhendelse.behsak er skrudd av i Unleash")
+            logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-behsak er skrudd av i Unleash")
         }
 
         kanalNavnoCounter.increment()
@@ -129,10 +129,10 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                     "tema=${journalpost.tema}, " +
                     "kanal=${journalpost.kanal}]")
 
-        if (featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.jfr")) {
+        if (featureToggleService.isEnabled("familie.ef.mottak.journalhendelse-jfr-skannede")) {
             lagEksternJournalføringsTask(journalpost)
         } else {
-            logger.info("Behandler ikke journalhendelse, feature familie-ef-mottak.journalhendelse.jfr er skrudd av i Unleash")
+            logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-jfr-skannede er skrudd av i Unleash")
         }
 
         kanalSkannetsCounter.increment()
