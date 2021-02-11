@@ -25,10 +25,13 @@ import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
 
+/**
+ * TODO : Trekk ut alt IA relatert (f.eks Prometheus-ting) fra serviceklassen. Evt legg til egne unntakstyper.
+ */
 @Service
 class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                              val taskRepository: TaskRepository,
-                             val hendelsesloggRepository: HendelsesloggRepository,
+                             val hendelseloggRepository: HendelsesloggRepository,
                              val featureToggleService: FeatureToggleService,
                              val soknadRepository: SoknadRepository) {
 
@@ -51,25 +54,21 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
         if (hendelseRecord.skalProsessereHendelse()) {
             secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
             behandleJournalhendelse(hendelseRecord)
-
         }
-
         lagreHendelseslogg(hendelseRecord, offset)
-
     }
-
 
     fun JournalfoeringHendelseRecord.skalProsessereHendelse() = erRiktigTemaNytt(this)
                                                                 && erGyldigHendelsetype(this)
 
     fun hendelseRegistrertIHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord) =
-            hendelsesloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
+            hendelseloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
 
     // TODO Får vi en kopi av alle hendeler
     @Transactional
     fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord,
                            offset: Long) {
-        hendelsesloggRepository
+        hendelseloggRepository
                 .save(Hendelseslogg(offset,
                                     hendelseRecord.hendelsesId.toString(),
                                     mapOf("journalpostId" to hendelseRecord.journalpostId.toString(),

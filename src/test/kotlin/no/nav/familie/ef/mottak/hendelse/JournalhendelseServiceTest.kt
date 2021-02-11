@@ -33,7 +33,7 @@ class JournalføringHendelseServiceTest {
     lateinit var mockFeatureToggleService: FeatureToggleService
 
     @MockK(relaxed = true)
-    lateinit var mockHendelsesloggRepository: HendelsesloggRepository
+    lateinit var mockHendelseloggRepository: HendelsesloggRepository
 
     @MockK(relaxed = true)
     lateinit var mockSøknadRepository: SoknadRepository
@@ -47,7 +47,7 @@ class JournalføringHendelseServiceTest {
         clearAllMocks()
 
         every {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
@@ -154,23 +154,19 @@ class JournalføringHendelseServiceTest {
 
     }
 
-
     @Test
     fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg`() {
         val consumerRecord = ConsumerRecord("topic", 1,
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
         every {
-            mockHendelsesloggRepository.existsByHendelseId("hendelseId")
+            mockHendelseloggRepository.existsByHendelseId("hendelseId")
         } returns true
 
-        service.prosesserNyHendelse(consumerRecord.value(),
-                                    consumerRecord.offset())
-
-        //  verify { ack.acknowledge() } // TODO flytt/lag test av JournalføringHendelseConsumer
+        service.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
 
         verify(exactly = 0) {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         }
     }
 
@@ -183,11 +179,9 @@ class JournalføringHendelseServiceTest {
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
 
-        // TODO flytt/lag test av JournalføringHendelseConsumer  verify { ack.acknowledge() }
-
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+            mockHendelseloggRepository.save(capture(slot))
         }
 
         assertThat(slot.captured).isNotNull
@@ -207,11 +201,9 @@ class JournalføringHendelseServiceTest {
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
 
-
-        //   verify { ack.acknowledge() }  TODO flytt/lag test av JournalføringHendelseConsumer
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+            mockHendelseloggRepository.save(capture(slot))
         }
         assertThat(slot.captured).isNotNull
         assertThat(slot.captured.offset).isEqualTo(OFFSET)
@@ -231,10 +223,9 @@ class JournalføringHendelseServiceTest {
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
 
-// TODO flytt/lag test av JournalføringHendelseConsumer        verify { ack.acknowledge() }
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+            mockHendelseloggRepository.save(capture(slot))
         }
         assertThat(slot.captured).isNotNull
         assertThat(slot.captured.offset).isEqualTo(OFFSET)
