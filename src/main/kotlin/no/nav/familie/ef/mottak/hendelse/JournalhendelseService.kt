@@ -96,8 +96,8 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                         behandleNavnoHendelser(journalpost)
                     }
                     else -> {
-                        logger.info("Ny journalhendelse med journalpostId=$journalpostId med status MOTTATT " +
-                                    "og kanal ${journalpost.kanal}")
+                        logger.error("Ny journalhendelse med journalpostId=$journalpostId med status MOTTATT " +
+                                     "og kanal ${journalpost.kanal}")
                         kanalAnnetCounter.count()
                     }
                 }
