@@ -22,7 +22,7 @@ class TestSøknadController(val integrasjonerClient: IntegrasjonerClient, val so
                            val featureToggleService: FeatureToggleService) {
 
     @PostMapping
-    fun sendInn(@RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+    fun sendInn(): Kvittering {
         if (featureToggleService.isEnabled("familie.ef.mottak.testarkivering")) {
             val soknad = soknadRepository.findByJournalpostId("453643988")
             val arkiverDokumentRequest = ArkiverDokumentRequest("07028822477",
