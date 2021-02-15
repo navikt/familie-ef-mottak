@@ -58,7 +58,6 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     fun hendelseRegistrertIHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord) =
             hendelseloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
 
-    // TODO Får vi en kopi av alle hendeler
     @Transactional
     fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord,
                            offset: Long) {
