@@ -10,7 +10,7 @@ import java.time.LocalDate
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    fun toDto(journalpost: Journalpost) = OpprettOppgave(ident = tilOppgaveIdent(journalpost),
+    fun toDto(journalpost: Journalpost) = OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                                          saksId = null,
                                                          journalpostId = journalpost.journalpostId,
                                                          tema = Tema.ENF,
@@ -20,7 +20,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                                          behandlingstema = journalpost.behandlingstema,
                                                          enhetsnummer = null)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost) = OpprettOppgave(ident = tilOppgaveIdent(journalpost),
+    fun toBehandleSakOppgave(journalpost: Journalpost) = OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                                          saksId = null,
                                                          tema = Tema.ENF,
                                                          oppgavetype = Oppgavetype.BehandleSak,
@@ -34,17 +34,17 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         return journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel
     }
 
-    private fun tilOppgaveIdent(journalpost: Journalpost): OppgaveIdent? {
+    private fun tilOppgaveIdent(journalpost: Journalpost): OppgaveIdentV2? {
         if (journalpost.bruker == null) {
             return null
         }
 
         return when (journalpost.bruker!!.type) {
             BrukerIdType.FNR -> {
-                OppgaveIdent(ident = integrasjonerClient.hentAktørId(journalpost.bruker!!.id), type = IdentType.Aktør)
+                OppgaveIdentV2(ident = integrasjonerClient.hentAktørId(journalpost.bruker!!.id), gruppe = IdentGruppe.AKTOERID)
             }
-            BrukerIdType.ORGNR -> OppgaveIdent(ident = journalpost.bruker!!.id, type = IdentType.Organisasjon)
-            BrukerIdType.AKTOERID -> OppgaveIdent(ident = journalpost.bruker!!.id, type = IdentType.Aktør)
+            BrukerIdType.ORGNR -> OppgaveIdentV2(ident = journalpost.bruker!!.id, gruppe = IdentGruppe.ORGNR)
+            BrukerIdType.AKTOERID -> OppgaveIdentV2(ident = journalpost.bruker!!.id, gruppe = IdentGruppe.AKTOERID)
         }
     }
 
