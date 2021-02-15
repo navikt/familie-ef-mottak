@@ -9,7 +9,7 @@ import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgave
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -42,7 +42,7 @@ class MockConfiguration {
             return ArkiverDokumentResponse("journalpostId1", true)
         }
 
-        override fun lagOppgave(opprettOppgave: OpprettOppgave): OppgaveResponse {
+        override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
             return OppgaveResponse(1)
         }
 
