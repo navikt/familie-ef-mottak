@@ -21,24 +21,16 @@ class LagEksternJournalføringsoppgaveTask(private val taskRepository: TaskRepos
 
         // Ved helt spesielle race conditions kan man tenke seg at vi fikk opprettet
         // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId
-        if (lagOppgaveIkkeHåndtertINormalFlyt(journalpostId)) {
+        if (finnesIkkeSøknadMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
-        }
-    }
-
-
-    private fun lagOppgaveIkkeHåndtertINormalFlyt(journalpostId: String) =
-            soknadRepository.findByJournalpostId(journalpostId) == null
-
-    override fun onCompletion(task: Task) {
-        val journalpostId = task.payload
-        if (lagOppgaveIkkeHåndtertINormalFlyt(journalpostId)) {
             taskRepository.save(Task(SjekkOmJournalpostHarFåttEnSak.HENT_EKSTERN_SAKSNUMMER_FRA_JOARK,
                                      task.payload,
                                      task.metadata))
         }
     }
 
+    private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) =
+            soknadRepository.findByJournalpostId(journalpostId) == null
 
     companion object {
 
