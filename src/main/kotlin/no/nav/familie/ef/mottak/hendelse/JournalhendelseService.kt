@@ -115,7 +115,6 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                 null -> lagEksternJournalføringsTask(journalpost)
                 else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
             }
-            logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
         } else {
             logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-behsak er skrudd av i Unleash")
         }
@@ -139,6 +138,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     }
 
     private fun lagEksternJournalføringsTask(journalpost: Journalpost) {
+        logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
         val metadata = opprettMetadata(journalpost)
         val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
                                       payload = journalpost.journalpostId,
