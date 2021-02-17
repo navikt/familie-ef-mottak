@@ -22,7 +22,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                    private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        require(gjelderSøknad(task))
         oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
 
     }
@@ -48,15 +47,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     private fun erSøknadOmStønad(søknadId: String): Boolean {
         val soknad = soknadRepository.findByIdOrNull(søknadId) ?: error("Søknad har forsvunnet!")
         return soknad.dokumenttype != DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-    }
-
-    private fun gjelderSøknad(task: Task): Boolean {
-        return try {
-            UUID.fromString(task.payload) // TODO AU! Kan dette gjøres mer elegant?
-            true
-        } catch (e: IllegalArgumentException) {
-            false
-        }
     }
 
     companion object {
