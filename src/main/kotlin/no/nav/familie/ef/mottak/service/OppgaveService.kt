@@ -64,7 +64,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                              "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
                              "journalpostId=${journalpost.journalpostId}")
                     null
-                } // TODO trenger vi en "behandle sak sjekk også?
+                }
+                behandlesakOppgaveFinnes(journalpost) -> {
+                    log.info("Skipper oppretting av journalførings-oppgave. " +
+                             "Fant allerede behandlet oppgave ${Oppgavetype.BehandleSak} for " +
+                             "journalpostId=${journalpost.journalpostId}")
+                    null
+                }
                 else -> {
                     val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
 
@@ -88,6 +94,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun journalføringsoppgaveFinnes(journalpost: Journalpost) =
             integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
+
+    private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
+            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
     fun ferdigstillOppgaveForJournalpost(journalpostId: String) {
         val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
