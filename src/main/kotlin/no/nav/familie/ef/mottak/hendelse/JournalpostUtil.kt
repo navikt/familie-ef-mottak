@@ -2,12 +2,15 @@ package no.nav.familie.ef.mottak.hendelse
 
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 
 
 fun Journalpost.skalBehandles() = this.erTemaEnfOgTypeI() && this.journalstatus == Journalstatus.MOTTATT && this.gyldigKanal()
 
 fun Journalpost.gyldigKanal() = this.kanal?.substring(0, 5) == "SKAN_" || this.kanal == "NAV_NO"
+
+fun Journalpost.erTemaEnfOgTypeI() = this.tema == "ENF" && this.journalposttype == Journalposttype.I
 
 fun Journalpost.statusIkkeMottattLogString() = "Ignorerer journalhendelse hvor journalpost=${this.journalpostId} har status ${this.journalstatus}"
 

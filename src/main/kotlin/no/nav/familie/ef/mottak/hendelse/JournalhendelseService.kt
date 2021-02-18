@@ -31,7 +31,7 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     fun behandleJournalpost(journalpostId: Long) {
 
-        val journalpost = journalpostClient.hentJournalpost(journalpostId.toString()) //hent journalpost fra saf
+        val journalpost = journalpostClient.hentJournalpost(journalpostId.toString())
 
         if (journalpost.skalBehandles()) {
             lagreSomEksternJournalføringsTaskDersomSøknadIkkeFinnes(journalpost)
