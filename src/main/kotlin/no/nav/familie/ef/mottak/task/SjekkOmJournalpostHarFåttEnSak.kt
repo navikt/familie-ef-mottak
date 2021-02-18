@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 class SjekkOmJournalpostHarFåttEnSak(private val hentJournalpostService: HentJournalpostService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        // TODO - her kommer vi kanskje til å få inn mye rart. Blir dette riktig for f.eks. vedlegg/annet?
         require(hentJournalpostService.harSaksnummer(task.payload))
     }
 

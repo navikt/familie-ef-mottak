@@ -11,7 +11,6 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
@@ -41,7 +40,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     }
 
     private fun skalForsøkeÅOppretteSak(task: Task): Boolean {
-        return gjelderSøknad(task) && erSøknadOmStønad(task.payload) && featureToggleService.isEnabled("familie.ef.mottak.opprett-sak")
+        return erSøknadOmStønad(task.payload) && featureToggleService.isEnabled("familie.ef.mottak.opprett-sak")
     }
 
     private fun erSøknadOmStønad(søknadId: String): Boolean {
