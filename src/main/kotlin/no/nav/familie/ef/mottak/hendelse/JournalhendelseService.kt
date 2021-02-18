@@ -45,15 +45,11 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
             hendelseRecord: JournalfoeringHendelseRecord,
             offset: Long) {
 
-        if (hendelseRegistrertIHendelseslogg(hendelseRecord)) {
-            return
-        }
-
-        if (hendelseRecord.skalProsessereHendelse()) {
+        if (hendelseRecord.skalProsessereHendelse() && !hendelseRegistrertIHendelseslogg(hendelseRecord)) {
             secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
             behandleJournalhendelse(hendelseRecord)
+            lagreHendelseslogg(hendelseRecord, offset)
         }
-        lagreHendelseslogg(hendelseRecord, offset)
     }
 
     fun JournalfoeringHendelseRecord.skalProsessereHendelse() = erRiktigTemaNytt(this)
@@ -62,7 +58,6 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
     fun hendelseRegistrertIHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord) =
             hendelseloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
 
-    // TODO Får vi en kopi av alle hendeler
     @Transactional
     fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord,
                            offset: Long) {
@@ -90,55 +85,39 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
             if (journalpost.journalstatus == Journalstatus.MOTTATT) {
                 when {
                     "SKAN_" == journalpost.kanal?.substring(0, 5) -> {
-                        behandleSkanningHendelser(journalpost)
+                        behandleHendelser(journalpost)
+                        kanalSkannetsCounter.increment()
                     }
                     "NAV_NO" == journalpost.kanal -> {
-                        behandleNavnoHendelser(journalpost)
+                        behandleHendelser(journalpost)
+                        kanalNavnoCounter.increment()
                     }
                     else -> {
-                        logger.info("Ny journalhendelse med journalpostId=$journalpostId med status MOTTATT " +
-                                    "og kanal ${journalpost.kanal}")
+                        logger.error("Ny journalhendelse med journalpostId=$journalpostId med status MOTTATT " +
+                                     "og kanal ${journalpost.kanal}")
                         kanalAnnetCounter.count()
                     }
                 }
             } else {
-                logger.debug("Ignorer journalhendelse hvor journalpost=$journalpostId har status ${journalpost.journalstatus}")
+                logger.info("Ignorer journalhendelse hvor journalpost=$journalpostId har status ${journalpost.journalstatus}")
                 ignorerteCounter.count()
             }
         }
     }
 
-    private fun behandleNavnoHendelser(journalpost: Journalpost) {
-
+    private fun behandleHendelser(journalpost: Journalpost) {
         if (featureToggleService.isEnabled("familie.ef.mottak.journalhendelse-behsak")) {
             when (val søknad = soknadRepository.findByJournalpostId(journalpost.journalpostId)) {
                 null -> lagEksternJournalføringsTask(journalpost)
                 else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
             }
-            logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
         } else {
             logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-behsak er skrudd av i Unleash")
         }
-
-        kanalNavnoCounter.increment()
-    }
-
-    private fun behandleSkanningHendelser(journalpost: Journalpost) {
-        logger.info("Ny Journalhendelse med [journalpostId=${journalpost.journalpostId}, " +
-                    "status=${journalpost.journalstatus}, " +
-                    "tema=${journalpost.tema}, " +
-                    "kanal=${journalpost.kanal}]")
-
-        if (featureToggleService.isEnabled("familie.ef.mottak.journalhendelse-jfr-skannede")) {
-            lagEksternJournalføringsTask(journalpost)
-        } else {
-            logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-jfr-skannede er skrudd av i Unleash")
-        }
-
-        kanalSkannetsCounter.increment()
     }
 
     private fun lagEksternJournalføringsTask(journalpost: Journalpost) {
+        logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
         val metadata = opprettMetadata(journalpost)
         val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
                                       payload = journalpost.journalpostId,

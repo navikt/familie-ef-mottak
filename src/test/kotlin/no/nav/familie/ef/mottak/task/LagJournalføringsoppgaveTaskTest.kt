@@ -46,7 +46,10 @@ internal class LagJournalføringsoppgaveTaskTest {
     @Test
     fun `Skal lage behandle-sak-oppgave-task hvis det er en ny søknad om overgangsstønad`() {
         val slot = slot<List<Task>>()
-        val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
+        val soknad = Soknad(id = UUID.randomUUID().toString(),
+                            fnr = "12345678901",
+                            søknadJson = "",
+                            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
@@ -60,7 +63,10 @@ internal class LagJournalføringsoppgaveTaskTest {
     @Test
     fun `Skal opprette behandle-sak-oppgave-task hvis det er en ny søknad om barnetilsyn`() {
         val slot = slot<List<Task>>()
-        val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_BARNETILSYN)
+        val soknad = Soknad(id = UUID.randomUUID().toString(),
+                            fnr = "12345678901",
+                            søknadJson = "",
+                            dokumenttype = DOKUMENTTYPE_BARNETILSYN)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
@@ -74,7 +80,10 @@ internal class LagJournalføringsoppgaveTaskTest {
     @Test
     fun `Skal opprette behandle-sak-oppgave-task hvis det er en ny søknad om skolepenger`() {
         val slot = slot<List<Task>>()
-        val soknad = Soknad(id = UUID.randomUUID().toString(), fnr = "12345678901", søknadJson = "", dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
+        val soknad = Soknad(id = UUID.randomUUID().toString(),
+                            fnr = "12345678901",
+                            søknadJson = "",
+                            dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
         every { featureToggleService.isEnabled(any()) } returns true
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
@@ -101,13 +110,6 @@ internal class LagJournalføringsoppgaveTaskTest {
         assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
-
-//    @Test
-//    fun `skal kalle lagJournalføringsoppgaveForJournalpostId hvis task payload ikke er gyldig uuid`() {
-//        lagJournalføringsoppgaveTask.doTask(Task(type = "", payload = "123", properties = Properties()))
-//
-//        verify { oppgaveService.lagJournalføringsoppgaveForJournalpostId("123") }
-//    }
 
     @Test
     fun `skal kalle lagJournalføringsoppgaveForSøknadId hvis task payload er gyldig uuid`() {

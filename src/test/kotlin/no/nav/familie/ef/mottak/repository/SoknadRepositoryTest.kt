@@ -46,4 +46,25 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         assertThat(soknadUtenTask).isNull()
     }
 
+    @Test
+    internal fun `findByJournalpostId skal returnere søknad`() {
+        soknadRepository.save(Soknad(søknadJson = "kåre",
+                                     fnr = "ded",
+                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                     taskOpprettet = true,
+                                     journalpostId = "123"))
+        val soknadUtenTask = soknadRepository.findByJournalpostId("123")
+        assertThat(soknadUtenTask).isNotNull
+    }
+
+    @Test
+    internal fun `findByJournalpostId skal returnere null`() {
+        soknadRepository.save(Soknad(søknadJson = "kåre",
+                                     fnr = "ded",
+                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                     taskOpprettet = true))
+        val soknadUtenTask = soknadRepository.findByJournalpostId("123")
+        assertThat(soknadUtenTask).isNull()
+    }
+
 }

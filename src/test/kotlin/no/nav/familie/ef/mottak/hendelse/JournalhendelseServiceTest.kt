@@ -112,9 +112,11 @@ class JournalføringHendelseServiceTest {
     }
 
     @Test
-    fun `Mottak av papirsøknader skal opprette OpprettOppgaveForJournalføringTask`() {
+    fun `Mottak av papirsøknader skal opprette LagEksternJournalføringsoppgaveTask`() {
         MDC.put("callId", "papir")
         val record = opprettRecord(JOURNALPOST_PAPIRSØKNAD)
+
+        every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
         service.behandleJournalhendelse(record)
 
@@ -201,19 +203,14 @@ class JournalføringHendelseServiceTest {
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
 
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelseloggRepository.save(capture(slot))
+        verify(exactly = 0) {
+            mockHendelseloggRepository.save(any())
         }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("UgyldigType")
+
     }
 
     @Test
-    fun `Hendelser hvor journalpost ikke har tema for Barnetrygd skal ignoreres`() {
+    fun `Hendelser hvor journalpost ikke har tema ENF skal ignoreres`() {
         val ukjentTemaRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
 
         val consumerRecord = ConsumerRecord("topic", 1,
@@ -223,15 +220,11 @@ class JournalføringHendelseServiceTest {
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
 
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelseloggRepository.save(capture(slot))
+        verify(exactly = 0) {
+            mockHendelseloggRepository.save(any())
+            mockTaskRepository.save(any())
         }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
+
     }
 
     private fun opprettRecord(journalpostId: String,
