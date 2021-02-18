@@ -30,6 +30,12 @@ internal class LagJournalføringsoppgaveTaskTest {
 
     @Test
     fun `Skal opprette SendMeldingTilDittNavTask og HentSaksnummerFraJoark når LagJournalføringsoppgaveTask er utført`() {
+
+        val soknad = Soknad(id = UUID.randomUUID().toString(),
+                            fnr = "12345678901",
+                            søknadJson = "",
+                            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
+        every { søknadRepository.findByIdOrNull(any()) } returns soknad
         val slot = slot<List<Task>>()
         every {
             taskRepository.saveAll(capture(slot))
