@@ -40,7 +40,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
         } catch (e: Exception) {
             if (erKlokkenMellom21Og06()) {
                 logger.info("Oppretter en ny task som kjører kl 06 id=${task.id} callId=${task.callId}")
-                taskRepository.save(task.copy(id = 0L, triggerTid = kl06IdagEllerNesteDag()))
+                taskRepository.save(Task(payload= task.payload, type = task.type, metadata = task.metadata, triggerTid = kl06IdagEllerNesteDag()))
             } else {
                 throw e
             }
