@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
-/**
- * TODO : Trekk ut alt IA relatert (f.eks Prometheus-ting) fra serviceklassen. Evt legg til egne unntakstyper.
- */
 @Service
 class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
                              val featureToggleService: FeatureToggleService,
