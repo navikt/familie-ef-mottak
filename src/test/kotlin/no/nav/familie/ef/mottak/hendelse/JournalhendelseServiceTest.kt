@@ -38,7 +38,8 @@ class JournalføringHendelseServiceTest {
     @MockK(relaxed = true)
     lateinit var mockSøknadRepository: SoknadRepository
 
-    @InjectMockKs
+    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+
     lateinit var service: JournalhendelseService
 
     @BeforeEach
@@ -109,6 +110,10 @@ class JournalføringHendelseServiceTest {
                               kanal = "NAV_NO")
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
+
+        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepository)
+
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil)
     }
 
     @Test
@@ -118,8 +123,7 @@ class JournalføringHendelseServiceTest {
 
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
-        service.behandleJournalhendelse(record)
-
+        service.prosesserNyHendelse(record, OFFSET)
 
         val taskSlot = slot<Task>()
         verify {
@@ -136,7 +140,7 @@ class JournalføringHendelseServiceTest {
     fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
         val record = opprettRecord(JOURNALPOST_FERDIGSTILT)
 
-        service.behandleJournalhendelse(record)
+        service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
             mockTaskRepository.save(any())
@@ -148,7 +152,7 @@ class JournalføringHendelseServiceTest {
     fun `Utgående journalposter skal ignoreres`() {
         val record = opprettRecord(JOURNALPOST_UTGÅENDE_DOKUMENT)
 
-        service.behandleJournalhendelse(record)
+        service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
             mockTaskRepository.save(any())
@@ -162,7 +166,7 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
         every {
-            mockHendelseloggRepository.existsByHendelseId("hendelseId")
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(consumerRecord.value())
         } returns true
 
         service.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
@@ -177,6 +181,10 @@ class JournalføringHendelseServiceTest {
         val consumerRecord = ConsumerRecord("topic", 1,
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
+
+        every {
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(consumerRecord.value())
+        } returns false
 
         service.prosesserNyHendelse(consumerRecord.value(),
                                     consumerRecord.offset())
