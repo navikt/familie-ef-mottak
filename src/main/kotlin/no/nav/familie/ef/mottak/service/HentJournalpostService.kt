@@ -15,4 +15,9 @@ class HentJournalpostService(private val søknadService: SøknadService,
         val søknadMedSaksnummer = soknad.copy(saksnummer = saksnummer)
         søknadService.lagreSøknad(søknadMedSaksnummer)
     }
+
+    fun harSaksnummer(journalpostId: String): Boolean {
+        return !integrasjonerClient.hentSaksnummer(journalpostId).isNullOrBlank()
+    }
+
 }

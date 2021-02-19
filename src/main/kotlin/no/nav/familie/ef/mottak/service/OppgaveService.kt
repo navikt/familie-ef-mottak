@@ -53,15 +53,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
-                integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L -> {
+                journalføringsoppgaveFinnes(journalpost) -> {
                     log.info("Skipper oppretting av journalførings-oppgave. " +
                              "Fant åpen oppgave av type ${Oppgavetype.Journalføring} for " +
                              "journalpostId=${journalpost.journalpostId}")
                     null
                 }
-                integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L -> {
+                fordelingsoppgaveFinnes(journalpost) -> {
                     log.info("Skipper oppretting av journalførings-oppgave. " +
                              "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
+                             "journalpostId=${journalpost.journalpostId}")
+                    null
+                }
+                behandlesakOppgaveFinnes(journalpost) -> {
+                    log.info("Skipper oppretting av journalførings-oppgave. " +
+                             "Fant allerede behandlet oppgave ${Oppgavetype.BehandleSak} for " +
                              "journalpostId=${journalpost.journalpostId}")
                     null
                 }
@@ -82,6 +88,15 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             throw error
         }
     }
+
+    private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
+            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L
+
+    private fun journalføringsoppgaveFinnes(journalpost: Journalpost) =
+            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
+
+    private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
+            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
     fun ferdigstillOppgaveForJournalpost(journalpostId: String) {
         val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
