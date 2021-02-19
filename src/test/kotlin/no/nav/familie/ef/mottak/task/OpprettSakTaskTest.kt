@@ -15,8 +15,10 @@ import no.nav.familie.ef.mottak.task.OppdaterBehandleSakOppgaveTask
 import no.nav.familie.ef.mottak.task.OpprettSakTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.error.RekjørSenereException
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -117,16 +119,15 @@ internal class OpprettSakTaskTest {
             slot.captured
         }
 
-        opprettSakTask.doTask(lagTask())
 
-        verify(exactly = 1) {
+        val throwable = catchThrowable { opprettSakTask.doTask(lagTask()) }
+        assertThat(throwable).isInstanceOf(RekjørSenereException::class.java)
+        assertThat((throwable as RekjørSenereException).triggerTid)
+                .isEqualTo(dateTimeService.now().toLocalDate().plusDays(1).atTime(6, 0))
+
+        verify(exactly = 0) {
             taskRepository.save(any())
         }
-
-        val now = dateTimeService.now().toLocalDate()
-        assertThat(slot.captured.id).isEqualTo(0L)
-        assertThat(slot.captured.type).isEqualTo(OpprettSakTask.TYPE)
-        assertThat(slot.captured.triggerTid).isEqualTo(now.plusDays(1).atTime(6, 0))
     }
 
     @Test
@@ -140,15 +141,14 @@ internal class OpprettSakTaskTest {
             slot.captured
         }
 
-        opprettSakTask.doTask(lagTask())
+        val throwable = catchThrowable { opprettSakTask.doTask(lagTask()) }
+        assertThat(throwable).isInstanceOf(RekjørSenereException::class.java)
+        assertThat((throwable as RekjørSenereException).triggerTid)
+                .isEqualTo(dateTimeService.now().toLocalDate().atTime(6, 0))
 
-        verify(exactly = 1) {
+        verify(exactly = 0) {
             taskRepository.save(any())
         }
-
-        assertThat(slot.captured.type).isEqualTo(OpprettSakTask.TYPE)
-        assertThat(slot.captured.id).isEqualTo(0L)
-        assertThat(slot.captured.triggerTid).isEqualTo(dateTimeService.now().toLocalDate().atTime(6, 0))
     }
 
     private fun lagTask() = Task(type = OpprettSakTask.TYPE, payload = "123", properties = Properties().apply {
