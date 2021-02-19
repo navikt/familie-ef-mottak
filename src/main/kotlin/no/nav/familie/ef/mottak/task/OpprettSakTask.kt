@@ -8,6 +8,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.error.RekjørSenereException
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -39,8 +40,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
             opprettNesteTask(task, soknadMedSaksnummer)
         } catch (e: Exception) {
             if (erKlokkenMellom21Og06()) {
-                logger.info("Oppretter en ny task som kjører kl 06 id=${task.id} callId=${task.callId}")
-                taskRepository.save(Task(payload= task.payload, type = task.type, metadata = task.metadata, triggerTid = kl06IdagEllerNesteDag()))
+                throw RekjørSenereException("Infotrygd er stengt mellom 21 og 06", kl06IdagEllerNesteDag())
             } else {
                 throw e
             }
