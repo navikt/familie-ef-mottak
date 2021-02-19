@@ -24,6 +24,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                                          saksId = null,
                                                          tema = Tema.ENF,
                                                          oppgavetype = Oppgavetype.BehandleSak,
+                                                         journalpostId = journalpost.journalpostId,
                                                          fristFerdigstillelse = LocalDate.now().plusDays(2),
                                                          beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                                          behandlingstema = journalpost.behandlingstema,
