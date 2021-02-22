@@ -18,6 +18,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestOperations
@@ -43,14 +44,28 @@ class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
 
+    /**
+     * Overskrever familie-felles sin, då timeouts ikke virker med den og proxy allerede er satt i issuer-proxyurl
+     * Dvs, bruker ikke NaisProxyCustomizer
+     */
+    @Bean
+    @Primary
+    fun restTemplateBuilder(): RestTemplateBuilder {
+        return RestTemplateBuilder()
+                .setConnectTimeout(Duration.of(30, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(180, ChronoUnit.SECONDS))
+    }
+
     @Bean("restTemplateAzure")
     fun restTemplateAzure(restTemplateBuilder: RestTemplateBuilder,
                           mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                           bearerTokenClientInterceptor: BearerTokenClientInterceptor,
                           consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
-        return restTemplateBuilder.interceptors(mdcInterceptor,
-                                                bearerTokenClientInterceptor,
-                                                consumerIdClientInterceptor).build()
+        return restTemplateBuilder
+                .interceptors(mdcInterceptor,
+                              bearerTokenClientInterceptor,
+                              consumerIdClientInterceptor)
+                .build()
     }
 
     @Bean("restTemplateUnsecured")
@@ -58,8 +73,6 @@ class ApplicationConfig {
                      mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
         return restTemplateBuilder
-                .setConnectTimeout(Duration.of(30, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(180, ChronoUnit.SECONDS))
                 .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
