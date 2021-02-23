@@ -10,6 +10,7 @@ import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -43,21 +44,19 @@ class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
-
     /**
      * Overskrever familie-felles sin, då timeouts ikke virker med den og proxy allerede er satt i issuer-proxyurl
      * Dvs, bruker ikke NaisProxyCustomizer
      */
-    @Bean
-    @Primary
+    @Bean("restTemplateUtenProxy")
     fun restTemplateBuilder(): RestTemplateBuilder {
         return RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(30, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(180, ChronoUnit.SECONDS))
+                .setConnectTimeout(Duration.of(15, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(120, ChronoUnit.SECONDS))
     }
 
     @Bean("restTemplateAzure")
-    fun restTemplateAzure(restTemplateBuilder: RestTemplateBuilder,
+    fun restTemplateAzure(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
                           mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                           bearerTokenClientInterceptor: BearerTokenClientInterceptor,
                           consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
@@ -69,7 +68,7 @@ class ApplicationConfig {
     }
 
     @Bean("restTemplateUnsecured")
-    fun restTemplate(restTemplateBuilder: RestTemplateBuilder,
+    fun restTemplate(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
                      mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
         return restTemplateBuilder
