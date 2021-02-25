@@ -23,11 +23,8 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
     }
 
     override fun onCompletion(task: Task) {
-        // Når vi begynner å lytte på journalføringshendelser så trenger vi ikke denne tasen.
-        if (!featureToggleService.isEnabled("familie-ef-mottak.journalhendelse.behsak")) {
-            val nesteTask: Task = Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
-            taskRepository.save(nesteTask)
-        }
+        val nesteTask = Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
+        taskRepository.save(nesteTask)
     }
 
     companion object {
