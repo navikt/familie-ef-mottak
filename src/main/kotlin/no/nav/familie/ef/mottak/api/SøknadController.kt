@@ -25,7 +25,8 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["", "overgangsstonad"])
     fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-                        @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
+                        @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
+            : ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -35,7 +36,8 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["barnetilsyn"])
     fun barnetilsyn(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
+                    @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
+            : ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -45,7 +47,8 @@ class SøknadController(val søknadService: SøknadService) {
 
     @PostMapping(path = ["skolepenger"])
     fun skolepenger(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-                    @RequestPart("vedlegg") vedleggListe: List<MultipartFile>): ResponseEntity<Kvittering> {
+                    @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
+            : ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -64,8 +67,8 @@ class SøknadController(val søknadService: SøknadService) {
         }
     }
 
-    private fun vedleggData(vedleggListe: List<MultipartFile>) =
-            vedleggListe.map { it.originalFilename to it.bytes }.toMap()
+    private fun vedleggData(vedleggListe: List<MultipartFile>?) =
+            (vedleggListe ?: emptyList()).map { it.originalFilename to it.bytes }.toMap()
 
     private fun validerVedlegg(vedlegg: List<Vedlegg>,
                                vedleggData: Map<String?, ByteArray>) {
