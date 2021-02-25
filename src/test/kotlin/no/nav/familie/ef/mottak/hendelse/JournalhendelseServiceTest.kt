@@ -6,8 +6,9 @@ import io.mockk.impl.annotations.MockK
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
+import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.slf4j.MDC
-import org.springframework.kafka.support.Acknowledgment
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JournalføringHendelseServiceTest {
@@ -33,12 +33,13 @@ class JournalføringHendelseServiceTest {
     lateinit var mockFeatureToggleService: FeatureToggleService
 
     @MockK(relaxed = true)
-    lateinit var mockHendelsesloggRepository: HendelsesloggRepository
+    lateinit var mockHendelseloggRepository: HendelsesloggRepository
 
     @MockK(relaxed = true)
-    lateinit var ack: Acknowledgment
+    lateinit var mockSøknadRepository: SoknadRepository
 
-    @InjectMockKs
+    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+
     lateinit var service: JournalhendelseService
 
     @BeforeEach
@@ -47,7 +48,7 @@ class JournalføringHendelseServiceTest {
         clearAllMocks()
 
         every {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
@@ -109,15 +110,20 @@ class JournalføringHendelseServiceTest {
                               kanal = "NAV_NO")
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
+
+        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepository)
+
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil)
     }
 
     @Test
-    fun `Mottak av papirsøknader skal opprette OpprettOppgaveForJournalføringTask`() {
+    fun `Mottak av papirsøknader skal opprette LagEksternJournalføringsoppgaveTask`() {
         MDC.put("callId", "papir")
         val record = opprettRecord(JOURNALPOST_PAPIRSØKNAD)
 
-        service.behandleJournalhendelse(record)
+        every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
+        service.prosesserNyHendelse(record, OFFSET)
 
         val taskSlot = slot<Task>()
         verify {
@@ -127,14 +133,14 @@ class JournalføringHendelseServiceTest {
         assertThat(taskSlot.captured).isNotNull
         assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
     }
 
     @Test
     fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
         val record = opprettRecord(JOURNALPOST_FERDIGSTILT)
 
-        service.behandleJournalhendelse(record)
+        service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
             mockTaskRepository.save(any())
@@ -146,7 +152,7 @@ class JournalføringHendelseServiceTest {
     fun `Utgående journalposter skal ignoreres`() {
         val record = opprettRecord(JOURNALPOST_UTGÅENDE_DOKUMENT)
 
-        service.behandleJournalhendelse(record)
+        service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
             mockTaskRepository.save(any())
@@ -154,22 +160,19 @@ class JournalføringHendelseServiceTest {
 
     }
 
-
     @Test
     fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg`() {
         val consumerRecord = ConsumerRecord("topic", 1,
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
         every {
-            mockHendelsesloggRepository.existsByHendelseId("hendelseId")
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(consumerRecord.value())
         } returns true
 
-        service.prosesserNyHendelse(consumerRecord, ack)
-
-        verify { ack.acknowledge() }
+        service.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
 
         verify(exactly = 0) {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         }
     }
 
@@ -179,13 +182,16 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        every {
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(consumerRecord.value())
+        } returns false
 
-        verify { ack.acknowledge() }
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+            mockHendelseloggRepository.save(capture(slot))
         }
 
         assertThat(slot.captured).isNotNull
@@ -202,41 +208,31 @@ class JournalføringHendelseServiceTest {
                                             OFFSET,
                                             42L, ugyldigHendelsetypeRecord)
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
-
-        verify { ack.acknowledge() }
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+        verify(exactly = 0) {
+            mockHendelseloggRepository.save(any())
         }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("UgyldigType")
+
     }
 
     @Test
-    fun `Hendelser hvor journalpost ikke har tema for Barnetrygd skal ignoreres`() {
+    fun `Hendelser hvor journalpost ikke har tema ENF skal ignoreres`() {
         val ukjentTemaRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
 
         val consumerRecord = ConsumerRecord("topic", 1,
                                             OFFSET,
                                             42L, ukjentTemaRecord)
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        service.prosesserNyHendelse(consumerRecord.value(),
+                                    consumerRecord.offset())
 
-        verify { ack.acknowledge() }
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+        verify(exactly = 0) {
+            mockHendelseloggRepository.save(any())
+            mockTaskRepository.save(any())
         }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
+
     }
 
     private fun opprettRecord(journalpostId: String,
