@@ -67,11 +67,11 @@ class SøknadController(val søknadService: SøknadService) {
         }
     }
 
-    private fun vedleggData(vedleggListe: List<MultipartFile>?) =
-            (vedleggListe ?: emptyList()).map { it.originalFilename to it.bytes }.toMap()
+    private fun vedleggData(vedleggListe: List<MultipartFile>?): Map<String, ByteArray> =
+            vedleggListe?.map { it.originalFilename to it.bytes }?.toMap() ?: emptyMap()
 
     private fun validerVedlegg(vedlegg: List<Vedlegg>,
-                               vedleggData: Map<String?, ByteArray>) {
+                               vedleggData: Map<String, ByteArray>) {
         val vedleggMetadata = vedlegg.map { it.id to it }.toMap()
         if (vedleggMetadata.keys.size != vedleggData.keys.size || !vedleggMetadata.keys.containsAll(vedleggData.keys)) {
             logger.error("Søknad savner: [{}], vedleggListe:[{}]",
