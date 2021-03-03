@@ -184,8 +184,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     fun hentIdenter(personident: String, medHistprikk: Boolean): List<PersonIdentMedHistorikk> {
         val uri = UriComponentsBuilder.fromUri(hentIdenterURI).queryParam("historikk", medHistprikk).build().toUri()
-        val response = postForEntity<FinnPersonidenterResponse>(uri, PersonIdent(personident))
-        return response.identer
+        val response = postForEntity<Ressurs<FinnPersonidenterResponse>>(uri, PersonIdent(personident))
+        return response.getDataOrThrow().identer
     }
 
     private val lagFinnInfotrygdSakerUri =
@@ -237,7 +237,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"
-        const val PATH_HENT_IDENTER = "personopplysning/identer/ENF"
+        const val PATH_HENT_IDENTER = "personopplysning/v1/identer/ENF"
     }
 
 }
