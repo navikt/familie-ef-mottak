@@ -88,6 +88,8 @@ database:
     # 16, 24 or 32 bytes
     key: ${DATABASEKEY}
 
+INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.nais.adeo.no
+
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
 KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local

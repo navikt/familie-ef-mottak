@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.integration
 
 
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
@@ -32,7 +32,9 @@ import java.net.URI
 @Service
 class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperations,
                           private val integrasjonerConfig: IntegrasjonerConfig) :
-        AbstractRestClient(operations, "Arkiv") {
+        AbstractPingableRestClient(operations, "Arkiv") {
+
+    override val pingUri: URI = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment("ping").build().toUri()
 
     private val sendInnUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_SEND_INN).build().toUri()
     private val opprettOppgaveUri =
@@ -99,7 +101,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun opprettInfotrygdsak(opprettInfotrygdSakRequest: OpprettInfotrygdSakRequest): OpprettInfotrygdSakResponse {
-        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(lagOpprettInfotrygdsakUri, opprettInfotrygdSakRequest).getDataOrThrow()
+        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(lagOpprettInfotrygdsakUri,
+                                                                   opprettInfotrygdSakRequest).getDataOrThrow()
     }
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
@@ -138,7 +141,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, oppgave: Oppgave) : Long {
+    fun oppdaterOppgave(oppgaveId: Long, oppgave: Oppgave): Long {
         val response = patchForEntity<Ressurs<OppgaveResponse>>(patchOppgaveUri(oppgaveId), oppgave).getDataOrThrow()
         return response.oppgaveId
     }
@@ -175,10 +178,10 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     private val lagFinnInfotrygdSakerUri =
-        UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
+            UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
 
     private val lagOpprettInfotrygdsakUri =
-        UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
+            UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
 
     private fun lagFerdigstillOppgaveUri(oppgaveId: Long): URI {
         return UriComponentsBuilder

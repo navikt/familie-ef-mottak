@@ -5,6 +5,8 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
+import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.journalpost.*
@@ -29,10 +31,11 @@ val stønadsklassifiseringMap =
 
 @Service
 class SakService(private val integrasjonerClient: IntegrasjonerClient,
+                 private val infotrygdService: InfotrygdService,
                  private val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun opprettSak(søknadId: String, oppgaveId: String): String? {
         val soknad = søknadService.get(søknadId)
@@ -60,7 +63,34 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && it.sak?.fagsakId != null
             && gjelderStønad(soknad, it)
         }
+        sjekkMotReplika(soknad.fnr, fagsakFinnesForStønad)
         return !fagsakFinnesForStønad
+    }
+
+    private fun sjekkMotReplika(personIdent: String, fagsakFinnesForStønad: Boolean) {
+        try {
+            val finnes = infotrygdService.finnes(personIdent)
+            val vedtakFinnes = finnes.vedtak.isNotEmpty()
+            val sakerFinnes = finnes.saker.isNotEmpty()
+            logger.info("kanOppretteInfotrygdSak -" +
+                        " fagsakFinnesForStønad=$fagsakFinnesForStønad" +
+                        " vedtakFinnes=$vedtakFinnes" +
+                        " sakerFinnes=$sakerFinnes")
+
+            val finnesAlleredeNoeSted = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
+            if(finnesAlleredeNoeSted) {
+                val vedtak = finnes.vedtak.sortedWith(compareBy(Vedtakstreff::stønadType, Vedtakstreff::personIdent))
+                val saker = finnes.saker.sortedWith(compareBy(Saktreff::stønadType, Saktreff::personIdent))
+                secureLogger.info("kanOppretteInfotrygdSak - " +
+                                  " personIdent=$personIdent" +
+                                  " fagsakFinnesForStønad=$fagsakFinnesForStønad" +
+                                  " vedtak=$vedtak" +
+                                  " saker=$saker")
+            }
+        } catch (e: Exception) {
+            logger.warn("Feilet sjekk mot infotrygdReplika")
+            secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
+        }
     }
 
     private fun gjelderStønad(soknad: Soknad, journalpost: Journalpost): Boolean {
@@ -74,12 +104,12 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun harBrevkode(journalpost: Journalpost, dokumentBrevkode: DokumentBrevkode): Boolean {
         return journalpost.dokumenter
-                ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
-                ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
-                ?.any {
-                    logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} og dokument=${it.dokumentInfoId}")
-                    return true
-                }?: false
+                       ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
+                       ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
+                       ?.any {
+                           logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} og dokument=${it.dokumentInfoId}")
+                           return true
+                       } ?: false
 
     }
 

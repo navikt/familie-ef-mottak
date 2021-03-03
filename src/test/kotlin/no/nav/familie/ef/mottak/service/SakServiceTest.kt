@@ -24,6 +24,7 @@ internal class SakServiceTest {
     private val søknadService: SøknadService = mockk()
 
     private val sakService = SakService(integrasjonerClient,
+                                        mockk(relaxed = true),
                                         søknadService)
 
     @Test
