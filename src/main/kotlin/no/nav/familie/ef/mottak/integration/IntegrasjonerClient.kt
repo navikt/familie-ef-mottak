@@ -18,6 +18,8 @@ import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.personopplysning.FinnPersonidenterResponse
+import no.nav.familie.kontrakter.felles.personopplysning.PersonIdentMedHistorikk
 import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
@@ -57,6 +59,9 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     private val ferdigstillOppgaveURI =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FERDIGSTILL_OPPGAVE).build().toUri()
+
+    private val hentIdenterURI =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_HENT_IDENTER).build().toUri()
 
     private fun hentOppgaveUri(oppgaveId: Long) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
@@ -177,6 +182,12 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     }
 
+    fun hentIdenter(personident: String, medHistprikk: Boolean): List<PersonIdentMedHistorikk> {
+        val uri = UriComponentsBuilder.fromUri(hentIdenterURI).queryParam("historikk", medHistprikk).build().toUri()
+        val response = postForEntity<FinnPersonidenterResponse>(uri, PersonIdent(personident))
+        return response.identer
+    }
+
     private val lagFinnInfotrygdSakerUri =
             UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
 
@@ -226,6 +237,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"
+        const val PATH_HENT_IDENTER = "personopplysning/identer/ENF"
     }
 
 }
