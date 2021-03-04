@@ -13,7 +13,7 @@ class InfotrygdService(private val integrasjonerClient: IntegrasjonerClient,
     /**
      * Finner om en person eksisterer i infotrygd og om det finnes noen aktiv sak for personen.
      */
-    fun finnes(personIdent: String): InfotrygdFinnesResponse {
+    fun hentInslagHosInfotrygd(personIdent: String): InfotrygdFinnesResponse {
         val personIdenter = integrasjonerClient.hentIdenter(personIdent, true).map { it.personIdent }.toSet()
         return infotrygdReplikaClient.finnesIInfotrygd(InfotrygdSøkRequest(personIdenter))
     }

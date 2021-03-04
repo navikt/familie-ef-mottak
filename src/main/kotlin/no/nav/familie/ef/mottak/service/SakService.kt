@@ -64,16 +64,16 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && it.sak?.fagsakId != null
             && gjelderStønad(soknad, it)
         }
-        sjekkOmVedtakEllerSakFinnesIReplika(soknad.fnr, fagsakFinnesForStønad, soknad.dokumenttype)
+        loggKanOppretteInfotrygdSak(soknad.fnr, fagsakFinnesForStønad, soknad.dokumenttype)
         return !fagsakFinnesForStønad
     }
 
-    private fun sjekkOmVedtakEllerSakFinnesIReplika(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
+    private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
         val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: return
         try {
-            val finnes = infotrygdService.finnes(personIdent)
-            val vedtak = finnes.vedtak.filter { it.stønadType == stønadType }
-            val saker = finnes.saker.filter { it.stønadType == stønadType }
+            val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
+            val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
+            val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
             val vedtakFinnes = vedtak.isNotEmpty()
             val sakerFinnes = saker.isNotEmpty()
             val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
