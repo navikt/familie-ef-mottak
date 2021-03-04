@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
@@ -63,33 +64,42 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && it.sak?.fagsakId != null
             && gjelderStønad(soknad, it)
         }
-        sjekkMotReplika(soknad.fnr, fagsakFinnesForStønad)
+        sjekkOmVedtakEllerSakFinnesIReplika(soknad.fnr, fagsakFinnesForStønad, soknad.dokumenttype)
         return !fagsakFinnesForStønad
     }
 
-    private fun sjekkMotReplika(personIdent: String, fagsakFinnesForStønad: Boolean) {
+    private fun sjekkOmVedtakEllerSakFinnesIReplika(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
+        val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: return
         try {
             val finnes = infotrygdService.finnes(personIdent)
-            val vedtakFinnes = finnes.vedtak.isNotEmpty()
-            val sakerFinnes = finnes.saker.isNotEmpty()
-            logger.info("kanOppretteInfotrygdSak -" +
-                        " fagsakFinnesForStønad=$fagsakFinnesForStønad" +
-                        " vedtakFinnes=$vedtakFinnes" +
-                        " sakerFinnes=$sakerFinnes")
+            val vedtak = finnes.vedtak.filter { it.stønadType == stønadType }
+            val saker = finnes.saker.filter { it.stønadType == stønadType }
+            val vedtakFinnes = vedtak.isNotEmpty()
+            val sakerFinnes = saker.isNotEmpty()
+            val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
+                                             " stønadType=$stønadType" +
+                                             " fagsakFinnesForStønad=$fagsakFinnesForStønad"
+            logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
 
-            val finnesAlleredeNoeSted = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
-            if(finnesAlleredeNoeSted) {
-                val vedtak = finnes.vedtak.sortedWith(compareBy(Vedtakstreff::stønadType, Vedtakstreff::personIdent))
-                val saker = finnes.saker.sortedWith(compareBy(Saktreff::stønadType, Saktreff::personIdent))
-                secureLogger.info("kanOppretteInfotrygdSak - " +
+            val finnesAllerede = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
+            if (finnesAllerede) {
+                secureLogger.info(kanOppretteInfotrygdSakLog +
                                   " personIdent=$personIdent" +
-                                  " fagsakFinnesForStønad=$fagsakFinnesForStønad" +
-                                  " vedtak=$vedtak" +
-                                  " saker=$saker")
+                                  " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
+                                  " saker=${saker.sortedBy(Saktreff::personIdent)}")
             }
         } catch (e: Exception) {
             logger.warn("Feilet sjekk mot infotrygdReplika")
             secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
+        }
+    }
+
+    private fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
+        return when(dokumenttype) {
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
+            DOKUMENTTYPE_BARNETILSYN -> StønadType.BARNETILSYN
+            DOKUMENTTYPE_SKOLEPENGER -> StønadType.SKOLEPENGER
+            else -> null
         }
     }
 
