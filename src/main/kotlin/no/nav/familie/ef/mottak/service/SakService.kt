@@ -5,6 +5,9 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
+import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.journalpost.*
@@ -29,10 +32,11 @@ val stønadsklassifiseringMap =
 
 @Service
 class SakService(private val integrasjonerClient: IntegrasjonerClient,
+                 private val infotrygdService: InfotrygdService,
                  private val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun opprettSak(søknadId: String, oppgaveId: String): String? {
         val soknad = søknadService.get(søknadId)
@@ -60,7 +64,43 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && it.sak?.fagsakId != null
             && gjelderStønad(soknad, it)
         }
+        loggKanOppretteInfotrygdSak(soknad.fnr, fagsakFinnesForStønad, soknad.dokumenttype)
         return !fagsakFinnesForStønad
+    }
+
+    private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
+        val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: return
+        try {
+            val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
+            val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
+            val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
+            val vedtakFinnes = vedtak.isNotEmpty()
+            val sakerFinnes = saker.isNotEmpty()
+            val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
+                                             " stønadType=$stønadType" +
+                                             " fagsakFinnesForStønad=$fagsakFinnesForStønad"
+            logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
+
+            val finnesAllerede = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
+            if (finnesAllerede) {
+                secureLogger.info(kanOppretteInfotrygdSakLog +
+                                  " personIdent=$personIdent" +
+                                  " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
+                                  " saker=${saker.sortedBy(Saktreff::personIdent)}")
+            }
+        } catch (e: Exception) {
+            logger.warn("Feilet sjekk mot infotrygdReplika")
+            secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
+        }
+    }
+
+    private fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
+        return when(dokumenttype) {
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
+            DOKUMENTTYPE_BARNETILSYN -> StønadType.BARNETILSYN
+            DOKUMENTTYPE_SKOLEPENGER -> StønadType.SKOLEPENGER
+            else -> null
+        }
     }
 
     private fun gjelderStønad(soknad: Soknad, journalpost: Journalpost): Boolean {
@@ -74,12 +114,12 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun harBrevkode(journalpost: Journalpost, dokumentBrevkode: DokumentBrevkode): Boolean {
         return journalpost.dokumenter
-                ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
-                ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
-                ?.any {
-                    logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} og dokument=${it.dokumentInfoId}")
-                    return true
-                }?: false
+                       ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
+                       ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
+                       ?.any {
+                           logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} og dokument=${it.dokumentInfoId}")
+                           return true
+                       } ?: false
 
     }
 
