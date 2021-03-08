@@ -28,7 +28,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.BehandleSak,
                                   journalpostId = journalpost.journalpostId,
-                                  fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now(), 1),
+                                  fristFerdigstillelse = LocalDate.now().plusDays(2),
                                   beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null)
@@ -53,15 +53,15 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
     }
 
     /**
-     * Frist skal være 1 dag (pluss evt. ekstradager) hvis den opprettes før kl. 12
-     * og 2 dager (pluss evt. ekstradager) hvis den opprettes etter kl. 12
+     * Frist skal være 1 dag hvis den opprettes før kl. 12
+     * og 2 dager hvis den opprettes etter kl. 12
      *
      */
-    fun lagFristForOppgave(gjeldendeTid: LocalDateTime, ekstradager: Long = 0): LocalDate {
+    fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
         return if (gjeldendeTid.hour >= 12) {
-            return gjeldendeTid.plusDays(2 + ekstradager).toLocalDate()
+            return gjeldendeTid.plusDays(2).toLocalDate()
         } else {
-            gjeldendeTid.plusDays(1 + ekstradager).toLocalDate()
+            gjeldendeTid.plusDays(1).toLocalDate()
         }
     }
 

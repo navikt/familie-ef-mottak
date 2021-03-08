@@ -28,17 +28,4 @@ internal class OpprettOppgaveMapperTest {
         Assertions.assertThat(frist).isEqualTo(gjeldendeTid.plusDays(2).toLocalDate())
     }
 
-    @Test
-    internal fun `skal sette frist til 2 dager for oppgave opprettet før kl 12 med ekstradag`() {
-        val gjeldendeTid = LocalDateTime.of(2020, 1, 1, 11, 0)
-        val frist = OpprettOppgaveMapper(mockk()).lagFristForOppgave(gjeldendeTid, 1)
-        Assertions.assertThat(frist).isEqualTo(gjeldendeTid.plusDays(2).toLocalDate())
-    }
-
-    @Test
-    internal fun `skal sette frist til 3 dager for oppgave opprettet etter kl 12 med ekstradag`() {
-        val gjeldendeTid = LocalDateTime.of(2020, 1, 1, 13, 0)
-        val frist = OpprettOppgaveMapper(mockk()).lagFristForOppgave(gjeldendeTid, 1)
-        Assertions.assertThat(frist).isEqualTo(gjeldendeTid.plusDays(3).toLocalDate())
-    }
 }
