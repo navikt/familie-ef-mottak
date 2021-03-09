@@ -6,29 +6,32 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.oppgave.*
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    fun toDto(journalpost: Journalpost) = OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
-                                                         saksId = null,
-                                                         journalpostId = journalpost.journalpostId,
-                                                         tema = Tema.ENF,
-                                                         oppgavetype = Oppgavetype.Journalføring,
-                                                         fristFerdigstillelse = LocalDate.now(),
-                                                         beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
-                                                         behandlingstema = journalpost.behandlingstema,
-                                                         enhetsnummer = null)
+    fun toDto(journalpost: Journalpost) =
+            OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
+                                  saksId = null,
+                                  journalpostId = journalpost.journalpostId,
+                                  tema = Tema.ENF,
+                                  oppgavetype = Oppgavetype.Journalføring,
+                                  fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+                                  beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
+                                  behandlingstema = journalpost.behandlingstema,
+                                  enhetsnummer = null)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost) = OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
-                                                         saksId = null,
-                                                         tema = Tema.ENF,
-                                                         oppgavetype = Oppgavetype.BehandleSak,
-                                                         journalpostId = journalpost.journalpostId,
-                                                         fristFerdigstillelse = LocalDate.now().plusDays(2),
-                                                         beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
-                                                         behandlingstema = journalpost.behandlingstema,
-                                                         enhetsnummer = null)
+    fun toBehandleSakOppgave(journalpost: Journalpost) =
+            OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
+                                  saksId = null,
+                                  tema = Tema.ENF,
+                                  oppgavetype = Oppgavetype.BehandleSak,
+                                  journalpostId = journalpost.journalpostId,
+                                  fristFerdigstillelse = LocalDate.now().plusDays(2),
+                                  beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
+                                  behandlingstema = journalpost.behandlingstema,
+                                  enhetsnummer = null)
 
     private fun hentHoveddokumentTittel(journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
@@ -49,5 +52,17 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         }
     }
 
+    /**
+     * Frist skal være 1 dag hvis den opprettes før kl. 12
+     * og 2 dager hvis den opprettes etter kl. 12
+     *
+     */
+    fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
+        return if (gjeldendeTid.hour >= 12) {
+            return gjeldendeTid.plusDays(2).toLocalDate()
+        } else {
+            gjeldendeTid.plusDays(1).toLocalDate()
+        }
+    }
 
 }
