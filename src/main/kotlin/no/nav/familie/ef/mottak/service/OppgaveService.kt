@@ -87,7 +87,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest, journalpost: Journalpost): Long? {
-        XYZ
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +

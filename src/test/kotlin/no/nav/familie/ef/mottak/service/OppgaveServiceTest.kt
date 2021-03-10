@@ -1,20 +1,18 @@
 package no.nav.familie.ef.mottak.service
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
-import no.nav.familie.kontrakter.felles.journalpost.Journalpost
-import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
-import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
 
@@ -67,5 +65,56 @@ internal class OppgaveServiceTest {
         }
     }
 
+    @Test
+    fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke finnes`() {
+
+        val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
+        every {
+            integrasjonerClient.lagOppgave(opprettOppgaveRequest)
+        } throws IllegalArgumentException(feilmeldingFraOppgave)
+
+        val forventetOpprettOppgaveRequestMedNayEnhet = opprettOppgaveRequest.copy(enhetsnummer = "4489")
+        every {
+            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
+        } answers {
+            OppgaveResponse(1)
+        }
+
+        every {
+            integrasjonerClient.finnOppgaver(any(), any())
+        } returns FinnOppgaveResponseDto(0, listOf())
+
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
+
+
+        assertEquals(1, oppgaveResponse)
+    }
+
+    private val journalpost =
+        Journalpost(
+            journalpostId = "111111111",
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = "ab0071",
+            tittel = "abrakadabra",
+            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
+            journalforendeEnhet = "4817",
+            kanal = "SKAN_IM",
+            sak = Sak(null, null, null),
+            dokumenter =
+            listOf(
+                DokumentInfo(
+                    dokumentInfoId = "12345",
+                    tittel = "Tittel",
+                    brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = "ARKIV"))
+                )
+            )
+        )
+
+
+    val feilmeldingFraOppgave =
+        "Feil ved oppretting av oppgave for 1111111111111. Response fra oppgave = {\"uuid\":\"1uuid1-1234-4321-uuid-1234\",\"feilmelding\":\"Fant ingen gyldig arbeidsfordeling for oppgaven\"}"
 
 }
