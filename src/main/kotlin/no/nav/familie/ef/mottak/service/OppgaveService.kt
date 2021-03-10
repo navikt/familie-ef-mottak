@@ -17,6 +17,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val soknad: Soknad = søknadService.get(søknadId)
@@ -27,7 +28,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        try {
+            return lagJournalføringsoppgave(journalpost)
+        } catch (e: Exception) {
+            secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
+            throw e
+        }
     }
 
     fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
