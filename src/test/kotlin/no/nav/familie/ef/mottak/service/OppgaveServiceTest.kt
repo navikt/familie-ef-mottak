@@ -66,7 +66,7 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke finnes`() {
+    fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
         val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
         every {
