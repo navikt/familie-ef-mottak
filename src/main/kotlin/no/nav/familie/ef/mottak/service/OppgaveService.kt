@@ -7,6 +7,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -18,6 +19,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+    private val ENHETSNUMMER_NAY: String = "4489"
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val soknad: Soknad = søknadService.get(søknadId)
@@ -41,7 +43,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                 "for journalpost journalpostId=${journalpost.journalpostId}")
+                "for journalpost journalpostId=${journalpost.journalpostId}")
 
         return nyOppgave.oppgaveId
     }
@@ -60,39 +62,56 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant åpen oppgave av type ${Oppgavetype.Journalføring} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Journalføring)
                     null
                 }
                 fordelingsoppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Fordeling)
                     null
                 }
                 behandlesakOppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant allerede behandlet oppgave ${Oppgavetype.BehandleSak} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.BehandleSak)
                     null
                 }
                 else -> {
                     val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
-
-                    val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-
-                    log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                             "for journalpost journalpostId=${journalpost.journalpostId}")
-                    nyOppgave.oppgaveId
+                    return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }
         } else {
             val error = IllegalStateException("Journalpost ${journalpost.journalpostId} har endret status " +
-                                              "fra MOTTATT til ${journalpost.journalstatus.name}")
+                    "fra MOTTATT til ${journalpost.journalstatus.name}")
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
+    }
+
+    private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest, journalpost: Journalpost): Long? {
+        XYZ
+        return try {
+            val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
+            log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
+                    "for journalpost journalpostId=${journalpost.journalpostId}")
+            nyOppgave.oppgaveId
+        } catch (e: Exception) {
+            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(e.message)) {
+                val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
+                log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
+                        "for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
+                nyOppgave.oppgaveId
+            } else {
+                throw e
+            }
+        }
+    }
+
+    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(feilmelding: String?): Boolean =
+            feilmelding?.contains("Fant ingen gyldig arbeidsfordeling for oppgaven") ?: false
+
+    private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
+        log.info("Skipper oppretting av journalførings-oppgave. " +
+                "Fant åpen oppgave av type ${oppgavetype} for " +
+                "journalpostId=${journalpostId}")
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
