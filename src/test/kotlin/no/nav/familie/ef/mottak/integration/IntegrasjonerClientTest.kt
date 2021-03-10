@@ -57,7 +57,7 @@ internal class IntegrasjonerClientTest {
 
     @Test
     fun `skal kunne plukke ut hele feilmeldingen fra ressurs selv om body er større enn 400`() {
-        val feilmelding = """Fant ingen gyldig arbeidsfordeling for oppgaven"""
+        val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
         wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
                 .willReturn(serverError().withBody(TestUtils.readFile("opprett_oppgave_feilet.json"))))
         try {
