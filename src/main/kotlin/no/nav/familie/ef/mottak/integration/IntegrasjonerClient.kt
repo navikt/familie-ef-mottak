@@ -19,6 +19,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.oppgave.*
 import no.nav.familie.kontrakter.felles.personopplysning.FinnPersonidenterResponse
+import no.nav.familie.kontrakter.felles.personopplysning.Ident
 import no.nav.familie.kontrakter.felles.personopplysning.PersonIdentMedHistorikk
 import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
@@ -168,7 +169,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun hentAktørId(personident: String): String {
-        val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, Ident(personident))
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
@@ -233,7 +234,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
         const val PATH_HENT_OPPGAVE = "oppgave"
         const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
-        const val PATH_AKTØR = "aktoer/v1"
+        const val PATH_AKTØR = "aktoer/v2/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"

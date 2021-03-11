@@ -1,20 +1,26 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
-import no.nav.familie.kontrakter.felles.journalpost.Journalpost
-import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
-import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpServerErrorException
+import java.nio.charset.Charset
+import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
 
@@ -66,6 +72,55 @@ internal class OppgaveServiceTest {
             integrasjonerClient.lagOppgave(any())
         }
     }
+
+    @Test
+    fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
+
+        val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
+        every {
+            integrasjonerClient.lagOppgave(opprettOppgaveRequest)
+        } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,  "Server error", TestUtils.readFile("opprett_oppgave_feilet.json").toByteArray(), Charset.defaultCharset() )
+
+        val forventetOpprettOppgaveRequestMedNayEnhet = opprettOppgaveRequest.copy(enhetsnummer = "4489")
+        every {
+            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
+        } answers {
+            OppgaveResponse(1)
+        }
+
+        every {
+            integrasjonerClient.finnOppgaver(any(), any())
+        } returns FinnOppgaveResponseDto(0, listOf())
+
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
+
+
+        assertEquals(1, oppgaveResponse)
+    }
+
+    private val journalpost =
+        Journalpost(
+            journalpostId = "111111111",
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = "ab0071",
+            tittel = "abrakadabra",
+            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
+            journalforendeEnhet = "4817",
+            kanal = "SKAN_IM",
+            sak = Sak(null, null, null),
+            dokumenter =
+            listOf(
+                DokumentInfo(
+                    dokumentInfoId = "12345",
+                    tittel = "Tittel",
+                    brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = "ARKIV"))
+                )
+            )
+        )
+
 
 
 }

@@ -1,15 +1,21 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpStatusCodeException
 
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
@@ -17,6 +23,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
+    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+    private val ENHETSNUMMER_NAY: String = "4489"
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val soknad: Soknad = søknadService.get(søknadId)
@@ -27,7 +35,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        try {
+            return lagJournalføringsoppgave(journalpost)
+        } catch (e: Exception) {
+            secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
+            throw e
+        }
     }
 
     fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
@@ -55,31 +68,20 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant åpen oppgave av type ${Oppgavetype.Journalføring} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Journalføring)
                     null
                 }
                 fordelingsoppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant åpen oppgave av type ${Oppgavetype.Fordeling} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Fordeling)
                     null
                 }
                 behandlesakOppgaveFinnes(journalpost) -> {
-                    log.info("Skipper oppretting av journalførings-oppgave. " +
-                             "Fant allerede behandlet oppgave ${Oppgavetype.BehandleSak} for " +
-                             "journalpostId=${journalpost.journalpostId}")
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.BehandleSak)
                     null
                 }
                 else -> {
                     val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
-
-                    val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-
-                    log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                             "for journalpost journalpostId=${journalpost.journalpostId}")
-                    nyOppgave.oppgaveId
+                    return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }
         } else {
@@ -88,6 +90,42 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
+    }
+
+    private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest,
+                                                                             journalpost: Journalpost): Long? {
+        return try {
+            val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
+            log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId}")
+            nyOppgave.oppgaveId
+        } catch (httpStatusCodeException: HttpStatusCodeException) {
+            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
+                val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
+                log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
+                nyOppgave.oppgaveId
+            } else {
+                throw httpStatusCodeException
+            }
+        }
+    }
+
+    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException: HttpStatusCodeException): Boolean {
+        try {
+            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(httpStatusCodeException.responseBodyAsString)
+            val feilmelding = response.melding
+            secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
+            return feilmelding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
+        } catch (e:Exception) {
+            secureLogger.error("Feilet ved parsing av feilstatus", e)
+            throw httpStatusCodeException
+        }
+
+    }
+
+    private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
+        log.info("Skipper oppretting av journalførings-oppgave. " +
+                "Fant åpen oppgave av type ${oppgavetype} for " +
+                "journalpostId=${journalpostId}")
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =

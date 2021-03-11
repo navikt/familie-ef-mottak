@@ -1,12 +1,15 @@
 package no.nav.familie.ef.mottak.integration
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils
 import no.nav.familie.http.sts.StsRestClient
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
@@ -15,12 +18,14 @@ import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestOperations
 import java.net.URI
 import java.time.LocalDate
@@ -48,6 +53,29 @@ internal class IntegrasjonerClientTest {
     fun tearDown() {
         wireMockServer.resetAll()
         wireMockServer.stop()
+    }
+
+    @Test
+    fun `skal kunne plukke ut hele feilmeldingen fra ressurs selv om body er større enn 400`() {
+        val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
+        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
+                .willReturn(serverError().withBody(TestUtils.readFile("opprett_oppgave_feilet.json"))))
+        try {
+            integrasjonerClient.lagOppgave(OpprettOppgaveRequest(ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
+                    saksId = null,
+                    journalpostId = "123",
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.Journalføring,
+                    fristFerdigstillelse = LocalDate.now(),
+                    beskrivelse = "",
+                    behandlingstema = "sad",
+                    enhetsnummer = null))
+        } catch (e: HttpStatusCodeException) {
+            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(e.getResponseBodyAsString())
+            assertThat(response.melding).contains(feilmelding)
+            assertThat(e.message).doesNotContain(feilmelding)
+        }
+
     }
 
     @Test

@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.2</version>
+        <version>2.4.3</version>
     </parent>
 
     <properties>
@@ -21,10 +21,10 @@
         <jvmTarget>11</jvmTarget>
         <kotlin.version>1.4.31</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
-        <mockk.version>1.10.5</mockk.version>
+        <mockk.version>1.10.6</mockk.version>
         <felles.version>1.20210223111349_05be6ea</felles.version>
         <prosessering.version>1.20210302133042_76527ed</prosessering.version>
-        <confluent.version>6.0.1</confluent.version>
+        <confluent.version>6.1.0</confluent.version>
         <kontrakter.version>2.0_20210311144551_2b8eb9e</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
         <token-validation.version>1.3.3</token-validation.version>
