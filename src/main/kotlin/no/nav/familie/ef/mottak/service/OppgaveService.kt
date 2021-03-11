@@ -45,8 +45,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
                 beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-                metadata = mutableMapOf("kanLageBlankett" to "true") // TODO må oppdatere ikke overskrive metadata
         )
+        oppdatertOppgave.leggTilMetadata("kanLageBlankett", "true")
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
