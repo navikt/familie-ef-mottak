@@ -1,17 +1,25 @@
 package no.nav.familie.ef.mottak.service
 
-import io.mockk.*
+import com.fasterxml.jackson.module.kotlin.readValue
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpServerErrorException
+import java.nio.charset.Charset
 import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
@@ -71,7 +79,7 @@ internal class OppgaveServiceTest {
         val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
-        } throws IllegalArgumentException(feilmeldingFraOppgave)
+        } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,  "Server error", TestUtils.readFile("opprett_oppgave_feilet.json").toByteArray(), Charset.defaultCharset() )
 
         val forventetOpprettOppgaveRequestMedNayEnhet = opprettOppgaveRequest.copy(enhetsnummer = "4489")
         every {
@@ -114,7 +122,5 @@ internal class OppgaveServiceTest {
         )
 
 
-    val feilmeldingFraOppgave =
-        "Feil ved oppretting av oppgave for 1111111111111. Response fra oppgave = {\"uuid\":\"1uuid1-1234-4321-uuid-1234\",\"feilmelding\":\"Fant ingen gyldig arbeidsfordeling for oppgaven\"}"
 
 }

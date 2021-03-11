@@ -1,16 +1,21 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpStatusCodeException
 
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
@@ -90,32 +95,36 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                                                              journalpost: Journalpost): Long? {
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-            log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                     "for journalpost journalpostId=${journalpost.journalpostId}")
+            log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId}")
             nyOppgave.oppgaveId
-        } catch (e: Exception) {
-
-            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(e.message)) {
+        } catch (httpStatusCodeException: HttpStatusCodeException) {
+            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
                 val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
-                log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                         "for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
+                log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
                 nyOppgave.oppgaveId
             } else {
-                throw e
+                throw httpStatusCodeException
             }
         }
     }
 
-    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(feilmelding: String?): Boolean {
-        secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
-        return feilmelding?.contains("Fant ingen gyldig arbeidsfordeling for oppgaven") ?: false
+    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException: HttpStatusCodeException): Boolean {
+        try {
+            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(httpStatusCodeException.responseBodyAsString)
+            val feilmelding = response.melding
+            secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
+            return feilmelding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
+        } catch (e:Exception) {
+            secureLogger.error("Feilet ved parsing av feilstatus", e)
+            throw httpStatusCodeException
+        }
 
     }
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
         log.info("Skipper oppretting av journalførings-oppgave. " +
-                 "Fant åpen oppgave av type ${oppgavetype} for " +
-                 "journalpostId=${journalpostId}")
+                "Fant åpen oppgave av type ${oppgavetype} for " +
+                "journalpostId=${journalpostId}")
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
