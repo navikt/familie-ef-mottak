@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.hendelse
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
@@ -18,15 +20,19 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+    val alleredeBehandletJournalpostCounter: Counter =
+            Metrics.counter("alene.med.barn.journalhendelse.alleredeBehandletJournalpostHendelse")
+
 
     @Transactional
     fun prosesserNyHendelse(hendelseRecord: JournalfoeringHendelseRecord, offset: Long) {
 
         if (skalProsessereHendelse(hendelseRecord)) {
             secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
-            if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)){
+            if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 behandleJournalpost(hendelseRecord.journalpostId)
             } else {
+                alleredeBehandletJournalpostCounter.increment()
                 logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
             }
             journalfoeringHendelseDbUtil.lagreHendelseslogg(hendelseRecord, offset)
