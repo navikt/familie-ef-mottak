@@ -82,6 +82,9 @@ prosessering:
   fixedDelayString:
     in:
       milliseconds: 10000
+  delete:
+    after:
+      weeks: 4
 
 database:
   encryption:

@@ -24,7 +24,11 @@ class JournalhendelseService(val journalpostClient: IntegrasjonerClient,
 
         if (skalProsessereHendelse(hendelseRecord)) {
             secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
-            behandleJournalpost(hendelseRecord.journalpostId)
+            if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)){
+                behandleJournalpost(hendelseRecord.journalpostId)
+            } else {
+                logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
+            }
             journalfoeringHendelseDbUtil.lagreHendelseslogg(hendelseRecord, offset)
         }
     }

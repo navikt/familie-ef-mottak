@@ -1,17 +1,16 @@
 package no.nav.familie.ef.mottak.hendelse
 
 import io.mockk.*
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +26,7 @@ class JournalføringHendelseServiceTest {
     lateinit var integrasjonerClient: IntegrasjonerClient
 
     @MockK
-    lateinit var mockTaskRepository: TaskRepository
+    lateinit var mockTaskRepositoryUtvidet: TaskRepositoryUtvidet
 
     @MockK(relaxed = true)
     lateinit var mockFeatureToggleService: FeatureToggleService
@@ -52,7 +51,7 @@ class JournalføringHendelseServiceTest {
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         } answers { it.invocation.args[0] as Task }
 
         //Inngående papirsøknad, Mottatt
@@ -111,7 +110,7 @@ class JournalføringHendelseServiceTest {
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
 
-        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepository)
+        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
         service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil)
     }
@@ -123,11 +122,15 @@ class JournalføringHendelseServiceTest {
 
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
+        } returns false
+
         service.prosesserNyHendelse(record, OFFSET)
 
         val taskSlot = slot<Task>()
         verify {
-            mockTaskRepository.save(capture(taskSlot))
+            mockTaskRepositoryUtvidet.save(capture(taskSlot))
         }
 
         assertThat(taskSlot.captured).isNotNull
@@ -137,13 +140,35 @@ class JournalføringHendelseServiceTest {
     }
 
     @Test
+    fun `Mottak av papirsøknader skal ikke opprette LagEksternJournalføringsoppgaveTask hvis det allerede finnes en task med samme journalpostId`() {
+        MDC.put("callId", "papir")
+        val record = opprettRecord(JOURNALPOST_PAPIRSØKNAD)
+
+        every { mockSøknadRepository.findByJournalpostId(any()) } returns null
+
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
+        } returns true
+
+        service.prosesserNyHendelse(record, OFFSET)
+
+        verify(exactly = 0) {
+            mockTaskRepositoryUtvidet.save(any())
+        }
+
+        verify(exactly = 1) {
+            mockHendelseloggRepository.save(any())
+        }
+    }
+
+    @Test
     fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
         val record = opprettRecord(JOURNALPOST_FERDIGSTILT)
 
         service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         }
 
     }
@@ -155,7 +180,7 @@ class JournalføringHendelseServiceTest {
         service.behandleJournalpost(record.journalpostId)
 
         verify(exactly = 0) {
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         }
 
     }
@@ -184,6 +209,10 @@ class JournalføringHendelseServiceTest {
 
         every {
             mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(consumerRecord.value())
+        } returns false
+
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
         } returns false
 
         service.prosesserNyHendelse(consumerRecord.value(),
@@ -230,7 +259,7 @@ class JournalføringHendelseServiceTest {
 
         verify(exactly = 0) {
             mockHendelseloggRepository.save(any())
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         }
 
     }
