@@ -60,6 +60,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                 beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
         )
         oppdatertOppgave.leggTilMetadata("kanLageBlankett", "true")
+        log.info("Oppdaterer oppgave $oppgaveId med kanLageBlankett = true")
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
