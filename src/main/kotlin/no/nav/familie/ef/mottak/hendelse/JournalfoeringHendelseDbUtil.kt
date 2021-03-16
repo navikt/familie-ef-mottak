@@ -49,7 +49,7 @@ class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepo
 
     private fun opprettMetadata(journalpost: Journalpost): Properties {
         return Properties().apply {
-            this["personIdent"] = journalpost.bruker?.id
+            this["personIdent"] = journalpost.bruker?.id ?: "Ukjent"
             this["journalpostId"] = journalpost.journalpostId
             if (!MDC.get(MDCConstants.MDC_CALL_ID).isNullOrEmpty()) {
                 this["callId"] = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
