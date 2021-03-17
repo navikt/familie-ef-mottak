@@ -58,9 +58,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
                 beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
+                behandlesAvApplikasjon = "familie-ef-sak-blankett"
         )
-        oppdatertOppgave.leggTilMetadata("kanLageBlankett", "true")
-        log.info("Oppdaterer oppgave $oppgaveId med kanLageBlankett = true")
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
@@ -116,7 +115,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             val feilmelding = response.melding
             secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
             return feilmelding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             secureLogger.error("Feilet ved parsing av feilstatus", e)
             throw httpStatusCodeException
         }
@@ -125,8 +124,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
         log.info("Skipper oppretting av journalførings-oppgave. " +
-                "Fant åpen oppgave av type ${oppgavetype} for " +
-                "journalpostId=${journalpostId}")
+                 "Fant åpen oppgave av type ${oppgavetype} for " +
+                 "journalpostId=${journalpostId}")
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
