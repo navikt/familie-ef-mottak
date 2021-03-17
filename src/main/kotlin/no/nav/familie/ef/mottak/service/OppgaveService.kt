@@ -43,8 +43,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost)
+    fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon)
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
@@ -57,8 +57,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
-                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-                behandlesAvApplikasjon = "familie-ef-sak-blankett"
+                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]"
         )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }

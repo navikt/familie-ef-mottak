@@ -22,7 +22,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost) =
+    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   tema = Tema.ENF,
@@ -31,7 +31,9 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   fristFerdigstillelse = LocalDate.now().plusDays(2),
                                   beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = null)
+                                  enhetsnummer = null,
+                                  behandlesAvApplikasjon = behandlesAvApplikasjon
+            )
 
     private fun hentHoveddokumentTittel(journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")

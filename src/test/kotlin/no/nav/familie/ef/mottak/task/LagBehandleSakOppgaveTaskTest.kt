@@ -7,9 +7,7 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.service.INFOTRYGD
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -17,10 +15,9 @@ import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.familie.util.FnrGenerator
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
-import org.assertj.core.api.Assertions.assertThat as assertThat
 
 internal class LagBehandleSakOppgaveTaskTest {
 
@@ -29,7 +26,8 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val oppgaveService: OppgaveService = mockk()
     private val sakService: SakService = mockk()
     private val taskRepository: TaskRepository = mockk()
-    private val lagBehandleSakOppgaveTask = LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
+    private val lagBehandleSakOppgaveTask =
+            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
@@ -38,28 +36,25 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns true
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-        every { oppgaveService.lagBehandleSakOppgave(any())  } returns 99L
-        every { taskRepository.save(capture(taskSlot)) } .answers { taskSlot.captured }
+        every { oppgaveService.lagBehandleSakOppgave(any(), "familie-ef-sak-blankett") } returns 99L
+        every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         verify(exactly = 1) {
-            oppgaveService.lagBehandleSakOppgave(any())
+            oppgaveService.lagBehandleSakOppgave(any(), "familie-ef-sak-blankett")
         }
         assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
     }
 
     @Test
     internal fun `skal ikke lage behandle-sak-oppgave dersom infotrygdsak finnes fra før`() {
-        val taskSlot = slot<Task>()
-
         every { sakService.kanOppretteInfotrygdSak(any()) } returns false
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-
-
+        
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         verify(exactly = 0) {
-            oppgaveService.lagBehandleSakOppgave(any())
+            oppgaveService.lagBehandleSakOppgave(any(), "")
         }
     }
 
