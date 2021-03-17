@@ -43,8 +43,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost)
+    fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String): Long {
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon)
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
 
         log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
@@ -53,11 +53,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return nyOppgave.oppgaveId
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String): Long {
+    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String, behandlesAvApplikasjon: String): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
-                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]"
+                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
+                behandlesAvApplikasjon = behandlesAvApplikasjon
         )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
@@ -114,7 +115,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             val feilmelding = response.melding
             secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
             return feilmelding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             secureLogger.error("Feilet ved parsing av feilstatus", e)
             throw httpStatusCodeException
         }
@@ -123,8 +124,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
         log.info("Skipper oppretting av journalførings-oppgave. " +
-                "Fant åpen oppgave av type ${oppgavetype} for " +
-                "journalpostId=${journalpostId}")
+                 "Fant åpen oppgave av type ${oppgavetype} for " +
+                 "journalpostId=${journalpostId}")
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
