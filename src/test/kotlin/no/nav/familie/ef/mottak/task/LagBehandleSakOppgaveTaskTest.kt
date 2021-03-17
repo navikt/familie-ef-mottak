@@ -36,12 +36,12 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns true
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-        every { oppgaveService.lagBehandleSakOppgave(any(), "familie-ef-sak-blankett") } returns 99L
+        every { oppgaveService.lagBehandleSakOppgave(any(), "") } returns 99L
         every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         verify(exactly = 1) {
-            oppgaveService.lagBehandleSakOppgave(any(), "familie-ef-sak-blankett")
+            oppgaveService.lagBehandleSakOppgave(any(), "")
         }
         assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
     }
@@ -51,7 +51,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns false
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-        
+
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), "")

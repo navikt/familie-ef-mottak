@@ -34,6 +34,7 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
         val saksnummer = "12345A01"
         val saksblokkSlot = slot<String>()
         val saksnummerSlot = slot<String>()
+        val behandlesAvApplikasjonSlot = slot<String>()
         val soknad = Soknad(id = UUID.randomUUID().toString(),
                             fnr = "12345678901",
                             søknadJson = "",
@@ -45,10 +46,19 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
                                                               FAGOMRÅDE_ENSLIG_FORSØRGER,
                                                               any())
         } returns saksnummer
-        every { oppgaveService.oppdaterOppgave(oppgaveId, capture(saksblokkSlot), capture(saksnummerSlot)) } returns oppgaveId
+        every {
+            oppgaveService.oppdaterOppgave(oppgaveId,
+                                           capture(saksblokkSlot),
+                                           capture(saksnummerSlot),
+                                           capture(behandlesAvApplikasjonSlot))
+        } returns oppgaveId
         oppdaterBehandleSakOppgaveTask.doTask(Task(type = "", payload = "", properties = properties))
         assertThat(saksblokkSlot.captured).isEqualTo(saksblokk)
         assertThat(saksnummerSlot.captured).isEqualTo(saksnummer)
+        assertThat(behandlesAvApplikasjonSlot.captured).isEqualTo("familie-ef-sak-blankett")
+
     }
+
+
 
 }
