@@ -45,25 +45,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String): Long {
         val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon)
-        try {
-            val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-            log.info("Oppretter ny behandle-sak-oppgave med oppgaveId=${nyOppgave.oppgaveId} " +
-                     "for journalpost journalpostId=${journalpost.journalpostId}")
-            return nyOppgave.oppgaveId
-        } catch (httpStatusCodeException: HttpStatusCodeException) {
-            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
-                val oppgaveId = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY)).oppgaveId
-                log.warn("Oppgave kunne ikke finne enhet for behandle-sak-oppgave med oppgaveId=${oppgaveId} "
-                         + "for journalpost journalpostId=${journalpost.journalpostId}. Bruker ENHETSNUMMER_NAY")
-                return oppgaveId
-            } else {
-                log.error("Oppgave kunne ikke finne enhet for behandle-sak-oppgave  "
-                          + "for journalpost journalpostId=${journalpost.journalpostId}. Bruker ENHETSNUMMER_NAY")
-
-                throw httpStatusCodeException
-            }
-
-        }
+        return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
     }
 
     fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String, behandlesAvApplikasjon: String): Long {
@@ -106,15 +88,15 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest,
-                                                                             journalpost: Journalpost): Long? {
+                                                                             journalpost: Journalpost): Long {
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-            log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId}")
+            log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId}")
             nyOppgave.oppgaveId
         } catch (httpStatusCodeException: HttpStatusCodeException) {
             if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
                 val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
-                log.info("Oppretter ny journalførings-oppgave med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
+                log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
                 nyOppgave.oppgaveId
             } else {
                 throw httpStatusCodeException
