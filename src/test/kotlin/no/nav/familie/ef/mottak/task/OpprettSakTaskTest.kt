@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
+import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.DateTimeService
@@ -39,7 +39,7 @@ internal class OpprettSakTaskTest {
     private val soknad = Soknad(søknadJson = "",
                                 dokumenttype = "noe",
                                 saksnummer = saksnummer,
-                                journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+                                journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                                 fnr = FnrGenerator.generer())
 
     private val soknadSlot = slot<Soknad>()

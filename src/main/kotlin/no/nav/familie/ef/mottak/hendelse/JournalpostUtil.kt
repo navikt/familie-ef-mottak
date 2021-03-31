@@ -4,6 +4,10 @@ import io.micrometer.core.instrument.Metrics
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.log.IdUtils
+import no.nav.familie.log.mdc.MDCConstants
+import org.slf4j.MDC
+import java.util.*
 
 
 fun Journalpost.skalBehandles() = this.erTemaEnfOgTypeI() && this.journalstatus == Journalstatus.MOTTATT && this.gyldigKanal()
@@ -36,6 +40,17 @@ fun Journalpost.incrementMetric() {
         JournalpostState.UGYLDIG_KANAL,
         JournalpostState.GYLDIG -> Metrics.counter(this.kanalMetricName()).increment()
 
+    }
+}
+
+fun Journalpost.metadata(): Properties {
+    val journalpost = this
+    return Properties().apply {
+        this["personIdent"] = journalpost.bruker?.id ?: "Ukjent"
+        this["journalpostId"] = journalpost.journalpostId
+        if (!MDC.get(MDCConstants.MDC_CALL_ID).isNullOrEmpty()) {
+            this["callId"] = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
+        }
     }
 }
 

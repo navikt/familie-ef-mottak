@@ -1,13 +1,11 @@
 package no.nav.familie.ef.mottak.task
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
+import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -25,9 +23,10 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val søknadService: SøknadService = mockk()
     private val oppgaveService: OppgaveService = mockk()
     private val sakService: SakService = mockk()
+    private val journalføringsoppgaveService: JournalføringsoppgaveService = mockk()
     private val taskRepository: TaskRepository = mockk()
     private val lagBehandleSakOppgaveTask =
-            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
+            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository, journalføringsoppgaveService)
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
@@ -51,15 +50,20 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns false
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
+        every { journalføringsoppgaveService.lagEksternJournalføringTask(any()) } just runs
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), "")
+        }
+        verify(exactly = 1) {
+            journalføringsoppgaveService.lagEksternJournalføringTask(any())
         }
     }
 
     private fun mockJournalpost(): Journalpost {
-        return Journalpost(journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+        return Journalpost(journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                            journalposttype = Journalposttype.I,
                            journalstatus = Journalstatus.MOTTATT,
                            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
@@ -75,7 +79,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         return Soknad(søknadJson = "",
                       dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
                       saksnummer = null,
-                      journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+                      journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                       fnr = FnrGenerator.generer())
     }
 

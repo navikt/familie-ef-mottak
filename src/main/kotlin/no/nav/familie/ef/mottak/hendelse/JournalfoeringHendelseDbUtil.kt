@@ -40,20 +40,10 @@ class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepo
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
         logger.info("Oppretter task LagEksternJournalføringsoppgaveTask, feature skrudd på")
-        val metadata = opprettMetadata(journalpost)
         val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
                                       payload = journalpost.journalpostId,
-                                      metadata = metadata)
+                                      metadata = journalpost.metadata())
         taskRepository.save(journalføringsTask)
     }
 
-    private fun opprettMetadata(journalpost: Journalpost): Properties {
-        return Properties().apply {
-            this["personIdent"] = journalpost.bruker?.id ?: "Ukjent"
-            this["journalpostId"] = journalpost.journalpostId
-            if (!MDC.get(MDCConstants.MDC_CALL_ID).isNullOrEmpty()) {
-                this["callId"] = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
-            }
-        }
-    }
 }

@@ -23,7 +23,9 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
             val hendelseRecord = consumerRecord.value()
             val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
             MDC.put(MDCConstants.MDC_CALL_ID, callId)
-            journalhendelseService.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
+            if (hendelseRecord.skalProsesseres()) {
+                journalhendelseService.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
+            }
             ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved prosessering av journalhendelser ", e)
