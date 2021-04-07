@@ -6,7 +6,8 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
-import no.nav.familie.ef.mottak.task.LagBehandleSakOppgaveTask
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.slf4j.Logger
@@ -20,7 +21,8 @@ class JournalhendelseService(
     val featureToggleService: FeatureToggleService,
     val soknadRepository: SoknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
-    val taskRepository: TaskRepositoryUtvidet
+    val taskRepository: TaskRepositoryUtvidet,
+    val journalføringsoppgaveService: JournalføringsoppgaveService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
@@ -37,7 +39,7 @@ class JournalhendelseService(
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 val journalpost = journalpostClient.hentJournalpost(hendelseRecord.journalpostId.toString())
                 val lagBehandleSakOppgaveTask = Task(
-                    type = LagBehandleSakOppgaveTask.TYPE,
+                    type = LagJournalføringsoppgaveTask.TYPE,
                     payload = hendelseRecord.journalpostId.toString(),
                     metadata = journalpost.metadata()
                 )

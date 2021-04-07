@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.task
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
@@ -50,15 +53,11 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns false
         every { søknadService.get("123L") } returns mockSøknad()
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-        every { journalføringsoppgaveService.lagEksternJournalføringTask(any()) } just runs
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
 
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), "")
-        }
-        verify(exactly = 1) {
-            journalføringsoppgaveService.lagEksternJournalføringTask(any())
         }
     }
 

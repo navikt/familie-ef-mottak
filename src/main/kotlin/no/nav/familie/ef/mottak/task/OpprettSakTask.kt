@@ -53,7 +53,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
             Task(OppdaterBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         } else {
             logger.warn("Det er allerede opprettet en sak for denne oppgaven - trolig gjort manuelt av saksbehandler")
-            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+            Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
         }
         taskRepository.save(nesteTask)
     }

@@ -9,8 +9,8 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.DateTimeService
 import no.nav.familie.ef.mottak.service.SakService
-import no.nav.familie.ef.mottak.task.HentSaksnummerFraJoarkTask
 import no.nav.familie.ef.mottak.task.LagBehandleSakOppgaveTask
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.ef.mottak.task.OppdaterBehandleSakOppgaveTask
 import no.nav.familie.ef.mottak.task.OpprettSakTask
 import no.nav.familie.prosessering.domene.Task
@@ -104,7 +104,7 @@ internal class OpprettSakTaskTest {
 
         opprettSakTask.doTask(lagTask())
 
-        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured.type)
+        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured.type)
     }
 
     @Test

@@ -26,7 +26,7 @@ internal class LagJournalføringsoppgaveTaskTest {
     private val featureToggleService: FeatureToggleService = mockk(relaxed = true)
     private val søknadRepository: SoknadRepository = mockk(relaxed = true)
     private val lagJournalføringsoppgaveTask: LagJournalføringsoppgaveTask =
-            LagJournalføringsoppgaveTask(taskRepository, oppgaveService, søknadRepository, featureToggleService)
+            LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
 
     @Test
     fun `Skal opprette SendMeldingTilDittNavTask og HentSaksnummerFraJoark når LagJournalføringsoppgaveTask er utført`() {
@@ -62,7 +62,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
@@ -79,7 +79,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
@@ -96,7 +96,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagBehandleSakOppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV, slot.captured[1].type)
     }
 
