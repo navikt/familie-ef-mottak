@@ -6,7 +6,6 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -21,8 +20,7 @@ class JournalhendelseService(
     val featureToggleService: FeatureToggleService,
     val soknadRepository: SoknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
-    val taskRepository: TaskRepositoryUtvidet,
-    val journalføringsoppgaveService: JournalføringsoppgaveService
+    val taskRepository: TaskRepositoryUtvidet
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
@@ -38,12 +36,12 @@ class JournalhendelseService(
         if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(hendelseRecord)) {
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 val journalpost = journalpostClient.hentJournalpost(hendelseRecord.journalpostId.toString())
-                val lagBehandleSakOppgaveTask = Task(
+                val eksternJournalføringsoppgaveTask = Task(
                     type = LagEksternJournalføringsoppgaveTask.TYPE,
                     payload = hendelseRecord.journalpostId.toString(),
                     metadata = journalpost.metadata()
                 )
-                taskRepository.save(lagBehandleSakOppgaveTask)
+                taskRepository.save(eksternJournalføringsoppgaveTask)
             } else {
                 alleredeBehandletJournalpostCounter.increment()
                 logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
