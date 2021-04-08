@@ -5,6 +5,7 @@ import ch.qos.logback.core.read.ListAppender
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +37,7 @@ abstract class IntegrasjonSpringRunnerTest {
     @Autowired private lateinit var soknadRepository: SoknadRepository
     @Autowired private lateinit var vedleggRepository: VedleggRepository
     @Autowired private lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
+    @Autowired private lateinit var taskRepository: TaskRepository
 
     @LocalServerPort
     private var port: Int? = 0
@@ -46,6 +48,7 @@ abstract class IntegrasjonSpringRunnerTest {
         dokumentasjonsbehovRepository.deleteAllInBatch()
         vedleggRepository.deleteAllInBatch()
         soknadRepository.deleteAllInBatch()
+        taskRepository.deleteAll()
     }
 
     protected fun getPort(): String {
