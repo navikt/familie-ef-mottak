@@ -9,7 +9,7 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -41,6 +41,7 @@ class JournalhendelseServiceTest {
     @MockK(relaxed = true)
     lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
 
+    @MockK(relaxed = true)
     lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     lateinit var service: JournalhendelseService
@@ -140,7 +141,7 @@ class JournalhendelseServiceTest {
         assertThat(taskSlot.captured).isNotNull
         assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
     }
 
     @Test

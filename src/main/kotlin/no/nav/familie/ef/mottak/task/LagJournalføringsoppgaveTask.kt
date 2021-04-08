@@ -21,12 +21,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
         val hentSaksnummerFraJoarkTask = Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
-
-        val sendMeldingTilDittNavTask =
-                Task(SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
-                     task.payload,
-                     task.metadata)
-        taskRepository.saveAll(listOf(hentSaksnummerFraJoarkTask, sendMeldingTilDittNavTask))
+        taskRepository.save(hentSaksnummerFraJoarkTask)
     }
 
     companion object {

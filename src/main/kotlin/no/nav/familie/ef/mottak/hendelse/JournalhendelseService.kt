@@ -7,7 +7,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.slf4j.Logger
@@ -39,7 +39,7 @@ class JournalhendelseService(
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 val journalpost = journalpostClient.hentJournalpost(hendelseRecord.journalpostId.toString())
                 val lagBehandleSakOppgaveTask = Task(
-                    type = LagJournalføringsoppgaveTask.TYPE,
+                    type = LagEksternJournalføringsoppgaveTask.TYPE,
                     payload = hendelseRecord.journalpostId.toString(),
                     metadata = journalpost.metadata()
                 )
