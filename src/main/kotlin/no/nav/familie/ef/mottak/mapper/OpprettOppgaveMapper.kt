@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.felles.journalpost.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.oppgave.*
 import org.springframework.stereotype.Component
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -28,7 +29,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.BehandleSak,
                                   journalpostId = journalpost.journalpostId,
-                                  fristFerdigstillelse = LocalDate.now().plusDays(2),
+                                  fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
@@ -58,8 +59,26 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
      * Frist skal være 1 dag hvis den opprettes før kl. 12
      * og 2 dager hvis den opprettes etter kl. 12
      *
+     * Helgedager må ekskluderes
+     *
      */
     fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
+         val frist = when (gjeldendeTid.dayOfWeek) {
+            DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
+            DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
+            DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))
+            else -> fristBasertPåKlokkeslett(gjeldendeTid)
+        }
+
+        return when (frist.dayOfWeek) {
+            DayOfWeek.SATURDAY -> frist.plusDays(2)
+            DayOfWeek.SUNDAY -> frist.plusDays(1)
+            else -> frist
+        }
+    }
+
+
+    private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate {
         return if (gjeldendeTid.hour >= 12) {
             return gjeldendeTid.plusDays(2).toLocalDate()
         } else {
