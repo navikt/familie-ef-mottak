@@ -117,7 +117,7 @@ class JournalhendelseServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockTaskRepositoryUtvidet, mockJournalføringsoppgaveService)
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockTaskRepositoryUtvidet)
     }
 
     @Test

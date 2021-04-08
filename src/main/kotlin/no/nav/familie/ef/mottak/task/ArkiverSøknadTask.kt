@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
 class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
                         private val taskRepository: TaskRepository,
-                        private val featureToggleService: FeatureToggleService,
                         private val soknadRepository: SoknadRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -27,7 +25,7 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = if (skalForsøkeÅOppretteSak(task)) {
+        val nesteTask = if (erSøknadOmStønad(task.payload)) {
             Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         } else {
             Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
@@ -39,10 +37,6 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
                 task.metadata)
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
-    }
-
-    private fun skalForsøkeÅOppretteSak(task: Task): Boolean {
-        return erSøknadOmStønad(task.payload) && featureToggleService.isEnabled("familie.ef.mottak.opprett-sak")
     }
 
     private fun erSøknadOmStønad(søknadId: String): Boolean {
