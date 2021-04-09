@@ -32,7 +32,7 @@ internal class TaskRepositoryUtvidetTest : IntegrasjonSpringRunnerTest() {
     internal fun `skal ikke få treff dersom det ikke eksisterer en task med riktig type`() {
         val journalpostId = "12345678"
         taskRepositoryUtvidet.save(Task(
-                type = SjekkOmJournalpostHarFåttEnSak.HENT_EKSTERN_SAKSNUMMER_FRA_JOARK,
+                type = SjekkOmJournalpostHarFåttEnSak.TYPE,
                 payload = journalpostId
         ))
 

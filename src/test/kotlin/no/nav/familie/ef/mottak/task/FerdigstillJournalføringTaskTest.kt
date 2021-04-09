@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
@@ -14,7 +14,6 @@ import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.collections.HashMap
 
 internal class FerdigstillJournalføringTaskTest {
 
@@ -33,7 +32,7 @@ internal class FerdigstillJournalføringTaskTest {
 
         every {
             søknadService.get("123L")
-        } returns Soknad(søknadJson = "",
+        } returns Søknad(søknadJson = "",
                          dokumenttype = "noe",
                          journalpostId = journalpostId,
                          fnr = FnrGenerator.generer())

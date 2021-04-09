@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -20,17 +20,17 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                                      private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        val soknad: Soknad = søknadService.get(task.payload)
+        val søknad: Søknad = søknadService.get(task.payload)
         val oppgaveId: String? = task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] as String?
-        soknad.saksnummer?.trim()?.let { saksnummer ->
+        søknad.saksnummer?.trim()?.let { saksnummer ->
             oppgaveId?.let {
                 val infotrygdSaksnummer = saksnummer.trim().let {
-                    integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, soknad.fnr)
+                    integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, søknad.fnr)
                 }
                 oppgaveService.oppdaterOppgave(it.toLong(), saksnummer, infotrygdSaksnummer, "familie-ef-sak-blankett")
             } ?: error("Kan ikke oppdatere oppgave uten oppgaveId")
 
-        } ?: error("Kan ikke oppdatere behandle-sak-oppgave ettersom søknad=${soknad.id} mangler saksnummer")
+        } ?: error("Kan ikke oppdatere behandle-sak-oppgave ettersom søknad=${søknad.id} mangler saksnummer")
     }
 
     override fun onCompletion(task: Task) {
@@ -39,7 +39,6 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     companion object {
-
         const val TYPE = "oppdaterBehandleSakOppgave"
     }
 }

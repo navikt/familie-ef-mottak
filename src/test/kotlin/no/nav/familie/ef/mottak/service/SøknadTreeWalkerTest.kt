@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils.readFile
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil.readFile
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

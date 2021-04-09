@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.mapper
 import no.nav.familie.ef.mottak.config.*
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper.toDto
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -49,7 +49,7 @@ internal class ArkiverDokumentRequestMapperTest {
         }).withFailMessage("Skjema arbeidssøker kan ikke ha vedlegg")
     }
 
-    private fun lagSøknad(søknad: Any, dokumenttype: String): Soknad = Soknad(
+    private fun lagSøknad(søknad: Any, dokumenttype: String): Søknad = Søknad(
             søknadJson = objectMapper.writeValueAsString(søknad),
             fnr = "123",
             søknadPdf = Fil(byteArrayOf(12)),

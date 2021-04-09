@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.*
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokument
@@ -9,17 +9,17 @@ import no.nav.familie.kontrakter.felles.dokarkiv.FilType
 
 object ArkiverDokumentRequestMapper {
 
-    fun toDto(soknad: Soknad,
+    fun toDto(søknad: Søknad,
               vedlegg: List<Vedlegg>): ArkiverDokumentRequest {
         val søknadsdokumentJson =
-                Dokument(soknad.søknadJson.toByteArray(), FilType.JSON, null, "hoveddokument", soknad.dokumenttype)
+                Dokument(søknad.søknadJson.toByteArray(), FilType.JSON, null, "hoveddokument", søknad.dokumenttype)
         val søknadsdokumentPdf =
-                Dokument(soknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", soknad.dokumenttype)
+                Dokument(søknad.søknadPdf!!.bytes, FilType.PDFA, null, "hoveddokument", søknad.dokumenttype)
         val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)
-        return ArkiverDokumentRequest(soknad.fnr,
+        return ArkiverDokumentRequest(søknad.fnr,
                                       false,
                                       hoveddokumentvarianter,
-                                      mapVedlegg(vedlegg, soknad.dokumenttype))
+                                      mapVedlegg(vedlegg, søknad.dokumenttype))
     }
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {

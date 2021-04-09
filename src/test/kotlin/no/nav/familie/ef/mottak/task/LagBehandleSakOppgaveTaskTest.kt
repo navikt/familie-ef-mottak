@@ -4,10 +4,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
@@ -15,7 +14,6 @@ import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -36,7 +34,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         val taskSlot = slot<Task>()
 
         every { sakService.kanOppretteInfotrygdSak(any()) } returns true
-        every { søknadService.get("123L") } returns mockSøknad()
+        every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
         every { oppgaveService.lagBehandleSakOppgave(any(), "") } returns 99L
         every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
@@ -51,7 +49,7 @@ internal class LagBehandleSakOppgaveTaskTest {
     @Test
     internal fun `skal ikke lage behandle-sak-oppgave dersom infotrygdsak finnes fra før`() {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns false
-        every { søknadService.get("123L") } returns mockSøknad()
+        every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
@@ -62,7 +60,7 @@ internal class LagBehandleSakOppgaveTaskTest {
     }
 
     private fun mockJournalpost(): Journalpost {
-        return Journalpost(journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+        return Journalpost(journalpostId = JOURNALPOST_DIGITALSØKNAD,
                            journalposttype = Journalposttype.I,
                            journalstatus = Journalstatus.MOTTATT,
                            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
@@ -73,13 +71,4 @@ internal class LagBehandleSakOppgaveTaskTest {
                            journalforendeEnhet = null,
                            sak = null)
     }
-
-    private fun mockSøknad(): Soknad {
-        return Soknad(søknadJson = "",
-                      dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-                      saksnummer = null,
-                      journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
-                      fnr = FnrGenerator.generer())
-    }
-
 }

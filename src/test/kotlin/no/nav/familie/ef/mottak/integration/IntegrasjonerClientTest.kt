@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.TestUtils
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.http.sts.StsRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
@@ -59,7 +59,7 @@ internal class IntegrasjonerClientTest {
     fun `skal kunne plukke ut hele feilmeldingen fra ressurs selv om body er større enn 400`() {
         val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
         wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
-                .willReturn(serverError().withBody(TestUtils.readFile("opprett_oppgave_feilet.json"))))
+                .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))))
         try {
             integrasjonerClient.lagOppgave(OpprettOppgaveRequest(ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
                     saksId = null,

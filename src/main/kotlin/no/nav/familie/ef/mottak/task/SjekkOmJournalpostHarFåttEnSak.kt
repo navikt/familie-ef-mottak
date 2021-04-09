@@ -7,7 +7,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = SjekkOmJournalpostHarFåttEnSak.HENT_EKSTERN_SAKSNUMMER_FRA_JOARK,
+@TaskStepBeskrivelse(taskStepType = SjekkOmJournalpostHarFåttEnSak.TYPE,
                      maxAntallFeil = 20,
                      beskrivelse = "Hent saksnummer fra joark",
                      triggerTidVedFeilISekunder = 60 * 60 * 12)
@@ -18,8 +18,7 @@ class SjekkOmJournalpostHarFåttEnSak(private val hentJournalpostService: HentJo
     }
 
     companion object {
-
-        const val HENT_EKSTERN_SAKSNUMMER_FRA_JOARK = "hentEksternSaksnummerFraJoark"
+        const val TYPE = "hentEksternSaksnummerFraJoark"
     }
 
 }

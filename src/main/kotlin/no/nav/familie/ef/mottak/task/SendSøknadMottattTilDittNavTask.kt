@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.SEND_SØKNAD_MOTTATT_TIL_DITT_NAV
+import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.TYPE
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
+@TaskStepBeskrivelse(taskStepType = TYPE,
                      beskrivelse = "Send 'søknad mottatt' til ditt nav")
 class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProducer,
                                       private val søknadService: SøknadService) : AsyncTaskStep {
@@ -48,8 +48,7 @@ class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProduce
 
 
     companion object {
-
-        const val SEND_SØKNAD_MOTTATT_TIL_DITT_NAV = "sendSøknadMottattTilDittNav"
+        const val TYPE = "sendSøknadMottattTilDittNav"
     }
 }
 

@@ -5,7 +5,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,13 +19,11 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     }
 
     override fun onCompletion(task: Task) {
-        val hentSaksnummerFraJoarkTask = Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+        val hentSaksnummerFraJoarkTask = Task(HentSaksnummerFraJoarkTask.TYPE, task.payload, task.metadata)
         taskRepository.save(hentSaksnummerFraJoarkTask)
     }
 
     companion object {
-
-        private val LOG = LoggerFactory.getLogger(LagJournalføringsoppgaveTask::class.java)
         const val TYPE = "lagJournalføringsoppgave"
     }
 }

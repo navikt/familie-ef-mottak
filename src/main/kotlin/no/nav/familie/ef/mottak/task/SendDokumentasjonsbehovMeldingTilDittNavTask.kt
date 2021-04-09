@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.DittNavConfig
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-@TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV,
+@TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
                      beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
 class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNavKafkaProducer,
                                                    private val søknadService: SøknadService,
@@ -46,7 +46,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
 
     private fun link(søknadId: UUID) = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=$søknadId"
 
-    private fun lagLinkMelding(søknad: Soknad, dokumentasjonsbehov: List<Dokumentasjonsbehov>): LinkMelding {
+    private fun lagLinkMelding(søknad: Søknad, dokumentasjonsbehov: List<Dokumentasjonsbehov>): LinkMelding {
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = søknadstypeTekst(søknadType)
         val søknadId = UUID.fromString(søknad.id)
@@ -73,8 +73,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
     }
 
     companion object {
-
-        const val SEND_MELDING_TIL_DITT_NAV = "sendMeldingTilDittNav"
+        const val TYPE = "sendMeldingTilDittNav"
     }
 
 }
