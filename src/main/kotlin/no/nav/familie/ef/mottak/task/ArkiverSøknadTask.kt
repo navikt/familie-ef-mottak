@@ -26,9 +26,9 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
 
     override fun onCompletion(task: Task) {
         val nesteTask = if (erSøknadOmStønad(task.payload)) {
-            Task(LagBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
+            Task(TYPE.nesteHovedflytTask(), task.payload, task.metadata)
         } else {
-            Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
+            Task(fallbackTask(), task.payload, task.metadata)
         }
 
         val sendMeldingTilDittNavTask =

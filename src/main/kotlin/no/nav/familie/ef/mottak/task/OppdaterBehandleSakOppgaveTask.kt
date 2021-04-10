@@ -34,7 +34,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task(OppdaterJournalføringTask.TYPE, task.payload, task.metadata)
+        val nesteTask = Task(TYPE.nesteHovedflytTask(), task.payload, task.metadata)
         taskRepository.save(nesteTask)
     }
 

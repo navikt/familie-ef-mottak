@@ -19,7 +19,7 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
     }
 
     override fun onCompletion(task: Task) {
-        val hentSaksnummerFraJoarkTask = Task(HentSaksnummerFraJoarkTask.TYPE, task.payload, task.metadata)
+        val hentSaksnummerFraJoarkTask = Task(TYPE.nesteFallbackTask(), task.payload, task.metadata)
         taskRepository.save(hentSaksnummerFraJoarkTask)
     }
 
