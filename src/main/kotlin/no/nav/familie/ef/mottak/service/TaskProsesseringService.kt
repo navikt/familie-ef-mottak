@@ -19,7 +19,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
         val properties =
                 Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
                         .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskRepository.save(Task(LagPdfTask.LAG_PDF,
+        taskRepository.save(Task(LagPdfTask.TYPE,
                                  søknad.id,
                                  properties))
 
