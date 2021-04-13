@@ -9,7 +9,6 @@ import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
-import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -117,7 +116,7 @@ class JournalhendelseServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockTaskRepositoryUtvidet)
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockJournalføringsoppgaveService, mockTaskRepositoryUtvidet)
     }
 
     @Test
@@ -133,15 +132,13 @@ class JournalhendelseServiceTest {
 
         service.prosesserNyHendelse(record, OFFSET)
 
-        val taskSlot = slot<Task>()
+        val taskSlot = slot<Journalpost>()
         verify {
-            mockTaskRepositoryUtvidet.save(capture(taskSlot))
+            mockJournalføringsoppgaveService.lagEksternJournalføringTask(capture(taskSlot))
         }
 
         assertThat(taskSlot.captured).isNotNull
-        assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.kanal).isEqualTo(record.mottaksKanal)
     }
 
     @Test

@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -18,6 +19,7 @@ class JournalhendelseService(
     val featureToggleService: FeatureToggleService,
     val soknadRepository: SoknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
+    val journalføringsoppgaveService: JournalføringsoppgaveService,
     val taskRepository: TaskRepositoryUtvidet
 ) {
 
@@ -34,7 +36,7 @@ class JournalhendelseService(
         if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(hendelseRecord)) {
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 val journalpost = journalpostClient.hentJournalpost(hendelseRecord.journalpostId.toString())
-                journalfoeringHendelseDbUtil.lagreEksternJournalføringsTask(journalpost)
+                journalføringsoppgaveService.lagEksternJournalføringTask(journalpost)
             } else {
                 alleredeBehandletJournalpostCounter.increment()
                 logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
