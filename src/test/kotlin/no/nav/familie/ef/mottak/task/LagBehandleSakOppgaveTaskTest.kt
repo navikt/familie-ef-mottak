@@ -8,7 +8,6 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -26,10 +25,9 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val søknadService: SøknadService = mockk()
     private val oppgaveService: OppgaveService = mockk()
     private val sakService: SakService = mockk()
-    private val journalføringsoppgaveService: JournalføringsoppgaveService = mockk()
     private val taskRepository: TaskRepository = mockk()
     private val lagBehandleSakOppgaveTask =
-            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository, journalføringsoppgaveService)
+            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
