@@ -15,7 +15,7 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThat
@@ -44,6 +44,9 @@ class JournalhendelseServiceTest {
 
     @MockK(relaxed = true)
     lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+
+    @MockK(relaxed = true)
+    lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
 
     lateinit var service: JournalhendelseService
 
@@ -118,7 +121,7 @@ class JournalhendelseServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(integrasjonerClient, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockTaskRepositoryUtvidet)
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockJournalføringsoppgaveService, mockTaskRepositoryUtvidet)
     }
 
     @Test
@@ -134,15 +137,13 @@ class JournalhendelseServiceTest {
 
         service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
 
-        val taskSlot = slot<Task>()
+        val taskSlot = slot<Journalpost>()
         verify {
-            mockTaskRepositoryUtvidet.save(capture(taskSlot))
+            mockJournalføringsoppgaveService.lagEksternJournalføringTask(capture(taskSlot))
         }
 
         assertThat(taskSlot.captured).isNotNull
-        assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.kanal).isEqualTo(journalføringhendelseRecord.mottaksKanal)
     }
 
     @Test

@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -21,8 +20,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                                 private val søknadService: SøknadService,
                                 private val integrasjonerClient: IntegrasjonerClient,
                                 private val sakService: SakService,
-                                private val taskRepository: TaskRepository,
-                                private val journalføringsoppgaveService: JournalføringsoppgaveService) : AsyncTaskStep {
+                                private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     val antallJournalposterAutomatiskBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.automatisk.behandlet")
     val antallJournalposterManueltBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.manuelt.behandlet")
