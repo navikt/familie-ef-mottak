@@ -24,10 +24,9 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val søknadService: SøknadService = mockk()
     private val oppgaveService: OppgaveService = mockk()
     private val sakService: SakService = mockk()
-    private val journalføringsoppgaveService: JournalføringsoppgaveService = mockk()
     private val taskRepository: TaskRepository = mockk()
     private val lagBehandleSakOppgaveTask =
-            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository, journalføringsoppgaveService)
+            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {

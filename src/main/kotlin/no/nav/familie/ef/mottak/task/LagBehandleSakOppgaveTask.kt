@@ -21,8 +21,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                                 private val søknadService: SøknadService,
                                 private val integrasjonerClient: IntegrasjonerClient,
                                 private val sakService: SakService,
-                                private val taskRepository: TaskRepository,
-                                private val journalføringsoppgaveService: JournalføringsoppgaveService) : AsyncTaskStep {
+                                private val taskRepository: TaskRepository) : AsyncTaskStep {
 
     val antallJournalposterAutomatiskBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.automatisk.behandlet")
     val antallJournalposterManueltBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.manuelt.behandlet")
