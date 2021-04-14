@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
