@@ -42,6 +42,7 @@ fun søknad(
     journalpostId: String? = null,
     fnr: String = "11111122222",
     saksnummer: String? = null,
+    skalAutomatiskJournalføres: Boolean = true
 ) =
     Søknad(
         id = id,
@@ -51,5 +52,6 @@ fun søknad(
         opprettetTid = opprettetTid,
         taskOpprettet = taskOpprettet,
         journalpostId = journalpostId,
-        saksnummer = saksnummer
+        saksnummer = saksnummer,
+        skalAutomatiskJournalføres = skalAutomatiskJournalføres
     )

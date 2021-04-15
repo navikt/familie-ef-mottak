@@ -1,0 +1,1 @@
+ALTER TABLE soknad ADD COLUMN skal_automatisk_journalfores BOOLEAN NOT NULL;

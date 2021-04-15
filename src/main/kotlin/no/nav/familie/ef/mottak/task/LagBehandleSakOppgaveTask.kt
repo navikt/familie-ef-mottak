@@ -29,7 +29,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val søknad: Søknad = søknadService.get(task.payload)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        if (sakService.kanOppretteInfotrygdSak(søknad)) {
+        if (sakService.kanOppretteInfotrygdSak(søknad) && søknad.skalAutomatiskJournalføres) {
             val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
             task.metadata.apply {
                 this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
@@ -39,7 +39,6 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     override fun onCompletion(task: Task) {
-
         val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] == null) {
             antallJournalposterManueltBehandlet.increment()
             Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
@@ -49,7 +48,6 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         }
 
         taskRepository.save(nesteTask)
-
     }
 
     companion object {
