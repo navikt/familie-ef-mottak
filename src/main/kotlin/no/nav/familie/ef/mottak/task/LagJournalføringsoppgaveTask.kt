@@ -14,8 +14,8 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                    private val oppgaveService: OppgaveService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
-
+        val skalIkkeAutomatiskJournalføres = task.metadata[SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY] == true
+        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload, skalIkkeAutomatiskJournalføres)
     }
 
     override fun onCompletion(task: Task) {
@@ -25,5 +25,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     companion object {
         const val TYPE = "lagJournalføringsoppgave"
+        const val SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY = "skalIkkeAutomatiskJournalføres"
     }
 }

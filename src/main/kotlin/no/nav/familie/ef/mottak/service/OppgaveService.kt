@@ -26,11 +26,11 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     private val ENHETSNUMMER_NAY: String = "4489"
 
-    fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
+    fun lagJournalføringsoppgaveForSøknadId(søknadId: String, skalIkkeAutomatiskJournalføres: Boolean): Long? {
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        return lagJournalføringsoppgave(journalpost, skalIkkeAutomatiskJournalføres)
     }
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
@@ -58,7 +58,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost, skalIkkeAutomatiskJournalføres: Boolean = false): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -75,7 +75,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     null
                 }
                 else -> {
-                    val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
+                    val behandlesAvApplikasjon =
+                            if (skalIkkeAutomatiskJournalføres) "familie-ef-sak-førstegangsbehandling" else null
+                    val opprettOppgave = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }

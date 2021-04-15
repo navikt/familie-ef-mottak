@@ -7,6 +7,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask.Companion.SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -29,10 +30,14 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val søknad: Søknad = søknadService.get(task.payload)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        if (sakService.kanOppretteInfotrygdSak(søknad) && søknad.skalAutomatiskJournalføres) {
-            val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
+        if (sakService.kanOppretteInfotrygdSak(søknad)) {
             task.metadata.apply {
-                this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
+                if(søknad.skalAutomatiskJournalføres) {
+                    val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
+                    this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
+                } else {
+                    this[SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY] = true
+                }
             }
             taskRepository.save(task)
         }

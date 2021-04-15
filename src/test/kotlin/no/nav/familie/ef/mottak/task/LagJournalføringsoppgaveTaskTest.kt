@@ -49,7 +49,7 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         lagJournalføringsoppgaveTask.doTask(Task(type = "", payload = uuid, properties = Properties()))
 
-        verify { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid) }
+        verify { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid, skalIkkeAutomatiskJournalføres) }
     }
 
 

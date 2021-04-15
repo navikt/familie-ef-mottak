@@ -63,7 +63,7 @@ internal class OppgaveServiceTest {
                          fnr = Testdata.randomFnr())
 
 
-        oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
+        oppgaveService.lagJournalføringsoppgaveForSøknadId("123", skalIkkeAutomatiskJournalføres)
 
         verify(exactly = 1) {
             integrasjonerClient.lagOppgave(any())
@@ -73,7 +73,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
+        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost)
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
         } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -92,7 +92,7 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost, skalIkkeAutomatiskJournalføres)
 
 
         assertEquals(1, oppgaveResponse)
