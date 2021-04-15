@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -35,12 +35,9 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
         val saksblokkSlot = slot<String>()
         val saksnummerSlot = slot<String>()
         val behandlesAvApplikasjonSlot = slot<String>()
-        val soknad = Soknad(id = UUID.randomUUID().toString(),
-                            fnr = "12345678901",
-                            søknadJson = "",
-                            dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+        val søknad = søknad(dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                             saksnummer = saksblokk)
-        every { søknadService.get(any()) } returns soknad
+        every { søknadService.get(any()) } returns søknad
         every {
             integrasjonerClient.finnInfotrygdSaksnummerForSak(saksblokk,
                                                               FAGOMRÅDE_ENSLIG_FORSØRGER,
@@ -58,7 +55,4 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
         assertThat(behandlesAvApplikasjonSlot.captured).isEqualTo("familie-ef-sak-blankett")
 
     }
-
-
-
 }

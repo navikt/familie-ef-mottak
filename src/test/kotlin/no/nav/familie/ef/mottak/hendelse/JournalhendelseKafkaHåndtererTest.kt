@@ -2,10 +2,11 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.hendelse
 
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.hendelse.JournalhendelseKafkaHåndterer
 import no.nav.familie.ef.mottak.hendelse.JournalhendelseService
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_PAPIRSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.OFFSET
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.journalføringHendelseRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,13 +34,13 @@ class JournalhendelseKafkaHåndtererTest {
 
     @Test
     fun `Ikke gyldige hendelsetyper skal ignoreres`() {
-        val ugyldigHendelsetypeRecord = opprettRecord(
-            journalpostId = JournalhendelseServiceTest.JOURNALPOST_PAPIRSØKNAD,
+        val ugyldigHendelsetypeRecord = journalføringHendelseRecord(
+            JOURNALPOST_PAPIRSØKNAD,
             hendelseType = "UgyldigType"
         )
         val consumerRecord = ConsumerRecord(
             "topic", 1,
-            JournalhendelseServiceTest.OFFSET,
+            OFFSET,
             42L, ugyldigHendelsetypeRecord
         )
 
@@ -53,10 +54,10 @@ class JournalhendelseKafkaHåndtererTest {
 
     @Test
     fun `Hendelser hvor journalpost ikke har tema ENF skal ignoreres`() {
-        val ukjentTemaRecord = opprettRecord(journalpostId = JournalhendelseServiceTest.JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
+        val ukjentTemaRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
 
         val consumerRecord = ConsumerRecord("topic", 1,
-            JournalhendelseServiceTest.OFFSET,
+            OFFSET,
             42L, ukjentTemaRecord)
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
@@ -64,7 +65,6 @@ class JournalhendelseKafkaHåndtererTest {
         verify(exactly = 0) {
             journalhendelseServiceMock.prosesserNyHendelse(any(), any())
         }
-
     }
 
 
@@ -72,8 +72,8 @@ class JournalhendelseKafkaHåndtererTest {
     fun `kast unntak for prosesserhendelse, forvent not acknowledged`() {
         val consumerRecord = ConsumerRecord(
             "topic", 1,
-            JournalhendelseServiceTest.OFFSET,
-            42L, opprettRecord(JournalhendelseServiceTest.JOURNALPOST_PAPIRSØKNAD)
+            OFFSET,
+            42L, journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
         )
         every {
             journalhendelseServiceMock.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
@@ -91,9 +91,8 @@ class JournalhendelseKafkaHåndtererTest {
     @Test
     fun `send inn gyldig consumer record, forvent acknowledged`() {
         val consumerRecord = ConsumerRecord(
-            "topic", 1,
-            JournalhendelseServiceTest.OFFSET,
-            42L, opprettRecord(JournalhendelseServiceTest.JOURNALPOST_PAPIRSØKNAD)
+            "topic", 1, OFFSET,
+            42L, journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
         )
 
         every {
@@ -105,24 +104,5 @@ class JournalhendelseKafkaHåndtererTest {
         verify(exactly = 1) {
             ack.acknowledge()
         }
-    }
-
-    private fun opprettRecord(
-        journalpostId: String,
-        hendelseType: String = "MidlertidigJournalført",
-        temaNytt: String = "ENF"
-    ): JournalfoeringHendelseRecord {
-        return JournalfoeringHendelseRecord(
-            JournalhendelseServiceTest.HENDELSE_ID,
-            1,
-            hendelseType,
-            journalpostId.toLong(),
-            "M",
-            "ENF",
-            temaNytt,
-            "SKAN_NETS",
-            "kanalReferanseId",
-            "ENF"
-        )
     }
 }

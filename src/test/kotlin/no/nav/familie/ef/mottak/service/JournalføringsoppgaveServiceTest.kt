@@ -8,7 +8,7 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
-import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -25,7 +25,7 @@ class JournalføringsoppgaveServiceTest {
     lateinit var mockTaskRepositoryUtvidet: TaskRepositoryUtvidet
 
     @MockK(relaxed = true)
-    lateinit var mockSøknadRepository: SoknadRepository
+    lateinit var mockSøknadRepository: SøknadRepository
 
     @MockK(relaxed = true)
     lateinit var mockHendelseloggRepository: HendelsesloggRepository

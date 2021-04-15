@@ -8,7 +8,7 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagPdfTask.LAG_PDF, beskrivelse = "Lag pdf")
+@TaskStepBeskrivelse(taskStepType = LagPdfTask.TYPE, beskrivelse = "Lag pdf")
 class LagPdfTask(private val pdfService: PdfService,
                  private val taskRepository: TaskRepository) : AsyncTaskStep {
 
@@ -23,8 +23,7 @@ class LagPdfTask(private val pdfService: PdfService,
     }
 
     companion object {
-
-        const val LAG_PDF = "lagPdf"
+        const val TYPE = "lagPdf"
     }
 
 }

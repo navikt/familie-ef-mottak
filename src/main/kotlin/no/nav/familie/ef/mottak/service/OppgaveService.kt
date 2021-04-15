@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -27,8 +27,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private val ENHETSNUMMER_NAY: String = "4489"
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
-        val soknad: Soknad = søknadService.get(søknadId)
-        val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
+        val søknad: Søknad = søknadService.get(søknadId)
+        val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         return lagJournalføringsoppgave(journalpost)
     }

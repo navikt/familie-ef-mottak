@@ -4,7 +4,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
@@ -52,8 +52,8 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     }
 
-    fun kanOppretteInfotrygdSak(soknad: Soknad): Boolean {
-        val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(soknad.fnr, BrukerIdType.FNR),
+    fun kanOppretteInfotrygdSak(søknad: Søknad): Boolean {
+        val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(søknad.fnr, BrukerIdType.FNR),
                                                                           50,
                                                                           listOf(Tema.ENF),
                                                                           listOf(Journalposttype.I))
@@ -62,9 +62,9 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val fagsakFinnesForStønad = journalposter.any {
             it.sak?.fagsaksystem in listOf(INFOTRYGD, EF_SAK)
             && it.sak?.fagsakId != null
-            && gjelderStønad(soknad, it)
+            && gjelderStønad(søknad, it)
         }
-        loggKanOppretteInfotrygdSak(soknad.fnr, fagsakFinnesForStønad, soknad.dokumenttype)
+        loggKanOppretteInfotrygdSak(søknad.fnr, fagsakFinnesForStønad, søknad.dokumenttype)
         return !fagsakFinnesForStønad
     }
 
@@ -103,8 +103,8 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun gjelderStønad(soknad: Soknad, journalpost: Journalpost): Boolean {
-        return when (soknad.dokumenttype) {
+    private fun gjelderStønad(søknad: Søknad, journalpost: Journalpost): Boolean {
+        return when (søknad.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> harBrevkode(journalpost, DokumentBrevkode.OVERGANGSSTØNAD)
             DOKUMENTTYPE_BARNETILSYN -> harBrevkode(journalpost, DokumentBrevkode.BARNETILSYN)
             DOKUMENTTYPE_SKOLEPENGER -> harBrevkode(journalpost, DokumentBrevkode.SKOLEPENGER)
@@ -124,23 +124,23 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
 
-    private fun lagOpprettInfotrygdSakRequest(soknad: Soknad, oppgaveId: String): OpprettInfotrygdSakRequest {
-        val stønadsklassifisering = stønadsklassifiseringMap[soknad.dokumenttype]
-        val enheter = integrasjonerClient.finnBehandlendeEnhet(soknad.fnr)
+    private fun lagOpprettInfotrygdSakRequest(søknad: Søknad, oppgaveId: String): OpprettInfotrygdSakRequest {
+        val stønadsklassifisering = stønadsklassifiseringMap[søknad.dokumenttype]
+        val enheter = integrasjonerClient.finnBehandlendeEnhet(søknad.fnr)
         if (enheter.size > 1) {
-            logger.warn("Fant mer enn 1 enhet for ${soknad.id}: $enheter")
+            logger.warn("Fant mer enn 1 enhet for ${søknad.id}: $enheter")
         }
 
         val mottagendeEnhet = enheter.firstOrNull()?.enhetId
-                              ?: error("Ingen behandlende enhet funnet for søknad ${soknad.id} ")
+                              ?: error("Ingen behandlende enhet funnet for søknad ${søknad.id} ")
 
-        return OpprettInfotrygdSakRequest(fnr = soknad.fnr,
+        return OpprettInfotrygdSakRequest(fnr = søknad.fnr,
                                           fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
                                           stonadsklassifisering2 = stønadsklassifisering,
                                           type = SAKSTYPE_SØKNAD,
                                           opprettetAvOrganisasjonsEnhetsId = mottagendeEnhet,
                                           mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
-                                          mottattdato = soknad.opprettetTid.toLocalDate(),
+                                          mottattdato = søknad.opprettetTid.toLocalDate(),
                                           sendBekreftelsesbrev = false,
                                           oppgaveId = oppgaveId)
     }

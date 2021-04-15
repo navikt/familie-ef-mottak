@@ -4,7 +4,7 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -17,7 +17,7 @@ import javax.transaction.Transactional
 class JournalhendelseService(
     val journalpostClient: IntegrasjonerClient,
     val featureToggleService: FeatureToggleService,
-    val soknadRepository: SoknadRepository,
+    val søknadRepository: SøknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
     val journalføringsoppgaveService: JournalføringsoppgaveService,
     val taskRepository: TaskRepositoryUtvidet

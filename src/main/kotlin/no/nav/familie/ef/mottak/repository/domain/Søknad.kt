@@ -8,7 +8,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "soknad")
-data class Soknad(@Id
+data class Søknad(@Id
                   val id: String = UUID.randomUUID().toString(),
                   @Convert(converter = StringValCryptoConverter::class)
                   @Column(name = "soknad_json")

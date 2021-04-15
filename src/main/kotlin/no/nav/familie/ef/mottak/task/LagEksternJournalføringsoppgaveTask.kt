@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
                      beskrivelse = "Lager oppgave i GoSys")
 class LagEksternJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                           private val oppgaveService: OppgaveService,
-                                          private val soknadRepository: SoknadRepository
+                                          private val søknadRepository: SøknadRepository
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -23,17 +23,16 @@ class LagEksternJournalføringsoppgaveTask(private val taskRepository: TaskRepos
         // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId
         if (finnesIkkeSøknadMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
-            taskRepository.save(Task(SjekkOmJournalpostHarFåttEnSak.HENT_EKSTERN_SAKSNUMMER_FRA_JOARK,
+            taskRepository.save(Task(SjekkOmJournalpostHarFåttEnSak.TYPE,
                                      task.payload,
                                      task.metadata))
         }
     }
 
     private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) =
-            soknadRepository.findByJournalpostId(journalpostId) == null
+            søknadRepository.findByJournalpostId(journalpostId) == null
 
     companion object {
-
         const val TYPE = "lagEksternJournalføringsoppgave"
     }
 

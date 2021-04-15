@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.repository.SoknadRepository
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DateTimeService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -25,7 +25,7 @@ import java.time.LocalTime
 class OpprettSakTask(private val taskRepository: TaskRepository,
                      private val sakService: SakService,
                      private val dateTimeService: DateTimeService,
-                     private val soknadRepository: SoknadRepository) : AsyncTaskStep {
+                     private val søknadRepository: SøknadRepository) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -34,9 +34,9 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
                                 ?: error("Fant ikke oppgaveId for behandle-sak-oppgave i tasken")
         try {
             val sakId = sakService.opprettSak(task.payload, oppgaveId)?.trim()
-            val soknad = soknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
+            val soknad = søknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
             val soknadMedSaksnummer = soknad.copy(saksnummer = sakId)
-            soknadRepository.save(soknadMedSaksnummer)
+            søknadRepository.save(soknadMedSaksnummer)
             opprettNesteTask(task, soknadMedSaksnummer)
         } catch (e: Exception) {
             if (erKlokkenMellom21Og06()) {
@@ -48,8 +48,8 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
     }
 
     //Ikke endre til onCompletion
-    private fun opprettNesteTask(task: Task, soknad: Soknad) {
-        val nesteTask = if (soknad?.saksnummer != null) {
+    private fun opprettNesteTask(task: Task, søknad: Søknad) {
+        val nesteTask = if (søknad?.saksnummer != null) {
             Task(OppdaterBehandleSakOppgaveTask.TYPE, task.payload, task.metadata)
         } else {
             logger.warn("Det er allerede opprettet en sak for denne oppgaven - trolig gjort manuelt av saksbehandler")
@@ -73,7 +73,6 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
-
         const val TYPE = "opprettSak"
     }
 }

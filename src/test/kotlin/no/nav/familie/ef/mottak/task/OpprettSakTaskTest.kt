@@ -4,9 +4,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
-import no.nav.familie.ef.mottak.repository.SoknadRepository
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
+import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DateTimeService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.task.LagBehandleSakOppgaveTask
@@ -16,7 +17,6 @@ import no.nav.familie.ef.mottak.task.OpprettSakTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.familie.prosessering.error.RekjørSenereException
-import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,28 +30,24 @@ import java.util.*
 internal class OpprettSakTaskTest {
 
     private val sakService: SakService = mockk()
-    private val soknadRepository: SoknadRepository = mockk()
+    private val søknadRepository: SøknadRepository = mockk()
     private val taskRepository: TaskRepository = mockk()
     private val dateTimeService: DateTimeService = mockk()
-    private val opprettSakTask = OpprettSakTask(taskRepository, sakService, dateTimeService, soknadRepository)
+    private val opprettSakTask = OpprettSakTask(taskRepository, sakService, dateTimeService, søknadRepository)
 
     private val saksnummer = "A01"
-    private val soknad = Soknad(søknadJson = "",
-                                dokumenttype = "noe",
-                                saksnummer = saksnummer,
-                                journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
-                                fnr = FnrGenerator.generer())
+    private val soknad = søknad(saksnummer = saksnummer,journalpostId = JOURNALPOST_DIGITALSØKNAD)
 
-    private val soknadSlot = slot<Soknad>()
+    private val soknadSlot = slot<Søknad>()
 
     @BeforeEach
     internal fun setUp() {
         every {
-            soknadRepository.findByIdOrNull("123")
+            søknadRepository.findByIdOrNull("123")
         } returns soknad
         every { dateTimeService.now() } returns LocalDateTime.of(2020, 1, 1, 12, 0)
         every {
-            soknadRepository.save(capture(soknadSlot))
+            søknadRepository.save(capture(soknadSlot))
         } returns soknad
     }
 

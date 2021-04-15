@@ -3,21 +3,22 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.INFOTRYGD
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.FerdigstillJournalføringTask
 import no.nav.familie.ef.mottak.task.OppdaterJournalføringTask
-import no.nav.familie.kontrakter.felles.dokarkiv.*
+import no.nav.familie.kontrakter.felles.dokarkiv.IdType
+import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
+import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.Sak
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -44,11 +45,8 @@ internal class OppdaterJournalføringTaskTest {
 
         every {
             søknadService.get("123")
-        } returns Soknad(søknadJson = "",
-                         dokumenttype = "noe",
-                         saksnummer = saksnummer,
-                         journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
-                         fnr = FnrGenerator.generer())
+        } returns søknad(saksnummer = saksnummer,
+                         journalpostId = JOURNALPOST_DIGITALSØKNAD)
 
         every {
             integrasjonerClient.oppdaterJournalpost(capture(oppdaterJournalpostRequestSlot), capture(journalpostIdSlot))
@@ -56,7 +54,7 @@ internal class OppdaterJournalføringTaskTest {
 
         every {
             integrasjonerClient.hentJournalpost(any())
-        } returns Journalpost(journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+        } returns Journalpost(journalpostId = JOURNALPOST_DIGITALSØKNAD,
                               journalposttype = Journalposttype.I,
                               journalstatus = Journalstatus.MOTTATT,
                               bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
@@ -70,7 +68,7 @@ internal class OppdaterJournalføringTaskTest {
 
         oppdaterJournalføringTask.doTask(Task(type = "", payload = "123", properties = Properties()))
 
-        assertThat(journalpostIdSlot.captured).isEqualTo(JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
+        assertThat(journalpostIdSlot.captured).isEqualTo(JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
                                                                               fagsaksystem = INFOTRYGD,
                                                                               sakstype = "FAGSAK"))

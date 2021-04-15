@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.task
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -26,10 +26,10 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     val antallJournalposterManueltBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.manuelt.behandlet")
 
     override fun doTask(task: Task) {
-        val soknad: Soknad = søknadService.get(task.payload)
-        val journalpostId: String = soknad.journalpostId ?: error("Søknad mangler journalpostId")
+        val søknad: Søknad = søknadService.get(task.payload)
+        val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        if (sakService.kanOppretteInfotrygdSak(soknad)) {
+        if (sakService.kanOppretteInfotrygdSak(søknad)) {
             val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
             task.metadata.apply {
                 this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
@@ -53,7 +53,6 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     companion object {
-
         const val behandleSakOppgaveIdKey = "behandleSakOppgaveId"
         const val TYPE = "lagBehandleSakOppgave"
     }
