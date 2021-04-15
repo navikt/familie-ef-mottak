@@ -58,8 +58,8 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
     }
 
     private fun <T : Any> skalAutomatiskJournalføres(søknad: SøknadMedVedlegg<T>): Boolean {
-        val getenv = System.getenv("CLUSTER")
-        val erIDev = getenv == "dev-gcp"
+        val getenv = System.getenv("NAIS_CLUSTER_NAME")
+        val erIDev = getenv == "dev-fss"
         logger.info("env=$getenv") // TODO remove
         return when {
             erIDev -> søknad.skalAutomatiskJournalføres
