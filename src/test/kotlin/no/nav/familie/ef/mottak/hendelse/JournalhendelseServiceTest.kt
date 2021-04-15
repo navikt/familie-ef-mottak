@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SoknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.TestInstance
 import org.slf4j.MDC
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JournalføringHendelseServiceTest {
+class JournalhendelseServiceTest {
 
     @MockK
     lateinit var integrasjonerClient: IntegrasjonerClient
@@ -37,6 +37,10 @@ class JournalføringHendelseServiceTest {
     @MockK(relaxed = true)
     lateinit var mockSøknadRepository: SoknadRepository
 
+    @MockK(relaxed = true)
+    lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
+
+    @MockK(relaxed = true)
     lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     lateinit var service: JournalhendelseService
@@ -112,7 +116,7 @@ class JournalføringHendelseServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil)
+        service = JournalhendelseService(integrasjonerClient, mockFeatureToggleService, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockJournalføringsoppgaveService, mockTaskRepositoryUtvidet)
     }
 
     @Test
@@ -128,15 +132,13 @@ class JournalføringHendelseServiceTest {
 
         service.prosesserNyHendelse(record, OFFSET)
 
-        val taskSlot = slot<Task>()
+        val taskSlot = slot<Journalpost>()
         verify {
-            mockTaskRepositoryUtvidet.save(capture(taskSlot))
+            mockJournalføringsoppgaveService.lagEksternJournalføringTask(capture(taskSlot))
         }
 
         assertThat(taskSlot.captured).isNotNull
-        assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.kanal).isEqualTo(record.mottaksKanal)
     }
 
     @Test
@@ -159,30 +161,6 @@ class JournalføringHendelseServiceTest {
         verify(exactly = 1) {
             mockHendelseloggRepository.save(any())
         }
-    }
-
-    @Test
-    fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
-        val record = opprettRecord(JOURNALPOST_FERDIGSTILT)
-
-        service.behandleJournalpost(record.journalpostId)
-
-        verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
-        }
-
-    }
-
-    @Test
-    fun `Utgående journalposter skal ignoreres`() {
-        val record = opprettRecord(JOURNALPOST_UTGÅENDE_DOKUMENT)
-
-        service.behandleJournalpost(record.journalpostId)
-
-        verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
-        }
-
     }
 
     @Test
@@ -228,40 +206,6 @@ class JournalføringHendelseServiceTest {
         assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
         assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
-    }
-
-    @Test
-    fun `Ikke gyldige hendelsetyper skal ignoreres`() {
-        val ugyldigHendelsetypeRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, hendelseType = "UgyldigType")
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, ugyldigHendelsetypeRecord)
-
-        service.prosesserNyHendelse(consumerRecord.value(),
-                                    consumerRecord.offset())
-
-        verify(exactly = 0) {
-            mockHendelseloggRepository.save(any())
-        }
-
-    }
-
-    @Test
-    fun `Hendelser hvor journalpost ikke har tema ENF skal ignoreres`() {
-        val ukjentTemaRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
-
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, ukjentTemaRecord)
-
-        service.prosesserNyHendelse(consumerRecord.value(),
-                                    consumerRecord.offset())
-
-        verify(exactly = 0) {
-            mockHendelseloggRepository.save(any())
-            mockTaskRepositoryUtvidet.save(any())
-        }
-
     }
 
     private fun opprettRecord(journalpostId: String,

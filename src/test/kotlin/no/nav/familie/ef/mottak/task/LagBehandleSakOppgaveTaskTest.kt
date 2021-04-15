@@ -5,7 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
+import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.OppgaveService
@@ -53,13 +53,14 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), "")
         }
     }
 
     private fun mockJournalpost(): Journalpost {
-        return Journalpost(journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+        return Journalpost(journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                            journalposttype = Journalposttype.I,
                            journalstatus = Journalstatus.MOTTATT,
                            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
@@ -75,7 +76,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         return Soknad(søknadJson = "",
                       dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
                       saksnummer = null,
-                      journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+                      journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                       fnr = FnrGenerator.generer())
     }
 

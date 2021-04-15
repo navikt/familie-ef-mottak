@@ -24,6 +24,7 @@ internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `henting av metrics går fint`() {
+        taskRepository.deleteAll()
         soknadRepository.save(soknad())
         //oppretter 2 søknader som har opprettet tid nå som ikke skal vises
         soknadRepository.save(soknad(opprettetTid = LocalDateTime.now()))

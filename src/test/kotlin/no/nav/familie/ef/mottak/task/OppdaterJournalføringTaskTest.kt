@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.hendelse.JournalføringHendelseServiceTest
+import no.nav.familie.ef.mottak.hendelse.JournalhendelseServiceTest
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
@@ -47,7 +47,7 @@ internal class OppdaterJournalføringTaskTest {
         } returns Soknad(søknadJson = "",
                          dokumenttype = "noe",
                          saksnummer = saksnummer,
-                         journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+                         journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                          fnr = FnrGenerator.generer())
 
         every {
@@ -56,7 +56,7 @@ internal class OppdaterJournalføringTaskTest {
 
         every {
             integrasjonerClient.hentJournalpost(any())
-        } returns Journalpost(journalpostId = JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
+        } returns Journalpost(journalpostId = JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD,
                               journalposttype = Journalposttype.I,
                               journalstatus = Journalstatus.MOTTATT,
                               bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
@@ -70,7 +70,7 @@ internal class OppdaterJournalføringTaskTest {
 
         oppdaterJournalføringTask.doTask(Task(type = "", payload = "123", properties = Properties()))
 
-        assertThat(journalpostIdSlot.captured).isEqualTo(JournalføringHendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
+        assertThat(journalpostIdSlot.captured).isEqualTo(JournalhendelseServiceTest.JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
                                                                               fagsaksystem = INFOTRYGD,
                                                                               sakstype = "FAGSAK"))

@@ -12,7 +12,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.collections.HashMap
@@ -51,20 +50,6 @@ internal class FerdigstillJournalføringTaskTest {
 
         assertThat(journalpostIdSlot.captured).isEqualTo(journalpostId)
         assertThat(enhetSlot.captured).isEqualTo(enhetId)
-    }
-
-    @Test
-    fun `Skal gå til FerdigstillOppgaveTask når FerdigstillJournalføringTask er utført`() {
-        val slot = slot<Task>()
-        every {
-            taskRepository.save(capture(slot))
-        } answers {
-            slot.captured
-        }
-
-        ferdigstillJournalføringTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
-
-        Assertions.assertEquals(FerdigstillOppgaveTask.TYPE, slot.captured.type)
     }
 
 }

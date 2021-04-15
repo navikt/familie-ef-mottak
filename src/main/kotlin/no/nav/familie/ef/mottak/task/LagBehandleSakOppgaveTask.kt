@@ -34,7 +34,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
             task.metadata.apply {
                 this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
             }
-                taskRepository.save(task)
+            taskRepository.save(task)
         }
     }
 
@@ -42,7 +42,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
 
         val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] == null) {
             antallJournalposterManueltBehandlet.increment()
-            Task(HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK, task.payload, task.metadata)
+            Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
         } else {
             antallJournalposterAutomatiskBehandlet.increment()
             Task(OpprettSakTask.TYPE, task.payload, task.metadata)
