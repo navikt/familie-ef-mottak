@@ -63,7 +63,7 @@ internal class OppgaveServiceTest {
                          fnr = Testdata.randomFnr())
 
 
-        oppgaveService.lagJournalføringsoppgaveForSøknadId("123", skalIkkeAutomatiskJournalføres)
+        oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
 
         verify(exactly = 1) {
             integrasjonerClient.lagOppgave(any())
@@ -92,7 +92,7 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost, skalIkkeAutomatiskJournalføres)
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
 
 
         assertEquals(1, oppgaveResponse)

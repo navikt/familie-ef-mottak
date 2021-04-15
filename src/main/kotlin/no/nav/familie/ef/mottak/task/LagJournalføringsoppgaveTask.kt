@@ -15,7 +15,8 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun doTask(task: Task) {
         val skalIkkeAutomatiskJournalføres = task.metadata[SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY] == true
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload, skalIkkeAutomatiskJournalføres)
+        val behandlesAvApplikasjon = if (skalIkkeAutomatiskJournalføres) "familie-ef-sak-førstegangsbehandling" else null
+        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload, behandlesAvApplikasjon)
     }
 
     override fun onCompletion(task: Task) {
