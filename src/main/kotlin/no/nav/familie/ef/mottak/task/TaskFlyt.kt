@@ -1,20 +1,23 @@
 package no.nav.familie.ef.mottak.task
 
-fun kafkaHendelseFlyt() = listOf(LagEksternJournalføringsoppgaveTask.TYPE, SjekkOmJournalpostHarFåttEnSak.TYPE)
+fun kafkaHendelseFlyt() = listOf(TaskType(LagEksternJournalføringsoppgaveTask.TYPE), TaskType(SjekkOmJournalpostHarFåttEnSak.TYPE))
 
 fun hovedflyt() = listOf(
-    LagPdfTask.TYPE,
-    ArkiverSøknadTask.TYPE,
-    LagBehandleSakOppgaveTask.TYPE,
-    OpprettSakTask.TYPE,
-    OppdaterBehandleSakOppgaveTask.TYPE,
-    OppdaterJournalføringTask.TYPE,
-    FerdigstillJournalføringTask.TYPE
+    TaskType(LagPdfTask.TYPE),
+    TaskType(ArkiverSøknadTask.TYPE),
+    TaskType(LagBehandleSakOppgaveTask.TYPE),
+    TaskType(OpprettSakTask.TYPE),
+    TaskType(OppdaterBehandleSakOppgaveTask.TYPE),
+    TaskType(OppdaterJournalføringTask.TYPE),
+    TaskType(FerdigstillJournalføringTask.TYPE)
 )
 
-fun fallbackFlyt() = listOf(LagJournalføringsoppgaveTask.TYPE, HentSaksnummerFraJoarkTask.TYPE)
-fun fallbackTask() = fallbackFlyt().first() // Akkurat nå er alle fallback-tasks det samme, men utvid logikk her dersom det skulle endres
+val fallbacks = mapOf(
+    TaskType(ArkiverSøknadTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
+    TaskType(LagBehandleSakOppgaveTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
+    TaskType(OpprettSakTask.TYPE) to LagJournalføringsoppgaveTask.TYPE
+)
+fun TaskType.nesteFallbackTask() = fallbacks[this] ?: error("Finner ikke fallback til $this")
 
-fun String.nesteHovedflytTask() = hovedflyt().zipWithNext().first {this == it.first}.second
-fun String.nesteFallbackTask() = fallbackFlyt().zipWithNext().first {this == it.first}.second
-fun String.nesteKafkaHendelseFlyt() = kafkaHendelseFlyt().zipWithNext().first { this == it.first }.second
+fun TaskType.nesteHovedflytTask() = hovedflyt().zipWithNext().first {this == it.first}.second.type
+fun TaskType.nesteKafkaHendelseFlytTask() = kafkaHendelseFlyt().zipWithNext().first { this == it.first }.second.type

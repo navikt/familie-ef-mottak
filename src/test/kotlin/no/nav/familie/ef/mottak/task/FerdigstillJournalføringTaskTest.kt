@@ -9,7 +9,6 @@ import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,8 +19,7 @@ internal class FerdigstillJournalføringTaskTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val arkiveringService: ArkiveringService = ArkiveringService(integrasjonerClient, søknadService, mockk())
-    private val taskRepository: TaskRepository = mockk()
-    private val ferdigstillJournalføringTask = FerdigstillJournalføringTask(arkiveringService, taskRepository)
+    private val ferdigstillJournalføringTask = FerdigstillJournalføringTask(arkiveringService)
 
     @Test
     internal fun `skal ferdigstille journalføring med riktig id og enhet`() {

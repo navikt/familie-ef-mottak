@@ -42,10 +42,10 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
 
         val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] != null) {
             antallJournalposterAutomatiskBehandlet.increment()
-            Task(TYPE.nesteHovedflytTask(), task.payload, task.metadata)
+            Task(TaskType(TYPE).nesteHovedflytTask(), task.payload, task.metadata)
         } else {
             antallJournalposterManueltBehandlet.increment()
-            Task(fallbackTask(), task.payload, task.metadata)
+            Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         }
 
         taskRepository.save(nesteTask)
