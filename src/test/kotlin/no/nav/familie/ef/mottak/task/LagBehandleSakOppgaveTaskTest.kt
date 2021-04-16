@@ -62,10 +62,10 @@ internal class LagBehandleSakOppgaveTaskTest {
     }
 
     @Test
-    internal fun `hvis skalAutomatiskJournalføres er true så skal man ikke kalle på lagBehandleSakOppgave`() {
+    internal fun `hvis skalBehandlesINySaksbehandling er true så skal man ikke kalle på lagBehandleSakOppgave`() {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns true
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD,
-                                                           skalAutomatiskJournalføres = false)
+                                                           behandleINySaksbehandling = true)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
@@ -74,7 +74,7 @@ internal class LagBehandleSakOppgaveTaskTest {
             sakService.kanOppretteInfotrygdSak(any()) // skal kalle på kanOppretteInfotrygdSak pga logging
         }
         verify(exactly = 0) {
-            oppgaveService.lagBehandleSakOppgave(any(), "")
+            oppgaveService.lagBehandleSakOppgave(any(), any())
         }
     }
 

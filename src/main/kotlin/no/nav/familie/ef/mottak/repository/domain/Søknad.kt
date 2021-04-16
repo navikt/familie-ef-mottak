@@ -25,5 +25,5 @@ data class Søknad(@Id
                   val taskOpprettet: Boolean = false,
                   @Column(name = "opprettet_tid")
                   val opprettetTid: LocalDateTime = LocalDateTime.now(),
-                  @Column(name = "skal_automatisk_journalfores")
-                  val skalAutomatiskJournalføres: Boolean = true)
+                  @Column(name = "behandle_i_ny_saksbehandling")
+                  val behandleINySaksbehandling: Boolean = false)

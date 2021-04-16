@@ -7,7 +7,6 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask.Companion.SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -30,20 +29,17 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val søknad: Søknad = søknadService.get(task.payload)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        if (sakService.kanOppretteInfotrygdSak(søknad)) {
+        if (sakService.kanOppretteInfotrygdSak(søknad) && !søknad.behandleINySaksbehandling) {
+            val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
             task.metadata.apply {
-                if(søknad.skalAutomatiskJournalføres) {
-                    val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
-                    this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
-                } else {
-                    this[SKAL_IKKE_AUTOMATISK_JOURNALFØRES_KEY] = true
-                }
+                this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
             }
             taskRepository.save(task)
         }
     }
 
     override fun onCompletion(task: Task) {
+
         val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] == null) {
             antallJournalposterManueltBehandlet.increment()
             Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
@@ -53,6 +49,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         }
 
         taskRepository.save(nesteTask)
+
     }
 
     companion object {

@@ -18,32 +18,32 @@ object SøknadMapper {
         return objectMapper.readValue(søknad.søknadJson)
     }
 
-    fun fromDto(søknad: SøknadOvergangsstønad, skalAutomatiskJournalføres: Boolean): Søknad {
+    fun fromDto(søknad: SøknadOvergangsstønad, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknad),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                      skalAutomatiskJournalføres = skalAutomatiskJournalføres)
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
-    fun fromDto(søknad: SøknadBarnetilsyn, skalAutomatiskJournalføres: Boolean): Søknad {
+    fun fromDto(søknad: SøknadBarnetilsyn, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknad),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                      skalAutomatiskJournalføres = skalAutomatiskJournalføres)
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-                      skalAutomatiskJournalføres = true)
+                      behandleINySaksbehandling = true)
     }
 
-    fun fromDto(søknadSkolepenger: SøknadSkolepenger, skalAutomatiskJournalføres: Boolean): Søknad {
+    fun fromDto(søknadSkolepenger: SøknadSkolepenger, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknadSkolepenger),
                       fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-                      skalAutomatiskJournalføres = skalAutomatiskJournalføres)
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
 }

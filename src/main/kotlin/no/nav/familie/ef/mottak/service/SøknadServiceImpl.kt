@@ -38,29 +38,29 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
     @Transactional
     override fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                                       vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalAutomatiskJournalføres(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalAutomatiskJournalføres(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalAutomatiskJournalføres(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
-    private fun <T : Any> skalAutomatiskJournalføres(søknad: SøknadMedVedlegg<T>): Boolean {
+    private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
         val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
         return when {
-            erIDev -> søknad.skalAutomatiskJournalføres
+            erIDev -> søknad.behandleINySaksbehandling
             else -> true
         }
     }

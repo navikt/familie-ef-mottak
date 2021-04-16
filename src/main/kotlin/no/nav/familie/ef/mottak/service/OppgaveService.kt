@@ -26,8 +26,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     private val ENHETSNUMMER_NAY: String = "4489"
 
-    fun lagJournalføringsoppgaveForSøknadId(søknadId: String, behandlesAvApplikasjon: String? = null): Long? {
+    fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val søknad: Søknad = søknadService.get(søknadId)
+        val behandlesAvApplikasjon = if (søknad.behandleINySaksbehandling) "familie-ef-sak-førstegangsbehandling" else null
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
