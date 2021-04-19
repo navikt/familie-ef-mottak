@@ -61,7 +61,7 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
         val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
         return when {
             erIDev -> søknad.behandleINySaksbehandling
-            else -> true
+            else -> false
         }
     }
 
