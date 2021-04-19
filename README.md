@@ -1,4 +1,4 @@
-# familie-ef-mottak
+# familie-ef-mottak t
 Mottaksapplikasjon for søknader om overgangsstønad.
 
 ## Kjøre appen
