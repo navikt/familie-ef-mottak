@@ -23,8 +23,10 @@ internal class OppgaveServiceTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
+    private val sakService: SakService = mockk()
     private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient)
-    private val oppgaveService: OppgaveService = OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper)
+    private val oppgaveService: OppgaveService =
+            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService)
 
 
     @BeforeEach
@@ -73,7 +75,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toDto(journalpost)
+        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost)
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
         } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,

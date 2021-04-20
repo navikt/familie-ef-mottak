@@ -7,16 +7,19 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.BrukerIdType
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Properties
 
 internal class LagBehandleSakOppgaveTaskTest {
 
@@ -55,6 +58,23 @@ internal class LagBehandleSakOppgaveTaskTest {
 
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), "")
+        }
+    }
+
+    @Test
+    internal fun `hvis skalBehandlesINySaksbehandling er true så skal man ikke kalle på lagBehandleSakOppgave`() {
+        every { sakService.kanOppretteInfotrygdSak(any()) } returns true
+        every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD,
+                                                           behandleINySaksbehandling = true)
+        every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
+
+        lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+
+        verify(exactly = 1) {
+            sakService.kanOppretteInfotrygdSak(any()) // skal kalle på kanOppretteInfotrygdSak pga logging
+        }
+        verify(exactly = 0) {
+            oppgaveService.lagBehandleSakOppgave(any(), any())
         }
     }
 

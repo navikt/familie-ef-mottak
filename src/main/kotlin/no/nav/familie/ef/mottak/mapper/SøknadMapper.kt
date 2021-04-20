@@ -18,28 +18,32 @@ object SøknadMapper {
         return objectMapper.readValue(søknad.søknadJson)
     }
 
-    fun fromDto(søknad: SøknadOvergangsstønad): Søknad {
+    fun fromDto(søknad: SøknadOvergangsstønad, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknad),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)
+                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
-    fun fromDto(søknad: SøknadBarnetilsyn): Søknad {
+    fun fromDto(søknad: SøknadBarnetilsyn, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknad),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_BARNETILSYN)
+                      dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER)
+                      dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+                      behandleINySaksbehandling = true)
     }
 
-    fun fromDto(søknadSkolepenger: SøknadSkolepenger): Søknad {
+    fun fromDto(søknadSkolepenger: SøknadSkolepenger, behandleINySaksbehandling: Boolean): Søknad {
         return Søknad(søknadJson = objectMapper.writeValueAsString(søknadSkolepenger),
                       fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
-                      dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
+                      dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+                      behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
 }

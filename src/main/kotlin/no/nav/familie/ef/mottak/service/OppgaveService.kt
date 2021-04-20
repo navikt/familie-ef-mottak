@@ -20,7 +20,8 @@ import org.springframework.web.client.HttpStatusCodeException
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val søknadService: SøknadService,
-                     private val opprettOppgaveMapper: OpprettOppgaveMapper) {
+                     private val opprettOppgaveMapper: OpprettOppgaveMapper,
+                     private val sakService: SakService) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -30,7 +31,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        return lagJournalføringsoppgave(journalpost, utledBehandlingsmåte(søknad))
     }
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
@@ -58,7 +59,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: String? = null): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -75,7 +76,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     null
                 }
                 else -> {
-                    val opprettOppgave = opprettOppgaveMapper.toDto(journalpost)
+                    val opprettOppgave = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }
@@ -147,4 +148,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
+    private fun utledBehandlingsmåte(søknad: Søknad) =
+            if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad))
+                "familie-ef-sak-førstegangsbehandling"
+            else null
 }

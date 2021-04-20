@@ -24,4 +24,6 @@ data class Søknad(@Id
                   @Column(name = "task_opprettet")
                   val taskOpprettet: Boolean = false,
                   @Column(name = "opprettet_tid")
-                  val opprettetTid: LocalDateTime = LocalDateTime.now())
+                  val opprettetTid: LocalDateTime = LocalDateTime.now(),
+                  @Column(name = "behandle_i_ny_saksbehandling")
+                  val behandleINySaksbehandling: Boolean = false)
