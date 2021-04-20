@@ -23,8 +23,10 @@ internal class OppgaveServiceTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
+    private val sakService: SakService = mockk()
     private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient)
-    private val oppgaveService: OppgaveService = OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper)
+    private val oppgaveService: OppgaveService =
+            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService)
 
 
     @BeforeEach

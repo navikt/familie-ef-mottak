@@ -20,7 +20,8 @@ import org.springframework.web.client.HttpStatusCodeException
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val søknadService: SøknadService,
-                     private val opprettOppgaveMapper: OpprettOppgaveMapper) {
+                     private val opprettOppgaveMapper: OpprettOppgaveMapper,
+                     private val sakService: SakService) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -28,10 +29,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val søknad: Søknad = søknadService.get(søknadId)
-        val behandlesAvApplikasjon = if (søknad.behandleINySaksbehandling) "familie-ef-sak-førstegangsbehandling" else null
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
+        return lagJournalføringsoppgave(journalpost, utledBehandlingsmåte(søknad))
     }
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
@@ -148,4 +148,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
+    private fun utledBehandlingsmåte(søknad: Søknad) =
+            if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad))
+                "familie-ef-sak-førstegangsbehandling"
+            else null
 }
