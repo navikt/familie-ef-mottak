@@ -40,16 +40,15 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
 
     override fun onCompletion(task: Task) {
 
-        val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] == null) {
-            antallJournalposterManueltBehandlet.increment()
-            Task(LagJournalføringsoppgaveTask.TYPE, task.payload, task.metadata)
-        } else {
+        val nesteTask = if (task.metadata[behandleSakOppgaveIdKey] != null) {
             antallJournalposterAutomatiskBehandlet.increment()
-            Task(OpprettSakTask.TYPE, task.payload, task.metadata)
+            Task(TaskType(TYPE).nesteHovedflytTask(), task.payload, task.metadata)
+        } else {
+            antallJournalposterManueltBehandlet.increment()
+            Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         }
 
         taskRepository.save(nesteTask)
-
     }
 
     companion object {
