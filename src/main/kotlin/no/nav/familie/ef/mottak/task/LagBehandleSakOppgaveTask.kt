@@ -29,7 +29,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         val søknad: Søknad = søknadService.get(task.payload)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        if (sakService.kanOppretteInfotrygdSak(søknad)) {
+        if (sakService.kanOppretteInfotrygdSak(søknad) && !søknad.behandleINySaksbehandling) {
             val lagBehandleSakOppgave = oppgaveService.lagBehandleSakOppgave(journalpost, "")
             task.metadata.apply {
                 this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()

@@ -15,7 +15,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun doTask(task: Task) {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
-
     }
 
     override fun onCompletion(task: Task) {

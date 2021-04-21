@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    fun toDto(journalpost: Journalpost) =
+    fun toJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: String? = null) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   journalpostId = journalpost.journalpostId,
@@ -21,7 +21,8 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = null)
+                                  enhetsnummer = null,
+                                  behandlesAvApplikasjon = behandlesAvApplikasjon)
 
     fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),

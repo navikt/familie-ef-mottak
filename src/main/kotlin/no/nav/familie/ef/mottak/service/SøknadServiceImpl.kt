@@ -10,7 +10,13 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -18,7 +24,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 
@@ -32,23 +38,31 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
     @Transactional
     override fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                                       vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     override fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad)
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+    }
+
+    private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
+        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
+        return when {
+            erIDev -> søknad.behandleINySaksbehandling
+            else -> false
+        }
     }
 
     private fun motta(søknadDb: Søknad,
