@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = SjekkOmJournalpostHarFåttEnSak.TYPE,
                      maxAntallFeil = 20,
                      beskrivelse = "Hent saksnummer fra joark",
-                     triggerTidVedFeilISekunder = 60 * 60 * 12)
+                     triggerTidVedFeilISekunder = 60 * 60 * 12,
+                     settTilManuellOppfølgning = true)
 class SjekkOmJournalpostHarFåttEnSak(private val hentJournalpostService: HentJournalpostService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -18,6 +19,7 @@ class SjekkOmJournalpostHarFåttEnSak(private val hentJournalpostService: HentJo
     }
 
     companion object {
+
         const val TYPE = "hentEksternSaksnummerFraJoark"
     }
 
