@@ -71,10 +71,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Fordeling)
                     null
                 }
-//                behandlesakOppgaveFinnes(journalpost) -> {
-//                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.BehandleSak)
-//                    null
-//                }
+                behandlesakOppgaveFinnes(journalpost) -> {
+                    loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.BehandleSak)
+                    null
+                }
                 else -> {
                     val opprettOppgave = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
