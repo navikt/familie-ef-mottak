@@ -27,6 +27,9 @@ internal class SakServiceTest {
                                         mockk(relaxed = true),
                                         søknadService)
 
+    private val enheterNay = listOf(Enhet("4489", "NAY"))
+    private val ingenEnheter = emptyList<Enhet>()
+
     @Test
     fun `skal ikke kunne opprette infotrygd-sak dersom det allerede eksisterer en sak for stønaden`() {
 
@@ -40,6 +43,7 @@ internal class SakServiceTest {
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
                                                                 DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"))
                 )))
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
         assertThat(sakService.kanOppretteInfotrygdSak(søknad)).isFalse()
     }
@@ -62,12 +66,14 @@ internal class SakServiceTest {
             søknadService.get("1")
         } returns søknad
 
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+
         assertThat(sakService.opprettSak(søknad.id, "12")).isNull()
     }
 
 
     @Test
-    fun `skal ikke kunne opprette barnetrygd-infotrygd-sak dersom den allerede eksisterer`() {
+    fun `skal ikke kunne opprette barnetilsyn-infotrygd-sak dersom den allerede eksisterer`() {
 
         val soknad = søknad(id = "1", dokumenttype = DOKUMENTTYPE_BARNETILSYN, journalpostId = "15")
         every { integrasjonerClient.finnJournalposter(any()) }
@@ -78,6 +84,8 @@ internal class SakServiceTest {
                                                       fagsaksystem = INFOTRYGD),
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"))
                 )))
+
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
     }
@@ -94,6 +102,7 @@ internal class SakServiceTest {
                                             fagsaksystem = INFOTRYGD),
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.04"))
                 )))
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
     }
@@ -140,7 +149,31 @@ internal class SakServiceTest {
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.04")))))
 
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
+    }
+
+    @Test
+    fun `skal ikke kunne opprette infotrygdsak for overgangsstønad hvis det ikke finnes enhet for søker`() {
+
+        val soknad = søknad(id = "1",
+                            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                            journalpostId = "15",
+                            fnr = "123",
+                            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+        every { integrasjonerClient.finnJournalposter(any()) }
+                .returns(listOf(Journalpost(journalpostId = "15",
+                                            journalposttype = Journalposttype.I,
+                                            journalstatus = Journalstatus.FERDIGSTILT,
+                                            sak = Sak(fagsakId = "23",
+                                                      fagsaksystem = INFOTRYGD),
+                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                                                                DokumentInfo(dokumentInfoId = "123",
+                                                                             brevkode = "NAV 15-00.04")))))
+
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns ingenEnheter
+        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
     }
 
     @Test
@@ -162,6 +195,7 @@ internal class SakServiceTest {
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.04")))))
 
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
 
     }
@@ -185,6 +219,8 @@ internal class SakServiceTest {
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.02")))))
+        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+
         assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
     }
 
