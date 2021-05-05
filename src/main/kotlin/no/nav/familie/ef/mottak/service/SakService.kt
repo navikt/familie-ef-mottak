@@ -65,7 +65,9 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && gjelderStønad(søknad, it)
         }
         loggKanOppretteInfotrygdSak(søknad.fnr, fagsakFinnesForStønad, søknad.dokumenttype)
-        return !fagsakFinnesForStønad
+        val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(søknad.fnr).isNotEmpty()
+
+        return !fagsakFinnesForStønad && erTilknyttetEnhet
     }
 
     private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
