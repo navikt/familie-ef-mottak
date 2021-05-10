@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -18,23 +19,23 @@ internal class ArkiverDokumentRequestMapperTest {
     internal fun `overgangsstønad toDto`() {
         val vedlegg = lagVedlegg()
         val dto = toDto(lagSøknad(Testdata.søknadOvergangsstønad, DOKUMENTTYPE_OVERGANGSSTØNAD), listOf(vedlegg))
-        assertThat(dto.vedleggsdokumenter.first().dokumentType)
-                .isEqualTo(DOKUMENTTYPE_OVERGANGSSTØNAD_VEDLEGG)
+        assertThat(dto.vedleggsdokumenter.first().dokumenttype)
+                .isEqualTo(Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG)
         assertThat(dto.vedleggsdokumenter.first().filnavn).isEqualTo(vedlegg.id.toString())
     }
 
     @Test
     internal fun `barnetilsyn toDto`() {
         val dto = toDto(lagSøknad(Testdata.søknadBarnetilsyn, DOKUMENTTYPE_BARNETILSYN), listOf(lagVedlegg()))
-        assertThat(dto.vedleggsdokumenter.first().dokumentType)
-                .isEqualTo(DOKUMENTTYPE_BARNETILSYN_VEDLEGG)
+        assertThat(dto.vedleggsdokumenter.first().dokumenttype)
+                .isEqualTo(Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG)
     }
 
     @Test
     internal fun `skolepenger toDto`() {
         val dto = toDto(lagSøknad(Testdata.søknadSkolepenger, DOKUMENTTYPE_SKOLEPENGER), listOf(lagVedlegg()))
-        assertThat(dto.vedleggsdokumenter.first().dokumentType)
-                .isEqualTo(DOKUMENTTYPE_SKOLEPENGER_VEDLEGG)
+        assertThat(dto.vedleggsdokumenter.first().dokumenttype)
+                .isEqualTo(Dokumenttype.SKOLEPENGER_VEDLEGG)
     }
 
     @Test

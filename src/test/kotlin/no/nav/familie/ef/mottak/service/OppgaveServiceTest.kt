@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
@@ -148,7 +149,7 @@ internal class OppgaveServiceTest {
                                     dokumentInfoId = "12345",
                                     tittel = "Tittel",
                                     brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                                    dokumentvarianter = listOf(Dokumentvariant(variantformat = "ARKIV"))
+                                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
                             )
                     )
             )
