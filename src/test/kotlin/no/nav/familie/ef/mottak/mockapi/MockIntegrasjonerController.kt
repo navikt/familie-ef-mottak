@@ -2,8 +2,8 @@ package no.nav.familie.ef.mottak.mockapi
 
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -17,7 +17,7 @@ import javax.validation.Valid
 @Unprotected
 class MockIntegrasjonerController {
 
-    @PostMapping(path = ["/arkiv/v2"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(path = ["/arkiv/v4"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun arkiverDokument(@RequestBody @Valid arkiverDokumentRequest: ArkiverDokumentRequest)
             : ResponseEntity<Ressurs<ArkiverDokumentResponse>> {
         val data = ArkiverDokumentResponse("JOURNALPOST_MOCK_ID", true)

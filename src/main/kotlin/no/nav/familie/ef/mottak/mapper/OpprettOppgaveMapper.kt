@@ -1,7 +1,8 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.kontrakter.felles.journalpost.BrukerIdType
+import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.oppgave.*
 import org.springframework.stereotype.Component

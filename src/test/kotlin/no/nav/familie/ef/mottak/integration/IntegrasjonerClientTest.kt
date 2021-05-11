@@ -12,8 +12,9 @@ import no.nav.familie.http.sts.StsRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
-import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
@@ -62,14 +63,14 @@ internal class IntegrasjonerClientTest {
                 .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))))
         try {
             integrasjonerClient.lagOppgave(OpprettOppgaveRequest(ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
-                    saksId = null,
-                    journalpostId = "123",
-                    tema = Tema.ENF,
-                    oppgavetype = Oppgavetype.Journalføring,
-                    fristFerdigstillelse = LocalDate.now(),
-                    beskrivelse = "",
-                    behandlingstema = "sad",
-                    enhetsnummer = null))
+                                                                 saksId = null,
+                                                                 journalpostId = "123",
+                                                                 tema = Tema.ENF,
+                                                                 oppgavetype = Oppgavetype.Journalføring,
+                                                                 fristFerdigstillelse = LocalDate.now(),
+                                                                 beskrivelse = "",
+                                                                 behandlingstema = "sad",
+                                                                 enhetsnummer = null))
         } catch (e: HttpStatusCodeException) {
             val response: Ressurs<OppgaveResponse> = objectMapper.readValue(e.getResponseBodyAsString())
             assertThat(response.melding).contains(feilmelding)
