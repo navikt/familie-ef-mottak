@@ -25,12 +25,7 @@ class SaksbehandlingClient(@Value("\${EF_SAK_URL}")
                 .pathSegment("/api/ekstern/behandling", stønadType.name, "finnes")
                 .build().toUri()
         val response = postForEntity<Ressurs<Boolean>>(uri, PersonIdent(personIdent))
-        val data = response.data
-        if (data != null) {
-            return data
-        } else {
-            error("Kall mot ef-sak feilet melding=${response.melding}")
-        }
+        return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 
 }
