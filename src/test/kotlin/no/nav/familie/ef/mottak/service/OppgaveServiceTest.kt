@@ -5,12 +5,22 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.OPPGAVEBENK_URI
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.journalpost.Sak
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.junit.jupiter.api.BeforeEach
@@ -25,9 +35,11 @@ internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val sakService: SakService = mockk()
-    private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient)
+    private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient, OPPGAVEBENK_URI)
+    private val saksbehandlingClient = mockk<SaksbehandlingClient>()
+
     private val oppgaveService: OppgaveService =
-            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService)
+            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService, saksbehandlingClient)
 
 
     @BeforeEach
@@ -76,7 +88,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost)
+        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
         } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -95,7 +107,7 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         assertEquals(1, oppgaveResponse)
@@ -104,7 +116,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, "")
+        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         every {
@@ -125,7 +137,7 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagBehandleSakOppgave(journalpost, "")
+        val oppgaveResponse = oppgaveService.lagBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         assertEquals(1, oppgaveResponse)

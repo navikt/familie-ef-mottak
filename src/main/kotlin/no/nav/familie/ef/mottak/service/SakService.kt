@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
@@ -95,15 +96,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         } catch (e: Exception) {
             logger.warn("Feilet sjekk mot infotrygdReplika")
             secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
-        }
-    }
-
-    private fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
-        return when(dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
-            DOKUMENTTYPE_BARNETILSYN -> StønadType.BARNETILSYN
-            DOKUMENTTYPE_SKOLEPENGER -> StønadType.SKOLEPENGER
-            else -> null
         }
     }
 

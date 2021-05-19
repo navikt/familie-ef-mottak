@@ -2,8 +2,11 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -21,7 +24,8 @@ import org.springframework.web.client.HttpStatusCodeException
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val søknadService: SøknadService,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper,
-                     private val sakService: SakService) {
+                     private val sakService: SakService,
+                     private val saksbehandlingClient: SaksbehandlingClient) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -31,20 +35,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, utledBehandlingsmåte(søknad))
+        return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjon(søknad))
     }
 
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
+
         try {
-            return lagJournalføringsoppgave(journalpost)
+            return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
         }
     }
 
-    fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String): Long {
+    fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
         val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon)
         return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
     }
@@ -59,7 +64,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: String? = null): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -148,8 +153,14 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun utledBehandlingsmåte(søknad: Søknad) =
-            if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad))
-                "familie-ef-sak-førstegangsbehandling"
-            else null
+    private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
+        val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
+        return if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
+            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+        } else if (saksbehandlingClient.finnesBehandlingForPerson(stønadType, søknad.fnr)) {
+            BehandlesAvApplikasjon.EF_SAK
+        } else {
+            BehandlesAvApplikasjon.INFOTRYGD
+        }
+    }
 }

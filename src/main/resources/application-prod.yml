@@ -30,3 +30,12 @@ no.nav.security.jwt:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      ef-sak:
+        resource-url: ${EF_SAK_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://prod-gcp.teamfamilie.familie-ef-sak/.default
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic

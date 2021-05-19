@@ -54,6 +54,15 @@ no.nav.security.jwt:
           client-id: anything5
           client-secret: anything6
           client-auth-method: client_secret_basic
+      ef-sak:
+        resource-url: ${EF_SAK_URL}
+        token-endpoint-url: http://localhost:8092/mockapi/token
+        grant-type: client_credentials
+        scope: anything5
+        authentication:
+          client-id: anything5
+          client-secret: anything6
+          client-auth-method: client_secret_basic
 
 
 database:
@@ -66,3 +75,4 @@ SRV_CREDENTIAL_USERNAME: test
 SRV_CREDENTIAL_PASSWORD: test
 
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
+EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
