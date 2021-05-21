@@ -26,7 +26,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient,
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = hentHoveddokumentTittel(behandlesAvApplikasjon, journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
@@ -38,12 +38,12 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient,
                                   oppgavetype = Oppgavetype.BehandleSak,
                                   journalpostId = journalpost.journalpostId,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = hentHoveddokumentTittel(behandlesAvApplikasjon, journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
 
-    private fun hentHoveddokumentTittel(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String? {
+    private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
         val beskrivelsePrefix = behandlesAvApplikasjon.beskrivelsePrefix(oppgavebenkUri)
         val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
