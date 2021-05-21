@@ -22,7 +22,8 @@ class SaksbehandlingClient(@Value("\${EF_SAK_URL}")
 
     fun finnesBehandlingForPerson(stønadType: StønadType, personIdent: String): Boolean {
         val uri = UriComponentsBuilder.fromUri(uri)
-                .pathSegment("/api/ekstern/behandling", stønadType.name, "finnes")
+                .pathSegment("api/ekstern/behandling/finnes")
+                .queryParam("type", stønadType.name)
                 .build().toUri()
         val response = postForEntity<Ressurs<Boolean>>(uri, PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
