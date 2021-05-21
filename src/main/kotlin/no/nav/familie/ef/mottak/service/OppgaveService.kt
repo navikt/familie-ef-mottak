@@ -54,7 +54,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
+    fun oppdaterOppgave(oppgaveId: Long,
+                        saksblokk: String,
+                        saksnummer: String,
+                        behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
@@ -155,10 +158,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
-        return if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
-            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
-        } else if (saksbehandlingClient.finnesBehandlingForPerson(stønadType, søknad.fnr)) {
+        return if (saksbehandlingClient.finnesBehandlingForPerson(stønadType, søknad.fnr)) {
             BehandlesAvApplikasjon.EF_SAK
+        } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
+            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
         }
