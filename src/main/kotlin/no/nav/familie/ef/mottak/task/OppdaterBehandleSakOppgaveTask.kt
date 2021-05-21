@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
@@ -27,7 +28,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                 val infotrygdSaksnummer = saksnummer.trim().let {
                     integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, søknad.fnr)
                 }
-                oppgaveService.oppdaterOppgave(it.toLong(), saksnummer, infotrygdSaksnummer, "familie-ef-sak-blankett")
+                oppgaveService.oppdaterOppgave(it.toLong(), saksnummer, infotrygdSaksnummer, BehandlesAvApplikasjon.EF_SAK_BLANKETT)
             } ?: error("Kan ikke oppdatere oppgave uten oppgaveId")
 
         } ?: error("Kan ikke oppdatere behandle-sak-oppgave ettersom søknad=${søknad.id} mangler saksnummer")

@@ -54,12 +54,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String, behandlesAvApplikasjon: String): Long {
+    fun oppdaterOppgave(oppgaveId: Long, saksblokk: String, saksnummer: String, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
                 beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-                behandlesAvApplikasjon = behandlesAvApplikasjon
+                behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
         )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
