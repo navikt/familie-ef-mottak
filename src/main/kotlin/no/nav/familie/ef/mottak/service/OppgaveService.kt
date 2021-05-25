@@ -7,6 +7,7 @@ import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
+import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -38,11 +39,18 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjon(søknad))
     }
 
+    /**
+     * Då vi ikke er sikre på at stønadstypen er riktig eller eksisterer på oppgaven så sjekker vi om den finnes i ny løsning
+     * Hvis den finnes setter vi att den må sjekkes opp før man behandler den
+     */
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-
+        val personIdent = finnPersonIdent(journalpost) ?: error("Finner ikke ident på journalpost=${journalpostId}")
+        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(personIdent)
         try {
-            return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
+            val behandlesAvApplikasjon =
+                    if (finnesBehandlingForPerson) BehandlesAvApplikasjon.UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
+            return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
@@ -54,15 +62,14 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
     }
 
-    fun oppdaterOppgave(oppgaveId: Long,
-                        saksblokk: String,
-                        saksnummer: String,
-                        behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
+    fun settSaksnummerPåInfotrygdOppgave(oppgaveId: Long,
+                                         saksblokk: String,
+                                         saksnummer: String): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
                 saksreferanse = saksnummer,
                 beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-                behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_BLANKETT.applikasjon,
         )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
@@ -93,6 +100,16 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                               "fra MOTTATT til ${journalpost.journalstatus.name}")
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
+        }
+    }
+
+    private fun finnPersonIdent(journalpost: Journalpost): String? {
+        return journalpost.bruker?.let {
+            when (it.type) {
+                BrukerIdType.FNR -> it.id
+                BrukerIdType.AKTOERID -> integrasjonerClient.hentIdentForAktørId(it.id)
+                BrukerIdType.ORGNR -> error("Kan ikke hente journalpost=${journalpost.journalpostId} for orgnr")
+            }
         }
     }
 
@@ -158,7 +175,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
-        return if (saksbehandlingClient.finnesBehandlingForPerson(stønadType, søknad.fnr)) {
+        return if (saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD

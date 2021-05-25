@@ -28,7 +28,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                 val infotrygdSaksnummer = saksnummer.trim().let {
                     integrasjonerClient.finnInfotrygdSaksnummerForSak(saksnummer, FAGOMRÅDE_ENSLIG_FORSØRGER, søknad.fnr)
                 }
-                oppgaveService.oppdaterOppgave(it.toLong(), saksnummer, infotrygdSaksnummer, BehandlesAvApplikasjon.EF_SAK_BLANKETT)
+                oppgaveService.settSaksnummerPåInfotrygdOppgave(it.toLong(), saksnummer, infotrygdSaksnummer)
             } ?: error("Kan ikke oppdatere oppgave uten oppgaveId")
 
         } ?: error("Kan ikke oppdatere behandle-sak-oppgave ettersom søknad=${søknad.id} mangler saksnummer")

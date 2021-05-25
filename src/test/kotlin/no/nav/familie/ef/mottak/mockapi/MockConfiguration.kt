@@ -61,7 +61,7 @@ class MockConfiguration {
     @Primary
     @Profile("mock-ef-sak")
     fun saksbehandlingClient(): SaksbehandlingClient = object : SaksbehandlingClient(URI.create("http://bac"), mockk()) {
-        override fun finnesBehandlingForPerson(stønadType: StønadType, personIdent: String): Boolean {
+        override fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType?): Boolean {
             return true
         }
     }

@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import java.nio.charset.Charset
+import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
@@ -35,7 +37,7 @@ internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val sakService: SakService = mockk()
-    private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient, OPPGAVEBENK_URI)
+    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient, OPPGAVEBENK_URI))
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
 
     private val oppgaveService: OppgaveService =
@@ -44,17 +46,13 @@ internal class OppgaveServiceTest {
 
     @BeforeEach
     private fun init() {
-        every {
-            integrasjonerClient.hentAktørId(any())
-        } returns Testdata.randomAktørId()
+        every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
+        every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
     }
 
 
     @Test
     fun `Skal kalle integrasjonsklient ved opprettelse av oppgave`() {
-        every {
-            integrasjonerClient.lagOppgave(any())
-        } returns OppgaveResponse(oppgaveId = 1)
         every { integrasjonerClient.hentJournalpost("999") }
                 .returns(Journalpost("999",
                                      Journalposttype.I,
@@ -96,13 +94,6 @@ internal class OppgaveServiceTest {
                                           IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
                                           Charset.defaultCharset())
 
-        val forventetOpprettOppgaveRequestMedNayEnhet = opprettOppgaveRequest.copy(enhetsnummer = "4489")
-        every {
-            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
-        } answers {
-            OppgaveResponse(1)
-        }
-
         every {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
@@ -126,13 +117,6 @@ internal class OppgaveServiceTest {
                                           IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
                                           Charset.defaultCharset())
 
-        val forventetOpprettOppgaveRequestMedNayEnhet = behandleSakOppgaveRequest.copy(enhetsnummer = "4489")
-        every {
-            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
-        } answers {
-            OppgaveResponse(1)
-        }
-
         every {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
@@ -141,6 +125,34 @@ internal class OppgaveServiceTest {
 
 
         assertEquals(1, oppgaveResponse)
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
+        val journalpostId = UUID.randomUUID().toString()
+        val journalpost = journalpost.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+
+        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
+        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+
+        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART) }
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=INFOTRYGD hvis det ikke finnes en behandling i ny løsning`() {
+        val journalpostId = UUID.randomUUID().toString()
+        val journalpost = journalpost.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+
+        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns false
+        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+
+        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
     }
 
     private val journalpost =

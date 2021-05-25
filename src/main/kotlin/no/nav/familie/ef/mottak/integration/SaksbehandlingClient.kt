@@ -20,12 +20,13 @@ class SaksbehandlingClient(@Value("\${EF_SAK_URL}")
 
     override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
 
-    fun finnesBehandlingForPerson(stønadType: StønadType, personIdent: String): Boolean {
-        val uri = UriComponentsBuilder.fromUri(uri)
+    fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType? = null): Boolean {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
                 .pathSegment("api/ekstern/behandling/finnes")
-                .queryParam("type", stønadType.name)
-                .build().toUri()
-        val response = postForEntity<Ressurs<Boolean>>(uri, PersonIdent(personIdent))
+        if(stønadType != null) {
+            uriComponentsBuilder.queryParam("type", stønadType.name)
+        }
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 

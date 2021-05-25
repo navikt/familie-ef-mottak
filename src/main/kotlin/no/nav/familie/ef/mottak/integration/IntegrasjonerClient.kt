@@ -175,6 +175,11 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.getDataOrThrow()["aktørId"].toString()
     }
 
+    fun hentIdentForAktørId(aktørId: String): String {
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, mapOf("aktørId" to aktørId))
+        return response.getDataOrThrow()["personIdent"].toString()
+    }
+
     fun finnInfotrygdSaksnummerForSak(saksnummer: String, fagområdeEnsligForsørger: String, fnr: String): String {
         val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
         val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri, request).getDataOrThrow()
@@ -237,6 +242,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_HENT_OPPGAVE = "oppgave"
         const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v2/ENF"
+        const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"

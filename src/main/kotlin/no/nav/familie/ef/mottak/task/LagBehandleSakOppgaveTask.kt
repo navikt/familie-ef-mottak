@@ -49,7 +49,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                                                        stønadType: StønadType) =
             sakService.kanOppretteInfotrygdSak(søknad)
             && !søknad.behandleINySaksbehandling
-            && !saksbehandlingClient.finnesBehandlingForPerson(stønadType, søknad.fnr)
+            && !saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
 
     override fun onCompletion(task: Task) {
 

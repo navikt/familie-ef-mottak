@@ -35,7 +35,6 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
         val saksnummer = "12345A01"
         val saksblokkSlot = slot<String>()
         val saksnummerSlot = slot<String>()
-        val behandlesAvApplikasjonSlot = slot<BehandlesAvApplikasjon>()
         val søknad = søknad(dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                             saksnummer = saksblokk)
         every { søknadService.get(any()) } returns søknad
@@ -45,15 +44,12 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
                                                               any())
         } returns saksnummer
         every {
-            oppgaveService.oppdaterOppgave(oppgaveId,
-                                           capture(saksblokkSlot),
-                                           capture(saksnummerSlot),
-                                           capture(behandlesAvApplikasjonSlot))
+            oppgaveService.settSaksnummerPåInfotrygdOppgave(oppgaveId,
+                                                            capture(saksblokkSlot),
+                                                            capture(saksnummerSlot))
         } returns oppgaveId
         oppdaterBehandleSakOppgaveTask.doTask(Task(type = "", payload = "", properties = properties))
         assertThat(saksblokkSlot.captured).isEqualTo(saksblokk)
         assertThat(saksnummerSlot.captured).isEqualTo(saksnummer)
-        assertThat(behandlesAvApplikasjonSlot.captured).isEqualTo(BehandlesAvApplikasjon.EF_SAK_BLANKETT)
-
     }
 }
