@@ -2,15 +2,26 @@ package no.nav.familie.ef.mottak.service
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.OPPGAVEBENK_URI
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
+import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariantformat
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.journalpost.Sak
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.junit.jupiter.api.BeforeEach
@@ -18,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import java.nio.charset.Charset
+import java.util.UUID
 import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
@@ -25,24 +37,25 @@ internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val sakService: SakService = mockk()
-    private val opprettOppgaveMapper = OpprettOppgaveMapper(integrasjonerClient)
-    private val oppgaveService: OppgaveService =
-            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService)
+    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient, OPPGAVEBENK_URI))
+    private val saksbehandlingClient = mockk<SaksbehandlingClient>()
 
+    private val oppgaveService: OppgaveService =
+            OppgaveService(integrasjonerClient = integrasjonerClient,
+                           featureToggleService = mockk(relaxed = true),
+                           søknadService = søknadService,
+                           opprettOppgaveMapper = opprettOppgaveMapper,
+                           sakService = sakService,
+                           saksbehandlingClient = saksbehandlingClient)
 
     @BeforeEach
     private fun init() {
-        every {
-            integrasjonerClient.hentAktørId(any())
-        } returns Testdata.randomAktørId()
+        every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
+        every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
     }
-
 
     @Test
     fun `Skal kalle integrasjonsklient ved opprettelse av oppgave`() {
-        every {
-            integrasjonerClient.lagOppgave(any())
-        } returns OppgaveResponse(oppgaveId = 1)
         every { integrasjonerClient.hentJournalpost("999") }
                 .returns(Journalpost("999",
                                      Journalposttype.I,
@@ -76,7 +89,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost)
+        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
         } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -84,18 +97,11 @@ internal class OppgaveServiceTest {
                                           IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
                                           Charset.defaultCharset())
 
-        val forventetOpprettOppgaveRequestMedNayEnhet = opprettOppgaveRequest.copy(enhetsnummer = "4489")
-        every {
-            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
-        } answers {
-            OppgaveResponse(1)
-        }
-
         every {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost)
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         assertEquals(1, oppgaveResponse)
@@ -104,7 +110,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, "")
+        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         every {
@@ -114,21 +120,42 @@ internal class OppgaveServiceTest {
                                           IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
                                           Charset.defaultCharset())
 
-        val forventetOpprettOppgaveRequestMedNayEnhet = behandleSakOppgaveRequest.copy(enhetsnummer = "4489")
-        every {
-            integrasjonerClient.lagOppgave(forventetOpprettOppgaveRequestMedNayEnhet)
-        } answers {
-            OppgaveResponse(1)
-        }
-
         every {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagBehandleSakOppgave(journalpost, "")
+        val oppgaveResponse = oppgaveService.lagBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
 
 
         assertEquals(1, oppgaveResponse)
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
+        val journalpostId = UUID.randomUUID().toString()
+        val journalpost = journalpost.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+
+        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
+        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+
+        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART) }
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=INFOTRYGD hvis det ikke finnes en behandling i ny løsning`() {
+        val journalpostId = UUID.randomUUID().toString()
+        val journalpost = journalpost.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+
+        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns false
+        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+
+        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
     }
 
     private val journalpost =
@@ -153,6 +180,5 @@ internal class OppgaveServiceTest {
                             )
                     )
             )
-
 
 }
