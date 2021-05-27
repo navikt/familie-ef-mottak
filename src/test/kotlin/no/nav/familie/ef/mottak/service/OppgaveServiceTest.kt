@@ -41,15 +41,18 @@ internal class OppgaveServiceTest {
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
 
     private val oppgaveService: OppgaveService =
-            OppgaveService(integrasjonerClient, søknadService, opprettOppgaveMapper, sakService, saksbehandlingClient)
-
+            OppgaveService(integrasjonerClient = integrasjonerClient,
+                           featureToggleService = mockk(relaxed = true),
+                           søknadService = søknadService,
+                           opprettOppgaveMapper = opprettOppgaveMapper,
+                           sakService = sakService,
+                           saksbehandlingClient = saksbehandlingClient)
 
     @BeforeEach
     private fun init() {
         every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
     }
-
 
     @Test
     fun `Skal kalle integrasjonsklient ved opprettelse av oppgave`() {
@@ -177,6 +180,5 @@ internal class OppgaveServiceTest {
                             )
                     )
             )
-
 
 }

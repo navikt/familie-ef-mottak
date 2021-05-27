@@ -1,12 +1,14 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -23,6 +25,7 @@ import org.springframework.web.client.HttpStatusCodeException
 
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
+                     private val featureToggleService: FeatureToggleService,
                      private val søknadService: SøknadService,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper,
                      private val sakService: SakService,
@@ -175,7 +178,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
-        return if (saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)) {
+        return if (finnesBehandlingINyLøsning(søknad, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
@@ -183,4 +186,14 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             BehandlesAvApplikasjon.INFOTRYGD
         }
     }
+
+    private fun finnesBehandlingINyLøsning(søknad: Søknad,
+                                           stønadType: StønadType): Boolean {
+        val enabled = featureToggleService.isEnabled("familie.ef.mottak.sjekk-om-behandling-finnes", true)
+        if (!enabled) return false
+        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
+        log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
+        return finnesBehandlingForPerson
+    }
+
 }
