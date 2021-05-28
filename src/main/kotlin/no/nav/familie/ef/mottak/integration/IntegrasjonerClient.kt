@@ -48,6 +48,9 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val aktørUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
 
+    private val identFraAktørUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_IDENT_FRA_AKTØRID).build().toUri()
+
     private val behandlendeEnhetUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
 
@@ -176,7 +179,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun hentIdentForAktørId(aktørId: String): String {
-        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, mapOf("aktørId" to aktørId))
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(identFraAktørUri, aktørId)
         return response.getDataOrThrow()["personIdent"].toString()
     }
 
@@ -226,12 +229,6 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
             else -> error(melding)
         }
     }
-
-    private fun HttpHeaders.medPersonident(personident: String): HttpHeaders {
-        this.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
-        return this
-    }
-
 
     companion object {
 

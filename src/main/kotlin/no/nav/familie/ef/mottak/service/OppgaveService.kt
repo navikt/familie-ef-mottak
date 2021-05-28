@@ -51,6 +51,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val personIdent = finnPersonIdent(journalpost) ?: error("Finner ikke ident på journalpost=${journalpostId}")
         val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(personIdent)
         try {
+            log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
                     if (finnesBehandlingForPerson) BehandlesAvApplikasjon.UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
             return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
