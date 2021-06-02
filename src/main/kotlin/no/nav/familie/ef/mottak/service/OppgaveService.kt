@@ -48,8 +48,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
      */
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        val personIdent = finnPersonIdent(journalpost) ?: error("Finner ikke ident på journalpost=${journalpostId}")
-        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(personIdent)
+        val finnesBehandlingForPerson = finnesBehandlingForPerson(journalpost)
         try {
             log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
@@ -59,6 +58,11 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
         }
+    }
+
+    private fun finnesBehandlingForPerson(journalpost: Journalpost): Boolean {
+        val personIdent = finnPersonIdent(journalpost) ?: return false
+        return saksbehandlingClient.finnesBehandlingForPerson(personIdent)
     }
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
