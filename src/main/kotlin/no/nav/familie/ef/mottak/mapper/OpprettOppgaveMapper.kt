@@ -8,16 +8,13 @@ import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.net.URI
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Component
-class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient,
-                           @Value("\${EF_SAK_OPPGAVEBENK_URL}") private val oppgavebenkUri: URI) {
+class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
     fun toJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
@@ -45,9 +42,8 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
-        val beskrivelsePrefix = behandlesAvApplikasjon.beskrivelsePrefix(oppgavebenkUri)
         val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
-        return "$beskrivelsePrefix$dokumentTittel"
+        return "${behandlesAvApplikasjon.beskrivelsePrefix}$dokumentTittel"
     }
 
     private fun tilOppgaveIdent(journalpost: Journalpost): OppgaveIdentV2? {

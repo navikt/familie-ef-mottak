@@ -10,7 +10,6 @@ import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.OPPGAVEBENK_URI
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
@@ -37,7 +36,7 @@ internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val sakService: SakService = mockk()
-    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient, OPPGAVEBENK_URI))
+    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
 
     private val oppgaveService: OppgaveService =
