@@ -75,15 +75,13 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
             return false
         }
         val dagensDato = LocalDate.now()
-
         logger.info("Sjekker om søknad er aktuell for å plukkes som første sak i ny løsning")
         return søknad.barn.verdi.any {
-            val fødselsTermindato = it.fødselTermindato?.verdi
-            val fødselsnummer = it.fødselsnummer?.verdi
-            val erMindreEnnSeksMånederBasertPåTermindato = fødselsTermindato?.minusMonths(6)?.isBefore(dagensDato) ?: false
-            val erMindreEnnSeksMånederBasertPåFødselsnummer =
-                    fødselsnummer?.fødselsdato?.minusMonths(6)?.isBefore(dagensDato) ?: false
-            return erMindreEnnSeksMånederBasertPåTermindato || erMindreEnnSeksMånederBasertPåFødselsnummer
+            val fødselsTermindato = it.fødselTermindato?.verdi ?: LocalDate.MIN
+            val fødselsdatoFraIdent = it.fødselsnummer?.verdi?.fødselsdato ?: LocalDate.MIN
+            val alderBasertPåTermindatoErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsTermindato)
+            val alderBasertPåIdentErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsdatoFraIdent)
+            return alderBasertPåTermindatoErMindreEnn6mnd || alderBasertPåIdentErMindreEnn6mnd
         }
     }
 
