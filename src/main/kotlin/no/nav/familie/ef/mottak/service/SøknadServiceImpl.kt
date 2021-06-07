@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
@@ -24,6 +25,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
@@ -31,14 +33,16 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 @Service
 class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
                         private val vedleggRepository: VedleggRepository,
-                        private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository) : SøknadService {
+                        private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
+                        private val featureToggleService: FeatureToggleService) : SøknadService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
     override fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                                       vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad,
+                                            skalBehandlesINySaksbehandling(søknad) || erAktuellForFørsteSak(søknad.søknad))
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
@@ -62,6 +66,24 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
         return when {
             erIDev -> søknad.behandleINySaksbehandling
             else -> false
+        }
+    }
+
+    private fun erAktuellForFørsteSak(søknad: SøknadOvergangsstønad): Boolean {
+        val erAktuellForFørsteSakFT = featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+        if (!erAktuellForFørsteSakFT) {
+            return false
+        }
+        val dagensDato = LocalDate.now()
+
+        logger.info("Sjekker om søknad er aktuell for å plukkes som første sak i ny løsning")
+        return søknad.barn.verdi.any {
+            val fødselsTermindato = it.fødselTermindato?.verdi
+            val fødselsnummer = it.fødselsnummer?.verdi
+            val erMindreEnnSeksMånederBasertPåTermindato = fødselsTermindato?.minusMonths(6)?.isBefore(dagensDato) ?: false
+            val erMindreEnnSeksMånederBasertPåFødselsnummer =
+                    fødselsnummer?.fødselsdato?.minusMonths(6)?.isBefore(dagensDato) ?: false
+            return erMindreEnnSeksMånederBasertPåTermindato || erMindreEnnSeksMånederBasertPåFødselsnummer
         }
     }
 

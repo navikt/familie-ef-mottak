@@ -10,11 +10,13 @@ import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ActiveProfiles
+import java.time.LocalDate
 import java.util.*
 
 @ActiveProfiles("local")
@@ -58,6 +60,38 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
                                                         vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
         val søknad = søknadService.get(kvittering.id)
         assertThat(søknad).isNotNull
+    }
+
+    @Test
+    internal fun `skal kunne behandle sak med barn under 6 mnd i ny løsning`() {
+//        val barnFødtIDag = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+//                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
+//        ))
+//        val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
+//                barn = Søknadsfelt("Barn", barnFødtIDag)
+//        )
+//        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg),
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg),
+                                                            vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+        assertThat(søknad.behandleINySaksbehandling).isTrue
+    }
+
+
+    @Test
+    internal fun `skal ikke kunne behandle sak med barn over 6 mnd i ny løsning`() {
+        val barnFødtIDag = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
+        ))
+        val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
+                barn = Søknadsfelt("Barn", barnFødtIDag)
+        )
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg),
+                                                            vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+        assertThat(søknad.behandleINySaksbehandling).isTrue
     }
 
     @Test
