@@ -6,6 +6,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
 
+@Deprecated("Trenger ikke å følge opp")
 @Service
 @TaskStepBeskrivelse(taskStepType = SjekkOmJournalpostHarFåttEnSak.TYPE,
                      maxAntallFeil = 20,
