@@ -8,9 +8,11 @@ import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
@@ -90,8 +92,47 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
                                                             vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
         val søknad = søknadService.get(kvittering.id)
         assertThat(søknad).isNotNull
-        assertThat(søknad.behandleINySaksbehandling).isFalse()
+        assertThat(søknad.behandleINySaksbehandling).isFalse
     }
+
+    @Test
+    internal fun `skal ikke behandle sak med barn over 6 mnd i ny løsning gitt ident `() {
+        val fødselsdato = LocalDate.now().minusMonths(7)
+        val ident = FnrGenerator.generer(fødselsdato.year, fødselsdato.month.value, fødselsdato.dayOfMonth)
+
+        val barn1mnd = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+                fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer(ident))
+        )
+        )
+        val søknadMedBarn1mnd = søknadOvergangsstønad.copy(
+                barn = Søknadsfelt("Barn", barn1mnd)
+        )
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg),
+                                                            vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+        assertThat(søknad.behandleINySaksbehandling).isFalse
+    }
+
+    @Test
+    internal fun `skal kunne behandle sak med barn under 6 mnd i ny løsning gitt ident `() {
+        val fødselsdato = LocalDate.now().minusMonths(5)
+        val ident = FnrGenerator.generer(fødselsdato.year, fødselsdato.month.value, fødselsdato.dayOfMonth)
+
+        val barn1mnd = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+                fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer(ident))
+        )
+        )
+        val søknadMedBarn1mnd = søknadOvergangsstønad.copy(
+                barn = Søknadsfelt("Barn", barn1mnd)
+        )
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg),
+                                                            vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+        assertThat(søknad.behandleINySaksbehandling).isTrue
+    }
+
 
     @Test
     internal fun `lagre skjema for søknad barnetilsyn`() {
