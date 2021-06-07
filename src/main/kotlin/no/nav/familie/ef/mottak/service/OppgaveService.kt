@@ -99,7 +99,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     null
                 }
                 else -> {
-                    val opprettOppgave = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
+                    val tilordnet: String? = if (førsteSakFeatureEnabled()) "S135150" else null
+                    val opprettOppgave =
+                            opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }
@@ -111,6 +113,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
+    private fun førsteSakFeatureEnabled(): Boolean = featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
     private fun finnPersonIdent(journalpost: Journalpost): String? {
         return journalpost.bruker?.let {
             when (it.type) {
