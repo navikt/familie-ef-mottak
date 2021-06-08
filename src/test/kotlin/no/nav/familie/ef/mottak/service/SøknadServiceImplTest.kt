@@ -81,6 +81,26 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
+    internal fun `skal kunne behandle sak med et barn under 6 mnd og et over i ny løsning`() {
+        val barnFødtIDag = søknadOvergangsstønad.barn.verdi.first().copy(
+                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
+        )
+
+        val barnFødtforLengeSiden = søknadOvergangsstønad.barn.verdi.first().copy(
+                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusYears(3))
+        )
+        val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
+                barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag))
+        )
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg),
+                                                            vedlegg.map { it.id to it.navn.toByteArray() }.toMap())
+
+        val søknad = søknadService.get(kvittering.id)
+        assertThat(søknad).isNotNull
+        assertThat(søknad.behandleINySaksbehandling).isTrue
+    }
+
+    @Test
     internal fun `skal ikke kunne behandle sak med barn over 6 mnd i ny løsning`() {
         val barn7mnd = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
                 fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusMonths(7))
@@ -113,6 +133,7 @@ internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isFalse
     }
+
 
     @Test
     internal fun `skal kunne behandle sak med barn under 6 mnd i ny løsning gitt ident `() {
