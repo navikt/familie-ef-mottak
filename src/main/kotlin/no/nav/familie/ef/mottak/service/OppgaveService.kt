@@ -119,6 +119,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun finnSaksbehandlerIdentForMiljø(): String {
         return if (System.getenv("NAIS_CLUSTER_NAME") == "dev-fss") {
+            log.info("Setter tilordnet på Journalføringsoppgave til Z994119")
             "Z994119"
         } else {
             "S135150"

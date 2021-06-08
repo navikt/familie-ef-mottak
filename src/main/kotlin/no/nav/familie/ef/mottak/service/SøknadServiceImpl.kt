@@ -81,6 +81,7 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
             val fødselsdatoFraIdent = it.fødselsnummer?.verdi?.fødselsdato ?: LocalDate.MIN
             val alderBasertPåTermindatoErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsTermindato)
             val alderBasertPåIdentErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsdatoFraIdent)
+            logger.info("Barn ${it.navn?.verdi}: erAktuellForFørsteSak: født: $fødselsTermindato / $fødselsdatoFraIdent, $alderBasertPåTermindatoErMindreEnn6mnd || $alderBasertPåIdentErMindreEnn6mnd ")
             return alderBasertPåTermindatoErMindreEnn6mnd || alderBasertPåIdentErMindreEnn6mnd
         }
     }
