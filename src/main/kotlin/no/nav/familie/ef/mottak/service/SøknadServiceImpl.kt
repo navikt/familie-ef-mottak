@@ -71,12 +71,13 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
 
     private fun erAktuellForFørsteSak(søknad: SøknadOvergangsstønad): Boolean {
         val erAktuellForFørsteSakFT = featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+        logger.info("Skal sjekke om søknad er aktuell for å plukkes som første sak i ny løsning: $erAktuellForFørsteSakFT")
+
         if (!erAktuellForFørsteSakFT) {
             return false
         }
         val dagensDato = LocalDate.now()
 
-        logger.info("Sjekker om søknad er aktuell for å plukkes som første sak i ny løsning")
 
         return søknad.barn.verdi.any {
             val fødselsTermindato = it.fødselTermindato?.verdi ?: LocalDate.MIN
