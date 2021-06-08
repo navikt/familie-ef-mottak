@@ -23,9 +23,6 @@ class LagEksternJournalføringsoppgaveTask(private val taskRepository: TaskRepos
         // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId
         if (finnesIkkeSøknadMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
-            taskRepository.save(Task(TaskType(TYPE).nesteKafkaHendelseFlytTask(),
-                                     task.payload,
-                                     task.metadata))
         }
     }
 

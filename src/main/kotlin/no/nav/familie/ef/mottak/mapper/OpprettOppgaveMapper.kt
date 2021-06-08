@@ -16,7 +16,10 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    fun toJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+
+    fun toJournalføringsoppgave(journalpost: Journalpost,
+                                behandlesAvApplikasjon: BehandlesAvApplikasjon,
+                                tilordnet: String? = null) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   journalpostId = journalpost.journalpostId,
@@ -26,7 +29,8 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
-                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
+                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
+                                  tilordnetRessurs = tilordnet)
 
     fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): OpprettOppgaveRequest =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),

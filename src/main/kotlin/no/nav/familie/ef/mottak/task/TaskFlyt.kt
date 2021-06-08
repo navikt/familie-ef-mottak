@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-fun kafkaHendelseFlyt() = listOf(TaskType(LagEksternJournalføringsoppgaveTask.TYPE), TaskType(SjekkOmJournalpostHarFåttEnSak.TYPE))
+fun kafkaHendelseFlyt() = listOf(TaskType(LagEksternJournalføringsoppgaveTask.TYPE))
 
 fun hovedflyt() = listOf(
     TaskType(LagPdfTask.TYPE),
