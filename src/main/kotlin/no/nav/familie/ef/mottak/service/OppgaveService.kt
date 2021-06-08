@@ -49,14 +49,14 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
      * Då vi ikke er sikre på at stønadstypen er riktig eller eksisterer på oppgaven så sjekker vi om den finnes i ny løsning
      * Hvis den finnes setter vi att den må sjekkes opp før man behandler den
      */
-    fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String, tilordnet: String? = null): Long? {
+    fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         val finnesBehandlingForPerson = finnesBehandlingForPerson(journalpost)
         try {
             log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
                     if (finnesBehandlingForPerson) BehandlesAvApplikasjon.UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
-            return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
+            return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
