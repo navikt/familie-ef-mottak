@@ -39,7 +39,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjon(søknad))
+        val behandlesAvApplikasjon = utledBehandlesAvApplikasjon(søknad)
+        val tilordnet: String? =
+                if (skalSetteTilordnet(behandlesAvApplikasjon)) finnSaksbehandlerIdentForMiljø() else null
+        return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
     }
 
     /**
@@ -82,7 +85,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost,
+                                 behandlesAvApplikasjon: BehandlesAvApplikasjon,
+                                 tilordnet: String? = null): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -99,7 +104,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     null
                 }
                 else -> {
-                    val opprettOppgave = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
+                    val opprettOppgave =
+                            opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
                 }
             }
@@ -109,6 +115,22 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
+    }
+
+    private fun finnSaksbehandlerIdentForMiljø(): String {
+        return if (System.getenv("NAIS_CLUSTER_NAME") == "dev-fss") {
+            log.info("Setter tilordnet på Journalføringsoppgave til Z994119")
+            "Z994119"
+        } else {
+            log.info("Setter tilordnet på Journalføringsoppgave til S135150")
+            "S135150"
+        }
+    }
+
+    private fun skalSetteTilordnet(behandlesAvApplikasjon: BehandlesAvApplikasjon): Boolean {
+
+        return behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD && featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+
     }
 
     private fun finnPersonIdent(journalpost: Journalpost): String? {
