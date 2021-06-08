@@ -128,7 +128,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun skalSetteTilordnet(behandlesAvApplikasjon: BehandlesAvApplikasjon): Boolean {
 
-        return behandlesAvApplikasjon.equals(BehandlesAvApplikasjon.EF_SAK_INFOTRYGD) && featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+        return behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD && featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
 
     }
 
