@@ -122,6 +122,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             log.info("Setter tilordnet på Journalføringsoppgave til Z994119")
             "Z994119"
         } else {
+            log.info("Setter tilordnet på Journalføringsoppgave til S135150")
             "S135150"
         }
     }
