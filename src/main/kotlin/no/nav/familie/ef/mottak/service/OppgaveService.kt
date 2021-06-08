@@ -39,21 +39,24 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjon(søknad))
+        val behandlesAvApplikasjon = utledBehandlesAvApplikasjon(søknad)
+        val tilordnet: String? =
+                if (skalSetteTilordnet(behandlesAvApplikasjon)) finnSaksbehandlerIdentForMiljø() else null
+        return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
     }
 
     /**
      * Då vi ikke er sikre på at stønadstypen er riktig eller eksisterer på oppgaven så sjekker vi om den finnes i ny løsning
      * Hvis den finnes setter vi att den må sjekkes opp før man behandler den
      */
-    fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
+    fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String, tilordnet: String? = null): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         val finnesBehandlingForPerson = finnesBehandlingForPerson(journalpost)
         try {
             log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
                     if (finnesBehandlingForPerson) BehandlesAvApplikasjon.UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
-            return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
+            return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
@@ -82,7 +85,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost,
+                                 behandlesAvApplikasjon: BehandlesAvApplikasjon,
+                                 tilordnet: String? = null): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -99,7 +104,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                     null
                 }
                 else -> {
-                    val tilordnet: String? = if (førsteSakFeatureEnabled()) "S135150" else null
                     val opprettOppgave =
                             opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
                     return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
@@ -113,7 +117,20 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun førsteSakFeatureEnabled(): Boolean = featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+    private fun finnSaksbehandlerIdentForMiljø(): String {
+        return if (System.getenv("NAIS_CLUSTER_NAME") == "dev-fss") {
+            "Z994119"
+        } else {
+            "S135150"
+        }
+    }
+
+    private fun skalSetteTilordnet(behandlesAvApplikasjon: BehandlesAvApplikasjon): Boolean {
+
+        return behandlesAvApplikasjon.equals(BehandlesAvApplikasjon.EF_SAK_INFOTRYGD) && featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
+
+    }
+
     private fun finnPersonIdent(journalpost: Journalpost): String? {
         return journalpost.bruker?.let {
             when (it.type) {
