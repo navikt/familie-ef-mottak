@@ -1,8 +1,5 @@
 name: Build-Deploy
 on:
-  push:
-    branches-ignore:
-      - 'master'
   workflow_dispatch:
 
 env:
