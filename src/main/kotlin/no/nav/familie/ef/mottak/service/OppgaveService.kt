@@ -217,9 +217,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun finnesBehandlingINyLøsning(søknad: Søknad,
                                            stønadType: StønadType): Boolean {
-        val enabled = featureToggleService.isEnabled("familie.ef.mottak.sjekk-om-behandling-finnes", true)
-        log.info("finnesBehandlingINyLøsning enabled=$enabled")
-        if (!enabled) return false
         val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
         log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
         return finnesBehandlingForPerson
