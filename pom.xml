@@ -25,7 +25,7 @@
         <felles.version>1.20210607085527_b0c86f4</felles.version>
         <prosessering.version>1.20210617141104_8f0760d</prosessering.version>
         <confluent.version>6.2.0</confluent.version>
-        <kontrakter.version>2.0_20210617084158_5b8c07d</kontrakter.version>
+        <kontrakter.version>2.0_20210618112555_90ebc98</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
         <token-validation.version>1.3.7</token-validation.version>
         <spring-cloud.version>3.0.3</spring-cloud.version>
