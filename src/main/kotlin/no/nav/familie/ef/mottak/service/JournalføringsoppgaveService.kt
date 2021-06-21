@@ -27,13 +27,9 @@ class JournalføringsoppgaveService(val featureToggleService: FeatureToggleServi
     }
 
     private fun lagreSomEksternJournalføringsTaskDersomSøknadIkkeFinnes(journalpost: Journalpost) {
-        if (featureToggleService.isEnabled("familie.ef.mottak.journalhendelse-behsak")) {
-            when (val søknad = søknadRepository.findByJournalpostId(journalpost.journalpostId)) {
-                null -> journalfoeringHendelseDbUtil.lagreEksternJournalføringsTask(journalpost)
-                else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
-            }
-        } else {
-            logger.info("Behandler ikke journalhendelse, feature familie.ef.mottak.journalhendelse-behsak er skrudd av i Unleash")
+        when (val søknad = søknadRepository.findByJournalpostId(journalpost.journalpostId)) {
+            null -> journalfoeringHendelseDbUtil.lagreEksternJournalføringsTask(journalpost)
+            else -> logger.info("Hendelse mottatt for digital søknad ${søknad.id}")
         }
     }
 
