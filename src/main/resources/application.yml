@@ -73,7 +73,7 @@ funksjonsbrytere:
 familie:
   ef:
     integrasjoner:
-      url: http://familie-integrasjoner/api/
+      url: http://familie-integrasjoner.teamfamilie/api/
     pdfgenerator:
       url: https://familie-ef-dokgen.nais.adeo.no/
 
