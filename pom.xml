@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.5.RELEASE</version>
+        <version>2.5.2</version>
     </parent>
 
     <properties>
@@ -19,17 +19,20 @@
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
         <jvmTarget>11</jvmTarget>
-        <kotlin.version>1.4.21-2</kotlin.version>
+        <kotlin.version>1.5.20</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
-        <mockk.version>1.10.4</mockk.version>
-        <felles.version>1.20201123131335_671787f</felles.version>
-        <prosessering.version>1.20201207095749_fecab6b</prosessering.version>
-        <confluent.version>6.0.1</confluent.version>
-        <kontrakter.version>2.0_20210105115213_05f0728</kontrakter.version>
+        <mockk.version>1.11.0</mockk.version>
+        <felles.version>1.20210607085527_b0c86f4</felles.version>
+        <prosessering.version>1.20210617141104_8f0760d</prosessering.version>
+        <confluent.version>6.2.0</confluent.version>
+        <kontrakter.version>2.0_20210625133148_3b67468</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
-        <token-validation.version>1.3.2</token-validation.version>
-        <spring-cloud.version>2.2.6.RELEASE</spring-cloud.version>
+        <token-validation.version>1.3.8</token-validation.version>
+        <spring-cloud.version>3.0.3</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
+
+        <!-- Setter disse til token-support sine versjoner, versjoner(9.x) i spring er ikke kompatibel med oauth2-oidc-sdk -->
+        <nimbus-jose-jwt.version>8.20.2</nimbus-jose-jwt.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
@@ -42,7 +45,7 @@
     <repositories>
         <repository>
             <id>confluent</id>
-            <url>http://packages.confluent.io/maven/</url>
+            <url>https://packages.confluent.io/maven/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -75,7 +78,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.4.2</version>
+            <version>1.5.0-native-mt</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,7 +129,7 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.10.1</version>
+            <version>1.10.2</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -157,7 +160,7 @@
         <dependency>
             <groupId>no.finn.unleash</groupId>
             <artifactId>unleash-client-java</artifactId>
-            <version>3.3.4</version>
+            <version>4.4.0</version>
         </dependency>
 
         <!-- Nav-internt  -->
@@ -203,7 +206,11 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.18</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${spring-cloud.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -216,7 +223,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.11</version>
         </dependency>
 
         <!-- Logging og metrikker -->
@@ -237,7 +243,7 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8</artifactId>
-            <version>2.27.2</version>
+            <version>2.28.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -324,12 +330,12 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.7.0.1746</version>
+                    <version>3.9.0.2155</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.6</version>
+                    <version>0.8.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -337,7 +343,7 @@
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
-                <version>1.10.1</version>
+                <version>1.10.2</version>
 
                 <executions>
                     <execution>

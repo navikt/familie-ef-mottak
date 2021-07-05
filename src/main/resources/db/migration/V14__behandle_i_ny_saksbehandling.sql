@@ -1,0 +1,1 @@
+ALTER TABLE soknad ADD COLUMN behandle_i_ny_saksbehandling BOOLEAN NOT NULL DEFAULT FALSE;

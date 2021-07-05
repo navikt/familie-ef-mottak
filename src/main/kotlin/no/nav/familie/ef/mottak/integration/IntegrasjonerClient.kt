@@ -2,15 +2,17 @@ package no.nav.familie.ef.mottak.integration
 
 
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
-import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentRequest
+
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
+import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.FinnInfotrygdSakerRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
@@ -18,6 +20,9 @@ import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.personopplysning.FinnPersonidenterResponse
+import no.nav.familie.kontrakter.felles.personopplysning.Ident
+import no.nav.familie.kontrakter.felles.personopplysning.PersonIdentMedHistorikk
 import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
@@ -32,13 +37,19 @@ import java.net.URI
 @Service
 class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperations,
                           private val integrasjonerConfig: IntegrasjonerConfig) :
-        AbstractRestClient(operations, "Arkiv") {
+        AbstractPingableRestClient(operations, "Arkiv") {
+
+    override val pingUri: URI = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment("ping").build().toUri()
 
     private val sendInnUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_SEND_INN).build().toUri()
     private val opprettOppgaveUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_OPPRETT_OPPGAVE).build().toUri()
 
-    private val aktørUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
+    private val aktørUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
+
+    private val identFraAktørUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_IDENT_FRA_AKTØRID).build().toUri()
 
     private val behandlendeEnhetUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
@@ -49,10 +60,24 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val infotrygdsakUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_INFOTRYGDSAK).build().toUri()
 
-    private fun finnOppgaveUri(finnOppgaveRequest: FinnOppgaveRequest) =
+    private val finnOppgaveUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FINN_OPPGAVE).build().toUri()
+
+    private val ferdigstillOppgaveURI =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FERDIGSTILL_OPPGAVE).build().toUri()
+
+    private val hentIdenterURI =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_HENT_IDENTER).build().toUri()
+
+    private fun hentOppgaveUri(oppgaveId: Long) =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url)
-                    .pathSegment(PATH_HENT_OPPGAVE)
-                    .queryParams(finnOppgaveRequest.toQueryParams())
+                    .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString())
+                    .build()
+                    .toUri()
+
+    private fun patchOppgaveUri(oppgaveId: Long) =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                    .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString(), "oppdater")
                     .build()
                     .toUri()
 
@@ -87,7 +112,8 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun opprettInfotrygdsak(opprettInfotrygdSakRequest: OpprettInfotrygdSakRequest): OpprettInfotrygdSakResponse {
-        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(lagOpprettInfotrygdsakUri(), opprettInfotrygdSakRequest).getDataOrThrow()
+        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(lagOpprettInfotrygdsakUri,
+                                                                   opprettInfotrygdSakRequest).getDataOrThrow()
     }
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
@@ -98,7 +124,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         val finnOppgaveRequest = FinnOppgaveRequest(tema = Tema.ENF,
                                                     journalpostId = journalpostId,
                                                     oppgavetype = oppgavetype)
-        return getForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri(finnOppgaveRequest)).getDataOrThrow()
+        return postForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri, finnOppgaveRequest).getDataOrThrow()
     }
 
 
@@ -122,9 +148,18 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
 
-    fun lagOppgave(opprettOppgave: OpprettOppgave): OppgaveResponse {
+    fun hentOppgave(oppgaveId: Long): Oppgave {
+        return getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
+    }
+
+    fun oppdaterOppgave(oppgaveId: Long, oppgave: Oppgave): Long {
+        val response = patchForEntity<Ressurs<OppgaveResponse>>(patchOppgaveUri(oppgaveId), oppgave).getDataOrThrow()
+        return response.oppgaveId
+    }
+
+    fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
         val response =
-                postForEntity<Ressurs<OppgaveResponse>>(opprettOppgaveUri, opprettOppgave)
+                postForEntity<Ressurs<OppgaveResponse>>(opprettOppgaveUri, opprettOppgaveRequest)
         return response.getDataOrThrow()
     }
 
@@ -139,13 +174,18 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun hentAktørId(personident: String): String {
-        val response = getForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, HttpHeaders().medPersonident(personident))
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, Ident(personident))
         return response.getDataOrThrow()["aktørId"].toString()
+    }
+
+    fun hentIdentForAktørId(aktørId: String): String {
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(identFraAktørUri, aktørId)
+        return response.getDataOrThrow()["personIdent"].toString()
     }
 
     fun finnInfotrygdSaksnummerForSak(saksnummer: String, fagområdeEnsligForsørger: String, fnr: String): String {
         val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
-        val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri(), request).getDataOrThrow()
+        val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri, request).getDataOrThrow()
 
         return infotrygdSaker.find { it.saksnr.trim() == saksnummer }?.let {
             it.registrertNavEnhetId + saksnummer
@@ -153,17 +193,21 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     }
 
-    private fun lagFinnInfotrygdSakerUri(): URI {
-        return UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
+    fun hentIdenter(personident: String, medHistprikk: Boolean): List<PersonIdentMedHistorikk> {
+        val uri = UriComponentsBuilder.fromUri(hentIdenterURI).queryParam("historikk", medHistprikk).build().toUri()
+        val response = postForEntity<Ressurs<FinnPersonidenterResponse>>(uri, PersonIdent(personident))
+        return response.getDataOrThrow().identer
     }
 
-    private fun lagOpprettInfotrygdsakUri(): URI {
-        return UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
-    }
+    private val lagFinnInfotrygdSakerUri =
+            UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
+
+    private val lagOpprettInfotrygdsakUri =
+            UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
 
     private fun lagFerdigstillOppgaveUri(oppgaveId: Long): URI {
         return UriComponentsBuilder
-                .fromUri(opprettOppgaveUri)
+                .fromUri(ferdigstillOppgaveURI)
                 .pathSegment(oppgaveId.toString())
                 .pathSegment("ferdigstill")
                 .build()
@@ -186,22 +230,20 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         }
     }
 
-    private fun HttpHeaders.medPersonident(personident: String): HttpHeaders {
-        this.add(NavHttpHeaders.NAV_PERSONIDENT.asString(), personident)
-        return this
-    }
-
-
     companion object {
 
-        const val PATH_SEND_INN = "arkiv/v3"
+        const val PATH_SEND_INN = "arkiv/v4"
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
-        const val PATH_OPPRETT_OPPGAVE = "oppgave"
-        const val PATH_HENT_OPPGAVE = "oppgave/v3"
-        const val PATH_AKTØR = "aktoer/v1"
+        const val PATH_OPPRETT_OPPGAVE = "oppgave/opprett"
+        const val PATH_FINN_OPPGAVE = "oppgave/v4"
+        const val PATH_HENT_OPPGAVE = "oppgave"
+        const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
+        const val PATH_AKTØR = "aktoer/v2/ENF"
+        const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"
+        const val PATH_HENT_IDENTER = "personopplysning/v1/identer/ENF"
     }
 
 }

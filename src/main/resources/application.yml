@@ -73,19 +73,26 @@ funksjonsbrytere:
 familie:
   ef:
     integrasjoner:
-      url: http://familie-integrasjoner/api/
+      url: http://familie-integrasjoner.teamfamilie/api/
     pdfgenerator:
       url: https://familie-ef-dokgen.nais.adeo.no/
 
 prosessering:
+  cronRetryTasks: "0 5 6,7 1/1 * ?"
   fixedDelayString:
     in:
       milliseconds: 10000
+  delete:
+    after:
+      weeks: 4
 
 database:
   encryption:
     # 16, 24 or 32 bytes
     key: ${DATABASEKEY}
+
+INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.nais.adeo.no
+EF_SAK_URL: https://familie-ef-sak.intern.nav.no
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
 KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1

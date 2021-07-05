@@ -7,10 +7,11 @@ import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.HENT_SAKSNUMMER_FRA_JOARK,
+@TaskStepBeskrivelse(taskStepType = HentSaksnummerFraJoarkTask.TYPE,
                      maxAntallFeil = 20,
                      beskrivelse = "Hent saksnummer fra joark",
-                     triggerTidVedFeilISekunder = 60 * 60 * 12)
+                     triggerTidVedFeilISekunder = 60 * 60 * 12,
+                     settTilManuellOppfølgning = true)
 class HentSaksnummerFraJoarkTask(private val hentJournalpostService: HentJournalpostService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -18,6 +19,7 @@ class HentSaksnummerFraJoarkTask(private val hentJournalpostService: HentJournal
     }
 
     companion object {
-        const val HENT_SAKSNUMMER_FRA_JOARK = "hentSaksnummerFraJoark"
+
+        const val TYPE = "hentSaksnummerFraJoark"
     }
 }

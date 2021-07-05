@@ -1,11 +1,10 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -18,15 +17,13 @@ import java.util.*
 @ActiveProfiles("local")
 internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
 
-    @Autowired lateinit var soknadRepository: SoknadRepository
+    @Autowired lateinit var søknadRepository: SøknadRepository
 
     @Autowired lateinit var vedleggRepository: VedleggRepository
 
     @Test
     internal fun `findBySøknadId returnerer vedlegg`() {
-        val søknadId = soknadRepository.save(Soknad(søknadJson = "bob",
-                                                    fnr = "ded",
-                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        val søknadId = søknadRepository.save(søknad()).id
         vedleggRepository.save(Vedlegg(UUID.randomUUID(), søknadId, "navn", "tittel1", Fil(byteArrayOf(12))))
 
         assertThat(vedleggRepository.findBySøknadId(søknadId)).hasSize(1)
@@ -35,9 +32,7 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `findTitlerBySøknadId returnerer titler`() {
-        val søknadId = soknadRepository.save(Soknad(søknadJson = "bob",
-                                                    fnr = "ded",
-                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        val søknadId = søknadRepository.save(søknad()).id
         vedleggRepository.save(Vedlegg(UUID.randomUUID(), søknadId, "navn", "tittel1", Fil(byteArrayOf(12))))
 
         val vedlegg = vedleggRepository.findTitlerBySøknadId(søknadId)
@@ -48,14 +43,10 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `det skal ikke være mulig å oppdatere et vedlegg med ny søknadId`() {
         val vedleggId = UUID.randomUUID()
-        val søknadId = soknadRepository.save(Soknad(søknadJson = "bob",
-                                                    fnr = "ded",
-                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        val søknadId = søknadRepository.save(søknad()).id
         vedleggRepository.save(Vedlegg(vedleggId, søknadId, "navn", "tittel1", Fil(byteArrayOf(12))))
 
-        val søknad2Id = soknadRepository.save(Soknad(søknadJson = "bob",
-                                                     fnr = "ded",
-                                                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD)).id
+        val søknad2Id = søknadRepository.save(søknad()).id
         assertThat(catchThrowable {
             vedleggRepository.save(Vedlegg(vedleggId, søknad2Id, "navn", "tittel1", Fil(byteArrayOf(12))))
         }).isInstanceOf(TransactionSystemException::class.java)

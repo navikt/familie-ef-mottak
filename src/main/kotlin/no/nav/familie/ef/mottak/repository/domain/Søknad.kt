@@ -8,7 +8,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "soknad")
-data class Soknad(@Id
+data class Søknad(@Id
                   val id: String = UUID.randomUUID().toString(),
                   @Convert(converter = StringValCryptoConverter::class)
                   @Column(name = "soknad_json")
@@ -24,4 +24,6 @@ data class Soknad(@Id
                   @Column(name = "task_opprettet")
                   val taskOpprettet: Boolean = false,
                   @Column(name = "opprettet_tid")
-                  val opprettetTid: LocalDateTime = LocalDateTime.now())
+                  val opprettetTid: LocalDateTime = LocalDateTime.now(),
+                  @Column(name = "behandle_i_ny_saksbehandling")
+                  val behandleINySaksbehandling: Boolean = false)
