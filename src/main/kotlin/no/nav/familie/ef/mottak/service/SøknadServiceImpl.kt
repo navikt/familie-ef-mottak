@@ -12,6 +12,7 @@ import no.nav.familie.ef.mottak.repository.domain.Soknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.*
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -62,6 +63,10 @@ class SøknadServiceImpl(private val soknadRepository: SoknadRepository,
         dokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
+    }
+
+    override fun hentSøknaderForPerson(personIdent: String): List<String>{
+        return soknadRepository.findAllByFnr(personIdent).map { søknad -> søknad.id }
     }
 
     private fun mapVedlegg(søknadDbId: String,

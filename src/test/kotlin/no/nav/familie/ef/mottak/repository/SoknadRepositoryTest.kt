@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.repository.domain.Soknad
 import org.assertj.core.api.Assertions.assertThat
@@ -44,6 +45,25 @@ internal class SoknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         val soknadUtenTask = soknadRepository.findFirstByTaskOpprettetIsFalse()
 
         assertThat(soknadUtenTask).isNull()
+    }
+
+    @Test
+    internal fun `findAllByFnr returnerer flere søknader`() {
+        val ident = "12345678"
+
+        val søknadOvergangsstønad = soknadRepository.save(Soknad(søknadJson = "kåre",
+                                                                 fnr = ident,
+                                                                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                                                 taskOpprettet = true))
+
+        val søknadBarnetilsyn = soknadRepository.save(Soknad(søknadJson = "kåre",
+                                                             fnr = ident,
+                                                             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                                                             taskOpprettet = true))
+
+        val søknader = soknadRepository.findAllByFnr(ident)
+
+        assertThat(søknader).usingElementComparatorIgnoringFields("opprettetTid").containsExactlyInAnyOrder(søknadOvergangsstønad, søknadBarnetilsyn)
     }
 
 }
