@@ -47,7 +47,8 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
                            vedlegg: Map<String, ByteArray>): List<no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg> =
         vedleggMetadata.map {
             no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg(
-                id = UUID.fromString(it.id.dropLast(4)), //TODO kan ikke ha droplast??
+                id = UUID.fromString((it.id)),
+                // id = UUID.fromString(it.id.dropLast(4)), //Må bruke denne for at det skal funke med postman
                 ettersendingId = ettersendingDbId,
                 navn = it.navn,
                 tittel = it.tittel,
@@ -64,7 +65,7 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         val databaseDokumentasjonsbehov = EttersendingDokumentasjonsbehov(ettersendingId = lagretSkjema.id,
             data = objectMapper.writeValueAsString(ettersendingDokumentasjonsbehov))
         ettersendingDokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
-        logger.info("Mottatt søknad med id ${lagretSkjema.id}")
-        return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
+        logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
+        return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 }

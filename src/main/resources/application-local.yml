@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: postgres
-    password: sigmund
+    password: test
     url: jdbc:postgresql://localhost:5432/familie-ef-mottak
   kafka:
     bootstrap-servers: http://localhost:9092

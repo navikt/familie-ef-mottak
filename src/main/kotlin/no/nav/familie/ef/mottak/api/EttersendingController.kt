@@ -22,11 +22,6 @@ class EttersendingController(val ettersendingService: EttersendingService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    //@PostMapping(path=["ettersending"])
-    //fun ettersending(){
-    //    logger.info("YEY")
-    //}
-
    @PostMapping(path = ["ettersending"])
     fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg<Ettersending>,
                      @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering>
