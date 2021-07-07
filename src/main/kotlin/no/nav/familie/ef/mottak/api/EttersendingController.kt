@@ -31,7 +31,6 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg<Ettersending>,
                      @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering>
     {
-        logger.info("Request to ettersending mottatt")
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(ettersending.vedlegg, vedleggData)
@@ -58,7 +57,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
                                vedleggData: Map<String, ByteArray>) {
         val vedleggMetadata = vedlegg.map { it.id to it }.toMap()
         if (vedleggMetadata.keys.size != vedleggData.keys.size || !vedleggMetadata.keys.containsAll(vedleggData.keys)) {
-            logger.error("Søknad savner: [{}], vedleggListe:[{}]",
+            logger.error("Ettersending savner: [{}], vedleggListe:[{}]",
                 vedleggMetadata.keys.toMutableSet().removeAll(vedleggData.keys),
                 vedleggData.keys.toMutableSet().removeAll(vedleggMetadata.keys))
             throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
