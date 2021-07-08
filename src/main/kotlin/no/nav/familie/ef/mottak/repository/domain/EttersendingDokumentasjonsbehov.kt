@@ -6,6 +6,6 @@ import javax.persistence.Id
 
 @Entity
 data class EttersendingDokumentasjonsbehov(@Id
-                               @Column(name = "ettersending_id")
-                               val ettersendingId: String,
-                               val data: String)
+                                           @Column(name = "ettersending_id")
+                                           val ettersendingId: String,
+                                           val data: String)

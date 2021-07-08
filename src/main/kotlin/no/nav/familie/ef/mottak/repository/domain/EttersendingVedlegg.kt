@@ -1,8 +1,12 @@
 package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
-import java.util.*
-import javax.persistence.*
+import java.util.UUID
+import javax.persistence.Column
+import javax.persistence.Convert
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.PreUpdate
 
 @Entity
 data class EttersendingVedlegg(@Id

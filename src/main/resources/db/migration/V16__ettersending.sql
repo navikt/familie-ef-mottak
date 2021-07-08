@@ -8,8 +8,7 @@ CREATE TABLE ettersending(
     dokumenttype   VARCHAR(256) DEFAULT N'ETTERSENDING' NOT NULL,
     task_opprettet BOOLEAN      DEFAULT FALSE                     NOT NULL,
     opprettet_tid  TIMESTAMP(3) DEFAULT LOCALTIMESTAMP            NOT NULL,
-    vedlegg        BYTEA,
-    behandle_i_ny_saksbehandling BOOLEAN DEFAULT FALSE
+    vedlegg        BYTEA
 );
 
 CREATE TABLE ettersending_vedlegg (
