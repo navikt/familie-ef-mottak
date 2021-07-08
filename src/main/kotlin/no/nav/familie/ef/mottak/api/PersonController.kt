@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/person"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(consumes = [APPLICATION_JSON_VALUE], path = ["/api/person"], produces = [APPLICATION_JSON_VALUE])
 @Protected
 class PersonController(val søknadService: SøknadService) {
 
