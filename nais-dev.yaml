@@ -43,6 +43,14 @@ spec:
     - https://familie-ef-mottak.dev-fss.nais.io
   secureLogs:
     enabled: true
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ef-soknad-api
+          namespace: teamfamilie
+          cluster: dev-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
