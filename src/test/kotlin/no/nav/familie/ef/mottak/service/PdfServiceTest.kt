@@ -5,10 +5,10 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.repository.SoknadRepository
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -18,14 +18,14 @@ import org.springframework.data.repository.findByIdOrNull
 
 internal class PdfServiceTest {
 
-    private val soknadRepository: SoknadRepository = mockk()
+    private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
     private val pdfClient: PdfClient = mockk()
-    private val pdfService: PdfService = PdfService(soknadRepository, vedleggRepository, pdfClient)
+    private val pdfService: PdfService = PdfService(søknadRepository, vedleggRepository, pdfClient)
 
     private val pdf = Fil("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
-    private val søknadOvergangsstønad = Soknad(id = søknadOvergangsstønadId,
+    private val søknadOvergangsstønad = Søknad(id = søknadOvergangsstønadId,
                                                søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
                                                søknadPdf = null,
                                                fnr = "654",
@@ -34,7 +34,7 @@ internal class PdfServiceTest {
                                                saksnummer = null)
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
-    private val søknadSkolepenger = Soknad(id = søknadSkolepengerId,
+    private val søknadSkolepenger = Søknad(id = søknadSkolepengerId,
                                            søknadJson = createValidSøknadJson(Testdata.søknadSkolepenger),
                                            søknadPdf = null,
                                            fnr = "654",
@@ -43,7 +43,7 @@ internal class PdfServiceTest {
                                            saksnummer = null)
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
-    private val søknadBarnetilsyn = Soknad(id = søknadBarnetilsynId,
+    private val søknadBarnetilsyn = Søknad(id = søknadBarnetilsynId,
                                            søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
                                            søknadPdf = null,
                                            fnr = "654",
@@ -64,7 +64,7 @@ internal class PdfServiceTest {
     @Test
     fun `Søknad skal oppdateres med pdf når pdf genereres`() {
         // Given
-        val slot = slot<Soknad>()
+        val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf(søknadOvergangsstønadId)
@@ -75,7 +75,7 @@ internal class PdfServiceTest {
     @Test
     fun `Skolepengesøknad skal oppdateres med pdf når pdf genereres`() {
         // Given
-        val slot = slot<Soknad>()
+        val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf(søknadSkolepengerId)
@@ -86,14 +86,14 @@ internal class PdfServiceTest {
     @Test
     fun `Søknad med pdf skal lagres`() {
         // Given
-        val slot = slot<Soknad>()
+        val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
         // When
         pdfService.lagPdf(søknadBarnetilsynId)
         // Then
         verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
         verify(exactly = 1) {
-            soknadRepository.saveAndFlush(slot.captured)
+            søknadRepository.saveAndFlush(slot.captured)
         }
     }
 
@@ -103,10 +103,10 @@ internal class PdfServiceTest {
         } returns pdf
     }
 
-    private fun søknadsRepositoryVilReturnere(vararg søknad: Soknad) {
+    private fun søknadsRepositoryVilReturnere(vararg søknad: Søknad) {
         søknad.forEach {
             every {
-                soknadRepository.findByIdOrNull(it.id)
+                søknadRepository.findByIdOrNull(it.id)
             } returns it
         }
     }
@@ -115,9 +115,9 @@ internal class PdfServiceTest {
         return objectMapper.writeValueAsString(søknad)
     }
 
-    private fun capturePdfAddedToSøknad(slot: CapturingSlot<Soknad>) {
+    private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {
         every {
-            soknadRepository.saveAndFlush(capture(slot))
+            søknadRepository.saveAndFlush(capture(slot))
         } answers {
             slot.captured
         }

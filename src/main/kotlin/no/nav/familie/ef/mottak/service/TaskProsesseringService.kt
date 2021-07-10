@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.repository.SoknadRepository
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.task.LagPdfTask
-import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.SEND_SØKNAD_MOTTATT_TIL_DITT_NAV
+import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.TYPE
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
@@ -12,21 +12,21 @@ import javax.transaction.Transactional
 
 @Service
 class TaskProsesseringService(private val taskRepository: TaskRepository,
-                              private val soknadRepository: SoknadRepository) {
+                              private val søknadRepository: SøknadRepository) {
 
     @Transactional
-    fun startTaskProsessering(søknad: Soknad) {
+    fun startTaskProsessering(søknad: Søknad) {
         val properties =
                 Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
                         .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskRepository.save(Task(LagPdfTask.LAG_PDF,
+        taskRepository.save(Task(LagPdfTask.TYPE,
                                  søknad.id,
                                  properties))
 
-        taskRepository.save(Task(SEND_SØKNAD_MOTTATT_TIL_DITT_NAV,
+        taskRepository.save(Task(TYPE,
                                  søknad.id,
                                  properties))
-        soknadRepository.save(søknad.copy(taskOpprettet = true))
+        søknadRepository.save(søknad.copy(taskOpprettet = true))
     }
 
 }

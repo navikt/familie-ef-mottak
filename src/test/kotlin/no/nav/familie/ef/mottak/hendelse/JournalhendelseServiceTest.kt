@@ -1,44 +1,54 @@
 package no.nav.familie.ef.mottak.hendelse
 
 import io.mockk.*
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_FERDIGSTILT
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_IKKE_ENFNETRYGD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_PAPIRSØKNAD
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_UTGÅENDE_DOKUMENT
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.OFFSET
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.journalføringHendelseRecord
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
+import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
+import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.*
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.slf4j.MDC
-import org.springframework.kafka.support.Acknowledgment
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JournalføringHendelseServiceTest {
+class JournalhendelseServiceTest {
 
     @MockK
     lateinit var integrasjonerClient: IntegrasjonerClient
 
     @MockK
-    lateinit var mockTaskRepository: TaskRepository
+    lateinit var mockTaskRepositoryUtvidet: TaskRepositoryUtvidet
 
     @MockK(relaxed = true)
     lateinit var mockFeatureToggleService: FeatureToggleService
 
     @MockK(relaxed = true)
-    lateinit var mockHendelsesloggRepository: HendelsesloggRepository
+    lateinit var mockHendelseloggRepository: HendelsesloggRepository
 
     @MockK(relaxed = true)
-    lateinit var ack: Acknowledgment
+    lateinit var mockSøknadRepository: SøknadRepository
 
-    @InjectMockKs
+    @MockK(relaxed = true)
+    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+
+    @MockK(relaxed = true)
+    lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
+
     lateinit var service: JournalhendelseService
 
     @BeforeEach
@@ -47,11 +57,11 @@ class JournalføringHendelseServiceTest {
         clearAllMocks()
 
         every {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         } answers { it.invocation.args[0] as Task }
 
         //Inngående papirsøknad, Mottatt
@@ -109,159 +119,92 @@ class JournalføringHendelseServiceTest {
                               kanal = "NAV_NO")
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
+
+        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
+
+        service = JournalhendelseService(integrasjonerClient, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockJournalføringsoppgaveService, mockTaskRepositoryUtvidet)
     }
 
     @Test
-    fun `Mottak av papirsøknader skal opprette OpprettOppgaveForJournalføringTask`() {
+    fun `Mottak av papirsøknader skal opprette LagEksternJournalføringsoppgaveTask`() {
         MDC.put("callId", "papir")
-        val record = opprettRecord(JOURNALPOST_PAPIRSØKNAD)
+        val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
 
-        service.behandleJournalhendelse(record)
+        every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
+        } returns false
 
-        val taskSlot = slot<Task>()
+        service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
+
+        val taskSlot = slot<Journalpost>()
         verify {
-            mockTaskRepository.save(capture(taskSlot))
+            mockJournalføringsoppgaveService.lagEksternJournalføringTask(capture(taskSlot))
         }
 
         assertThat(taskSlot.captured).isNotNull
-        assertThat(taskSlot.captured.payload).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(taskSlot.captured.metadata.getProperty("callId")).isEqualTo("papir")
-        assertThat(taskSlot.captured.type).isEqualTo(LagJournalføringsoppgaveTask.TYPE)
+        assertThat(taskSlot.captured.kanal).isEqualTo(journalføringhendelseRecord.mottaksKanal)
     }
 
     @Test
-    fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
-        val record = opprettRecord(JOURNALPOST_FERDIGSTILT)
+    fun `Mottak av papirsøknader skal ikke opprette LagEksternJournalføringsoppgaveTask hvis det allerede finnes en task med samme journalpostId`() {
+        MDC.put("callId", "papir")
+        val record = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
 
-        service.behandleJournalhendelse(record)
+        every { mockSøknadRepository.findByJournalpostId(any()) } returns null
 
-        verify(exactly = 0) {
-            mockTaskRepository.save(any())
-        }
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
+        } returns true
 
-    }
-
-    @Test
-    fun `Utgående journalposter skal ignoreres`() {
-        val record = opprettRecord(JOURNALPOST_UTGÅENDE_DOKUMENT)
-
-        service.behandleJournalhendelse(record)
+        service.prosesserNyHendelse(record, OFFSET)
 
         verify(exactly = 0) {
-            mockTaskRepository.save(any())
+            mockTaskRepositoryUtvidet.save(any())
         }
 
+        verify(exactly = 1) {
+            mockHendelseloggRepository.save(any())
+        }
     }
-
 
     @Test
     fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg`() {
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
+        val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
         every {
-            mockHendelsesloggRepository.existsByHendelseId("hendelseId")
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringhendelseRecord)
         } returns true
 
-        service.prosesserNyHendelse(consumerRecord, ack)
-
-        verify { ack.acknowledge() }
+        service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
 
         verify(exactly = 0) {
-            mockHendelsesloggRepository.save(any())
+            mockHendelseloggRepository.save(any())
         }
     }
 
     @Test
     fun `Mottak av gyldig hendelse skal delegeres til service`() {
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, opprettRecord(JOURNALPOST_PAPIRSØKNAD))
 
-        service.prosesserNyHendelse(consumerRecord, ack)
+        every {
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD))
+        } returns false
 
-        verify { ack.acknowledge() }
+        every {
+            mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
+        } returns false
+        val journalføringHendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+        service.prosesserNyHendelse(journalføringHendelseRecord, OFFSET)
 
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
+            mockHendelseloggRepository.save(capture(slot))
         }
 
         assertThat(slot.captured).isNotNull
         assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
+        assertThat(slot.captured.hendelseId).isEqualTo(journalføringHendelseRecord.hendelsesId)
         assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
         assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
-    }
-
-    @Test
-    fun `Ikke gyldige hendelsetyper skal ignoreres`() {
-        val ugyldigHendelsetypeRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, hendelseType = "UgyldigType")
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, ugyldigHendelsetypeRecord)
-
-        service.prosesserNyHendelse(consumerRecord, ack)
-
-
-        verify { ack.acknowledge() }
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
-        }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("UgyldigType")
-    }
-
-    @Test
-    fun `Hendelser hvor journalpost ikke har tema for Barnetrygd skal ignoreres`() {
-        val ukjentTemaRecord = opprettRecord(journalpostId = JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
-
-        val consumerRecord = ConsumerRecord("topic", 1,
-                                            OFFSET,
-                                            42L, ukjentTemaRecord)
-
-        service.prosesserNyHendelse(consumerRecord, ack)
-
-        verify { ack.acknowledge() }
-        val slot = slot<Hendelseslogg>()
-        verify(exactly = 1) {
-            mockHendelsesloggRepository.save(capture(slot))
-        }
-        assertThat(slot.captured).isNotNull
-        assertThat(slot.captured.offset).isEqualTo(OFFSET)
-        assertThat(slot.captured.hendelseId).isEqualTo(HENDELSE_ID)
-        assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
-    }
-
-    private fun opprettRecord(journalpostId: String,
-                              hendelseType: String = "MidlertidigJournalført",
-                              temaNytt: String = "ENF"): JournalfoeringHendelseRecord {
-        return JournalfoeringHendelseRecord(HENDELSE_ID,
-                                            1,
-                                            hendelseType,
-                                            journalpostId.toLong(),
-                                            "M",
-                                            "ENF",
-                                            temaNytt,
-                                            "SKAN_NETS",
-                                            "kanalReferanseId",
-                                            "ENF")
-    }
-
-    companion object {
-
-        const val JOURNALPOST_PAPIRSØKNAD = "111"
-        const val JOURNALPOST_DIGITALSØKNAD = "222"
-        const val JOURNALPOST_UTGÅENDE_DOKUMENT = "333"
-        const val JOURNALPOST_IKKE_ENFNETRYGD = "444"
-        const val JOURNALPOST_FERDIGSTILT = "555"
-        const val OFFSET = 21L
-        const val HENDELSE_ID = "hendelseId"
     }
 }

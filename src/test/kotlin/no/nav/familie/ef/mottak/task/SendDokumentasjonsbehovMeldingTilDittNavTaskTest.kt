@@ -4,7 +4,7 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.søknad.Dokument
@@ -116,7 +116,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
     private fun mockSøknad(søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
         every { søknadService.get(SØKNAD_ID) } returns
-                Soknad(id = SØKNAD_ID,
+                Søknad(id = SØKNAD_ID,
                        søknadJson = "",
                        dokumenttype = søknadType.dokumentType,
                        fnr = FNR)

@@ -3,8 +3,9 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.repository.SoknadRepository
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
+import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -13,18 +14,18 @@ import org.junit.jupiter.api.Test
 internal class TaskProsesseringServiceTest {
 
     private val taskRepository: TaskRepository = mockk(relaxed = true)
-    private val soknadRepository: SoknadRepository = mockk(relaxed = true)
+    private val søknadRepository: SøknadRepository = mockk(relaxed = true)
 
-    private val scheduledEventService = TaskProsesseringService(taskRepository, soknadRepository)
+    private val scheduledEventService = TaskProsesseringService(taskRepository, søknadRepository)
 
     @Test
     fun `startTaskProsessering oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
-        val soknad = Soknad(dokumenttype = "søknad", søknadJson = "json", fnr = "fnr", taskOpprettet = false)
+        val soknad = søknad()
         val taskSlot = slot<Task>()
-        val soknadSlot = slot<Soknad>()
+        val soknadSlot = slot<Søknad>()
         every { taskRepository.save(capture(taskSlot)) }
                 .answers { taskSlot.captured }
-        every { soknadRepository.save(capture(soknadSlot)) }
+        every { søknadRepository.save(capture(soknadSlot)) }
                 .answers { soknadSlot.captured }
 
         scheduledEventService.startTaskProsessering(soknad)

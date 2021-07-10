@@ -34,6 +34,28 @@ no.nav.security.jwt:
           client-id: ${CLIENT_ID}
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      infotrygd-replika:
+        resource-url: ${INFOTRYGD_REPLIKA_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: ${EF_INFOTRYGD_REPLIKA_SCOPE}
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      ef-sak:
+        resource-url: ${EF_SAK_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://dev-gcp.teamfamilie.familie-ef-sak/.default
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+
+INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.dev.adeo.no
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
+
+EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no

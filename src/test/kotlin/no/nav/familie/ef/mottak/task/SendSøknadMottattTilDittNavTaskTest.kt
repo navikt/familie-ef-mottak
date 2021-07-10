@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.SendDokumentasjonsbehovMeldingTilDittNavTask
@@ -28,7 +28,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                 SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         task = Task(id = 1,
                     payload = SØKNAD_ID,
-                    type = SendDokumentasjonsbehovMeldingTilDittNavTask.SEND_MELDING_TIL_DITT_NAV)
+                    type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE)
     }
 
     @Test
@@ -72,7 +72,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
 
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadService.get(SØKNAD_ID) } returns
-                Soknad(id = SØKNAD_ID,
+                Søknad(id = SØKNAD_ID,
                        søknadJson = "",
                        dokumenttype = søknadType.dokumentType,
                        fnr = FNR)

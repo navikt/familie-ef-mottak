@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.mockapi
 
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.ef.mottak.repository.domain.Soknad
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.MediaType
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class SøknadControllerExtension(val søknadService: SøknadService) {
 
     @GetMapping("{id}")
-    fun get(@PathVariable id: String): Soknad {
+    fun get(@PathVariable id: String): Søknad {
         return søknadService.get(id)
     }
 

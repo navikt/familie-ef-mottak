@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*
 
-internal class SoknadTest {
+internal class SøknadTest {
 
     @Test
     fun testHashCode() {
         val uuid = UUID.randomUUID().toString()
         val opprettet = LocalDateTime.now()
-        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
-        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val one = Søknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val other = Søknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
         assertEquals(one.hashCode(), other.hashCode())
     }
 
@@ -21,8 +21,8 @@ internal class SoknadTest {
     fun testEquals() {
         val uuid = UUID.randomUUID().toString()
         val opprettet = LocalDateTime.now()
-        val one = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
-        val other = Soknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val one = Søknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
+        val other = Søknad(uuid, "string", Fil("321".toByteArray()), "", "654", "789", "123", true, opprettet)
         assertTrue(one == other)
     }
 }
