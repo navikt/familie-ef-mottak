@@ -22,5 +22,5 @@ spring:
       generic:
         enabled: true
         backend: kv/prod/fss
-        application-name: familie-ef-mottak/default
-        default-context: familie-ef-mottak/default
+        application-name: familie-ef-mottak/teamfamilie
+        default-context: familie-ef-mottak/teamfamilie
