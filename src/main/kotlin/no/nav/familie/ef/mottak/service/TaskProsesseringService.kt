@@ -3,11 +3,11 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.task.LagPdfTask
-import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.TYPE
+import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.Properties
 import javax.transaction.Transactional
 
 @Service
@@ -23,7 +23,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                                  søknad.id,
                                  properties))
 
-        taskRepository.save(Task(TYPE,
+        taskRepository.save(Task(SendSøknadMottattTilDittNavTask.TYPE,
                                  søknad.id,
                                  properties))
         søknadRepository.save(søknad.copy(taskOpprettet = true))
