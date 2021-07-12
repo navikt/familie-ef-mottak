@@ -22,7 +22,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 @ActiveProfiles("local")
-internal class SøknadServiceImplTest : IntegrasjonSpringRunnerTest() {
+internal class SøknadServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired(required = true) lateinit var søknadService: SøknadService
 

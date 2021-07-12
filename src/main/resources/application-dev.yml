@@ -7,6 +7,8 @@ spring:
       schema.registry.url: https://kafka-schema-registry.nais.preprod.local
 
 familie:
+  dokument:
+    url: https://familie-dokument.dev.intern.nav.no
   ef:
     pdfgenerator:
       url: https://familie-ef-dokgen.dev.intern.nav.no/

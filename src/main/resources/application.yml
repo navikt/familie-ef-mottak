@@ -71,6 +71,8 @@ funksjonsbrytere:
     applicationName: ${NAIS_APP_NAME}
 
 familie:
+  dokument:
+    url: https://familie-dokument.intern.nav.no
   ef:
     integrasjoner:
       url: http://familie-integrasjoner.teamfamilie/api/

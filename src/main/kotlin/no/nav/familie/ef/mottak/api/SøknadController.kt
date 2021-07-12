@@ -1,9 +1,15 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.repository.domain.Vedlegg.Companion
+import no.nav.familie.ef.mottak.repository.domain.Vedlegg.Companion.UPDATE_FEILMELDING
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.getRootCause
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -11,22 +17,37 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
 @Protected
 class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping(path = ["", "overgangsstonad"])
-    fun overgangsstønad(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-                        @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
-            : ResponseEntity<Kvittering> {
+    @PostMapping("overgangsstonad")
+    fun overgangsstønad(@RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+        return okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
+    }
+
+    @PostMapping("barnetilsyn")
+    fun barnetilsyn(@RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
+        return okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
+    }
+
+    @PostMapping("skolepenger")
+    fun skolepenger(@RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
+        return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
+    }
+
+    @PostMapping(path = ["", "overgangsstonad"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun overgangsstønadOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
+                           @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -34,10 +55,9 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaOvergangsstønad(søknad, vedleggData) }
     }
 
-    @PostMapping(path = ["barnetilsyn"])
-    fun barnetilsyn(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-                    @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
-            : ResponseEntity<Kvittering> {
+    @PostMapping(path = ["barnetilsyn"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun barnetilsynOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
+                       @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
@@ -45,21 +65,20 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaBarnetilsyn(søknad, vedleggData) }
     }
 
-    @PostMapping(path = ["skolepenger"])
-    fun skolepenger(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-                    @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?)
-            : ResponseEntity<Kvittering> {
+    @PostMapping(path = ["skolepenger"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun skolepengerOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
+                       @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
         val vedleggData = vedleggData(vedleggListe)
 
         validerVedlegg(søknad.vedlegg, vedleggData)
         return okEllerKastException { søknadService.mottaSkolepenger(søknad, vedleggData) }
     }
 
-    private fun okEllerKastException(producer: () -> Kvittering): ResponseEntity<Kvittering> {
+    private fun okEllerKastException(producer: () -> Kvittering): Kvittering {
         try {
-            return ResponseEntity.ok(producer.invoke())
+            return producer.invoke()
         } catch (e: Exception) {
-            if (e.getRootCause()?.message == no.nav.familie.ef.mottak.repository.domain.Vedlegg.UPDATE_FEILMELDING) {
+            if (e.getRootCause()?.message == UPDATE_FEILMELDING) {
                 throw ApiFeil("Det går ikke å sende inn samme vedlegg to ganger", HttpStatus.BAD_REQUEST)
             } else {
                 throw e
