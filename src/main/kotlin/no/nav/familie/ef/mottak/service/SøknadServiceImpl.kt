@@ -101,6 +101,10 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
+    override fun hentSøknaderForPerson(personIdent: String): List<String>{
+        return søknadRepository.findAllByFnr(personIdent).map { søknad -> søknad.id }
+    }
+
     private fun mapVedlegg(søknadDbId: String,
                            vedleggMetadata: List<VedleggKontrakt>,
                            vedlegg: Map<String, ByteArray>): List<Vedlegg> =

@@ -12,6 +12,8 @@ interface SøknadRepository : JpaRepository<Søknad, String> {
 
     fun findByJournalpostId(jounalpostId: String): Søknad?
 
+    fun findAllByFnr(fnr: String): List<Søknad>
+
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
 }
