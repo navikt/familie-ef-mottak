@@ -22,7 +22,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/preprod/fss/familie-ef-mottak/default
+      - kvPath: /kv/preprod/fss/familie-ef-mottak/teamfamilie
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: serviceuser/data/dev/srvfamilie-ef-mot
         mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
