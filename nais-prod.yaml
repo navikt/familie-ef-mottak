@@ -50,7 +50,7 @@ spec:
       rules:
         - application: familie-ef-soknad-api
           namespace: teamfamilie
-          cluster: prod-gcp
+          cluster: prod-sbs
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod

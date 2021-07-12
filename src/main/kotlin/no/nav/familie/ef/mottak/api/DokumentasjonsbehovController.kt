@@ -18,8 +18,8 @@ import java.util.UUID
 @RestController
 @RequestMapping(path = ["/api/soknad/dokumentasjonsbehov"], produces = [APPLICATION_JSON_VALUE])
 @RequiredIssuers(
-        ProtectedWithClaims(issuer = "selvbetjening", claimMap = ["acr=Level4"]),
-        ProtectedWithClaims(issuer = "tokenx", claimMap = ["acr=Level4"])
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER, claimMap = ["acr=Level4"]),
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"])
 )
 class DokumentasjonsbehovController(val søknadService: SøknadService) {
 

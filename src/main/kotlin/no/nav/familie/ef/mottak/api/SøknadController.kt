@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.RequiredIssuers
 import org.slf4j.LoggerFactory
@@ -24,8 +25,8 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
 @RequiredIssuers(
-        ProtectedWithClaims(issuer = "selvbetjening", claimMap = ["acr=Level4"]),
-        ProtectedWithClaims(issuer = "tokenx", claimMap = ["acr=Level4"])
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER, claimMap = ["acr=Level4"]),
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"])
 )
 class SøknadController(val søknadService: SøknadService) {
 
