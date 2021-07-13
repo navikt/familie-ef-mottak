@@ -38,6 +38,7 @@ internal class OppgaveServiceTest {
     private val sakService: SakService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
+    private val ettersendingService = mockk<EttersendingService>()
 
     private val oppgaveService: OppgaveService =
             OppgaveService(integrasjonerClient = integrasjonerClient,
@@ -45,7 +46,8 @@ internal class OppgaveServiceTest {
                            søknadService = søknadService,
                            opprettOppgaveMapper = opprettOppgaveMapper,
                            sakService = sakService,
-                           saksbehandlingClient = saksbehandlingClient)
+                           saksbehandlingClient = saksbehandlingClient,
+                           ettersendingService = ettersendingService)
 
     @BeforeEach
     private fun init() {
