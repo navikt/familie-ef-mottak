@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.felles.StønadType
@@ -27,6 +28,7 @@ import org.springframework.web.client.HttpStatusCodeException
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val featureToggleService: FeatureToggleService,
                      private val søknadService: SøknadService,
+                     private val ettersendingService: EttersendingService,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper,
                      private val sakService: SakService,
                      private val saksbehandlingClient: SaksbehandlingClient) {
@@ -43,6 +45,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val tilordnet: String? =
                 if (skalSetteTilordnet(behandlesAvApplikasjon)) finnSaksbehandlerIdentForMiljø() else null
         return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
+    }
+
+    fun lagJournalføringsoppgaveForEttersendingId(ettersendingId: String): Long? {
+        val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
+        val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
+        val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
+        return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.EF_SAK )
     }
 
     /**

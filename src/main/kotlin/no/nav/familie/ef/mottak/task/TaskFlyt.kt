@@ -14,7 +14,7 @@ fun hovedflyt() = listOf(
 
 fun ettersendingflyt() = listOf(
         TaskType(ArkiverEttersendingTask.TYPE),
-        TaskType(LagJournalføringsoppgaveTask.TYPE)
+        TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE)
 )
 val fallbacks = mapOf(
     TaskType(ArkiverSøknadTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
