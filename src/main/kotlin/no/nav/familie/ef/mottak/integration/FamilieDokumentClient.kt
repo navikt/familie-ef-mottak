@@ -10,9 +10,9 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class FamilieDokumentClient(@Value("\${FAMILIE_DOKUMENT_API_URL}")
+class FamilieDokumentClient(@Value("\${familie.dokument.url}")
                             private val dokumentApiURI: URI,
-                            @Qualifier("restKlientMedApiKey") restTemplate: RestOperations) // TODO ta i bruken tokenExchange når tokenx er fikset
+                            @Qualifier("tokenExchange") restTemplate: RestOperations)
     : AbstractPingableRestClient(restTemplate, "familie.dokument") {
 
     private val hentVedleggUri = UriComponentsBuilder.fromUri(dokumentApiURI).pathSegment(HENT).build().toUri()

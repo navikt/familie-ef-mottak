@@ -73,6 +73,7 @@ funksjonsbrytere:
 familie:
   dokument:
     url: https://familie-dokument.intern.nav.no
+    audience: prod-fss:teamfamilie:familie-dokument
   ef:
     integrasjoner:
       url: http://familie-integrasjoner.teamfamilie/api/
