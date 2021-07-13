@@ -12,6 +12,7 @@ import no.nav.familie.kontrakter.ef.søknad.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -61,5 +62,13 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         ettersendingDokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
+    }
+
+    fun hentEttersending(id: String): Ettersending{
+        return ettersendingRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
+    }
+
+    fun lagreEttersending(ettersending: Ettersending) {
+        ettersendingRepository.save(ettersending)
     }
 }

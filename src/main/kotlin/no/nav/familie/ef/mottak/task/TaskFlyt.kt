@@ -12,6 +12,10 @@ fun hovedflyt() = listOf(
     TaskType(FerdigstillJournalføringTask.TYPE)
 )
 
+fun ettersendingflyt() = listOf(
+        TaskType(ArkiverEttersendingTask.TYPE),
+        TaskType(LagJournalføringsoppgaveTask.TYPE)
+)
 val fallbacks = mapOf(
     TaskType(ArkiverSøknadTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
     TaskType(LagBehandleSakOppgaveTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
@@ -21,3 +25,4 @@ fun TaskType.nesteFallbackTask() = fallbacks[this] ?: error("Finner ikke fallbac
 
 fun TaskType.nesteHovedflytTask() = hovedflyt().zipWithNext().first {this == it.first}.second.type
 fun TaskType.nesteKafkaHendelseFlytTask() = kafkaHendelseFlyt().zipWithNext().first { this == it.first }.second.type
+fun TaskType.nesteEttersendingsflytTask() = ettersendingflyt().zipWithNext().first {this == it.first}.second.type

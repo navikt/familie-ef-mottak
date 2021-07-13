@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.*
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
@@ -24,13 +26,36 @@ object ArkiverDokumentRequestMapper {
                                       mapVedlegg(vedlegg, søknad.dokumenttype))
     }
 
+    fun toEttersendingDto(ettersending: Ettersending,
+              vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
+
+        return ArkiverDokumentRequest(ettersending.fnr,
+                                      false,
+                                      emptyList(), //TODO må denne fylles ut?
+                                      mapEttersendingVedlegg(vedlegg, ettersending.dokumenttype))
+    }
+
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
         val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
         return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
     }
 
+    private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, dokumenttype: String): List<Dokument> {
+        if (vedlegg.isEmpty()) return emptyList()
+        val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
+        return vedlegg.map { tilEttersendingDokument(it, dokumenttypeVedlegg) }
+    }
+
     private fun tilDokument(vedlegg: Vedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
+        return Dokument(dokument = vedlegg.innhold.bytes,
+                        filtype = Filtype.PDFA,
+                        tittel = vedlegg.tittel,
+                        filnavn = vedlegg.id.toString(),
+                        dokumenttype = dokumenttypeVedlegg)
+    }
+
+    private fun tilEttersendingDokument(vedlegg: EttersendingVedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
         return Dokument(dokument = vedlegg.innhold.bytes,
                         filtype = Filtype.PDFA,
                         tittel = vedlegg.tittel,
