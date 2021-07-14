@@ -225,7 +225,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun utledBehandlesAvApplikasjonEttersending(ettersending: Ettersending): BehandlesAvApplikasjon {
-        val søknadId = søknadService.hentSøknaderForPerson(ettersending.id).first() //TODO: Håndter exception hvis ingen søknad finnes
+        val søknadId = søknadService.hentSøknaderForPerson(ettersending.fnr).first() //TODO: Håndter exception hvis ingen søknad finnes
         val søknad = søknadService.get(søknadId)
 
         return utledBehandlesAvApplikasjon(søknad)
