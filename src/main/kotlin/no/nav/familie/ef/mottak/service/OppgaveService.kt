@@ -51,7 +51,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
         val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.EF_SAK )
+        return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjonEttersending(ettersending))
     }
 
     /**
@@ -222,6 +222,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
         }
+    }
+
+    private fun utledBehandlesAvApplikasjonEttersending(ettersending: Ettersending): BehandlesAvApplikasjon {
+        val søknadId = søknadService.hentSøknaderForPerson(ettersending.id).first() //TODO: Håndter exception hvis ingen søknad finnes
+        val søknad = søknadService.get(søknadId)
+
+        return utledBehandlesAvApplikasjon(søknad)
     }
 
     private fun finnesBehandlingINyLøsning(søknad: Søknad,
