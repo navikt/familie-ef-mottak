@@ -87,8 +87,8 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         return dokumentResponse.journalpostId
     }
 
-    private fun sendEttersending(etterseding: Ettersending, vedlegg: List<EttersendingVedlegg>): String {
-        val arkiverDokumentRequest = ArkiverDokumentRequestMapper.toEttersendingDto(etterseding, vedlegg)
+    private fun sendEttersending(ettersending: Ettersending, vedlegg: List<EttersendingVedlegg>): String {
+        val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
         return dokumentResponse.journalpostId
     }

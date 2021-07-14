@@ -26,13 +26,20 @@ object ArkiverDokumentRequestMapper {
                                       mapVedlegg(vedlegg, søknad.dokumenttype))
     }
 
-    fun toEttersendingDto(ettersending: Ettersending,
-              vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
+    fun fromEttersending(ettersending: Ettersending,
+                         vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
 
-        return ArkiverDokumentRequest(ettersending.fnr,
-                                      false,
-                                      emptyList(), //TODO må denne fylles ut?
-                                      mapEttersendingVedlegg(vedlegg, ettersending.dokumenttype))
+        val hovedDokumentVarianter = listOf(Dokument(ettersending.ettersendingJson.toByteArray(),
+                                                     Filtype.JSON,
+                                                     null,
+                                                     "hoveddokument",
+                                                     Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG)) // TODO: Endre dokumenttype
+
+                                            return ArkiverDokumentRequest(ettersending.fnr,
+                                                                          false,
+                                                                          hovedDokumentVarianter,
+                                                                          mapEttersendingVedlegg(vedlegg,
+                                                                                                 ettersending.dokumenttype))
     }
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
