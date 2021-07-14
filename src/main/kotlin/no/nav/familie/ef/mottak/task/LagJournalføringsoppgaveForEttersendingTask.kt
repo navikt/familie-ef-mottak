@@ -8,7 +8,7 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
+@TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveForEttersendingTask.TYPE,
                      beskrivelse = "Lager oppgave i GoSys")
 class LagJournalføringsoppgaveForEttersendingTask(private val taskRepository: TaskRepository,
                                    private val oppgaveService: OppgaveService) : AsyncTaskStep {
