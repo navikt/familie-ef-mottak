@@ -32,7 +32,7 @@ object ArkiverDokumentRequestMapper {
         val hovedDokumentVarianter = listOf(Dokument(ettersending.ettersendingJson.toByteArray(),
                                                      Filtype.JSON,
                                                      null,
-                                                     "hoveddokument",
+                                                     "Ettersending til søknad om overgangsstønad",
                                                      Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG)) // TODO: Endre dokumenttype
 
                                             return ArkiverDokumentRequest(ettersending.fnr,
