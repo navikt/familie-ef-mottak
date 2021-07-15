@@ -11,6 +11,8 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -101,8 +103,14 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
-    override fun hentSøknaderForPerson(personIdent: String): List<String>{
-        return søknadRepository.findAllByFnr(personIdent).map { søknad -> søknad.id }
+    override fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
+        return søknadRepository.findAllByFnr(personIdent).map {
+            SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
+                                            stønadType = StønadType.OVERGANGSSTØNAD, // TODO: Endre denne
+                                            søknadDato = it.opprettetTid.toLocalDate(),
+                                            dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
+                                                    UUID.fromString(it.id)))
+        }
     }
 
     private fun mapVedlegg(søknadDbId: String,
