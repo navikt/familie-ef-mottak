@@ -3,8 +3,14 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.okEllerKastException
-import no.nav.familie.kontrakter.ef.søknad.*
-import no.nav.security.token.support.core.api.Protected
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.sikkerhet.EksternBrukerUtils
+import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.RequiredIssuers
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -18,7 +24,10 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
-@Protected
+@RequiredIssuers(
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER, claimMap = ["acr=Level4"]),
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"])
+)
 class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
