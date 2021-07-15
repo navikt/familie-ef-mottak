@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @Protected
 class PersonController(val søknadService: SøknadService) {
 
-    @PostMapping("soknader")
+    @PostMapping("soknader-med-dokumentasjonsbehov")
     fun søknaderForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<SøknadMedDokumentasjonsbehovDto>> {
         return ResponseEntity.ok().body(søknadService.hentDokumentasjonsbehovForPerson(personIdent.ident))
     }
