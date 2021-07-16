@@ -39,7 +39,7 @@
         <sonar.organization>navit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty Ligger som secret i github-->
-        <sonar.login>${SONAR_LOGIN}</sonar.login>
+        <sonar.login>${SONAR_LOGIN_TEST}</sonar.login>
     </properties>
 
     <repositories>
