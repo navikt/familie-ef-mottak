@@ -55,10 +55,10 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         val lagretSkjema = ettersendingRepository.save(ettersendingDb)
         ettersendingVedleggRepository.saveAll(vedlegg)
 
-            val databaseDokumentasjonsbehov = EttersendingDokumentasjonsbehov(ettersendingId = lagretSkjema.id,
-                                                                              data = objectMapper.writeValueAsString(
-                                                                                      ettersendingDokumentasjonsbehov))
-            ettersendingDokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
+        val databaseDokumentasjonsbehov = EttersendingDokumentasjonsbehov(ettersendingId = lagretSkjema.id,
+                                                                          data = objectMapper.writeValueAsString(
+                                                                                  ettersendingDokumentasjonsbehov))
+        ettersendingDokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }

@@ -48,4 +48,5 @@ class EttersendingController(val ettersendingService: EttersendingService) {
             throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
         }
     }
+
 }
