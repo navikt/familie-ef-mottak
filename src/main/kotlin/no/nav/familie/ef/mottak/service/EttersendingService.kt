@@ -30,7 +30,7 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
 
         val ettersendingDb = EttersendingMapper.fromDto(ettersending.ettersending)
 
-        val vedlegg = if(ettersending.vedlegg != null) mapVedlegg(ettersendingDb.id, ettersending.vedlegg!!, vedlegg) else emptyList()
+        val vedlegg = mapVedlegg(ettersendingDb.id, ettersending.vedlegg, vedlegg)
         return motta(ettersendingDb, vedlegg, ettersending.dokumentasjonsbehov)
 
     }
@@ -51,16 +51,14 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
 
     private fun motta(ettersendingDb: Ettersending,
                       vedlegg: List<no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg>,
-                      ettersendingDokumentasjonsbehov: List<no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov>?): Kvittering {
+                      ettersendingDokumentasjonsbehov: List<no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov>): Kvittering {
         val lagretSkjema = ettersendingRepository.save(ettersendingDb)
         ettersendingVedleggRepository.saveAll(vedlegg)
 
-        if(ettersendingDokumentasjonsbehov != null) {
             val databaseDokumentasjonsbehov = EttersendingDokumentasjonsbehov(ettersendingId = lagretSkjema.id,
                                                                               data = objectMapper.writeValueAsString(
                                                                                       ettersendingDokumentasjonsbehov))
             ettersendingDokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
-        }
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
