@@ -38,15 +38,20 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     private fun vedleggData(vedleggListe: List<MultipartFile>?): Map<String, ByteArray> =
             vedleggListe?.map { it.originalFilename to it.bytes }?.toMap() ?: emptyMap()
 
-    private fun validerVedlegg(vedlegg: List<Vedlegg>,
+    private fun validerVedlegg(vedlegg: List<Vedlegg>?,
                                vedleggData: Map<String, ByteArray>) {
-        val vedleggMetadata = vedlegg.map { it.id to it }.toMap()
-        if (vedleggMetadata.keys.size != vedleggData.keys.size || !vedleggMetadata.keys.containsAll(vedleggData.keys)) {
-            logger.error("Ettersending savner: [{}], vedleggListe:[{}]",
-                         vedleggMetadata.keys.toMutableSet().removeAll(vedleggData.keys),
-                         vedleggData.keys.toMutableSet().removeAll(vedleggMetadata.keys))
+        if(vedlegg == null && vedleggData.keys.isNotEmpty()){
+            logger.error("Ettersendingen mangler følgende vedlegg: [{}]", vedleggData.keys)
             throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
         }
+        else if (vedlegg != null) {
+            val vedleggMetadata = vedlegg!!.map { it.id to it }.toMap()
+            if (vedleggMetadata.keys.size != vedleggData.keys.size || !vedleggMetadata.keys.containsAll(vedleggData.keys)) {
+                logger.error("Ettersending savner: [{}], vedleggListe:[{}]",
+                             vedleggMetadata.keys.toMutableSet().removeAll(vedleggData.keys),
+                             vedleggData.keys.toMutableSet().removeAll(vedleggMetadata.keys))
+                throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
+            }
+        }
     }
-
 }
