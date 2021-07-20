@@ -8,14 +8,14 @@ import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingDokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.Fil
-import no.nav.familie.kontrakter.ef.søknad.EttersendingMedVedlegg
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.kontrakter.ef.søknad.Ettersending as EttersendingDto
+import no.nav.familie.kontrakter.ef.ettersending.Ettersending as EttersendingDto
 
 @Service
 class EttersendingService(private val ettersendingRepository: EttersendingRepository,
