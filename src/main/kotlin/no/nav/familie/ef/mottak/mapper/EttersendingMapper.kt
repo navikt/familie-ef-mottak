@@ -10,7 +10,7 @@ object EttersendingMapper {
     fun fromDto(ettersending: EttersendingDto):Ettersending {
         return Ettersending(
                 ettersendingJson = objectMapper.writeValueAsString(ettersending),
-                fnr = ettersending.personalia.verdi.fødselsnummer.verdi.verdi,
+                fnr = ettersending.fnr,
                 dokumenttype = DOKUMENTTYPE_ETTERSENDING,
         )
     }

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.kontrakter.ef.ettersending.Ettersending as EttersendingDto
 
 @Service
 class EttersendingService(private val ettersendingRepository: EttersendingRepository,
@@ -26,7 +25,7 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun mottaEttersending(ettersending: EttersendingMedVedlegg<EttersendingDto>, vedlegg: Map<String, ByteArray>): Kvittering {
+    fun mottaEttersending(ettersending: EttersendingMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
 
         val ettersendingDb = EttersendingMapper.fromDto(ettersending.ettersending)
 

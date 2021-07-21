@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
-import no.nav.familie.kontrakter.ef.ettersending.Ettersending
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.security.token.support.core.api.Protected
@@ -26,7 +25,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping
-    fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg<Ettersending>,
+    fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
                      @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering> {
         val vedleggData = vedleggData(vedleggListe)
 
