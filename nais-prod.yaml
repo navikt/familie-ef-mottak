@@ -43,6 +43,14 @@ spec:
     - https://familie-ef-mottak.nais.adeo.no
     - https://familie-ef-mottak.prod-fss-pub.nais.io
     - https://familie-ef-mottak.prod-fss.nais.io
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ef-soknad-api
+          namespace: teamfamilie
+          cluster: prod-sbs
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod

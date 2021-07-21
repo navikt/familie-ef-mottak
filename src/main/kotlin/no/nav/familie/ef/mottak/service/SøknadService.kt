@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
@@ -26,5 +27,5 @@ interface SøknadService {
 
     fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto
 
-    fun hentSøknaderForPerson(personIdent: String): List<String>
+    fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto>
 }

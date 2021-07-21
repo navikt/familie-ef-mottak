@@ -18,6 +18,9 @@ no.nav.security.jwt:
       acceptedaudience: ${LOGINSERVICE_IDPORTEN_AUDIENCE}
       proxyurl: http://webproxy-nais.nav.no:8088
       cookie_name: selvbetjening-idtoken
+    tokenx:
+      discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
+      accepted_audience: ${TOKEN_X_CLIENT_ID}
     azuread:
       discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
       accepted_audience: ${CLIENT_ID}
