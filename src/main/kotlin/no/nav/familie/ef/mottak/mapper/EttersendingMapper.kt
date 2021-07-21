@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_ETTERSENDING
+import no.nav.familie.kontrakter.ef.ettersending.Ettersending as EttersendingDto
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.ef.ettersending.Ettersending as EttersendingDto
 
 object EttersendingMapper {
 
