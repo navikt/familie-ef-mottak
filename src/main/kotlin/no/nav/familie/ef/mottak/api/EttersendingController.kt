@@ -1,21 +1,27 @@
 package no.nav.familie.ef.mottak.api
 
+import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
 
 @RestController
 @RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/ettersending"], produces = [APPLICATION_JSON_VALUE])
@@ -23,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile
 class EttersendingController(val ettersendingService: EttersendingService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping
     fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
@@ -46,6 +53,26 @@ class EttersendingController(val ettersendingService: EttersendingService) {
                          vedleggData.keys.toMutableSet().removeAll(vedleggMetadata.keys))
             throw ApiFeil("Savner vedlegg, se logg for mer informasjon", HttpStatus.BAD_REQUEST)
         }
+    }
+
+
+    // hente ettersendingtabell
+    fun hentEttersending(@PathVariable() fnr: String): ResponseEntity<EttersendingRequestData> {
+
+        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(fnr)
+        val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
+        if (fnrFraToken != fnr) {
+            logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
+            secureLogger.info("TokenFnr={} matcher ikke søknadFnr={} søknadId={}",
+                              fnrFraToken,
+                              fnr)
+            throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
+        }
+
+
+       // val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId)
+
+        return ResponseEntity.ok(ettersendingData)
     }
 
 }

@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.repository.EttersendingDokumentasjonsbehovRepository
@@ -10,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.domain.EttersendingDokumentasjonsbeho
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -31,6 +33,14 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
 
         val vedlegg = mapVedlegg(ettersendingDb.id, ettersending.vedlegg, vedlegg)
         return motta(ettersendingDb, vedlegg, ettersending.dokumentasjonsbehov)
+    }
+
+    fun hentEttersendingsdataForPerson(personIdent: String): List<EttersendingRequestData> {
+
+        //gjør om ettersendingDb til EttersendingRequestData
+
+        val ettersendingDb = EttersendingMapper
+
 
     }
 
@@ -61,4 +71,11 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
+
+    private fun sendEttersending(): List<EttersendingRequestData> {
+
+    }
+
+
+
 }
