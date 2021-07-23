@@ -40,7 +40,7 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         //gjør om ettersendingDb til EttersendingRequestData
 
         val ettersendingDb = EttersendingMapper
-
+        return emptyList()
 
     }
 
@@ -72,10 +72,11 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
+    /*
     private fun sendEttersending(): List<EttersendingRequestData> {
 
     }
-
+*/
 
 
 }
