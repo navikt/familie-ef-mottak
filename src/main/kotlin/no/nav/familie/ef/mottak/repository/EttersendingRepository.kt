@@ -13,4 +13,6 @@ interface EttersendingRepository : JpaRepository<Ettersending, String>{
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
+    fun findAllByFnr(personIdent: String): List<Ettersending>
+
 }

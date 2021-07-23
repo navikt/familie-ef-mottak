@@ -11,7 +11,6 @@ import no.nav.familie.ef.mottak.repository.domain.EttersendingDokumentasjonsbeho
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -35,13 +34,20 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         return motta(ettersendingDb, vedlegg, ettersending.dokumentasjonsbehov)
     }
 
+
+
     fun hentEttersendingsdataForPerson(personIdent: String): List<EttersendingRequestData> {
 
-        //gjør om ettersendingDb til EttersendingRequestData
+        // TODO legge inn soknadId og dokumentasjonsbehovLabel i requestdata
 
-        val ettersendingDb = EttersendingMapper
-        return emptyList()
+        val hei: MutableList<EttersendingRequestData> = mutableListOf()
 
+        ettersendingRepository.findAllByFnr(personIdent).forEach { ettersending ->
+            ettersendingVedleggRepository.findByEttersendingId(ettersending.id). forEach {
+                hei.add(EttersendingRequestData(datoMottatt = ettersending.opprettetTid, filnavn = it.navn))
+            }
+        }
+        return hei
     }
 
     private fun mapVedlegg(ettersendingDbId: String,
@@ -72,11 +78,16 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
-    /*
-    private fun sendEttersending(): List<EttersendingRequestData> {
 
+
+
+    private fun send(): List<EttersendingRequestData> {
+
+
+        //val ettersending = ettersendingRepository.getById()
+        return emptyList()
     }
-*/
+
 
 
 }

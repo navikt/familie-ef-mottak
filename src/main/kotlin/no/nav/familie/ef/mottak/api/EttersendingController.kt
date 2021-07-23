@@ -6,8 +6,6 @@ import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
-import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
@@ -15,8 +13,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
@@ -24,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE], path = ["/api/ettersending"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE], path = ["/api/ettersending"], produces = [APPLICATION_JSON_VALUE])
 @Protected
 class EttersendingController(val ettersendingService: EttersendingService) {
 
@@ -55,24 +53,26 @@ class EttersendingController(val ettersendingService: EttersendingService) {
         }
     }
 
+    // hente ettersendingtabell basert på bruker
+    @PostMapping("hent-ettersending-for-person")
+    fun hentEttersending(@RequestBody personIdent: String): ResponseEntity<List<EttersendingRequestData>> {
 
-    // hente ettersendingtabell
-    fun hentEttersending(@PathVariable() fnr: String): ResponseEntity<EttersendingRequestData> {
-
-        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(fnr)
+        print("AAAAAaAAAAAAAAAA\n\nAAAAAAAAAAAAAAAAAAA")
+        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent) // TODO må implementeres
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
-        if (fnrFraToken != fnr) {
+
+        print(ettersendingData)
+
+        /*if (fnrFraToken != fnr) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
             secureLogger.info("TokenFnr={} matcher ikke søknadFnr={} søknadId={}",
                               fnrFraToken,
                               fnr)
             throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
-        }
-
-
-       // val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknadId)
+        } */
 
         return ResponseEntity.ok(ettersendingData)
     }
+
 
 }
