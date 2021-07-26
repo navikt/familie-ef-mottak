@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
+import org.springframework.boot.configurationprocessor.json.JSONObject
 
 @Service
 class EttersendingService(private val ettersendingRepository: EttersendingRepository,
@@ -40,14 +42,22 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
 
         // TODO legge inn soknadId og dokumentasjonsbehovLabel i requestdata
 
-        val hei: MutableList<EttersendingRequestData> = mutableListOf()
+       // val ettersendingData: MutableList<EttersendingDto> = mutableListOf()
+
+        val ettersendingData =  ettersendingRepository.findAllByFnr(personIdent).map {
+            val json = it.ettersendingJson
+            print(json)
+            val ettersendingDto = EttersendingDto((it.ettersendingJson))
+
+        }
+
 
         ettersendingRepository.findAllByFnr(personIdent).forEach { ettersending ->
             ettersendingVedleggRepository.findByEttersendingId(ettersending.id). forEach {
-                hei.add(EttersendingRequestData(datoMottatt = ettersending.opprettetTid, filnavn = it.navn))
+                )
             }
         }
-        return hei
+        return ettersendingData
     }
 
     private fun mapVedlegg(ettersendingDbId: String,

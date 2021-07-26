@@ -4,6 +4,7 @@ import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.sikkerhet.EksternBrukerUtils
@@ -56,12 +57,8 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     // hente ettersendingtabell basert på bruker
     @PostMapping("hent-ettersending-for-person")
     fun hentEttersending(@RequestBody personIdent: String): ResponseEntity<List<EttersendingRequestData>> {
-
-        print("AAAAAaAAAAAAAAAA\n\nAAAAAAAAAAAAAAAAAAA")
-        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent) // TODO må implementeres
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
 
-        print(ettersendingData)
 
         /*if (fnrFraToken != fnr) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
@@ -70,6 +67,8 @@ class EttersendingController(val ettersendingService: EttersendingService) {
                               fnr)
             throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
         } */
+
+        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent) // TODO må implementeres
 
         return ResponseEntity.ok(ettersendingData)
     }
