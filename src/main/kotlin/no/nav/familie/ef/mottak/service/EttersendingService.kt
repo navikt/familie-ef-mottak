@@ -17,14 +17,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
-import org.springframework.boot.configurationprocessor.json.JSONObject
+import no.nav.familie.kontrakter.felles.PersonIdent
 
 @Service
 class EttersendingService(private val ettersendingRepository: EttersendingRepository,
                           private val ettersendingVedleggRepository: EttersendingVedleggRepository,
-                          private val ettersendingDokumentasjonsbehovRepository: EttersendingDokumentasjonsbehovRepository
-) {
+                          private val ettersendingDokumentasjonsbehovRepository: EttersendingDokumentasjonsbehovRepository) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -32,19 +30,17 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
     fun mottaEttersending(ettersending: EttersendingMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
 
         val ettersendingDb = EttersendingMapper.fromDto(ettersending.ettersending)
-
         val vedlegg = mapVedlegg(ettersendingDb.id, ettersending.vedlegg, vedlegg)
+
         return motta(ettersendingDb, vedlegg, ettersending.dokumentasjonsbehov)
     }
 
 
+    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendingRequestData> {
 
-    fun hentEttersendingsdataForPerson(personIdent: String): List<EttersendingRequestData> {
-
-        return  ettersendingRepository.findAllByFnr(personIdent).map {
-            EttersendingRequestData(objectMapper.readValue<EttersendingDto>(it.ettersendingJson), it.opprettetTid)
+        return ettersendingRepository.findAllByFnr(personIdent.ident).map {
+            EttersendingRequestData(objectMapper.readValue(it.ettersendingJson), it.opprettetTid)
         }
-
     }
 
     private fun mapVedlegg(ettersendingDbId: String,
@@ -52,12 +48,12 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
                            vedlegg: Map<String, ByteArray>): List<no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg> =
             vedleggMetadata.map {
                 no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg(
-                        id = UUID.fromString((it.id)),
-                        //id = UUID.fromString(it.id.dropLast(4)), //Må bruke denne for at det skal funke med postman
+                        //id = UUID.fromString((it.id)),
+                        id = UUID.fromString(it.id.dropLast(4)), //Må bruke denne for at det skal funke med postman
                         ettersendingId = ettersendingDbId,
                         navn = it.navn,
                         tittel = it.tittel,
-                        innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}"))
+                        innhold = Fil(vedlegg[it.id + ".pdf"] ?: error("Finner ikke vedlegg med id=${it.id}"))
                 )
             }
 
