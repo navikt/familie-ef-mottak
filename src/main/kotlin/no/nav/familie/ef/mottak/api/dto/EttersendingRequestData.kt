@@ -1,10 +1,9 @@
 package no.nav.familie.ef.mottak.api.dto
 
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import java.time.LocalDateTime
 
 data class EttersendingRequestData(
-        val filnavn: String,
-        val datoMottatt: LocalDateTime,
-        val soknadId: String? = null,
-        val dokumentasjonsbehovId: String? = null
+        val ettersendingDto: EttersendingDto,
+        val mottattTidspunkt: LocalDateTime
 )

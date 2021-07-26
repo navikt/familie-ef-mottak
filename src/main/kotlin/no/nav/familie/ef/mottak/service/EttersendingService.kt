@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
@@ -40,24 +41,10 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
 
     fun hentEttersendingsdataForPerson(personIdent: String): List<EttersendingRequestData> {
 
-        // TODO legge inn soknadId og dokumentasjonsbehovLabel i requestdata
-
-       // val ettersendingData: MutableList<EttersendingDto> = mutableListOf()
-
-        val ettersendingData =  ettersendingRepository.findAllByFnr(personIdent).map {
-            val json = it.ettersendingJson
-            print(json)
-            val ettersendingDto = EttersendingDto((it.ettersendingJson))
-
+        return  ettersendingRepository.findAllByFnr(personIdent).map {
+            EttersendingRequestData(objectMapper.readValue<EttersendingDto>(it.ettersendingJson), it.opprettetTid)
         }
 
-
-        ettersendingRepository.findAllByFnr(personIdent).forEach { ettersending ->
-            ettersendingVedleggRepository.findByEttersendingId(ettersending.id). forEach {
-                )
-            }
-        }
-        return ettersendingData
     }
 
     private fun mapVedlegg(ettersendingDbId: String,
@@ -87,17 +74,5 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
-
-
-
-
-    private fun send(): List<EttersendingRequestData> {
-
-
-        //val ettersending = ettersendingRepository.getById()
-        return emptyList()
-    }
-
-
 
 }
