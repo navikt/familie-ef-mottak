@@ -1,12 +1,12 @@
 package no.nav.familie.ef.mottak.api
 
-import no.nav.familie.ef.mottak.api.dto.EttersendingResponseData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingResponseData
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
