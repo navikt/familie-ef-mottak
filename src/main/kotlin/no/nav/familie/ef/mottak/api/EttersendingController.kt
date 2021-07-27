@@ -65,7 +65,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
                               personIdent.ident)
             throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
         }
-        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent) // TODO må implementeres
+        val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent)
 
         return ResponseEntity.ok(ettersendingData)
     }
