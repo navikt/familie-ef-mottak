@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
+import no.nav.familie.ef.mottak.api.dto.EttersendingResponseData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
@@ -33,10 +33,10 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
     }
 
 
-    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendingRequestData> {
+    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendingResponseData> {
 
         return ettersendingRepository.findAllByFnr(personIdent.ident).map {
-            EttersendingRequestData(objectMapper.readValue(it.ettersendingJson), it.opprettetTid)
+            EttersendingResponseData(objectMapper.readValue(it.ettersendingJson), it.opprettetTid)
         }
     }
 

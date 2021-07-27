@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
-import no.nav.familie.ef.mottak.api.dto.EttersendingRequestData
+import no.nav.familie.ef.mottak.api.dto.EttersendingResponseData
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
@@ -56,7 +56,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     }
 
     @PostMapping("hent-ettersending-for-person")
-    fun hentEttersending(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendingRequestData>> {
+    fun hentEttersending(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendingResponseData>> {
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
         if (fnrFraToken != personIdent.ident) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
