@@ -54,7 +54,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = søknadstypeTekst(søknadType)
         val søknadId = UUID.fromString(søknad.id)
-        val link = if(featureToggleService.isEnabled("familie.ef.soknad.api.ettersending")) ettersendingConfig.ettersendingUrl else link(søknadId);
+        val link = if(featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending")) ettersendingConfig.ettersendingUrl else link(søknadId);
         return when {
             manglerVedlegg(dokumentasjonsbehov) -> {
                 LinkMelding(link,
