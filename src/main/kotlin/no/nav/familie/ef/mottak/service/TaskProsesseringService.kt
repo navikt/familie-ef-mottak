@@ -10,8 +10,9 @@ import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
-import javax.transaction.Transactional
+
 
 @Service
 class TaskProsesseringService(private val taskRepository: TaskRepository,
