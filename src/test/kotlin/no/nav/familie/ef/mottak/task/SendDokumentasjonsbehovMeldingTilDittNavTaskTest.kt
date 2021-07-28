@@ -4,6 +4,7 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -22,13 +23,20 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
+    private lateinit var featureToggleService: FeatureToggleService
 
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
+        featureToggleService = mockk()
         sendDokumentasjonsbehovMeldingTilDittNavTask =
-                SendDokumentasjonsbehovMeldingTilDittNavTask(dittNavKafkaProducer, søknadService, mockk(relaxed = true))
+                SendDokumentasjonsbehovMeldingTilDittNavTask(dittNavKafkaProducer,
+                                                             søknadService,
+                                                             mockk(relaxed = true),
+                                                             mockk(relaxed = true),
+                                                             featureToggleService)
+        mockFeatureToggleMeldingDittNav()
     }
 
     @Test
@@ -120,6 +128,10 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                        søknadJson = "",
                        dokumenttype = søknadType.dokumentType,
                        fnr = FNR)
+    }
+
+    private fun mockFeatureToggleMeldingDittNav(){
+        every { featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending") } returns false
     }
 
     companion object {
