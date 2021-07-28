@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.DittNavConfig
+import no.nav.familie.ef.mottak.config.EttersendingConfig
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -18,7 +20,9 @@ import java.util.*
                      beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
 class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNavKafkaProducer,
                                                    private val søknadService: SøknadService,
-                                                   private val dittNavConfig: DittNavConfig) : AsyncTaskStep {
+                                                   private val dittNavConfig: DittNavConfig,
+                                                   private val ettersendingConfig: EttersendingConfig,
+                                                   private val featureToggleService: FeatureToggleService): AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -50,9 +54,10 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = søknadstypeTekst(søknadType)
         val søknadId = UUID.fromString(søknad.id)
+        val link = if(featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending")) ettersendingConfig.ettersendingUrl else link(søknadId);
         return when {
             manglerVedlegg(dokumentasjonsbehov) -> {
-                LinkMelding(link(søknadId),
+                LinkMelding(link,
                             "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
                             " Se hva som mangler og last opp vedlegg.")
             }
