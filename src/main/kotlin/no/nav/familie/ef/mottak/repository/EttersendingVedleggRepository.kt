@@ -9,8 +9,4 @@ import org.springframework.stereotype.Repository
 interface EttersendingVedleggRepository : JpaRepository<EttersendingVedlegg, String> {
 
     fun findByEttersendingId(ettersendingId: String): List<EttersendingVedlegg>
-
-    @Query(nativeQuery = true, value = "SELECT tittel FROM vedlegg WHERE ettersending_id=:ettersendingId")
-    fun findTitlerByEtterseningId(ettersendingId: String): List<String>
-
 }

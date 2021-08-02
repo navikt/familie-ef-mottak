@@ -46,7 +46,6 @@ class EttersendingService(private val ettersendingRepository: EttersendingReposi
             vedleggMetadata.map {
                 no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg(
                         id = UUID.fromString((it.id)),
-                        //id = UUID.fromString(it.id.dropLast(4)), //Må bruke denne for at det skal funke med postman
                         ettersendingId = ettersendingDbId,
                         navn = it.navn,
                         tittel = it.tittel,
