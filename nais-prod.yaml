@@ -2,7 +2,7 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: familie-ef-mottak
-  namespace: default
+  namespace: teamfamilie
   labels:
     team: teamfamilie
 
@@ -22,7 +22,7 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /kv/prod/fss/familie-ef-mottak/default
+      - kvPath: /kv/prod/fss/familie-ef-mottak/teamfamilie
         mountPath: /var/run/secrets/nais.io/vault
       - kvPath: serviceuser/data/prod/srvfamilie-ef-mot
         mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
@@ -43,6 +43,14 @@ spec:
     - https://familie-ef-mottak.nais.adeo.no
     - https://familie-ef-mottak.prod-fss-pub.nais.io
     - https://familie-ef-mottak.prod-fss.nais.io
+  tokenx:
+    enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ef-soknad-api
+          namespace: teamfamilie
+          cluster: prod-sbs
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
