@@ -19,9 +19,9 @@ data class Ettersending(
         val ettersendingJson: String,
         @Convert(converter = FileCryptoConverter::class)
         val ettersendingPdf: Fil? = null,
-        val dokumenttype: String,
+        @Column(name = "stonad_type")
+        val stønadType: String,
         val journalpostId: String? = null,
-        val saksnummer: String? = null,
         val fnr: String,
         val taskOpprettet: Boolean = false,
         val opprettetTid: LocalDateTime = LocalDateTime.now(),
