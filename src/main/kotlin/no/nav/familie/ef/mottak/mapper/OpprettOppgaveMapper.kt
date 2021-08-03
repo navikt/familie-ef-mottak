@@ -1,9 +1,13 @@
 package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.kontrakter.felles.journalpost.BrukerIdType
+import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -12,34 +16,38 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    fun toJournalføringsoppgave(journalpost: Journalpost, behandlesAvApplikasjon: String? = null) =
+
+    fun toJournalføringsoppgave(journalpost: Journalpost,
+                                behandlesAvApplikasjon: BehandlesAvApplikasjon,
+                                tilordnet: String? = null) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   journalpostId = journalpost.journalpostId,
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
-                                  behandlesAvApplikasjon = behandlesAvApplikasjon)
+                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
+                                  tilordnetRessurs = tilordnet)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: String) =
+    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): OpprettOppgaveRequest =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.BehandleSak,
                                   journalpostId = journalpost.journalpostId,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = hentHoveddokumentTittel(journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
-                                  behandlesAvApplikasjon = behandlesAvApplikasjon
-            )
+                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
 
-    private fun hentHoveddokumentTittel(journalpost: Journalpost): String? {
+    private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String? {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
-        return journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel
+        val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
+        return "${behandlesAvApplikasjon.beskrivelsePrefix}$dokumentTittel"
     }
 
     private fun tilOppgaveIdent(journalpost: Journalpost): OppgaveIdentV2? {
@@ -64,7 +72,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
      *
      */
     fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
-         val frist = when (gjeldendeTid.dayOfWeek) {
+        val frist = when (gjeldendeTid.dayOfWeek) {
             DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
             DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
             DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))

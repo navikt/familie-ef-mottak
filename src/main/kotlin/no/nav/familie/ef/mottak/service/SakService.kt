@@ -5,10 +5,13 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.journalpost.*
 import org.slf4j.LoggerFactory
@@ -65,7 +68,9 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && gjelderStønad(søknad, it)
         }
         loggKanOppretteInfotrygdSak(søknad.fnr, fagsakFinnesForStønad, søknad.dokumenttype)
-        return !fagsakFinnesForStønad
+        val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(søknad.fnr).isNotEmpty()
+
+        return !fagsakFinnesForStønad && erTilknyttetEnhet
     }
 
     private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
@@ -91,15 +96,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         } catch (e: Exception) {
             logger.warn("Feilet sjekk mot infotrygdReplika")
             secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
-        }
-    }
-
-    private fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
-        return when(dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
-            DOKUMENTTYPE_BARNETILSYN -> StønadType.BARNETILSYN
-            DOKUMENTTYPE_SKOLEPENGER -> StønadType.SKOLEPENGER
-            else -> null
         }
     }
 

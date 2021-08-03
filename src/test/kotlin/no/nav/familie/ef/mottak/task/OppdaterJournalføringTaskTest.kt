@@ -8,15 +8,18 @@ import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHend
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
-import no.nav.familie.ef.mottak.service.INFOTRYGD
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.FerdigstillJournalføringTask
 import no.nav.familie.ef.mottak.task.OppdaterJournalføringTask
-import no.nav.familie.kontrakter.felles.dokarkiv.IdType
+import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.Sak
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -70,10 +73,10 @@ internal class OppdaterJournalføringTaskTest {
 
         assertThat(journalpostIdSlot.captured).isEqualTo(JOURNALPOST_DIGITALSØKNAD)
         assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
-                                                                              fagsaksystem = INFOTRYGD,
+                                                                              fagsaksystem = Fagsystem.IT01,
                                                                               sakstype = "FAGSAK"))
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.id).isEqualTo("123456789012")
-        assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.idType).isEqualTo(IdType.AKTOERID)
+        assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.idType).isEqualTo(BrukerIdType.AKTOERID)
     }
 
     @Test

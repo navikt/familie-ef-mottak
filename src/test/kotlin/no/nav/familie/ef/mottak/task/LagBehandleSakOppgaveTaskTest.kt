@@ -5,13 +5,15 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.ef.mottak.service.SakService
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
-import no.nav.familie.kontrakter.felles.journalpost.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -28,8 +30,14 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val oppgaveService: OppgaveService = mockk()
     private val sakService: SakService = mockk()
     private val taskRepository: TaskRepository = mockk()
+    private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val lagBehandleSakOppgaveTask =
-            LagBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, sakService, taskRepository)
+            LagBehandleSakOppgaveTask(oppgaveService,
+                                      søknadService,
+                                      integrasjonerClient,
+                                      sakService,
+                                      saksbehandlingClient,
+                                      taskRepository)
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
@@ -38,14 +46,33 @@ internal class LagBehandleSakOppgaveTaskTest {
         every { sakService.kanOppretteInfotrygdSak(any()) } returns true
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
-        every { oppgaveService.lagBehandleSakOppgave(any(), "") } returns 99L
+        every { oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) } returns 99L
         every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
+        every { saksbehandlingClient.finnesBehandlingForPerson(any(), any()) } returns false
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
         verify(exactly = 1) {
-            oppgaveService.lagBehandleSakOppgave(any(), "")
+            oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD)
         }
         assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
+    }
+
+    @Test
+    internal fun `skal ikke lage behandle-sak-oppgave dersom den er tidligere behandlet i ef-sak`() {
+        val taskSlot = slot<Task>()
+
+        every { sakService.kanOppretteInfotrygdSak(any()) } returns false
+        every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
+        every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
+        every { oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) } returns 99L
+        every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
+        every { saksbehandlingClient.finnesBehandlingForPerson(any(), any()) } returns true
+
+        lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+
+        verify(exactly = 0) {
+            oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD)
+        }
     }
 
     @Test
@@ -57,7 +84,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
 
         verify(exactly = 0) {
-            oppgaveService.lagBehandleSakOppgave(any(), "")
+            oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD)
         }
     }
 

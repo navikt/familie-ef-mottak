@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.mapper
 
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -9,46 +8,46 @@ import java.time.LocalDateTime
 
 internal class OpprettOppgaveMapperTest {
 
+    private val mapper = OpprettOppgaveMapper(mockk())
+
     @Test
     internal fun `skal sette frist til 1 dag for journalføringsoppgave opprettet før kl 12`() {
         val gjeldendeTid = LocalDateTime.of(2020, 1, 1, 0, 0)
-        val frist = OpprettOppgaveMapper(mockk()).lagFristForOppgave(gjeldendeTid)
+        val frist = mapper.lagFristForOppgave(gjeldendeTid)
         assertThat(frist).isEqualTo(gjeldendeTid.plusDays(1).toLocalDate())
     }
 
     @Test
     internal fun `skal sette frist til 2 dager for journalføringsoppgave opprettet etter kl 12`() {
         val gjeldendeTid = LocalDateTime.of(2020, 1, 1, 13, 0)
-        val frist = OpprettOppgaveMapper(mockk()).lagFristForOppgave(gjeldendeTid)
+        val frist = mapper.lagFristForOppgave(gjeldendeTid)
         assertThat(frist).isEqualTo(gjeldendeTid.plusDays(2).toLocalDate())
     }
 
     @Test
     internal fun `skal sette frist til 2 dager for journalføringsoppgave opprettet kl 12`() {
         val gjeldendeTid = LocalDateTime.of(2020, 1, 1, 12, 0)
-        val frist = OpprettOppgaveMapper(mockk()).lagFristForOppgave(gjeldendeTid)
+        val frist = mapper.lagFristForOppgave(gjeldendeTid)
         assertThat(frist).isEqualTo(gjeldendeTid.plusDays(2).toLocalDate())
     }
 
     @Test
     fun `Skal sette frist for oppgave`() {
-        val opprettOppgaveMapper = OpprettOppgaveMapper(mockk())
-
         val frister = listOf<Pair<LocalDateTime, LocalDate>>(
-            Pair(torsdag.morgen(), fredagFrist),
-            Pair(torsdag.kveld(), mandagFrist),
-            Pair(fredag.morgen(), mandagFrist),
-            Pair(fredag.kveld(), tirsdagFrist),
-            Pair(lørdag.morgen(), tirsdagFrist),
-            Pair(lørdag.kveld(), tirsdagFrist),
-            Pair(søndag.morgen(), tirsdagFrist),
-            Pair(søndag.kveld(), tirsdagFrist),
-            Pair(mandag.morgen(), tirsdagFrist),
-            Pair(mandag.kveld(), onsdagFrist),
+                Pair(torsdag.morgen(), fredagFrist),
+                Pair(torsdag.kveld(), mandagFrist),
+                Pair(fredag.morgen(), mandagFrist),
+                Pair(fredag.kveld(), tirsdagFrist),
+                Pair(lørdag.morgen(), tirsdagFrist),
+                Pair(lørdag.kveld(), tirsdagFrist),
+                Pair(søndag.morgen(), tirsdagFrist),
+                Pair(søndag.kveld(), tirsdagFrist),
+                Pair(mandag.morgen(), tirsdagFrist),
+                Pair(mandag.kveld(), onsdagFrist),
         )
 
         frister.forEach {
-            assertThat(opprettOppgaveMapper.lagFristForOppgave(it.first)).isEqualTo(it.second)
+            assertThat(mapper.lagFristForOppgave(it.first)).isEqualTo(it.second)
         }
     }
 

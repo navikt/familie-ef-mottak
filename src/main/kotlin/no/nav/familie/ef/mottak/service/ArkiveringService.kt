@@ -5,8 +5,10 @@ import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Fagsystem
+import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.DokarkivBruker
-import no.nav.familie.kontrakter.felles.dokarkiv.IdType
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.Sak
 import org.slf4j.LoggerFactory
@@ -54,12 +56,12 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
 
         val oppdatertJournalpost = OppdaterJournalpostRequest(
                 bruker = journalpost.bruker?.let {
-                    DokarkivBruker(idType = IdType.valueOf(it.type.toString()), id = it.id)
+                    DokarkivBruker(idType = BrukerIdType.valueOf(it.type.toString()), id = it.id)
                 },
                 sak = Sak(fagsakId = infotrygdSaksnummer,
-                          fagsaksystem = INFOTRYGD,
+                          fagsaksystem = Fagsystem.IT01,
                           sakstype = "FAGSAK"),
-                tema = journalpost.tema,
+                tema = journalpost.tema?.let { Tema.valueOf(it) },
         )
 
         integrasjonerClient.oppdaterJournalpost(oppdatertJournalpost, journalpostId)
