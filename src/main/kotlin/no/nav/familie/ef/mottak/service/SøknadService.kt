@@ -62,6 +62,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @Transactional
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                              vedlegg: Map<String, ByteArray>): Kvittering {
@@ -71,6 +72,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
@@ -78,6 +80,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
@@ -125,6 +128,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     private fun mapVedlegg(søknadDbId: String,
                            vedleggMetadata: List<VedleggKontrakt>,
                            vedlegg: Map<String, ByteArray>): List<Vedlegg> =

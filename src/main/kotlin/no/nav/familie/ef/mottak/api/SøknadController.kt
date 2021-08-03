@@ -45,6 +45,7 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @PostMapping(path = ["", "overgangsstonad"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun overgangsstønadOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
                            @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
@@ -55,6 +56,7 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaOvergangsstønad(søknad, vedleggData) }
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @PostMapping(path = ["barnetilsyn"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun barnetilsynOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
                        @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
@@ -65,6 +67,7 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaBarnetilsyn(søknad, vedleggData) }
     }
 
+    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
     @PostMapping(path = ["skolepenger"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun skolepengerOld(@RequestPart("søknad") søknad: SøknadMedVedlegg<SøknadSkolepenger>,
                        @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
