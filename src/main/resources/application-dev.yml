@@ -9,7 +9,7 @@ spring:
 familie:
   dokument:
     url: https://familie-dokument.dev.intern.nav.no
-    audience: dev-fss:teamfamilie:familie-dokument
+    audience: dev-gcp:teamfamilie:familie-dokument
   ef:
     pdfgenerator:
       url: https://familie-ef-dokgen.dev.intern.nav.no/
