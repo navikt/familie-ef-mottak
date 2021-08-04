@@ -43,7 +43,7 @@ no.nav.security.jwt:
           client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
       dokument:
-        resource-url: ${familie.dokument.uri}
+        resource-url: ${familie.dokument.url}
         well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
         token-exchange:
