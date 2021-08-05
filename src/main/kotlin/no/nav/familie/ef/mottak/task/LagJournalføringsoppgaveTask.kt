@@ -17,10 +17,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
         oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
     }
 
-    override fun onCompletion(task: Task) {
-        val hentSaksnummerFraJoarkTask = Task(HentSaksnummerFraJoarkTask.TYPE, task.payload, task.metadata)
-        taskRepository.save(hentSaksnummerFraJoarkTask)
-    }
 
     companion object {
         const val TYPE = "lagJournalføringsoppgave"
