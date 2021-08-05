@@ -6,7 +6,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 
 object EttersendingMapper {
 
-    fun fromDto(ettersending: EttersendingDto):Ettersending {
+    fun fromDto(ettersending: EttersendingDto): Ettersending {
         return Ettersending(
                 ettersendingJson = objectMapper.writeValueAsString(ettersending),
                 fnr = ettersending.fnr,
