@@ -28,11 +28,6 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
     override fun onCompletion(task: Task) {
         val nesteTask = Task(TaskType(TYPE).nesteEttersendingsflytTask(), task.payload, task.metadata)
 
-        /*val sendMeldingTilDittNavTask =
-                Task(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-                     task.payload,
-                     task.metadata)*/ //TODO: Må se om dette skal gjøres
-
         taskRepository.save(nesteTask)
     }
 

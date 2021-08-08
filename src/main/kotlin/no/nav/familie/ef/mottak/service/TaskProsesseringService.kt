@@ -38,7 +38,6 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
     fun startTaskProsessering(ettersending: Ettersending) {
         val properties =
                 Properties().apply { this["søkersFødselsnummer"] = ettersending.fnr }
-                        .apply { this["dokumenttype"] = ettersending.dokumenttype }
 
         taskRepository.save(Task(ArkiverEttersendingTask.TYPE, ettersending.id, properties))
         ettersendingRepository.save(ettersending.copy(taskOpprettet = true))

@@ -1,14 +1,17 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.api.dto.FeilDto
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
+import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -225,8 +228,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun utledBehandlesAvApplikasjonEttersending(ettersending: Ettersending): BehandlesAvApplikasjon {
-        val søknadId = søknadService.hentDokumentasjonsbehovForPerson(ettersending.fnr).first().søknadId //TODO: Håndter exception hvis ingen søknad finnes
-        val søknad = søknadService.get(søknadId)
+        val søknadId = EttersendingMapper.toDto<EttersendingDto>(ettersending).ettersendingForSøknad?.søknadId
+        val søknad = søknadService.get(søknadId ?: throw Error("Fant ikke søknad for ettersending"))
 
         return utledBehandlesAvApplikasjon(søknad)
     }

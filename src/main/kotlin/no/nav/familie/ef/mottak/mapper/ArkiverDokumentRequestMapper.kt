@@ -5,6 +5,8 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Dokument
@@ -27,20 +29,32 @@ object ArkiverDokumentRequestMapper {
     }
 
     fun fromEttersending(ettersending: Ettersending,
-                         vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
+                         vedlegg: List<EttersendingVedlegg>,
+                         søknadFørEttersending: Søknad?): ArkiverDokumentRequest {
+
+        val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
 
         val hovedDokumentVarianter = listOf(Dokument(ettersending.ettersendingJson.toByteArray(),
                                                      Filtype.JSON,
                                                      null,
-                                                     "Ettersending til søknad om overgangsstønad",
-                                                     Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG)) // TODO: Endre dokumenttype
+                                                     "Ettersending til søknad om ${ettersendingDto.stønadType}",
+                                                     utledDokumenttypeForEttersending(ettersendingDto)))
 
-                                            return ArkiverDokumentRequest(ettersending.fnr,
-                                                                          false,
-                                                                          hovedDokumentVarianter,
-                                                                          mapEttersendingVedlegg(vedlegg,
-                                                                                                 ettersending.dokumenttype))
+
+        return ArkiverDokumentRequest(ettersendingDto.fnr,
+                                      false,
+                                      hovedDokumentVarianter,
+                                      mapEttersendingVedlegg(vedlegg,
+                                                             ettersendingDto.stønadType),
+                                      fagsakId = søknadFørEttersending?.saksnummer)
     }
+
+    private fun utledDokumenttypeForEttersending(ettersending: EttersendingDto) =
+            when (ettersending.stønadType) {
+                StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING
+                StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING
+                StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING
+            }
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
@@ -48,9 +62,13 @@ object ArkiverDokumentRequestMapper {
         return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
     }
 
-    private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, dokumenttype: String): List<Dokument> {
+    private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, stønadType: StønadType): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
-        val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
+        val dokumenttypeVedlegg = when (stønadType) {
+            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING_VEDLEGG
+            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING_VEDLEGG
+            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING_VEDLEGG
+        }
         return vedlegg.map { tilEttersendingDokument(it, dokumenttypeVedlegg) }
     }
 
@@ -75,7 +93,6 @@ object ArkiverDokumentRequestMapper {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
             DOKUMENTTYPE_BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
             DOKUMENTTYPE_SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
-            DOKUMENTTYPE_ETTERSENDING -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG // TODO: Legg til dokumenttyper skolepenger og barnetilsyn
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
     }
