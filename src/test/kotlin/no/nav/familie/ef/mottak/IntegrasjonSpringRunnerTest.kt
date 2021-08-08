@@ -3,6 +3,8 @@ package no.nav.familie.ef.mottak
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
+import no.nav.familie.ef.mottak.repository.EttersendingRepository
+import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -37,6 +39,8 @@ abstract class IntegrasjonSpringRunnerTest {
     @Autowired private lateinit var søknadRepository: SøknadRepository
     @Autowired private lateinit var vedleggRepository: VedleggRepository
     @Autowired private lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
+    @Autowired private lateinit var ettersendingRepository: EttersendingRepository
+    @Autowired private lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
     @Autowired private lateinit var taskRepository: TaskRepository
 
     @LocalServerPort
@@ -49,6 +53,8 @@ abstract class IntegrasjonSpringRunnerTest {
         vedleggRepository.deleteAllInBatch()
         søknadRepository.deleteAllInBatch()
         taskRepository.deleteAll()
+        ettersendingVedleggRepository.deleteAll()
+        ettersendingRepository.deleteAll()
     }
 
     protected fun getPort(): String {

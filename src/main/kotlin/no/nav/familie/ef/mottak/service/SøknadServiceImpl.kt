@@ -104,13 +104,16 @@ class SøknadServiceImpl(private val søknadRepository: SøknadRepository,
     }
 
     override fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
-        return søknadRepository.findAllByFnr(personIdent).map {
-            SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
-                                            stønadType = StønadType.OVERGANGSSTØNAD, // TODO: Endre denne
-                                            søknadDato = it.opprettetTid.toLocalDate(),
-                                            dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
-                                                    UUID.fromString(it.id)))
-        }
+        return søknadRepository.findAllByFnr(personIdent)
+                .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
+                .map {
+                    SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
+                                                    stønadType = StønadType.valueOf(SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                                                                            .toString()),
+                                                    søknadDato = it.opprettetTid.toLocalDate(),
+                                                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
+                                                            UUID.fromString(it.id)))
+                }
     }
 
     private fun mapVedlegg(søknadDbId: String,

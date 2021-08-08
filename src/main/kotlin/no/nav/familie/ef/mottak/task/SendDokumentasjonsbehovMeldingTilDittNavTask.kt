@@ -61,7 +61,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
                             "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
                             " Se hva som mangler og last opp vedlegg.")
             }
-            else -> LinkMelding(link(søknadId), "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
+            else -> LinkMelding(link, "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
         }
     }
 

@@ -11,7 +11,6 @@ import javax.persistence.PreUpdate
 @Entity
 data class EttersendingVedlegg(@Id
                    val id: UUID,
-                   @Column(name = "ettersending_id")
                    val ettersendingId: String,
                    val navn: String,
                    val tittel: String,

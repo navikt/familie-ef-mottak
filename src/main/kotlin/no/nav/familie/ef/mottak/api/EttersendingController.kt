@@ -32,15 +32,15 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping
-    fun ettersending(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
-                     @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering> {
-        val vedleggData = vedleggData(vedleggListe)
+    fun ettersend(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
+                  @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering> {
+        val vedleggData = pakkUtVedleggsdata(vedleggListe)
         validerVedlegg(ettersending.vedlegg, vedleggData)
 
         return okEllerKastException { ettersendingService.mottaEttersending(ettersending, vedleggData) }
     }
 
-    private fun vedleggData(vedleggListe: List<MultipartFile>?): Map<String, ByteArray> =
+    private fun pakkUtVedleggsdata(vedleggListe: List<MultipartFile>?): Map<String, ByteArray> =
             vedleggListe?.map { it.originalFilename to it.bytes }?.toMap() ?: emptyMap()
 
     private fun validerVedlegg(vedlegg: List<Vedlegg>,
@@ -55,8 +55,8 @@ class EttersendingController(val ettersendingService: EttersendingService) {
         }
     }
 
-    @PostMapping("hent-ettersending-for-person")
-    fun hentEttersending(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendingResponseData>> {
+    @PostMapping("person")
+    fun hentForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendingResponseData>> {
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
         if (fnrFraToken != personIdent.ident) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
