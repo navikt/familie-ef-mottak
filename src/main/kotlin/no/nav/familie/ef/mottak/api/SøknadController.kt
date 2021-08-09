@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.util.getRootCause
+import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
@@ -62,18 +62,6 @@ class SøknadController(val søknadService: SøknadService) {
 
         validerVedlegg(søknad.vedlegg, vedleggData)
         return okEllerKastException { søknadService.mottaSkolepenger(søknad, vedleggData) }
-    }
-
-    private fun okEllerKastException(producer: () -> Kvittering): ResponseEntity<Kvittering> {
-        try {
-            return ResponseEntity.ok(producer.invoke())
-        } catch (e: Exception) {
-            if (e.getRootCause()?.message == no.nav.familie.ef.mottak.repository.domain.Vedlegg.UPDATE_FEILMELDING) {
-                throw ApiFeil("Det går ikke å sende inn samme vedlegg to ganger", HttpStatus.BAD_REQUEST)
-            } else {
-                throw e
-            }
-        }
     }
 
     private fun vedleggData(vedleggListe: List<MultipartFile>?): Map<String, ByteArray> =
