@@ -13,6 +13,7 @@ fun hovedflyt() = listOf(
 )
 
 fun ettersendingflyt() = listOf(
+        TaskType(LagEttersendingPdfTask.TYPE),
         TaskType(ArkiverEttersendingTask.TYPE),
         TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE),
 )
