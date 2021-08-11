@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
+import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
@@ -20,8 +21,9 @@ internal class PdfServiceTest {
 
     private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
+    private val ettersendingRepository: EttersendingRepository = mockk()
     private val pdfClient: PdfClient = mockk()
-    private val pdfService: PdfService = PdfService(søknadRepository, vedleggRepository, pdfClient)
+    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient)
 
     private val pdf = Fil("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
