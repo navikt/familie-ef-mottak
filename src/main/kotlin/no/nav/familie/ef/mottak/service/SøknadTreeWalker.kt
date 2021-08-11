@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -53,6 +55,11 @@ object SøknadTreeWalker {
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
         val finnFelter = finnFelter(skjema)
         return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+    }
+
+    fun mapEttersending(ettersending: Ettersending, vedleggTitler: List<String>): Map<String, Any> {
+        val vedleggMap = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        return feltlisteMap("Ettersending for ${ettersending.stønadType}", listOf(vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {

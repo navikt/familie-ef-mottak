@@ -4,7 +4,7 @@ import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.task.ArkiverEttersendingTask
+import no.nav.familie.ef.mottak.task.LagEttersendingPdfTask
 import no.nav.familie.ef.mottak.task.LagPdfTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.prosessering.domene.Task
@@ -42,7 +42,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                     this["stønadType"] = ettersending.stønadType
                 }
 
-        taskRepository.save(Task(ArkiverEttersendingTask.TYPE, ettersending.id, properties))
+        taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id, properties))
         ettersendingRepository.save(ettersending.copy(taskOpprettet = true))
     }
 }

@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.config.*
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -33,18 +35,27 @@ object ArkiverDokumentRequestMapper {
 
         val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
 
-        val hovedDokumentVarianter = listOf(Dokument(ettersending.ettersendingJson.toByteArray(),
-                                                     Filtype.JSON,
-                                                     null,
-                                                     "Ettersending til søknad om ${ettersendingDto.stønadType}",
-                                                     utledDokumenttypeForEttersending(ettersendingDto)))
-
+        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(ettersendingDto, ettersending)
 
         return ArkiverDokumentRequest(ettersendingDto.fnr,
                                       false,
                                       hovedDokumentVarianter,
                                       mapEttersendingVedlegg(vedlegg,
                                                              ettersendingDto.stønadType))
+    }
+
+    private fun lagHoveddokumentvarianterForEttersending(ettersendingDto: EttersendingDto,
+                                                         ettersending: Ettersending): List<Dokument> {
+        val tittel = "Ettersending til søknad om ${ettersendingDto.stønadType}"
+        val dokumenttype = utledDokumenttypeForEttersending(ettersendingDto)
+
+        val dokumentSomPdf = ettersending.ettersendingPdf?.let {
+            Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
+        } ?: error("Mangler forside for ettersendingen")
+
+        val dokumentSomJson = Dokument(ettersending.ettersendingJson.toByteArray(), Filtype.PDFA, null, tittel, dokumenttype)
+
+        return listOf(dokumentSomPdf, dokumentSomJson)
     }
 
     private fun utledDokumenttypeForEttersending(ettersending: EttersendingDto) =
