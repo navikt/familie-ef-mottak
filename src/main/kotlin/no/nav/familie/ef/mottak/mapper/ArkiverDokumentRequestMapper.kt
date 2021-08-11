@@ -29,8 +29,7 @@ object ArkiverDokumentRequestMapper {
     }
 
     fun fromEttersending(ettersending: Ettersending,
-                         vedlegg: List<EttersendingVedlegg>,
-                         søknadFørEttersending: Søknad?): ArkiverDokumentRequest {
+                         vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
 
         val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
 
@@ -45,8 +44,7 @@ object ArkiverDokumentRequestMapper {
                                       false,
                                       hovedDokumentVarianter,
                                       mapEttersendingVedlegg(vedlegg,
-                                                             ettersendingDto.stønadType),
-                                      fagsakId = søknadFørEttersending?.saksnummer)
+                                                             ettersendingDto.stønadType))
     }
 
     private fun utledDokumenttypeForEttersending(ettersending: EttersendingDto) =
@@ -65,9 +63,9 @@ object ArkiverDokumentRequestMapper {
     private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, stønadType: StønadType): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
         val dokumenttypeVedlegg = when (stønadType) {
-            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING_VEDLEGG
-            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING_VEDLEGG
-            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING_VEDLEGG
+            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
+            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
+            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
         }
         return vedlegg.map { tilEttersendingDokument(it, dokumenttypeVedlegg) }
     }

@@ -39,9 +39,8 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun journalførEttersending(ettersendingId: String): String {
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
-        val søknadFørEttersending = hentSøknadForEttersending(ettersending)
         val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id)
-        val journalpostId: String = sendEttersending(ettersending, vedlegg, søknadFørEttersending)
+        val journalpostId: String = sendEttersending(ettersending, vedlegg)
         val ettersendingMedJournalpostId = ettersending.copy(journalpostId = journalpostId)
         ettersendingService.lagreEttersending(ettersendingMedJournalpostId)
         return journalpostId
@@ -91,13 +90,9 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun sendEttersending(ettersending: Ettersending,
-                                 vedlegg: List<EttersendingVedlegg>,
-                                 søknadFørEttersending: Søknad? = null): String {
-        val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg, søknadFørEttersending)
+                                 vedlegg: List<EttersendingVedlegg>): String {
+        val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
         return dokumentResponse.journalpostId
     }
-
-    private fun hentSøknadForEttersending(ettersending: Ettersending) =
-            EttersendingMapper.toDto<EttersendingDto>(ettersending).ettersendingForSøknad?.let { søknadService.get(it.søknadId) }
 }
