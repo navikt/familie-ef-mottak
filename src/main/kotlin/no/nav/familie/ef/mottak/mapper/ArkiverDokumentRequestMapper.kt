@@ -53,7 +53,7 @@ object ArkiverDokumentRequestMapper {
             Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
         } ?: error("Mangler forside for ettersendingen")
 
-        val dokumentSomJson = Dokument(ettersending.ettersendingJson.toByteArray(), Filtype.PDFA, null, tittel, dokumenttype)
+        val dokumentSomJson = Dokument(ettersending.ettersendingJson.toByteArray(), Filtype.JSON, null, tittel, dokumenttype)
 
         return listOf(dokumentSomPdf, dokumentSomJson)
     }
