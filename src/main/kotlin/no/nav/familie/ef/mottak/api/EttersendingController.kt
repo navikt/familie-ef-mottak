@@ -33,7 +33,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
 
     @PostMapping
     fun ettersend(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
-                  @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): ResponseEntity<Kvittering> {
+                  @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
         val vedleggData = pakkUtVedleggsdata(vedleggListe)
         validerVedlegg(ettersending.vedlegg, vedleggData)
 

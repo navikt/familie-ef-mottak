@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
-import no.nav.familie.ef.mottak.api.dto.FeilDto
+import no.nav.familie.kontrakter.felles.Ressurs
 import org.slf4j.LoggerFactory
 import org.springframework.core.NestedExceptionUtils
 import org.springframework.http.HttpStatus
@@ -17,20 +17,20 @@ class ApiExceptionHandler {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @ExceptionHandler(Throwable::class)
-    fun handleThrowable(throwable: Throwable): ResponseEntity<FeilDto> {
+    fun handleThrowable(throwable: Throwable): ResponseEntity<Ressurs<String>> {
         secureLogger.error("En feil har oppstått", throwable)
         logger.error("En feil har oppstått: ${NestedExceptionUtils.getMostSpecificCause(throwable).javaClass.simpleName} ")
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(FeilDto("Uventet feil"))
+                .body(Ressurs.failure("Uventet feil"))
     }
 
     @ExceptionHandler(ApiFeil::class)
-    fun handleThrowable(e: ApiFeil): ResponseEntity<FeilDto> {
+    fun handleThrowable(e: ApiFeil): ResponseEntity<Ressurs<String>> {
         return ResponseEntity
                 .status(e.httpStatus)
-                .body(FeilDto(e.feil))
+                .body(Ressurs.failure(e.feil))
     }
 
 }
