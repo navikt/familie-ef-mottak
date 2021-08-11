@@ -11,7 +11,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagPdfTask.TYPE, beskrivelse = "Lag pdf for ettersending")
+@TaskStepBeskrivelse(taskStepType = LagEttersendingPdfTask.TYPE, beskrivelse = "Lag pdf for ettersending")
 class LagEttersendingPdfTask(private val pdfService: PdfService,
                              private val taskRepository: TaskRepository,
                              private val ettersendingRepository: EttersendingRepository,
