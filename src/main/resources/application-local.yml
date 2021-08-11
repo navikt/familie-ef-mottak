@@ -76,3 +76,4 @@ SRV_CREDENTIAL_PASSWORD: test
 
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
+ettersending.ettersendingUrl: http://localhost:3000/

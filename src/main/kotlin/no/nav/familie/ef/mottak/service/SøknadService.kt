@@ -12,6 +12,8 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -161,6 +163,19 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
 
         return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
+    }
+
+    fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
+        return søknadRepository.findAllByFnr(personIdent)
+                .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
+                .map {
+                    SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
+                                                    stønadType = StønadType.valueOf(SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                                                                            .toString()),
+                                                    søknadDato = it.opprettetTid.toLocalDate(),
+                                                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
+                                                            UUID.fromString(it.id)))
+                }
     }
 
     fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto {

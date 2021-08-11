@@ -1,0 +1,1 @@
+DROP TABLE ettersending_dokumentasjonsbehov;
