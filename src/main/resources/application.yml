@@ -71,6 +71,9 @@ funksjonsbrytere:
     applicationName: ${NAIS_APP_NAME}
 
 familie:
+  dokument:
+    url: https://familie-dokument.intern.nav.no
+    audience: prod-gcp:teamfamilie:familie-dokument
   ef:
     integrasjoner:
       url: http://familie-integrasjoner.teamfamilie/api/

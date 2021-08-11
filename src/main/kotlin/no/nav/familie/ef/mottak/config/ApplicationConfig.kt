@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.config
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.http.config.RestTemplateBuilderBean
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
+import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.log.filter.LogFilter
@@ -37,6 +38,7 @@ import java.time.temporal.ChronoUnit
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
 @EnableScheduling
 @Import(BearerTokenClientInterceptor::class,
+        BearerTokenExchangeClientInterceptor::class,
         RestTemplateBuilderBean::class,
         MdcValuesPropagatingClientInterceptor::class,
         ConsumerIdClientInterceptor::class)
@@ -53,6 +55,20 @@ class ApplicationConfig {
         return RestTemplateBuilder()
                 .setConnectTimeout(Duration.of(15, ChronoUnit.SECONDS))
                 .setReadTimeout(Duration.of(120, ChronoUnit.SECONDS))
+    }
+
+    @Bean("tokenExchange")
+    fun restTemplate(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
+                     bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
+                     mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
+                     consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+        return RestTemplateBuilder()
+                .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(25, ChronoUnit.SECONDS))
+                .interceptors(bearerTokenExchangeClientInterceptor,
+                              mdcValuesPropagatingClientInterceptor,
+                              consumerIdClientInterceptor)
+                .build()
     }
 
     @Bean("restTemplateAzure")

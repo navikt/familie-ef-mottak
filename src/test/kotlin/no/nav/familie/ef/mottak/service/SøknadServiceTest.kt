@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
-import no.nav.familie.ef.mottak.service.SøknadServiceImpl
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -19,7 +19,7 @@ class SøknadServiceImplTest {
 
     val søknadRepository = mockk<SøknadRepository>()
     val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>()
-    val søknadService = SøknadServiceImpl(søknadRepository, mockk(), dokumentasjonsbehovRepository, mockk())
+    val søknadService = SøknadService(søknadRepository, mockk(), mockk(), dokumentasjonsbehovRepository, mockk())
 
     @Test
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
