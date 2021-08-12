@@ -4,9 +4,9 @@ import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingResponseData
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.PersonIdent
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingResponseData
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.Protected
 import org.slf4j.LoggerFactory
@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping(consumes = [MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE],
-                path = ["/api/ettersending"],
-                produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api/ettersending"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
 @Protected
 class EttersendingController(val ettersendingService: EttersendingService) {
 
@@ -32,8 +30,13 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping
-    fun ettersend(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
-                  @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
+    fun ettersend(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg): Kvittering {
+        return okEllerKastException { ettersendingService.mottaEttersending(ettersending) }
+    }
+
+    @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun ettersendOld(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg,
+                     @RequestPart("vedlegg", required = false) vedleggListe: List<MultipartFile>?): Kvittering {
         val vedleggData = pakkUtVedleggsdata(vedleggListe)
         validerVedlegg(ettersending.vedlegg, vedleggData)
 
