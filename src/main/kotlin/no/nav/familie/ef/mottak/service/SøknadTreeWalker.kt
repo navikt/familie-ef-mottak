@@ -1,11 +1,11 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.kontrakter.ef.søknad.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
@@ -58,8 +58,13 @@ object SøknadTreeWalker {
     }
 
     fun mapEttersending(ettersending: Ettersending, vedleggTitler: List<String>): Map<String, Any> {
-        val vedleggMap = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Ettersending for ${ettersending.stønadType}", listOf(vedleggMap))
+        val infoMap = feltlisteMap("Ettersending av vedlegg", listOf(mapOf(
+                "Stønadstype" to ettersending.stønadType,
+                "Fødselsnummer" to ettersending.fnr,
+                "Dato mottatt" to ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
+        )))
+        val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {
