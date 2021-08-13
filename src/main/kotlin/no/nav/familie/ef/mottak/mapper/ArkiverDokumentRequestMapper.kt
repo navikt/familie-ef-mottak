@@ -7,6 +7,8 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.ef.mottak.util.utledDokumenttypeForEttersending
+import no.nav.familie.ef.mottak.util.utledDokumenttypeForVedlegg
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
@@ -58,12 +60,6 @@ object ArkiverDokumentRequestMapper {
         return listOf(dokumentSomPdf, dokumentSomJson)
     }
 
-    private fun utledDokumenttypeForEttersending(stønadType: StønadType) =
-            when (stønadType) {
-                StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING
-                StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING
-                StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING
-            }
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
@@ -73,11 +69,7 @@ object ArkiverDokumentRequestMapper {
 
     private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, stønadType: StønadType): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
-        val dokumenttypeVedlegg = when (stønadType) {
-            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
-            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
-            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
-        }
+        val dokumenttypeVedlegg = utledDokumenttypeForVedlegg(stønadType)
         return vedlegg.map { tilEttersendingDokument(it, dokumenttypeVedlegg) }
     }
 
