@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.api.dto.FeilDto
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
@@ -54,7 +53,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
         val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, utledBehandlesAvApplikasjonEttersending(ettersending))
+        val stønadType = StønadType.valueOf(ettersending.stønadType)
+        val behandlesAvApplikasjon = utledBehandlesAvApplikasjonForEttersending(fnr = ettersending.fnr, stønadType = stønadType)
+        return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
     }
 
     /**
@@ -218,7 +219,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         log.info("utledBehandlesAvApplikasjon dokumenttype=${søknad.dokumenttype}")
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
-        return if (finnesBehandlingINyLøsning(søknad, stønadType)) {
+        return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
@@ -227,16 +228,18 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun utledBehandlesAvApplikasjonEttersending(ettersending: Ettersending): BehandlesAvApplikasjon {
-        val søknadId = EttersendingMapper.toDto<EttersendingDto>(ettersending).ettersendingForSøknad?.søknadId
-        val søknad = søknadService.get(søknadId ?: throw Error("Fant ikke søknad for ettersending"))
-
-        return utledBehandlesAvApplikasjon(søknad)
+    private fun utledBehandlesAvApplikasjonForEttersending(fnr: String, stønadType: StønadType): BehandlesAvApplikasjon {
+        log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
+        return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
+            BehandlesAvApplikasjon.EF_SAK
+        } else {
+            BehandlesAvApplikasjon.INFOTRYGD
+        }
     }
 
-    private fun finnesBehandlingINyLøsning(søknad: Søknad,
+    private fun finnesBehandlingINyLøsning(fnr: String,
                                            stønadType: StønadType): Boolean {
-        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
+        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(fnr, stønadType)
         log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
         return finnesBehandlingForPerson
     }

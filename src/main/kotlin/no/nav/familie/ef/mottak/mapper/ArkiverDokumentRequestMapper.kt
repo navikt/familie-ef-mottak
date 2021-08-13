@@ -35,7 +35,7 @@ object ArkiverDokumentRequestMapper {
 
         val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
 
-        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(ettersendingDto, ettersending)
+        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(ettersendingDto.stønadType, ettersending)
 
         return ArkiverDokumentRequest(ettersendingDto.fnr,
                                       false,
@@ -44,10 +44,10 @@ object ArkiverDokumentRequestMapper {
                                                              ettersendingDto.stønadType))
     }
 
-    private fun lagHoveddokumentvarianterForEttersending(ettersendingDto: EttersendingDto,
+    private fun lagHoveddokumentvarianterForEttersending(stønadType: StønadType,
                                                          ettersending: Ettersending): List<Dokument> {
-        val tittel = "Ettersending til søknad om ${ettersendingDto.stønadType}"
-        val dokumenttype = utledDokumenttypeForEttersending(ettersendingDto)
+        val tittel = "Ettersending til søknad om ${stønadType}"
+        val dokumenttype = utledDokumenttypeForEttersending(stønadType)
 
         val dokumentSomPdf = ettersending.ettersendingPdf?.let {
             Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
@@ -58,8 +58,8 @@ object ArkiverDokumentRequestMapper {
         return listOf(dokumentSomPdf, dokumentSomJson)
     }
 
-    private fun utledDokumenttypeForEttersending(ettersending: EttersendingDto) =
-            when (ettersending.stønadType) {
+    private fun utledDokumenttypeForEttersending(stønadType: StønadType) =
+            when (stønadType) {
                 StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING
                 StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING
                 StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING
