@@ -1,7 +1,16 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Datoperiode
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
@@ -58,11 +67,12 @@ object SøknadTreeWalker {
     }
 
     fun mapEttersending(ettersending: Ettersending, vedleggTitler: List<String>): Map<String, Any> {
-        val infoMap = feltlisteMap("Ettersending av vedlegg", listOf(mapOf(
-                "Stønadstype" to ettersending.stønadType,
-                "Fødselsnummer" to ettersending.fnr,
-                "Dato mottatt" to ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-        )))
+        val infoMap = feltlisteMap("Ettersending av vedlegg", listOf(
+                Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
+                Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
+                Feltformaterer.feltMap("Dato mottatt",
+                                       ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+        ))
         val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
     }
