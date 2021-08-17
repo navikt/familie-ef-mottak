@@ -73,7 +73,7 @@ object Feltformaterer {
                       adresse.land).joinToString("\n\n")
     }
 
-    private fun feltMap(label: String, verdi: String, alternativer: List<String>? = null): Map<String, String> {
+    fun feltMap(label: String, verdi: String, alternativer: List<String>? = null): Map<String, String> {
         return if (alternativer != null) {
             mapOf("label" to label, "verdi" to verdi, "alternativer" to alternativer.joinToString(" / "))
         } else {

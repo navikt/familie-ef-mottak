@@ -1,9 +1,11 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil.readFile
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 class SøknadTreeWalkerTest {
 
@@ -85,6 +87,18 @@ class SøknadTreeWalkerTest {
                              "Dokumentasjon på at kan arbeide")
         val mapSøknadsfelter = SøknadTreeWalker.mapBarnetilsyn(søknad, vedlegg)
         generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn.json")
+    }
+
+
+    @Test
+    fun `map ettersending med vedlegg`() {
+        val mapEttersending = SøknadTreeWalker.mapEttersending(Ettersending(stønadType = "OVERGANGSSTØNAD",
+                                                                            fnr = "23118612345",
+                                                                            ettersendingJson = "",
+        opprettetTid = LocalDateTime.of(2021,5,1,12,0)),
+                                                               listOf("Lærlingkontrakt", "Utgifter til pass av barn"))
+
+        generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending.json")
     }
 
     private fun generatePdfAndAssert(mapSøknadsfelter: Map<String, Any>, filename: String) {

@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -53,7 +54,7 @@ class EttersendingService(
     }
 
     @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    private fun mapVedlegg(ettersendingDbId: String,
+    private fun mapVedlegg(ettersendingDbId: UUID,
                            vedleggMetadata: List<Vedlegg>,
                            vedlegg: Map<String, ByteArray>): List<EttersendingVedlegg> =
             vedleggMetadata.map {
@@ -66,7 +67,7 @@ class EttersendingService(
                 )
             }
 
-    private fun mapVedlegg(ettersendingDbId: String,
+    private fun mapVedlegg(ettersendingDbId: UUID,
                            vedleggMetadata: List<Vedlegg>): List<EttersendingVedlegg> =
             vedleggMetadata.map {
                 EttersendingVedlegg(
@@ -85,7 +86,14 @@ class EttersendingService(
         val lagretSkjema = ettersendingRepository.save(ettersendingDb)
         ettersendingVedleggRepository.saveAll(vedlegg)
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
-        return Kvittering(lagretSkjema.id, "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
+        return Kvittering(lagretSkjema.id.toString(), "Ettersending lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
+    fun hentEttersending(id: String): Ettersending{
+        return ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
+    }
+
+    fun lagreEttersending(ettersending: Ettersending) {
+        ettersendingRepository.save(ettersending)
+    }
 }

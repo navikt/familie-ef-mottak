@@ -5,9 +5,12 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
+import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -27,6 +30,7 @@ import org.springframework.web.client.HttpStatusCodeException
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                      private val featureToggleService: FeatureToggleService,
                      private val søknadService: SøknadService,
+                     private val ettersendingService: EttersendingService,
                      private val opprettOppgaveMapper: OpprettOppgaveMapper,
                      private val sakService: SakService,
                      private val saksbehandlingClient: SaksbehandlingClient) {
@@ -43,6 +47,15 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val tilordnet: String? =
                 if (skalSetteTilordnet(behandlesAvApplikasjon)) finnSaksbehandlerIdentForMiljø() else null
         return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
+    }
+
+    fun lagJournalføringsoppgaveForEttersendingId(ettersendingId: String): Long? {
+        val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
+        val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
+        val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
+        val stønadType = StønadType.valueOf(ettersending.stønadType)
+        val behandlesAvApplikasjon = utledBehandlesAvApplikasjonForEttersending(fnr = ettersending.fnr, stønadType = stønadType)
+        return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
     }
 
     /**
@@ -206,7 +219,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         log.info("utledBehandlesAvApplikasjon dokumenttype=${søknad.dokumenttype}")
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
-        return if (finnesBehandlingINyLøsning(søknad, stønadType)) {
+        return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
@@ -215,9 +228,18 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun finnesBehandlingINyLøsning(søknad: Søknad,
+    private fun utledBehandlesAvApplikasjonForEttersending(fnr: String, stønadType: StønadType): BehandlesAvApplikasjon {
+        log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
+        return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
+            BehandlesAvApplikasjon.EF_SAK
+        } else {
+            BehandlesAvApplikasjon.INFOTRYGD
+        }
+    }
+
+    private fun finnesBehandlingINyLøsning(fnr: String,
                                            stønadType: StønadType): Boolean {
-        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
+        val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(fnr, stønadType)
         log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
         return finnesBehandlingForPerson
     }

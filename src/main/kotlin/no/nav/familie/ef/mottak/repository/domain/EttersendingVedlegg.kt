@@ -11,7 +11,7 @@ import javax.persistence.PreUpdate
 @Entity
 data class EttersendingVedlegg(@Id
                    val id: UUID,
-                   val ettersendingId: String,
+                   val ettersendingId: UUID,
                    val navn: String,
                    val tittel: String,
                    @Convert(converter = FileCryptoConverter::class)

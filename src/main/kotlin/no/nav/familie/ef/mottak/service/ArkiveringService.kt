@@ -2,9 +2,14 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper
+import no.nav.familie.ef.mottak.mapper.EttersendingMapper
+import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Tema
@@ -17,7 +22,9 @@ import org.springframework.stereotype.Service
 @Service
 class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
                         private val søknadService: SøknadService,
-                        private val vedleggRepository: VedleggRepository) {
+                        private val ettersendingService: EttersendingService,
+                        private val vedleggRepository: VedleggRepository,
+                        private val ettersendingVedleggRepository: EttersendingVedleggRepository) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -27,6 +34,15 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val journalpostId: String = send(søknad, vedlegg)
         val søknadMedJournalpostId = søknad.copy(journalpostId = journalpostId)
         søknadService.lagreSøknad(søknadMedJournalpostId)
+        return journalpostId
+    }
+
+    fun journalførEttersending(ettersendingId: String): String {
+        val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
+        val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id)
+        val journalpostId: String = sendEttersending(ettersending, vedlegg)
+        val ettersendingMedJournalpostId = ettersending.copy(journalpostId = journalpostId)
+        ettersendingService.lagreEttersending(ettersendingMedJournalpostId)
         return journalpostId
     }
 
@@ -69,6 +85,13 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun send(søknad: Søknad, vedlegg: List<Vedlegg>): String {
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.toDto(søknad, vedlegg)
+        val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
+        return dokumentResponse.journalpostId
+    }
+
+    private fun sendEttersending(ettersending: Ettersending,
+                                 vedlegg: List<EttersendingVedlegg>): String {
+        val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
         return dokumentResponse.journalpostId
     }

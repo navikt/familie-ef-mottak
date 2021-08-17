@@ -1,9 +1,20 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Datoperiode
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
@@ -53,6 +64,17 @@ object SøknadTreeWalker {
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
         val finnFelter = finnFelter(skjema)
         return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+    }
+
+    fun mapEttersending(ettersending: Ettersending, vedleggTitler: List<String>): Map<String, Any> {
+        val infoMap = feltlisteMap("Ettersending av vedlegg", listOf(
+                Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
+                Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
+                Feltformaterer.feltMap("Dato mottatt",
+                                       ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
+        ))
+        val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<Map<String, *>> {

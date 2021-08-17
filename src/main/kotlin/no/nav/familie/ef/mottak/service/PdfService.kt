@@ -6,8 +6,10 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
+import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class PdfService(private val søknadRepository: SøknadRepository,
+                 private val ettersendingRepository: EttersendingRepository,
                  private val vedleggRepository: VedleggRepository,
                  private val pdfClient: PdfClient) {
 
@@ -53,5 +56,11 @@ class PdfService(private val søknadRepository: SøknadRepository,
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }
         }
+    }
+
+    fun lagForsideForEttersending(ettersending: Ettersending, vedleggTitler: List<String>) {
+        val feltMap = SøknadTreeWalker.mapEttersending(ettersending, vedleggTitler)
+        val søknadPdf = pdfClient.lagPdf(feltMap)
+        ettersendingRepository.saveAndFlush(ettersending.copy(ettersendingPdf = søknadPdf))
     }
 }

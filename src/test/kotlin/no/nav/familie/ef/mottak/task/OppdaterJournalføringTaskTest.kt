@@ -31,7 +31,7 @@ internal class OppdaterJournalføringTaskTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val arkiveringService: ArkiveringService = ArkiveringService(integrasjonerClient, søknadService, mockk())
+    private val arkiveringService: ArkiveringService = ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
     private val taskRepository: TaskRepository = mockk()
     private val oppdaterJournalføringTask = OppdaterJournalføringTask(taskRepository, arkiveringService)
 

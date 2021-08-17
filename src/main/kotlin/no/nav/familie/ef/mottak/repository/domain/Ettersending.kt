@@ -14,7 +14,7 @@ import javax.persistence.Table
 @Table(name = "ettersending")
 data class Ettersending(
         @Id
-        val id: String = UUID.randomUUID().toString(),
+        val id: UUID = UUID.randomUUID(),
         @Convert(converter = StringValCryptoConverter::class)
         val ettersendingJson: String,
         @Convert(converter = FileCryptoConverter::class)

@@ -10,7 +10,10 @@ import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
@@ -28,6 +31,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import java.nio.charset.Charset
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -38,6 +42,7 @@ internal class OppgaveServiceTest {
     private val sakService: SakService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
+    private val ettersendingService = mockk<EttersendingService>()
 
     private val oppgaveService: OppgaveService =
             OppgaveService(integrasjonerClient = integrasjonerClient,
@@ -45,7 +50,8 @@ internal class OppgaveServiceTest {
                            søknadService = søknadService,
                            opprettOppgaveMapper = opprettOppgaveMapper,
                            sakService = sakService,
-                           saksbehandlingClient = saksbehandlingClient)
+                           saksbehandlingClient = saksbehandlingClient,
+                           ettersendingService = ettersendingService)
 
     @BeforeEach
     private fun init() {
@@ -157,6 +163,29 @@ internal class OppgaveServiceTest {
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
     }
 
+    @Test
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave for ny løsning dersom det finnes en behandling i ny løsning`() {
+        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns true
+        every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK) }
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave mot infotrygd dersom det ikke finnes en behandling i ny løsning`() {
+        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
+        every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
+    }
+
+    private val ettersendingId = UUID.randomUUID().toString()
     private val journalpost =
             Journalpost(
                     journalpostId = "111111111",
@@ -179,5 +208,16 @@ internal class OppgaveServiceTest {
                             )
                     )
             )
+
+    private val ettersending = Ettersending(id = UUID.randomUUID(),
+                                            ettersendingJson = "",
+                                            ettersendingPdf = Fil("abc".toByteArray()),
+                                            stønadType = "OVERGANGSSTØNAD",
+                                            journalpostId = "123Abc",
+                                            fnr = "12345678901",
+                                            taskOpprettet = true,
+                                            opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2)
+
+    )
 
 }
