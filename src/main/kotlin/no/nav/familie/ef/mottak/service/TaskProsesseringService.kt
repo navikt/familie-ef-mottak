@@ -42,7 +42,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                     this["stønadType"] = ettersending.stønadType
                 }
 
-        taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id, properties))
+        taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties))
         ettersendingRepository.save(ettersending.copy(taskOpprettet = true))
     }
 }

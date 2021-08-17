@@ -209,7 +209,7 @@ internal class OppgaveServiceTest {
                     )
             )
 
-    private val ettersending = Ettersending(id = UUID.randomUUID().toString(),
+    private val ettersending = Ettersending(id = UUID.randomUUID(),
                                             ettersendingJson = "",
                                             ettersendingPdf = Fil("abc".toByteArray()),
                                             stønadType = "OVERGANGSSTØNAD",

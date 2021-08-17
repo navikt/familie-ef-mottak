@@ -9,6 +9,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagEttersendingPdfTask.TYPE, beskrivelse = "Lag pdf for ettersending")
@@ -19,7 +20,7 @@ class LagEttersendingPdfTask(private val pdfService: PdfService,
 
     override fun doTask(task: Task) {
         val ettersending =
-                ettersendingRepository.findByIdOrNull(task.payload) ?: error("Kan ikke finne ettersending med id ${task.payload}")
+                ettersendingRepository.findByIdOrNull(UUID.fromString(task.payload)) ?: error("Kan ikke finne ettersending med id ${task.payload}")
         val vedleggTitler = ettersendingVedleggRepository.findByEttersendingId(ettersending.id).map { it.tittel }
 
         pdfService.lagForsideForEttersending(ettersending, vedleggTitler)
