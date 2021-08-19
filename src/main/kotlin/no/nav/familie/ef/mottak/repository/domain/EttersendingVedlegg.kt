@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import java.util.UUID
-import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -11,7 +10,7 @@ import javax.persistence.PreUpdate
 @Entity
 data class EttersendingVedlegg(@Id
                    val id: UUID,
-                   val ettersendingId: UUID,
+                   val ettersendingId: String,
                    val navn: String,
                    val tittel: String,
                    @Convert(converter = FileCryptoConverter::class)
