@@ -77,11 +77,11 @@ internal class EttersendingServiceTest {
         assertThat(ettersendingSlot.captured.taskOpprettet).isFalse
 
         assertThat(ettersendingVedleggSlot.captured[0].tittel).isEqualTo(vedlegg1.tittel)
-        assertThat(ettersendingVedleggSlot.captured[0].ettersendingId).isEqualTo(ettersendingSlot.captured.id)
+        assertThat(ettersendingVedleggSlot.captured[0].ettersendingId).isEqualTo(ettersendingSlot.captured.id.toString())
         assertThat(ettersendingVedleggSlot.captured[0].navn).isEqualTo(vedlegg1.navn)
         assertThat(ettersendingVedleggSlot.captured[0].innhold.bytes).isEqualTo(dokument1)
         assertThat(ettersendingVedleggSlot.captured[1].tittel).isEqualTo(vedlegg2.tittel)
-        assertThat(ettersendingVedleggSlot.captured[1].ettersendingId).isEqualTo(ettersendingSlot.captured.id)
+        assertThat(ettersendingVedleggSlot.captured[1].ettersendingId).isEqualTo(ettersendingSlot.captured.id.toString())
         assertThat(ettersendingVedleggSlot.captured[1].navn).isEqualTo(vedlegg2.navn)
         assertThat(ettersendingVedleggSlot.captured[1].innhold.bytes).isEqualTo(dokument2)
 

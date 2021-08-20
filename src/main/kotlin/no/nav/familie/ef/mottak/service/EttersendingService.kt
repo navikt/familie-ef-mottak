@@ -60,7 +60,7 @@ class EttersendingService(
             vedleggMetadata.map {
                 EttersendingVedlegg(
                         id = UUID.fromString(it.id),
-                        ettersendingId = ettersendingDbId,
+                        ettersendingId = ettersendingDbId.toString(),
                         navn = it.navn,
                         tittel = it.tittel,
                         innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}"))
@@ -72,7 +72,7 @@ class EttersendingService(
             vedleggMetadata.map {
                 EttersendingVedlegg(
                         id = UUID.fromString(it.id),
-                        ettersendingId = ettersendingDbId,
+                        ettersendingId = ettersendingDbId.toString(),
                         navn = it.navn,
                         tittel = it.tittel,
                         innhold = Fil(dokumentClient.hentVedlegg(it.id))

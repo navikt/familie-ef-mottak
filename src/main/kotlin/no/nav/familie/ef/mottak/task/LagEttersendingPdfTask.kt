@@ -21,7 +21,7 @@ class LagEttersendingPdfTask(private val pdfService: PdfService,
     override fun doTask(task: Task) {
         val ettersending =
                 ettersendingRepository.findByIdOrNull(UUID.fromString(task.payload)) ?: error("Kan ikke finne ettersending med id ${task.payload}")
-        val vedleggTitler = ettersendingVedleggRepository.findByEttersendingId(ettersending.id).map { it.tittel }
+        val vedleggTitler = ettersendingVedleggRepository.findByEttersendingId(ettersending.id.toString()).map { it.tittel }
 
         pdfService.lagForsideForEttersending(ettersending, vedleggTitler)
     }

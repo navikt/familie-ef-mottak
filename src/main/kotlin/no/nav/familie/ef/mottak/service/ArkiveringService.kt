@@ -2,14 +2,12 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper
-import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Fagsystem
 import no.nav.familie.kontrakter.felles.Tema
@@ -39,7 +37,7 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun journalførEttersending(ettersendingId: String): String {
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
-        val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id)
+        val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id.toString())
         val journalpostId: String = sendEttersending(ettersending, vedlegg)
         val ettersendingMedJournalpostId = ettersending.copy(journalpostId = journalpostId)
         ettersendingService.lagreEttersending(ettersendingMedJournalpostId)
