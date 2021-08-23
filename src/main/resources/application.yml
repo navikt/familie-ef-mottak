@@ -78,7 +78,7 @@ familie:
     integrasjoner:
       url: http://familie-integrasjoner.teamfamilie/api/
     pdfgenerator:
-      url: https://familie-ef-dokgen.nais.adeo.no/
+      url: https://familie-ef-dokgen.intern.nav.no/
 
 prosessering:
   cronRetryTasks: "0 5 6,7 1/1 * ?"
