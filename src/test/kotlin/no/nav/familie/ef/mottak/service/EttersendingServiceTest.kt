@@ -41,10 +41,10 @@ internal class EttersendingServiceTest {
         val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
         val innsending1 = Innsending(beskrivelse = "Lærlingekontrakt",
                                      dokumenttype = "DOKUMENTASJON_LÆRLING",
-                                     vedlegg = Dokument(vedlegg1.id, vedlegg1.navn))
+                                     vedlegg = listOf(Dokument(vedlegg1.id, vedlegg1.navn)))
         val innsending2 = Innsending(beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
                                      dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-                                     vedlegg = Dokument(vedlegg2.id, vedlegg2.navn))
+                                     vedlegg = listOf(Dokument(vedlegg2.id, vedlegg2.navn)))
         val ettersendingUtenSøknad = EttersendingUtenSøknad(innsending = listOf(innsending1, innsending2)
         )
         val ettersendingDto = EttersendingDto("12345678901", StønadType.OVERGANGSSTØNAD, null, ettersendingUtenSøknad)
