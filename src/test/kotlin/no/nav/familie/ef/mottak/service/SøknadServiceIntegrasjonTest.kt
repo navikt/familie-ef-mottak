@@ -181,7 +181,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `hent dokumentasjonsbehov til søknad feiler når søknadId ikke finnes`() {
         assertThat(catchThrowable { søknadService.hentDokumentasjonsbehovForSøknad(UUID.randomUUID()) })
-                .hasMessageContaining("Fant ikke dokumentasjonsbehov for søknad ")
+                .hasMessageContaining("Fant ikke søknad for id ")
                 .isInstanceOf(ApiFeil::class.java)
     }
 

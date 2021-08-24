@@ -178,11 +178,12 @@ class SøknadService(private val søknadRepository: SøknadRepository,
                 }
     }
 
+    // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
     fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto {
-        val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
-                objectMapper.readValue(dokumentasjonsbehovRepository.findByIdOrNull(søknadId.toString())?.data
-                                       ?: throw ApiFeil("Fant ikke dokumentasjonsbehov for søknad $søknadId",
-                                                        HttpStatus.BAD_REQUEST))
+        val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknadId.toString())
+        val dokumentasjonsbehov: List<Dokumentasjonsbehov> = dokumentasjonsbehovJson?.let {
+            objectMapper.readValue(it.data)
+        } ?: emptyList()
         val søknad: Søknad =
                 søknadRepository.findByIdOrNull(søknadId.toString()) ?: throw ApiFeil("Fant ikke søknad for id $søknadId",
                                                                                       HttpStatus.BAD_REQUEST)
