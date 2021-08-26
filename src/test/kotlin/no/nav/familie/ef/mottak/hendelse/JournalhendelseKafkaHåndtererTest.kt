@@ -1,9 +1,12 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.hendelse
+package no.nav.familie.ef.mottak.hendelse
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseKafkaHåndterer
-import no.nav.familie.ef.mottak.hendelse.JournalhendelseService
+import io.mockk.just
+import io.mockk.verify
+import no.nav.familie.ef.mottak.mockapi.clearAllMocks
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_PAPIRSØKNAD
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.OFFSET
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.journalføringHendelseRecord
@@ -29,7 +32,7 @@ class JournalhendelseKafkaHåndtererTest {
     internal fun setUp() {
         MockKAnnotations.init(this)
         journalhendelseKafkaHåndterer = JournalhendelseKafkaHåndterer(journalhendelseServiceMock)
-        clearAllMocks()
+        clearAllMocks(this)
     }
 
     @Test
