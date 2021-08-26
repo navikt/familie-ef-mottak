@@ -37,35 +37,12 @@ class EttersendingService(
         return motta(ettersendingDb, vedlegg)
     }
 
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    @Transactional
-    fun mottaEttersending(ettersending: EttersendingMedVedlegg, vedlegg: Map<String, ByteArray>): Kvittering {
-        val ettersendingDb = EttersendingMapper.fromDto(ettersending.ettersending)
-        val vedlegg = mapVedlegg(ettersendingDb.id, ettersending.vedlegg, vedlegg)
-
-        return motta(ettersendingDb, vedlegg)
-    }
-
     fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendingResponseData> {
 
         return ettersendingRepository.findAllByFnr(personIdent.ident).map {
             EttersendingResponseData(objectMapper.readValue(it.ettersendingJson), it.opprettetTid)
         }
     }
-
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    private fun mapVedlegg(ettersendingDbId: UUID,
-                           vedleggMetadata: List<Vedlegg>,
-                           vedlegg: Map<String, ByteArray>): List<EttersendingVedlegg> =
-            vedleggMetadata.map {
-                EttersendingVedlegg(
-                        id = UUID.fromString(it.id),
-                        ettersendingId = ettersendingDbId,
-                        navn = it.navn,
-                        tittel = it.tittel,
-                        innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}"))
-                )
-            }
 
     private fun mapVedlegg(ettersendingDbId: UUID,
                            vedleggMetadata: List<Vedlegg>): List<EttersendingVedlegg> =

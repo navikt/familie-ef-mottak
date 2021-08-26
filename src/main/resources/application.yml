@@ -9,10 +9,6 @@ spring:
     jdbc:
       repositories:
         enabled: true
-  servlet:
-    multipart:
-      max-file-size: 200MB
-      max-request-size: 200MB
   main:
     allow-bean-definition-overriding: true
     banner-mode: "off"

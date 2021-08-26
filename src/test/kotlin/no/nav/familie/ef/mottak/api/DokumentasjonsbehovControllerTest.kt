@@ -23,7 +23,7 @@ internal class DokumentasjonsbehovControllerTest : IntegrasjonSpringRunnerTest()
     @Test
     internal fun `fnr i token er lik fnr i søknaden`() {
         val søknad = SøknadMedVedlegg(Testdata.søknadOvergangsstønad, listOf())
-        val kvittering = søknadService.mottaOvergangsstønad(søknad, emptyMap())
+        val kvittering = søknadService.mottaOvergangsstønad(søknad)
         headers.setBearerAuth(getTestToken(søknad.søknad.personalia.verdi.fødselsnummer.verdi.verdi))
 
         val response: ResponseEntity<Any> =
@@ -38,7 +38,7 @@ internal class DokumentasjonsbehovControllerTest : IntegrasjonSpringRunnerTest()
     internal fun `fnr i token er ikke lik fnr i søknaden`() {
 
         val søknad = SøknadMedVedlegg(Testdata.søknadOvergangsstønad, listOf())
-        val kvittering = søknadService.mottaOvergangsstønad(søknad, emptyMap())
+        val kvittering = søknadService.mottaOvergangsstønad(søknad)
 
         headers.setBearerAuth(lokalTestToken)
 
