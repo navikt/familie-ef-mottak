@@ -27,7 +27,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping
-    fun ettersend(@RequestPart("ettersending") ettersending: EttersendingMedVedlegg): Kvittering {
+    fun ettersend(@RequestBody ettersending: EttersendingMedVedlegg): Kvittering {
         return okEllerKastException { ettersendingService.mottaEttersending(ettersending) }
     }
 
