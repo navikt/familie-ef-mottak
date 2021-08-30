@@ -51,6 +51,9 @@ spec:
         - application: familie-ef-soknad-api
           namespace: teamfamilie
           cluster: dev-sbs
+        - application: familie-ef-soknad-api
+          namespace: teamfamilie
+          cluster: dev-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
