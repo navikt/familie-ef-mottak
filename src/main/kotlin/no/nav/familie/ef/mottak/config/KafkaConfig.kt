@@ -12,6 +12,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.support.LoggingProducerListener
 import java.time.Duration
 
 @EnableKafka
@@ -32,7 +33,10 @@ class KafkaConfig {
 
     @Bean
     fun kafkaTemplate(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): KafkaTemplate<Nokkel, Beskjed> {
-        return KafkaTemplate(DefaultKafkaProducerFactory(properties.buildProducerProperties()))
+        return KafkaTemplate<Nokkel, Beskjed>(DefaultKafkaProducerFactory(properties.buildProducerProperties())).apply {
+            val producerListener = LoggingProducerListener<String, String>()
+            producerListener.setIncludeContents(false)
+        }
     }
 
 }
