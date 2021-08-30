@@ -1,9 +1,13 @@
 package no.nav.familie.ef.mottak.hendelse
 
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
+import no.nav.familie.ef.mottak.mockapi.clearAllMocks
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_FERDIGSTILT
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_IKKE_ENFNETRYGD
@@ -17,7 +21,10 @@ import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -54,7 +61,7 @@ class JournalhendelseServiceTest {
     @BeforeEach
     internal fun setUp() {
         MockKAnnotations.init(this)
-        clearAllMocks()
+        clearAllMocks(this)
 
         every {
             mockHendelseloggRepository.save(any())
@@ -122,7 +129,11 @@ class JournalhendelseServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(integrasjonerClient, mockSøknadRepository, mockJournalfoeringHendelseDbUtil, mockJournalføringsoppgaveService, mockTaskRepositoryUtvidet)
+        service = JournalhendelseService(integrasjonerClient,
+                                         mockSøknadRepository,
+                                         mockJournalfoeringHendelseDbUtil,
+                                         mockJournalføringsoppgaveService,
+                                         mockTaskRepositoryUtvidet)
     }
 
     @Test
@@ -187,7 +198,8 @@ class JournalhendelseServiceTest {
     fun `Mottak av gyldig hendelse skal delegeres til service`() {
 
         every {
-            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD))
+            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringHendelseRecord(
+                    JOURNALPOST_PAPIRSØKNAD))
         } returns false
 
         every {

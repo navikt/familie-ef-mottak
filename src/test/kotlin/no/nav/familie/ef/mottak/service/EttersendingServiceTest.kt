@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
+import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.mockapi.mockFamilieDokumentClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
@@ -17,7 +17,8 @@ import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -26,19 +27,26 @@ internal class EttersendingServiceTest {
 
     private val ettersendingRepository = mockk<EttersendingRepository>()
     private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>()
-    private val dokumentClient = mockk<FamilieDokumentClient>()
+    private val dokumentClient = mockFamilieDokumentClient()
 
     private val ettersendingService = EttersendingService(ettersendingRepository = ettersendingRepository,
                                                           ettersendingVedleggRepository = ettersendingVedleggRepository,
                                                           dokumentClient = dokumentClient)
 
+    private val dokument1 = "1234".toByteArray()
+    private val dokument2 = "999111".toByteArray()
+    private val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
+    private val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
+
+    @BeforeEach
+    internal fun setUp() {
+        every { dokumentClient.hentVedlegg(vedlegg1.id) } returns dokument1
+        every { dokumentClient.hentVedlegg(vedlegg2.id) } returns dokument2
+    }
+
     @Test
     internal fun `skal motta ettersending og lagre dette ned`() {
         val innsendingsdetaljer = Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("dato", LocalDateTime.now())))
-        val dokument1 = "1234".toByteArray()
-        val dokument2 = "999111".toByteArray()
-        val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
-        val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
         val innsending1 = Innsending(beskrivelse = "Lærlingekontrakt",
                                      dokumenttype = "DOKUMENTASJON_LÆRLING",
                                      vedlegg = listOf(Dokument(vedlegg1.id, vedlegg1.navn)))
@@ -59,16 +67,13 @@ internal class EttersendingServiceTest {
         val ettersendingVedleggSlot = slot<List<EttersendingVedlegg>>()
         every {
             ettersendingRepository.save(capture(ettersendingSlot))
-        } answers { ettersendingSlot.captured}
+        } answers { ettersendingSlot.captured }
 
         every {
             ettersendingVedleggRepository.saveAll(capture(ettersendingVedleggSlot))
-        } answers { ettersendingVedleggSlot.captured}
+        } answers { ettersendingVedleggSlot.captured }
 
-
-        ettersendingService.mottaEttersending(ettersending = ettersendingMedVedlegg,
-                                              vedlegg = mapOf(vedlegg1.id to dokument1, vedlegg2.id to dokument2))
-
+        ettersendingService.mottaEttersending(ettersendingMedVedlegg)
 
         assertThat(ettersendingSlot.captured.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD.toString())
         assertThat(ettersendingSlot.captured.ettersendingPdf).isNull()

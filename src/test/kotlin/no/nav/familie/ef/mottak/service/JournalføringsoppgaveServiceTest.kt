@@ -1,19 +1,18 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
+package no.nav.familie.ef.mottak.service
 
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
+import no.nav.familie.ef.mottak.mockapi.clearAllMocks
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.ef.mottak.service.JournalføringsoppgaveService
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -51,7 +50,7 @@ class JournalføringsoppgaveServiceTest {
     @BeforeEach
     internal fun setUp() {
         MockKAnnotations.init(this)
-        clearAllMocks()
+        clearAllMocks(this)
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
 

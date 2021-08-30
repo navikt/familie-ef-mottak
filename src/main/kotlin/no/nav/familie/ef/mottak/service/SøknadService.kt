@@ -64,32 +64,6 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    @Transactional
-    fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-                             vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad,
-                                            skalBehandlesINySaksbehandling(søknad) || erAktuellForFørsteSak(søknad.søknad))
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
-    }
-
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    @Transactional
-    fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
-    }
-
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    @Transactional
-    fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>, vedlegg: Map<String, ByteArray>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg, vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
-    }
-
     private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
         val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
         return when {
@@ -129,18 +103,6 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
-
-    @Deprecated("Bruk metode som henter vedlegg fra familie-dokument")
-    private fun mapVedlegg(søknadDbId: String,
-                           vedleggMetadata: List<VedleggKontrakt>,
-                           vedlegg: Map<String, ByteArray>): List<Vedlegg> =
-            vedleggMetadata.map {
-                Vedlegg(id = UUID.fromString(it.id),
-                        søknadId = søknadDbId,
-                        navn = it.navn,
-                        tittel = it.tittel,
-                        innhold = Fil(vedlegg[it.id] ?: error("Finner ikke vedlegg med id=${it.id}")))
-            }
 
     private fun mapVedlegg(søknadDbId: String,
                            vedleggMetadata: List<VedleggKontrakt>): List<Vedlegg> =

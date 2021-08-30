@@ -25,6 +25,8 @@ familie:
     pdfgenerator:
       #url: http://localhost:8081/
       url: https://familie-ef-dokgen.dev.intern.nav.no/
+  dokument:
+    url: http://localhost:8092/mockdokument/
 
 funksjonsbrytere:
   enabled: false
@@ -63,6 +65,16 @@ no.nav.security.jwt:
           client-id: anything5
           client-secret: anything6
           client-auth-method: client_secret_basic
+      dokument:
+        resource-url: ${familie.dokument.url}
+        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+        token-exchange:
+          audience: ${familie.dokument.audience}
+        authentication:
+          client-id: ${TOKEN_X_CLIENT_ID}
+          client-auth-method: private_key_jwt
+          client-jwk: ${TOKEN_X_PRIVATE_JWK}
+        token-endpoint-url: http://metadata
 
 
 database:
@@ -77,3 +89,12 @@ SRV_CREDENTIAL_PASSWORD: test
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
 ettersending.ettersendingUrl: http://localhost:3000/
+
+TOKEN_X_WELL_KNOWN_URL: http://localhost
+TOKEN_X_PRIVATE_JWK: '{
+    "kty" : "RSA",
+    "e" : "AQAB",
+    "use" : "sig",
+    "kid" : "mock-oauth2-server-key",
+    "n" : ""
+  }'
