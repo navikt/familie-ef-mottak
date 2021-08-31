@@ -51,6 +51,9 @@ spec:
         - application: familie-ef-soknad-api
           namespace: teamfamilie
           cluster: prod-sbs
+        - application: familie-ef-soknad-api
+          namespace: teamfamilie
+          cluster: prod-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
