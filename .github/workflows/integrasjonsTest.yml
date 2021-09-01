@@ -15,6 +15,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11.x'
+      - name: Read/save maven cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-cache-ef-mottak-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-cache-ef-mottak-
+            ${{ runner.os }}-
       - name: Bygg (dependabot)
         if: github.actor == 'dependabot[bot]'
         env:
