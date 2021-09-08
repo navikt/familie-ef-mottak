@@ -28,7 +28,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
                                   behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = null,
+                                  enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
                                   tilordnetRessurs = tilordnet)
 
