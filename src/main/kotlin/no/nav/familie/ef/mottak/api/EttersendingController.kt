@@ -32,7 +32,7 @@ class EttersendingController(val ettersendingService: EttersendingService) {
     }
 
     @PostMapping("person")
-    fun hentForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendingResponseData>> {
+    fun hentForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendelseDto>> {
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
         if (fnrFraToken != personIdent.ident) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")

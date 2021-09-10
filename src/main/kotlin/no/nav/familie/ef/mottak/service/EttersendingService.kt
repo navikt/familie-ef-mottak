@@ -39,10 +39,10 @@ class EttersendingService(
         return Kvittering(UUID.randomUUID().toString(), "Ettersending er registrert mottatt.")
     }
 
-    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendingResponseData> {
+    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> {
 
         return ettersendingRepository.findAllByFnr(personIdent.ident).map {
-            EttersendingResponseData(objectMapper.readValue(it.ettersendingJson), it.opprettetTid)
+            objectMapper.readValue(it.ettersendingJson)
         }
     }
 
