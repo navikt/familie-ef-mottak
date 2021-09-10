@@ -31,11 +31,12 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
         } else {
             Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         }
-        task.metadata["eventId"] = UUID.randomUUID()
         val sendMeldingTilDittNavTask =
             Task(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
                 task.payload,
-                task.metadata)
+                Properties(task.metadata).apply {
+                    this["eventId"] = UUID.randomUUID()
+                })
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
     }
