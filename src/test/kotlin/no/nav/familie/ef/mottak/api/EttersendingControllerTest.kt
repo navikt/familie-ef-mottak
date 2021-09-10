@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.kontrakter.ef.ettersending.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingUtenSøknad
@@ -39,19 +41,15 @@ internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
 
-    private fun request(): EttersendingMedVedlegg {
-        val innsendingsdetaljer = Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("dato", LocalDateTime.now())))
+    private fun request(): Map<StønadType, EttersendelseDto> {
         val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
-        val innsending1 = Innsending(beskrivelse = "Lærlingekontrakt",
-                                     dokumenttype = "DOKUMENTASJON_LÆRLING",
-                                     vedlegg = listOf(Dokument(vedlegg1.id, vedlegg1.navn)))
-        val ettersendingUtenSøknad = EttersendingUtenSøknad(innsending = listOf(innsending1)
-        )
-        val ettersendingDto = EttersendingDto("12345678901", StønadType.OVERGANGSSTØNAD, null, ettersendingUtenSøknad)
-        return EttersendingMedVedlegg(
-                innsendingsdetaljer = innsendingsdetaljer,
-                vedlegg = listOf(vedlegg1),
-                ettersending = ettersendingDto
-        )
+        val fnr = "12345678901"
+        return mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
+                                                                                               søknadsdata = null,
+                                                                                               dokumenttype = "DOKUMENTASJON_LÆRLING",
+                                                                                               beskrivelse = "Lærlingekontrakt",
+                                                                                               stønadType = StønadType.OVERGANGSSTØNAD,
+                                                                                               innsendingstidspunkt = null,
+                                                                                               vedlegg = listOf(vedlegg1))), fnr=fnr))
     }
 }
