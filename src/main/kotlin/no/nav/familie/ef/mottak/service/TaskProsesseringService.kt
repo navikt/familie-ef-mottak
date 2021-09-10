@@ -11,8 +11,8 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
-
+import java.util.Properties
+import java.util.UUID
 
 @Service
 class TaskProsesseringService(private val taskRepository: TaskRepository,
