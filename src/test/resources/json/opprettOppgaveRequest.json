@@ -1,0 +1,19 @@
+{
+  "aktivFra": "2021-09-08",
+  "behandlesAvApplikasjon": "ENF",
+  "behandlingstema": "ab0071",
+  "behandlingstype": "",
+  "beskrivelse": "test",
+  "enhetsnummer": "4862",
+  "fristFerdigstillelse": "2021-09-09",
+  "ident": {
+    "gruppe": "FOLKEREGISTERIDENT",
+    "ident": "06128116670"
+  },
+  "journalpostId": "",
+  "oppgavetype": "Journalføring",
+  "prioritet": "",
+  "saksId": "",
+  "tema": "ENF",
+  "tilordnetRessurs": "Z994119"
+}

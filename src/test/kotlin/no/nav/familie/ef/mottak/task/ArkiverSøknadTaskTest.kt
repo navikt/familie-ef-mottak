@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.util.*
@@ -76,5 +77,18 @@ internal class ArkiverSøknadTaskTest {
 
         assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE, slot.captured[1].type)
+    }
+
+    @Test
+    fun `Skal generere ny eventId i metadata ved oppretting av ArkiverSøknadTask`() {
+        val slot = slot<List<Task>>()
+        val soknad = søknad(dokumenttype = DOKUMENTTYPE_SKOLEPENGER)
+
+        every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
+        every { søknadRepository.findByIdOrNull(any()) } returns soknad
+        val uuid = UUID.randomUUID()
+        arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = soknad.id, properties = Properties().apply { this["eventId"] = uuid }))
+
+        assertNotEquals(uuid, slot.captured[1].metadata["eventID"])
     }
 }

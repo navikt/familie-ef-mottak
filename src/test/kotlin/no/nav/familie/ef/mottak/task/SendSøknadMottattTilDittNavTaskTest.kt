@@ -12,6 +12,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 internal class SendSøknadMottattTilDittNavTaskTest {
 
@@ -25,10 +26,13 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
         sendSøknadMottattTilDittNavTask =
-                SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
-        task = Task(id = 1,
-                    payload = SØKNAD_ID,
-                    type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE)
+            SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
+        val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
+        task = Task(
+            payload = SØKNAD_ID,
+            type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+            properties = properties
+        )
     }
 
     @Test
@@ -62,25 +66,30 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     private fun verifiserForventetKallMed(forventetTekst: String) {
         verify(exactly = 1) {
             søknadService.get(any())
-            dittNavKafkaProducer.sendToKafka(FNR,
-                                             forventetTekst,
-                                             task.payload,
-                                             task.id.toString(),
-                                             "")
+            dittNavKafkaProducer.sendToKafka(
+                FNR,
+                forventetTekst,
+                task.payload,
+                EVENT_ID,
+                ""
+            )
         }
     }
 
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadService.get(SØKNAD_ID) } returns
-                Søknad(id = SØKNAD_ID,
-                       søknadJson = "",
-                       dokumenttype = søknadType.dokumentType,
-                       fnr = FNR)
+                Søknad(
+                    id = SØKNAD_ID,
+                    søknadJson = "",
+                    dokumenttype = søknadType.dokumentType,
+                    fnr = FNR
+                )
     }
 
     companion object {
 
         private const val SØKNAD_ID = "e8703be6-eb47-476a-ae52-096df47430d6"
+        private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
         private const val FNR = "12345678901"
     }
 }

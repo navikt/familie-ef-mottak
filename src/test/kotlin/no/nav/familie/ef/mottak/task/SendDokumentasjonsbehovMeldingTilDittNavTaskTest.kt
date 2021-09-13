@@ -25,6 +25,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var søknadService: SøknadService
     private lateinit var featureToggleService: FeatureToggleService
 
+    private val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
+
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
@@ -47,12 +49,12 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
         mockDokumentasjonsbehov(dokumentasjonsBehov, SøknadType.OVERGANGSSTØNAD)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
             søknadService.get(any())
             søknadService.hentDokumentasjonsbehovForSøknad(any())
-            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), any(), isNull(true))
+            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), EVENT_ID, isNull(true))
         }
     }
 
@@ -60,7 +62,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - uten dokumentasjonsbehov skal ikke kalle sendToKafka`() {
         mockSøknad()
         mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
         verify {
             dittNavKafkaProducer wasNot called
         }
@@ -88,7 +90,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `arbeidssøker skal ikke sende melding til ditt nav`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
             søknadService.get(any())
@@ -105,10 +107,10 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov, SøknadType.OVERGANGSSTØNAD)
 
-        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), any(), link ?: any())
+            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), eq(EVENT_ID), link ?: any())
         }
     }
 
@@ -137,6 +139,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     companion object {
 
         private const val SØKNAD_ID = "e8703be6-eb47-476a-ae52-096df47430d6"
+        private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
         private const val FNR = "12345678901"
     }
 }
