@@ -8,19 +8,13 @@ import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingMedVedlegg
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingUtenSøknad
-import no.nav.familie.kontrakter.ef.ettersending.Innsending
+import no.nav.familie.kontrakter.ef.ettersending.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
-import no.nav.familie.kontrakter.ef.søknad.Dokument
-import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 import java.util.UUID
 
 internal class EttersendingServiceTest {
@@ -46,38 +40,44 @@ internal class EttersendingServiceTest {
 
     @Test
     internal fun `skal motta ettersending og lagre dette ned`() {
-        val innsendingsdetaljer = Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("dato", LocalDateTime.now())))
-        val innsending1 = Innsending(beskrivelse = "Lærlingekontrakt",
-                                     dokumenttype = "DOKUMENTASJON_LÆRLING",
-                                     vedlegg = listOf(Dokument(vedlegg1.id, vedlegg1.navn)))
-        val innsending2 = Innsending(beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
-                                     dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-                                     vedlegg = listOf(Dokument(vedlegg2.id, vedlegg2.navn)))
-        val ettersendingUtenSøknad = EttersendingUtenSøknad(innsending = listOf(innsending1, innsending2)
-        )
-        val ettersendingDto = EttersendingDto("12345678901", StønadType.OVERGANGSSTØNAD, null, ettersendingUtenSøknad)
-        val ettersendingMedVedlegg = EttersendingMedVedlegg(
-                innsendingsdetaljer = innsendingsdetaljer,
-                vedlegg = listOf(vedlegg1, vedlegg2),
-                ettersending = ettersendingDto
-
-        )
-
+        val dokument1 = "1234".toByteArray()
+        val dokument2 = "999111".toByteArray()
+        val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
+        val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
+        val dokumentasjonsbehov1 = Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
+                                                       søknadsdata = null,
+                                                       dokumenttype = "DOKUMENTASJON_LÆRLING",
+                                                       beskrivelse = "Lærlingekontrakt",
+                                                       stønadType = StønadType.OVERGANGSSTØNAD,
+                                                       innsendingstidspunkt = null,
+                                                       vedlegg = listOf(vedlegg1))
+        val dokumentasjonsbehov2 = Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
+                                                       søknadsdata = null,
+                                                       dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
+                                                       beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
+                                                       stønadType = StønadType.OVERGANGSSTØNAD,
+                                                       innsendingstidspunkt = null,
+                                                       vedlegg = listOf(vedlegg2))
+        val personIdent = "123456789010"
         val ettersendingSlot = slot<Ettersending>()
         val ettersendingVedleggSlot = slot<List<EttersendingVedlegg>>()
-        every {
-            ettersendingRepository.save(capture(ettersendingSlot))
-        } answers { ettersendingSlot.captured }
-
+        every { dokumentClient.hentVedlegg(vedlegg1.id) } returns dokument1
+        every { dokumentClient.hentVedlegg(vedlegg2.id) } returns dokument2
         every {
             ettersendingVedleggRepository.saveAll(capture(ettersendingVedleggSlot))
         } answers { ettersendingVedleggSlot.captured }
+        every {
+            hint(Ettersending::class)
+            ettersendingRepository.save(capture(ettersendingSlot))
+        } answers { ettersendingSlot.captured }
 
-        ettersendingService.mottaEttersending(ettersendingMedVedlegg)
+        ettersendingService.mottaEttersending(mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(dokumentasjonsbehov1,
+                                                                                                          dokumentasjonsbehov2),
+                                                                                                   personIdent = personIdent)))
 
         assertThat(ettersendingSlot.captured.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD.toString())
         assertThat(ettersendingSlot.captured.ettersendingPdf).isNull()
-        assertThat(ettersendingSlot.captured.fnr).isEqualTo(ettersendingDto.fnr)
+        assertThat(ettersendingSlot.captured.fnr).isEqualTo(personIdent)
         assertThat(ettersendingSlot.captured.journalpostId).isNull()
         assertThat(ettersendingSlot.captured.taskOpprettet).isFalse
 
