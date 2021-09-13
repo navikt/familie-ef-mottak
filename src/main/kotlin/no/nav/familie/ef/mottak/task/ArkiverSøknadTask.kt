@@ -35,7 +35,7 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
             Task(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
                 task.payload,
                 Properties(task.metadata).apply {
-                    this["eventId"] = UUID.randomUUID()
+                    this["eventId"] = UUID.randomUUID().toString()
                 })
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))

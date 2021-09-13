@@ -28,7 +28,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                                  søknad.id,
                                  properties))
 
-        properties["eventId"] = UUID.randomUUID()
+        properties["eventId"] = UUID.randomUUID().toString()
         taskRepository.save(Task(SendSøknadMottattTilDittNavTask.TYPE,
                                  søknad.id,
                                  properties))
