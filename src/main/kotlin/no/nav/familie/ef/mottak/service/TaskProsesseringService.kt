@@ -12,7 +12,7 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
-
+import java.util.UUID
 
 @Service
 class TaskProsesseringService(private val taskRepository: TaskRepository,
@@ -28,6 +28,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                                  søknad.id,
                                  properties))
 
+        properties["eventId"] = UUID.randomUUID().toString()
         taskRepository.save(Task(SendSøknadMottattTilDittNavTask.TYPE,
                                  søknad.id,
                                  properties))

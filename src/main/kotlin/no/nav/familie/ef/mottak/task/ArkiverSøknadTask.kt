@@ -9,6 +9,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
@@ -30,11 +31,12 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
         } else {
             Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         }
-
         val sendMeldingTilDittNavTask =
             Task(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
                 task.payload,
-                task.metadata)
+                Properties(task.metadata).apply {
+                    this["eventId"] = UUID.randomUUID().toString()
+                })
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
     }
