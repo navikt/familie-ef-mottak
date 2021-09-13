@@ -33,10 +33,10 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                                                        stønadType = StønadType.OVERGANGSSTØNAD,
                                                        innsendingstidspunkt = null,
                                                        vedlegg = listOf(vedlegg))
-        val fnr = "123456789010"
+        val personIdent = "123456789010"
 
         val ettersendelseDto = EttersendelseDto(
-                listOf(dokumentasjonsbehov), fnr = fnr)
+                listOf(dokumentasjonsbehov), personIdent = personIdent)
         val ettersending = ettersendingRepository.save(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
 

@@ -16,7 +16,7 @@ object EttersendingMapper {
     fun fromDto(stønadType: StønadType, ettersending: EttersendelseDto): Ettersending {
         return Ettersending(
                 ettersendingJson = objectMapper.writeValueAsString(ettersending),
-                fnr = ettersending.fnr,
+                fnr = ettersending.personIdent,
                 stønadType = stønadType.toString(),
         )
     }

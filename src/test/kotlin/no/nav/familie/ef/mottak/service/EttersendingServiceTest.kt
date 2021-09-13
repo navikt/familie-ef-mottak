@@ -58,7 +58,7 @@ internal class EttersendingServiceTest {
                                                        stønadType = StønadType.OVERGANGSSTØNAD,
                                                        innsendingstidspunkt = null,
                                                        vedlegg = listOf(vedlegg2))
-        val fnr = "123456789010"
+        val personIdent = "123456789010"
         val ettersendingSlot = slot<Ettersending>()
         val ettersendingVedleggSlot = slot<List<EttersendingVedlegg>>()
         every { dokumentClient.hentVedlegg(vedlegg1.id) } returns dokument1
@@ -73,11 +73,11 @@ internal class EttersendingServiceTest {
 
         ettersendingService.mottaEttersending(mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(dokumentasjonsbehov1,
                                                                                                           dokumentasjonsbehov2),
-                                                                                                   fnr = fnr)))
+                                                                                                   personIdent = personIdent)))
 
         assertThat(ettersendingSlot.captured.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD.toString())
         assertThat(ettersendingSlot.captured.ettersendingPdf).isNull()
-        assertThat(ettersendingSlot.captured.fnr).isEqualTo(fnr)
+        assertThat(ettersendingSlot.captured.fnr).isEqualTo(personIdent)
         assertThat(ettersendingSlot.captured.journalpostId).isNull()
         assertThat(ettersendingSlot.captured.taskOpprettet).isFalse
 
