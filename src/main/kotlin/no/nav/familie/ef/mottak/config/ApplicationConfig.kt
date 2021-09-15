@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.config
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import no.nav.familie.http.client.RetryOAuth2HttpClient
 import no.nav.familie.http.config.RestTemplateBuilderBean
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
@@ -89,6 +90,14 @@ class ApplicationConfig {
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
         return restTemplateBuilder
                 .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
+    }
+
+    @Primary
+    @Bean
+    fun oAuth2HttpClient(): RetryOAuth2HttpClient {
+        return RetryOAuth2HttpClient(RestTemplateBuilder()
+                                             .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                                             .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)))
     }
 
     @Bean
