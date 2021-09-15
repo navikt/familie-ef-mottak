@@ -22,7 +22,7 @@
         <kotlin.version>1.5.21</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
         <mockk.version>1.12.0</mockk.version>
-        <felles.version>1.20210712123123_4ab21f1</felles.version>
+        <felles.version>1.20210910085431_c48d7a9</felles.version>
         <prosessering.version>1.20210617141104_8f0760d</prosessering.version>
         <confluent.version>6.2.0</confluent.version>
         <kontrakter.version>2.0_20210913141853_cde427f</kontrakter.version>
