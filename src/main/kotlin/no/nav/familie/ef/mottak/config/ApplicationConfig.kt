@@ -94,8 +94,8 @@ class ApplicationConfig {
 
     @Primary
     @Bean
-    fun oAuth2HttpClient(): RetryOAuth2HttpClient {
-        return RetryOAuth2HttpClient(RestTemplateBuilder()
+    fun oAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder): RetryOAuth2HttpClient {
+        return RetryOAuth2HttpClient(restTemplateBuilder
                                              .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
                                              .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)))
     }
