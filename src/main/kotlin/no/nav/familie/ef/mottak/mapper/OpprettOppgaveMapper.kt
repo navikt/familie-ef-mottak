@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -15,6 +16,8 @@ import java.time.LocalDateTime
 
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
+
+    val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * En liten "hack", kanskje midlertidig.
@@ -93,6 +96,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
 
     private fun settBehandlingstema(behandlingstema: String?, journalpost: Journalpost): String? {
         if (behandlingstema.isNullOrBlank() && journalpost.tittel?.lowercase().equals("klage")) {
+            logger.warn("Behandlingstema fra journalpost er null, og setter derfor kode for klage manuelt. Journalpost : ${journalpost}")
             return KODEVERK_KLAGE
         }
         return behandlingstema
