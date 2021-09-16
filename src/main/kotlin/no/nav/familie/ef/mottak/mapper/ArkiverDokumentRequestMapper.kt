@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.util.utledDokumenttypeForEttersending
 import no.nav.familie.ef.mottak.util.utledDokumenttypeForVedlegg
+import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
@@ -35,15 +36,15 @@ object ArkiverDokumentRequestMapper {
     fun fromEttersending(ettersending: Ettersending,
                          vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
 
-        val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
+        val stønadType = StønadType.valueOf(ettersending.stønadType)
 
-        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(ettersendingDto.stønadType, ettersending)
+        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(stønadType, ettersending)
 
-        return ArkiverDokumentRequest(ettersendingDto.fnr,
+        return ArkiverDokumentRequest(ettersending.fnr,
                                       false,
                                       hovedDokumentVarianter,
                                       mapEttersendingVedlegg(vedlegg,
-                                                             ettersendingDto.stønadType))
+                                                             stønadType))
     }
 
     private fun lagHoveddokumentvarianterForEttersending(stønadType: StønadType,
