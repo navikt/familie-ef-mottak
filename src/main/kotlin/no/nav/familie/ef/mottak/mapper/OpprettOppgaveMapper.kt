@@ -16,6 +16,11 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
+    /**
+     * En liten "hack", kanskje midlertidig.
+     * - Kode for "klage", som brukes for å evt sette behandlingstema tilsvarende "klage"
+     */
+    val KODEVERK_KLAGE = "ae0058"
 
     fun toJournalføringsoppgave(journalpost: Journalpost,
                                 behandlesAvApplikasjon: BehandlesAvApplikasjon,
@@ -27,7 +32,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
-                                  behandlingstema = journalpost.behandlingstema,
+                                  behandlingstema = settBehandlingstema(journalpost.behandlingstema, journalpost),
                                   enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
                                   tilordnetRessurs = tilordnet)
@@ -86,6 +91,12 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         }
     }
 
+    private fun settBehandlingstema(behandlingstema: String?, journalpost: Journalpost): String? {
+        if (behandlingstema.isNullOrBlank() && journalpost.tittel?.lowercase().equals("klage")) {
+            return KODEVERK_KLAGE
+        }
+        return behandlingstema
+    }
 
     private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate {
         return if (gjeldendeTid.hour >= 12) {
