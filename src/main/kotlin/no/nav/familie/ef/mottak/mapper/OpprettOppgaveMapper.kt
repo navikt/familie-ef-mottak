@@ -97,7 +97,6 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
 
     private fun settBehandlingstema(journalpost: Journalpost): String? {
         if (journalpost.tittel?.lowercase().equals("klage")) {
-            logger.warn("Kunne ikke finne behandlingstema av journalpost ved opprettelse av oppgave")
             return KODEVERK_KLAGE
         }
         return null
