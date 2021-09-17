@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -16,6 +17,13 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
+    val logger = LoggerFactory.getLogger(javaClass)
+
+    /**
+     * En liten "hack", kanskje midlertidig.
+     * - Kode for "klage", som brukes for å evt sette behandlingstype tilsvarende "klage"
+     */
+    val KODEVERK_KLAGE = "ae0058"
 
     fun toJournalføringsoppgave(journalpost: Journalpost,
                                 behandlesAvApplikasjon: BehandlesAvApplikasjon,
@@ -27,6 +35,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
+                                  behandlingstype = settBehandlingstema(journalpost),
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
@@ -86,6 +95,12 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         }
     }
 
+    private fun settBehandlingstema(journalpost: Journalpost): String? {
+        if (journalpost.tittel?.lowercase().equals("klage")) {
+            return KODEVERK_KLAGE
+        }
+        return null
+    }
 
     private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate {
         return if (gjeldendeTid.hour >= 12) {
