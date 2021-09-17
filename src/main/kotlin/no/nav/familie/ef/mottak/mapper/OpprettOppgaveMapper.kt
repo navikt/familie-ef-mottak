@@ -21,7 +21,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
 
     /**
      * En liten "hack", kanskje midlertidig.
-     * - Kode for "klage", som brukes for å evt sette behandlingstema tilsvarende "klage"
+     * - Kode for "klage", som brukes for å evt sette behandlingstype tilsvarende "klage"
      */
     val KODEVERK_KLAGE = "ae0058"
 
