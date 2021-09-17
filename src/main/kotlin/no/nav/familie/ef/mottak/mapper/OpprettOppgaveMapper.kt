@@ -35,7 +35,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
-                                  behandlingstype = settBehandlingstema(journalpost),
+                                  behandlingstype = settBehandlingstype(journalpost),
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
@@ -95,7 +95,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         }
     }
 
-    private fun settBehandlingstema(journalpost: Journalpost): String? {
+    private fun settBehandlingstype(journalpost: Journalpost): String? {
         if (journalpost.tittel?.lowercase().equals("klage")) {
             return KODEVERK_KLAGE
         }
