@@ -43,6 +43,9 @@ spec:
     - https://familie-ef-mottak.dev-fss.nais.io
   secureLogs:
     enabled: true
+  azure:
+    application:
+      enabled: true
   tokenx:
     enabled: true
   accessPolicy:
