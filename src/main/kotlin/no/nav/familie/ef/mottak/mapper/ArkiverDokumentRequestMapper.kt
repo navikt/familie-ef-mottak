@@ -9,7 +9,6 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.util.utledDokumenttypeForEttersending
 import no.nav.familie.ef.mottak.util.utledDokumenttypeForVedlegg
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -22,9 +21,9 @@ object ArkiverDokumentRequestMapper {
               vedlegg: List<Vedlegg>): ArkiverDokumentRequest {
         val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
-                Dokument(søknad.søknadJson.toByteArray(), Filtype.JSON, null, "hoveddokument", dokumenttype)
+                Dokument(søknad.søknadJson.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
-                Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, "hoveddokument", dokumenttype)
+                Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, dokumenttype.dokumentTittel(), dokumenttype)
         val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)
         return ArkiverDokumentRequest(søknad.fnr,
                                       false,
@@ -35,15 +34,15 @@ object ArkiverDokumentRequestMapper {
     fun fromEttersending(ettersending: Ettersending,
                          vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
 
-        val ettersendingDto = EttersendingMapper.toDto<EttersendingDto>(ettersending)
+        val stønadType = StønadType.valueOf(ettersending.stønadType)
 
-        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(ettersendingDto.stønadType, ettersending)
+        val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(stønadType, ettersending)
 
-        return ArkiverDokumentRequest(ettersendingDto.fnr,
+        return ArkiverDokumentRequest(ettersending.fnr,
                                       false,
                                       hovedDokumentVarianter,
                                       mapEttersendingVedlegg(vedlegg,
-                                                             ettersendingDto.stønadType))
+                                                             stønadType))
     }
 
     private fun lagHoveddokumentvarianterForEttersending(stønadType: StønadType,
@@ -98,4 +97,12 @@ object ArkiverDokumentRequestMapper {
         }
     }
 
+}
+
+fun Dokumenttype?.dokumentTittel(): String {
+    return when (this) {
+        Dokumenttype.OVERGANGSSTØNAD_SØKNAD -> "Søknad om overgangsstønad"
+        Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om overgangsstønad"
+        else -> "hoveddokument"
+    }
 }
