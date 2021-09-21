@@ -45,6 +45,9 @@ spec:
     - https://familie-ef-mottak.prod-fss.nais.io
   tokenx:
     enabled: true
+  azure:
+    application:
+      enabled: true
   accessPolicy:
     inbound:
       rules:
