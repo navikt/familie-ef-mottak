@@ -60,6 +60,7 @@ spec:
         - application: familie-ef-soknad-api
           namespace: teamfamilie
           cluster: dev-gcp
+        - application: familie-prosessering
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
