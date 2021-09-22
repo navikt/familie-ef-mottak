@@ -61,6 +61,7 @@ spec:
           namespace: teamfamilie
           cluster: prod-gcp
         - application: familie-prosessering
+        - cluster: prod-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
