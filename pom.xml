@@ -28,7 +28,7 @@
         <kontrakter.version>2.0_20210913141853_cde427f</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
         <token-validation.version>1.3.8</token-validation.version>
-        <spring-cloud.version>3.0.3</spring-cloud.version>
+        <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
         <!-- Setter disse til token-support sine versjoner, versjoner(9.x) i spring er ikke kompatibel med oauth2-oidc-sdk -->
