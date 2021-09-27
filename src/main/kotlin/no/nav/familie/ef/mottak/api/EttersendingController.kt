@@ -4,12 +4,12 @@ import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingResponseData
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.sikkerhet.EksternBrukerUtils
-import no.nav.security.token.support.core.api.Protected
-import org.slf4j.LoggerFactory
+import no.nav.familie.sikkerhet.EksternBrukerUtils.personIdentErLikInnloggetBruker
+import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.RequiredIssuers
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(path = ["/api/ettersending"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
-@Protected
+@RequiredIssuers(
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER, claimMap = ["acr=Level4"]),
+        ProtectedWithClaims(issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"])
+)
 class EttersendingController(val ettersendingService: EttersendingService) {
-
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping
     fun ettersend(@RequestBody ettersending: Map<StønadType, EttersendelseDto>): Kvittering {
@@ -33,13 +33,8 @@ class EttersendingController(val ettersendingService: EttersendingService) {
 
     @PostMapping("person")
     fun hentForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendelseDto>> {
-        val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
-        if (fnrFraToken != personIdent.ident) {
-            logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
-            secureLogger.info("TokenFnr={} matcher ikke søknadFnr={} søknadId={}",
-                              fnrFraToken,
-                              personIdent.ident)
-            throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
+        if (!personIdentErLikInnloggetBruker(personIdent.ident)) {
+            throw ApiFeil("Fnr fra token matcher ikke fnr i request", HttpStatus.FORBIDDEN)
         }
         val ettersendingData = ettersendingService.hentEttersendingsdataForPerson(personIdent)
 
