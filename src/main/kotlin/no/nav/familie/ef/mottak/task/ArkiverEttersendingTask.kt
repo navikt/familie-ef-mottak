@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -16,12 +18,14 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
                         private val ettersendingRepository: EttersendingRepository) : AsyncTaskStep {
 
     val logger = LoggerFactory.getLogger(this::class.java)
+    val antallEttersendinger: Counter = Metrics.counter("alene.med.barn.journalposter.ettersending")
 
     override fun doTask(task: Task) {
         val journalpostId = arkiveringService.journalførEttersending(task.payload)
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }
+        antallEttersendinger.count()
         taskRepository.save(task)
     }
 
