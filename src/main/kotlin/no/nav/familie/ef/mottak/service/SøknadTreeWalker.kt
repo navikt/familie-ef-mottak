@@ -44,14 +44,14 @@ object SøknadTreeWalker {
                            vedleggTitler: List<String>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Søknad enslig forsørger", finnFelter + vedlegg)
+        return feltlisteMap("Søknad enslig forsørger - 15-00.01", finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(søknad: SøknadBarnetilsyn,
                        vedleggTitler: List<String>): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Søknad barnetilsyn", finnFelter + vedlegg)
+        return feltlisteMap("Søknad barnetilsyn - 15-00.02", finnFelter + vedlegg)
     }
 
     fun mapSkolepenger(søknad: SøknadSkolepenger,

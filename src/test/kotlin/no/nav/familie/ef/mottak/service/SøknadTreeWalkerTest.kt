@@ -16,7 +16,7 @@ class SøknadTreeWalkerTest {
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, emptyList())
 
         assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger - 15-00.01")
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any?>>
         assertThat(verdiliste).hasSize(11)
@@ -30,7 +30,7 @@ class SøknadTreeWalkerTest {
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
 
         assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger")
+        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad enslig forsørger - 15-00.01")
         assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(11)
     }
 
