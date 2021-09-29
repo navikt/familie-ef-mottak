@@ -25,7 +25,7 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }
-        antallEttersendinger.count()
+        antallEttersendinger.increment()
         taskRepository.save(task)
     }
 
