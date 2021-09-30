@@ -29,7 +29,7 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
             ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved prosessering av journalhendelser ", e)
-            feilCounter.count()
+            feilCounter.increment()
             throw e
         } finally {
             MDC.clear()
