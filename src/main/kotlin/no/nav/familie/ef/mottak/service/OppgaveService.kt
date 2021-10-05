@@ -5,12 +5,10 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
-import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -158,6 +156,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest,
                                                                              journalpost: Journalpost): Long {
+
+        // TODO kode skal fjernes.
+        //  Lagt inn for å fikse en journalføring med veldig gammel enhet (nedlagt) - brukt forside fra 2012/2013
+        if (opprettOppgave.enhetsnummer == "0389") {
+            return integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY)).oppgaveId
+        }
+
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for journalpost journalpostId=${journalpost.journalpostId}")
