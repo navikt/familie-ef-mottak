@@ -40,7 +40,7 @@ logging:
 
 no.nav.security.jwt:
   issuer:
-    selvbetjening:
+    tokenx:
       discoveryurl: http://metadata
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken

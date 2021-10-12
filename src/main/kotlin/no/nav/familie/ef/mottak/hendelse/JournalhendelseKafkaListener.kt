@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer,
                                    private val featureToggleService: FeatureToggleService) {
 
-    @KafkaListener(id = "familie-ef-mottak",
+    @KafkaListener(id = "familie-ef-mottak-gcp",
                    topics = ["\${JOURNALFOERINGHENDELSE_V1_TOPIC_URL}"],
                    containerFactory = "kafkaJournalføringHendelseListenerContainerFactory",
                    idIsGroup = false)

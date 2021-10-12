@@ -1,10 +1,6 @@
 spring:
   datasource:
     url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ef-mottak
-  kafka:
-    bootstrap-servers: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
-    properties:
-      schema.registry.url: https://kafka-schema-registry.nais.preprod.local
 
 familie:
   dokument:
@@ -75,5 +71,5 @@ JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
-EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
+EF_SAK_URL: http://familie-ef-sak
 ettersending.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending

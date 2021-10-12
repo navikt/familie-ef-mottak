@@ -37,7 +37,7 @@ jobs:
           docker build --tag ${IMAGE} .
           docker push ${IMAGE}
   deploy:
-    name: Deploy to NAIS
+    name: Deploy to GCP
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -45,5 +45,5 @@ jobs:
       - uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
+          CLUSTER: dev-gcp
           RESOURCE: nais-dev.yaml

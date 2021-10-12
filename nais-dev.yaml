@@ -19,13 +19,6 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
-  vault:
-    enabled: true
-    paths:
-      - kvPath: /kv/preprod/fss/familie-ef-mottak/teamfamilie
-        mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: serviceuser/data/dev/srvfamilie-ef-mot
-        mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
   replicas:
     min: 1
     max: 1
@@ -38,9 +31,7 @@ spec:
       memory: 1Gi
       cpu: 500m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://familie-ef-mottak.nais.preprod.local
-    - https://familie-ef-mottak.dev-fss-pub.nais.io
-    - https://familie-ef-mottak.dev-fss.nais.io
+    - https://familie-ef-mottak.dev.intern.nav.no
   secureLogs:
     enabled: true
   azure:
@@ -51,6 +42,8 @@ spec:
           - id: "928636f4-fd0d-4149-978e-a6fb68bb19de"  # 0000-GA-STDAPPS
   tokenx:
     enabled: true
+  kafka:
+    pool: nav-dev
   accessPolicy:
     inbound:
       rules:
@@ -67,6 +60,12 @@ spec:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
   leaderElection: true
-  envFrom:
-    - configmap: loginservice-idporten
-
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+        databases:
+          - name: familie-ef-mottak
+            envVarPrefix: DB
+            diskAutoresize: true
+            tier: db-g1-small
+            cascadingDelete: false
