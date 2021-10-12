@@ -67,7 +67,7 @@ no.nav.security.jwt:
 
 INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.dev.adeo.no
 
-JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
+JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-q1 #satt til q1 for å sikre at det ikke leses fra prod
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
