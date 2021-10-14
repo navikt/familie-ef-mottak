@@ -59,6 +59,9 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+  envFrom:
+    - secret: familie
+    - secret: familie-ef-mottak
   leaderElection: true
   gcp:
     sqlInstances:
