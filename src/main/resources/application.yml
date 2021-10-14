@@ -30,14 +30,10 @@ spring:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvfamilie-ef-mot
+      group-id: srvfamilie-ef-mot-gcp
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
-    producer:
-      acks: all
-      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
 
   flyway:
     enabled: true

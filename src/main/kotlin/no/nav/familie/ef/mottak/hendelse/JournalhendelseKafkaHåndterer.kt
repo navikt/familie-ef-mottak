@@ -24,7 +24,7 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
             val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
             MDC.put(MDCConstants.MDC_CALL_ID, callId)
             if (hendelseRecord.skalProsesseres()) {
-                //journalhendelseService.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
+                journalhendelseService.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
             }
             ack.acknowledge()
         } catch (e: Exception) {

@@ -3,14 +3,17 @@ package no.nav.familie.ef.mottak.hendelse
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.TopicPartition
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.listener.ConsumerSeekAware
+import org.springframework.kafka.listener.ConsumerSeekAware.ConsumerSeekCallback
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 
 
 @Service
 class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer,
-                                   private val featureToggleService: FeatureToggleService) {
+                                   private val featureToggleService: FeatureToggleService) : ConsumerSeekAware {
 
     @KafkaListener(id = "familie-ef-mottak-gcp",
                    topics = ["\${JOURNALFOERINGHENDELSE_V1_TOPIC_URL}"],
@@ -20,4 +23,7 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
         kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 
+    override fun onPartitionsAssigned(assignments: Map<TopicPartition?, Long?>, callback: ConsumerSeekCallback) {
+        callback.seekToEnd(assignments.keys)
+    }
 }
