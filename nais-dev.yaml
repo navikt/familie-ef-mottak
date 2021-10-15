@@ -57,6 +57,8 @@ spec:
           namespace: teamfamilie
           cluster: dev-gcp
     outbound:
+      rules:
+        - application: familie-ef-sak
       external:
         - host: infotrygd-enslig-forsoerger.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
