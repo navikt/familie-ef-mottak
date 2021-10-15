@@ -48,7 +48,6 @@ no.nav.security.jwt:
       discoveryurl: http://metadata
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
-      proxyurl:
   client:
     registration:
       integrasjoner-client-credentials:
