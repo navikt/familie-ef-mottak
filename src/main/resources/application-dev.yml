@@ -4,7 +4,7 @@ spring:
     placeholders:
       ignoreIfProd:
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-sak
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
