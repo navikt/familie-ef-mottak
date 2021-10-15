@@ -47,20 +47,9 @@ class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
-    /**
-     * Overskrever familie-felles sin, då timeouts ikke virker med den og proxy allerede er satt i issuer-proxyurl
-     * Dvs, bruker ikke NaisProxyCustomizer
-     */
-    @Bean("restTemplateUtenProxy")
-    fun restTemplateBuilder(): RestTemplateBuilder {
-        return RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(15, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(120, ChronoUnit.SECONDS))
-    }
 
     @Bean("tokenExchange")
-    fun restTemplate(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
-                     bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
+    fun restTemplate(bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
                      mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
         return RestTemplateBuilder()
@@ -73,11 +62,10 @@ class ApplicationConfig {
     }
 
     @Bean("restTemplateAzure")
-    fun restTemplateAzure(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
-                          mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+    fun restTemplateAzure(mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                           bearerTokenClientInterceptor: BearerTokenClientInterceptor,
                           consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
-        return restTemplateBuilder
+        return RestTemplateBuilder()
                 .interceptors(mdcInterceptor,
                               bearerTokenClientInterceptor,
                               consumerIdClientInterceptor)
@@ -85,17 +73,16 @@ class ApplicationConfig {
     }
 
     @Bean("restTemplateUnsecured")
-    fun restTemplate(@Qualifier("restTemplateUtenProxy") restTemplateBuilder: RestTemplateBuilder,
-                     mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+    fun restTemplate(mdcInterceptor: MdcValuesPropagatingClientInterceptor,
                      consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
-        return restTemplateBuilder
+        return RestTemplateBuilder()
                 .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
     @Primary
     @Bean
-    fun oAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder): RetryOAuth2HttpClient {
-        return RetryOAuth2HttpClient(restTemplateBuilder
+    fun oAuth2HttpClient(): RetryOAuth2HttpClient {
+        return RetryOAuth2HttpClient(RestTemplateBuilder()
                                              .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
                                              .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)))
     }
