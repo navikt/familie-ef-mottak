@@ -21,7 +21,7 @@ familie:
     pdfgenerator:
       url: https://familie-ef-dokgen.dev.intern.nav.no/
     integrasjoner:
-      url: https://familie-integrasjoner.dev-fss-pub.nais.io
+      url: https://familie-integrasjoner.dev-fss-pub.nais.io/api
 
 no.nav.security.jwt:
   issuer:
