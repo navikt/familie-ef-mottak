@@ -17,7 +17,9 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    containerFactory = "kafkaJournalføringHendelseListenerContainerFactory",
                    idIsGroup = false)
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
-        kafkaHåndterer.håndterHendelse(consumerRecord, ack)
+        if (featureToggleService.isEnabled("familie.ef.mottak.kafka.onprem")) {
+            kafkaHåndterer.håndterHendelse(consumerRecord, ack)
+        }
     }
 
 }
