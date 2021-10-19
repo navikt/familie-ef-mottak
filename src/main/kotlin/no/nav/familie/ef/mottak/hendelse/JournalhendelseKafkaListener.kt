@@ -19,6 +19,8 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         if (featureToggleService.isEnabled("familie.ef.mottak.kafka.onprem")) {
             kafkaHåndterer.håndterHendelse(consumerRecord, ack)
+        } else {
+            throw Exception("Lytting til topic er skrudd av som følge av migrering til gcp")
         }
     }
 
