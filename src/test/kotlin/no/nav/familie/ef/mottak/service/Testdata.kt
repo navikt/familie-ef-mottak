@@ -1,9 +1,46 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Aktivitet
+import no.nav.familie.kontrakter.ef.søknad.AnnenForelder
+import no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver
+import no.nav.familie.kontrakter.ef.søknad.Arbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.Barn
+import no.nav.familie.kontrakter.ef.søknad.Barnepass
+import no.nav.familie.kontrakter.ef.søknad.BarnepassOrdning
+import no.nav.familie.kontrakter.ef.søknad.BarnetilsynDokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Bosituasjon
+import no.nav.familie.kontrakter.ef.søknad.Datoperiode
+import no.nav.familie.kontrakter.ef.søknad.Dokument
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.GjeldendeUtdanning
+import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
+import no.nav.familie.kontrakter.ef.søknad.Medlemskapsdetaljer
+import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
+import no.nav.familie.kontrakter.ef.søknad.PersonMinimum
+import no.nav.familie.kontrakter.ef.søknad.Personalia
+import no.nav.familie.kontrakter.ef.søknad.PersonaliaArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.Samvær
+import no.nav.familie.kontrakter.ef.søknad.Selvstendig
+import no.nav.familie.kontrakter.ef.søknad.Situasjon
+import no.nav.familie.kontrakter.ef.søknad.Sivilstandsdetaljer
+import no.nav.familie.kontrakter.ef.søknad.Sivilstandsplaner
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
+import no.nav.familie.kontrakter.ef.søknad.SkolepengerDokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Stønadsstart
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.ef.søknad.TidligereUtdanning
+import no.nav.familie.kontrakter.ef.søknad.UnderUtdanning
+import no.nav.familie.kontrakter.ef.søknad.Utenlandsopphold
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.ef.søknad.Virksomhet
 import java.time.LocalDate
 import java.time.Month
-import java.util.*
+import java.util.UUID
 
 internal object Testdata {
 
@@ -58,14 +95,17 @@ internal object Testdata {
                                                       arbeidstid = dokumentfelt("Arbeidstid"),
                                                       spesielleBehov = dokumentfelt("Spesielle behov")))
 
-    val søknadSkolepenger = SøknadSkolepenger(Søknadsfelt("Søker", personalia()),
-                                              Søknadsfelt("Barn", listOf(barn())),
-                                              Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
-                                              Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
-                                              Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
-                                              Søknadsfelt("Bosituasjonen din", bosituasjon()),
-                                              Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-                                              Søknadsfelt("Arbeid, utdanning og andre aktiviteter", utdanning()),
+    val søknadSkolepenger = SøknadSkolepenger(personalia = Søknadsfelt("Søker", personalia()),
+                                              innsendingsdetaljer = Søknadsfelt("detaljer",
+                                                                                Innsendingsdetaljer(Søknadsfelt("mottat",
+                                                                                                                mottat))),
+                                              sivilstandsdetaljer = Søknadsfelt("Detaljer om sivilstand",
+                                                                                sivilstandsdetaljer()),
+                                              medlemskapsdetaljer = Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+                                              bosituasjon = Søknadsfelt("Bosituasjonen din", bosituasjon()),
+                                              sivilstandsplaner = Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+                                              barn = Søknadsfelt("Barn", listOf(barn())),
+                                              utdanning = Søknadsfelt("Arbeid, utdanning og andre aktiviteter", utdanning()),
                                               dokumentasjon = SkolepengerDokumentasjon())
 
     private fun utdanning(): UnderUtdanning {
