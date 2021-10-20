@@ -27,7 +27,16 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
         }
     }
 
-    override fun onPartitionsAssigned(assignments: Map<TopicPartition?, Long?>, callback: ConsumerSeekCallback) {
-        callback.seekToEnd(assignments.keys)
+    override fun onPartitionsAssigned(
+        assignments: MutableMap<TopicPartition, Long>,
+        callback: ConsumerSeekCallback
+    ) {
+
+        assignments.keys.stream()
+            .filter { it.topic() == "teamdokumenthandtering.aapen-dok-journalfoering" }
+            .forEach {
+                //callback.seek("teamdokumenthandtering.aapen-dok-journalfoering", it.partition(), )
+                callback.seekRelative("teamdokumenthandtering.aapen-dok-journalfoering", it.partition(), -1, false)
+            }
     }
 }
