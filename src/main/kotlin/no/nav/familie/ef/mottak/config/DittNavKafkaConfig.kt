@@ -39,6 +39,7 @@ class DittNavKafkaConfig(
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
         props[ProducerConfig.ACKS_CONFIG] = -1 //-1 equals all
+        props[ProducerConfig.CLIENT_ID_CONFIG] = username
         props[KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = schemaRegistryUrl
         props[SaslConfigs.SASL_JAAS_CONFIG] =
             "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$username\" password=\"$password\";"

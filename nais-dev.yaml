@@ -62,6 +62,7 @@ spec:
       external:
         - host: infotrygd-enslig-forsoerger.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: kafka-schema-registry.nais-q.adeo.no
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
