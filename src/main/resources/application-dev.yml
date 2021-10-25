@@ -83,7 +83,7 @@ dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
 KAFKA_ONPREM_BOOTSTRAP_SERVERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
-KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.preprod.local
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais-q.adeo.no/
 
 EF_SAK_URL: http://familie-ef-sak
 ettersending.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
