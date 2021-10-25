@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class DbMigreringService(private val dbMigreringRepository: DbMigreringRepository) {
+class DbMigreringService(@Suppress("unused")
+                         private val dbMigreringRepository: DbMigreringRepository) {
 
+    @Suppress("unused")
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(initialDelay = 120000, fixedDelay = ÅR)
     @Transactional
     fun dbMigrering() {
-        dbMigreringRepository.updateTaskSetTypeForOldTypeUserSetStatusForName(ArkiverSøknadTask.TYPE, "journalførSøknad")
-        dbMigreringRepository.updateTaskSetTypeForOldTypeUserSetStatusForName(LagJournalføringsoppgaveTask.TYPE, "lagOppgave")
-        logger.info("Migrering av tasktyper fullført.")
+        //logger.info("Migrering fullført.")
     }
 
     companion object {

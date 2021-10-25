@@ -29,24 +29,4 @@ internal class DbMigreringServiceTest : IntegrasjonSpringRunnerTest() {
         dbMigreringService = DbMigreringService(dbMigreringRepository)
     }
 
-    @Test
-    fun `dbMigrering oppdaterer task med korrekt verdi`() {
-        taskRepository.save(Task("lagOppgave", "1", Properties()))
-        taskRepository.save(Task("lagOppgave", "2", Properties()))
-        taskRepository.save(Task("journalførSøknad", "3", Properties()))
-        taskRepository.save(Task("journalførSøknad", "4", Properties()))
-
-        val alleFør = taskRepository.findAll()
-        assertThat(alleFør.filter { it.type == "lagOppgave" }.size).isEqualTo(2)
-        assertThat(alleFør.filter { it.type == "journalførSøknad" }.size).isEqualTo(2)
-
-        dbMigreringService.dbMigrering()
-
-        val alleEtter = taskRepository.findAll()
-        assertThat(alleEtter.filter { it.type == "lagOppgave" }).isEmpty()
-        assertThat(alleEtter.filter { it.type == "journalførSøknad" }).isEmpty()
-        assertThat(alleEtter.filter { it.type == LagJournalføringsoppgaveTask.TYPE }.size).isEqualTo(2)
-        assertThat(alleEtter.filter { it.type == ArkiverSøknadTask.TYPE }.size).isEqualTo(2)
-
-    }
 }
