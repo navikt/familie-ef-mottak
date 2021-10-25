@@ -30,13 +30,4 @@ class KafkaConfig {
         factory.setErrorHandler(kafkaErrorHandler)
         return factory
     }
-
-    @Bean
-    fun kafkaTemplate(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): KafkaTemplate<Nokkel, Beskjed> {
-        return KafkaTemplate<Nokkel, Beskjed>(DefaultKafkaProducerFactory(properties.buildProducerProperties())).apply {
-            val producerListener = LoggingProducerListener<String, String>()
-            producerListener.setIncludeContents(false)
-        }
-    }
-
 }
