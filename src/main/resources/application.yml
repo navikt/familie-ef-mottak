@@ -37,7 +37,10 @@ spring:
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
-
+    producer:
+      acks: all
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   flyway:
     enabled: true
     baseline-version: 6
@@ -99,6 +102,9 @@ INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.nais.adeo.no
 EF_SAK_URL: https://familie-ef-sak.intern.nav.no
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
+
 KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local
 dittnav.soknadfrontendUrl: https://www.nav.no/familie/alene-med-barn/soknad
