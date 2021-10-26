@@ -22,7 +22,7 @@ class LagJournalføringsoppgaveForEttersendingTask(private val oppgaveService: O
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(TaskType(LagPdfTask.TYPE).nesteFallbackTask(),
+        taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
                                  task.payload,
                                  task.metadata))
     }
