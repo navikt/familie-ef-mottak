@@ -9,4 +9,6 @@ import java.util.*
 interface HendelsesloggRepository : JpaRepository<Hendelseslogg, UUID> {
 
     fun existsByHendelseId(hendelseId: String): Boolean
+
+    fun findFirstByOrderByOffsetDesc(): Long
 }
