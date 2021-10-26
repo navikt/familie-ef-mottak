@@ -44,6 +44,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val behandlesAvApplikasjon = utledBehandlesAvApplikasjon(søknad)
         val tilordnet: String? =
                 if (skalSetteTilordnet(behandlesAvApplikasjon)) finnSaksbehandlerIdentForMiljø() else null
+        // TODO: Ikke sett Mirja på alle saker i prod?
         return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon, tilordnet)
     }
 
@@ -242,5 +243,19 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
         return finnesBehandlingForPerson
     }
+
+    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
+        val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
+        if (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY && kanBehandlesINyLøsning(oppgave)) {
+            // MappeId -> Søk etter mapper
+            // Filtrer ut den som heter "EF Sak - 01"
+            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = 261L))
+        }
+
+    }
+
+    private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
+            oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
+            || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
 
 }
