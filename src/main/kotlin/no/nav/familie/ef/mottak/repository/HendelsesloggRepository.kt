@@ -10,7 +10,7 @@ import java.util.UUID
 interface HendelsesloggRepository : JpaRepository<Hendelseslogg, UUID> {
 
     // language=PostgreSQL
-    @Query("""SELECT MAX(kafka_offset) max_offset FROM hendelseslogg""")
+    @Query("""SELECT MAX(kafka_offset) FROM hendelseslogg""", nativeQuery = true)
     fun hentMaxOffset(): Long
 
 }
