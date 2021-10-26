@@ -63,6 +63,7 @@ spec:
         - host: infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: kafka-schema-registry.nais.adeo.no
+        - host: unleash.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod

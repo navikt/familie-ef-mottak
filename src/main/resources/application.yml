@@ -42,11 +42,13 @@ spring:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   flyway:
-    enabled: true
+    enabled: false
     baseline-version: 6
     ignore-missing-migrations: true
   datasource:
-    url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 2
       connection-test-query: "select 1"
