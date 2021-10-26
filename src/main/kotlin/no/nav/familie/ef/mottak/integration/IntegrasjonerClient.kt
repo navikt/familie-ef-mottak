@@ -8,7 +8,6 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
-
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
 import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
@@ -19,13 +18,18 @@ import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
+import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.personopplysning.FinnPersonidenterResponse
 import no.nav.familie.kontrakter.felles.personopplysning.Ident
 import no.nav.familie.kontrakter.felles.personopplysning.PersonIdentMedHistorikk
-import no.nav.familie.log.NavHttpHeaders
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpHeaders
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
@@ -157,6 +161,18 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         return response.oppgaveId
     }
 
+    fun finnMappe(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
+        val mapperespons = postForEntity<Ressurs<FinnMappeResponseDto>>(finnMappeUri(), finnMappeRequest)
+        return mapperespons.getDataOrThrow()
+    }
+
+    private fun finnMappeUri(): URI {
+        return UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+                .pathSegment(PATH_FINN_MAPPE)
+                .build()
+                .toUri()
+    }
+
     fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
         val response =
                 postForEntity<Ressurs<OppgaveResponse>>(opprettOppgaveUri, opprettOppgaveRequest)
@@ -236,6 +252,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave/opprett"
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
+        const val PATH_FINN_MAPPE = "oppgave/mappe"
         const val PATH_HENT_OPPGAVE = "oppgave"
         const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v2/ENF"

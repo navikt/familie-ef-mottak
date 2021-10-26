@@ -15,10 +15,12 @@ import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -246,13 +248,22 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-        if (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY && kanBehandlesINyLøsning(oppgave)) {
-            // MappeId -> Søk etter mapper
-            // Filtrer ut den som heter "EF Sak - 01"
-            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = 261L))
-        }
+        if (kanFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)) {
+            val mapperResponse = integrasjonerClient.finnMappe(FinnMappeRequest(tema = listOf("ENF"),
+                                                                                enhetsnr = ENHETSNUMMER_NAY,
+                                                                                opprettetFom = null,
+                                                                                limit = 1000))
 
+            val mappe = mapperResponse.mapper.find { it.navn.contains("01 EF Sak", true) }
+                        ?: error("Fant ikke mappe for uplassert oppgave (01 EF Sak)")
+            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
+        } else {
+            secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
+        }
     }
+
+    private fun kanFlyttesTilMappe(oppgave: Oppgave) =
+            oppgave.status != StatusEnum.FEILREGISTRERT && oppgave.status != StatusEnum.FERDIGSTILT && oppgave.mappeId == null && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
             oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
