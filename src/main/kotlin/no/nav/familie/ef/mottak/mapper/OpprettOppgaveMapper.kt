@@ -39,8 +39,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
-                                  tilordnetRessurs = tilordnet,
-                                  mappeId = 261L)
+                                  tilordnetRessurs = tilordnet)
 
     fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): OpprettOppgaveRequest =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
