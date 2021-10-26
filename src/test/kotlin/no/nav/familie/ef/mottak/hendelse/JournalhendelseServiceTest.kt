@@ -51,10 +51,9 @@ class JournalhendelseServiceTest {
     lateinit var mockSøknadRepository: SøknadRepository
 
     @MockK(relaxed = true)
-    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
-
-    @MockK(relaxed = true)
     lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
+
+    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     lateinit var service: JournalhendelseService
 
@@ -181,11 +180,21 @@ class JournalhendelseServiceTest {
     }
 
     @Test
-    fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg`() {
+    fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg da offset er det samme`() {
         val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
-        every {
-            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringhendelseRecord)
-        } returns true
+        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET
+
+        service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
+
+        verify(exactly = 0) {
+            mockHendelseloggRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `Skal ignorere hendelse fordi offset i databaser er høyere enn hendelserecord`() {
+        val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET + 1
 
         service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
 
@@ -196,11 +205,7 @@ class JournalhendelseServiceTest {
 
     @Test
     fun `Mottak av gyldig hendelse skal delegeres til service`() {
-
-        every {
-            mockJournalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(journalføringHendelseRecord(
-                    JOURNALPOST_PAPIRSØKNAD))
-        } returns false
+        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET - 1
 
         every {
             mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
