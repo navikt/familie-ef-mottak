@@ -78,7 +78,7 @@ no.nav.security.jwt:
 
 INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.dev-fss-pub.nais.io
 
-JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
+JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
