@@ -18,7 +18,7 @@ import org.springframework.kafka.support.LoggingProducerListener
 
 /**
  * Config for å nå brukernotifikasjon topic som fortsatt er on-prem. Denne klassen kan fjernes når topic er klar i aiven i prod.
-
+*/
 @EnableKafka
 @Configuration
 class DittNavKafkaConfig(
@@ -62,4 +62,3 @@ class DittNavKafkaConfig(
         }
     }
 }
- */
