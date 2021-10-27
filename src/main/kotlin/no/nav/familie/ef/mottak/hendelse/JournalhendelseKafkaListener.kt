@@ -27,8 +27,8 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                 "med key ${consumerRecord.key()} og hendelseId: ${consumerRecord.value().hendelsesId}" +
                 "med timestamp: ${consumerRecord.timestamp()}")
         if (featureToggleService.isEnabled("familie.ef.mottak.kafka.gcp")
-            && hendelsesloggRepository.findFirstByOrderByOffsetDesc() > 0
-            && hendelsesloggRepository.findFirstByOrderByOffsetDesc() < consumerRecord.offset()) {
+            && hendelsesloggRepository.hentMaxOffset() > 0
+            && hendelsesloggRepository.hentMaxOffset() < consumerRecord.offset()) {
             kafkaHåndterer.håndterHendelse(consumerRecord, ack)
         } else {
             throw Exception("Lytting til topic er skrudd av som følge av migrering til gcp")
