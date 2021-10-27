@@ -20,7 +20,7 @@ spring:
       security.protocol: SASL_SSL
       sasl:
         mechanism: PLAIN
-        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SRV_CREDENTIAL_USERNAME}" password="${SRV_CREDENTIAL_PASSWORD}";
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SERVICE_USER_USERNAME}" password="${SERVICE_USER_USERNAME}";
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
