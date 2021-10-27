@@ -70,13 +70,13 @@ funksjonsbrytere:
 
 familie:
   dokument:
-    url: https://familie-dokument.intern.nav.no
+    url: http://familie-dokument
     audience: prod-gcp:teamfamilie:familie-dokument
   ef:
     integrasjoner:
-      url: http://familie-integrasjoner.teamfamilie/api/
+      url: https://familie-integrasjoner.prod-fss-pub.nais.io/api
     pdfgenerator:
-      url: https://familie-ef-dokgen.intern.nav.no/
+      url: http://familie-ef-dokgen
 
 prosessering:
   enabled: false
@@ -93,8 +93,8 @@ database:
     # 16, 24 or 32 bytes
     key: ${DATABASEKEY}
 
-INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.nais.adeo.no
-EF_SAK_URL: https://familie-ef-sak.intern.nav.no
+INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
+EF_SAK_URL: http://familie-ef-sak
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
 KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443

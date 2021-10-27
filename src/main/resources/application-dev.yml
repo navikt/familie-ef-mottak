@@ -15,11 +15,11 @@ spring:
 
 familie:
   dokument:
-    url: https://familie-dokument.dev.intern.nav.no
+    url: http://familie-dokument
     audience: dev-gcp:teamfamilie:familie-dokument
   ef:
     pdfgenerator:
-      url: https://familie-ef-dokgen.dev.intern.nav.no/
+      url: http://familie-ef-dokgen
     integrasjoner:
       url: https://familie-integrasjoner.dev-fss-pub.nais.io/api
 
