@@ -24,8 +24,6 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    idIsGroup = false,
                    groupId = "srvfamilie-ef-mot")
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
-        if (hendelsesloggRepository.hentMaxOffset() < consumerRecord.offset()) {
-            kafkaHåndterer.håndterHendelse(consumerRecord, ack)
-        }
+        kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 }
