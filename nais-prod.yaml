@@ -74,10 +74,11 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+        diskSize: 50
+        diskAutoresize: true
+        tier: db-custom-2-7680
+        cascadingDelete: false
         databases:
           - name: familie-ef-mottak
             envVarPrefix: DB
-            diskSize: 50
-            diskAutoresize: true
-            tier: db-custom-2-7680
-            cascadingDelete: false
+
