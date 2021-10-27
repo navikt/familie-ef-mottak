@@ -24,15 +24,6 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    idIsGroup = false,
                    groupId = "srvfamilie-ef-mot")
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
-        secureLogger.info("Starter lytting på offset: ${consumerRecord.offset()} " +
-                "med key ${consumerRecord.key()} og hendelseId: ${consumerRecord.value().hendelsesId}" +
-                "med timestamp: ${consumerRecord.timestamp()}")
-        if (featureToggleService.isEnabled("familie.ef.mottak.kafka.gcp")
-            && hendelsesloggRepository.hentMaxOffset() > 0
-            && hendelsesloggRepository.hentMaxOffset() < consumerRecord.offset()) {
-            kafkaHåndterer.håndterHendelse(consumerRecord, ack)
-        } else {
-            throw Exception("Lytting til topic er skrudd av som følge av migrering til gcp")
-        }
+        kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 }
