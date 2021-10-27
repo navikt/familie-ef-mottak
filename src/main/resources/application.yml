@@ -34,7 +34,7 @@ spring:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   flyway:
-    enabled: false
+    enabled: true
     baseline-version: 6
     ignore-missing-migrations: true
   datasource:
