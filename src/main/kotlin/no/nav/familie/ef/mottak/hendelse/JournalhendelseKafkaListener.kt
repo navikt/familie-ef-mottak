@@ -18,10 +18,12 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
 
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
+    /*
     @KafkaListener(id = "familie-ef-mottak",
                    topics = ["\${JOURNALFOERINGHENDELSE_V1_TOPIC_URL}"],
                    containerFactory = "kafkaJournalføringHendelseListenerContainerFactory",
                    idIsGroup = false)
+     */
     fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         secureLogger.info("Starter lytting på offset: ${consumerRecord.offset()} " +
                 "med key ${consumerRecord.key()} og hendelseId: ${consumerRecord.value().hendelsesId}" +
