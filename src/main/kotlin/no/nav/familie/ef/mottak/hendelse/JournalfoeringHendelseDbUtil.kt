@@ -27,8 +27,7 @@ class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepo
                                           "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties()))
     }
 
-    fun erHendelseRegistrertIHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord) =
-            hendelseloggRepository.existsByHendelseId(hendelseRecord.hendelsesId.toString())
+    fun erHendelseRegistrertIHendelseslogg(offset: Long): Boolean = hendelseloggRepository.hentMaxOffset() >= offset
 
     fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
         return !taskRepository.existsByPayloadAndType(hendelseRecord.journalpostId.toString(), LagEksternJournalføringsoppgaveTask.TYPE)
