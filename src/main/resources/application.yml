@@ -13,32 +13,35 @@ spring:
     allow-bean-definition-overriding: true
     banner-mode: "off"
   kafka:
-    client-id: familie-ef-mottak
-    bootstrap-servers: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+    bootstrap-servers: ${KAFKA_BROKERS}
     properties:
-      schema.registry.url: http://kafka-schema-registry.tpa:8081
-      security.protocol: SASL_SSL
-      sasl:
-        mechanism: PLAIN
-        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SRV_CREDENTIAL_USERNAME}" password="${SRV_CREDENTIAL_PASSWORD}";
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvfamilie-ef-mot
-      max-poll-records: 1
-      auto-offset-reset: latest
-      enable-auto-commit: false
+      client-id: familie-ef-mottak
+      bootstrap-servers: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+      properties:
+        schema.registry.url: http://kafka-schema-registry.tpa:8081
+        security.protocol: SASL_SSL
+        sasl:
+          mechanism: PLAIN
+          jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SRV_CREDENTIAL_USERNAME}" password="${SRV_CREDENTIAL_PASSWORD}";
+      consumer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+        group-id: srvfamilie-ef-mot
+        max-poll-records: 1
+        auto-offset-reset: latest
+        enable-auto-commit: false
     producer:
       acks: all
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-
   flyway:
-    enabled: true
+    enabled: false
     baseline-version: 6
     ignore-missing-migrations: true
   datasource:
-    url: jdbc:postgresql://A01DBVL010.adeo.no:5432/familie-ef-mottak
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 2
       connection-test-query: "select 1"
@@ -94,6 +97,9 @@ INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.nais.adeo.no
 EF_SAK_URL: https://familie-ef-sak.intern.nav.no
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
+
 KAFKA_TOPIC_DITTNAV: aapen-brukernotifikasjon-nyBeskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local
 dittnav.soknadfrontendUrl: https://www.nav.no/familie/alene-med-barn/soknad

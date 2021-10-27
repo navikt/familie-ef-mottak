@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<Nokkel, Beskjed>) {
 
-    @Value("\${SRV_CREDENTIAL_USERNAME}")
+    @Value("\${SERVICE_USER_USERNAME}")
     private lateinit var systembruker: String
 
     @Value("\${KAFKA_TOPIC_DITTNAV}")

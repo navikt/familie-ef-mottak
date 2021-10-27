@@ -19,13 +19,6 @@ spec:
   prometheus:
     enabled: true
     path: /internal/prometheus
-  vault:
-    enabled: true
-    paths:
-      - kvPath: /kv/prod/fss/familie-ef-mottak/teamfamilie
-        mountPath: /var/run/secrets/nais.io/vault
-      - kvPath: serviceuser/data/prod/srvfamilie-ef-mot
-        mountPath: /var/run/secrets/nais.io/srvfamilie-ef-mot
   replicas:
     min: 1
     max: 1
@@ -37,20 +30,20 @@ spec:
     requests:
       memory: 1Gi
       cpu: 500m
-  secureLogs:
-    enabled: true
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://familie-ef-mottak.nais.adeo.no
-    - https://familie-ef-mottak.prod-fss-pub.nais.io
-    - https://familie-ef-mottak.prod-fss.nais.io
-  tokenx:
+    - https://familie-ef-mottak.intern.nav.no
+  secureLogs:
     enabled: true
   azure:
     application:
       enabled: true
       claims:
         groups:
-          - id: "87190cf3-b278-457d-8ab7-1a5c55a9edd7"  # tilgang til prosessering
+          - id: "87190cf3-b278-457d-8ab7-1a5c55a9edd7"  # 0000-GA-STDAPPS
+  tokenx:
+    enabled: true
+  kafka:
+    pool: nav-prod
   accessPolicy:
     inbound:
       rules:
@@ -63,9 +56,28 @@ spec:
         - application: familie-prosessering
           namespace: teamfamilie
           cluster: prod-gcp
+    outbound:
+      rules:
+        - application: familie-ef-sak
+      external:
+        - host: infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
+        - host: familie-integrasjoner.prod-fss-pub.nais.io
+        - host: kafka-schema-registry.nais.adeo.no
+        - host: unleash.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
-  leaderElection: true
   envFrom:
-    - configmap: loginservice-idporten
+    - secret: familie
+    - secret: familie-ef-mottak
+  leaderElection: true
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+        databases:
+          - name: familie-ef-mottak
+            envVarPrefix: DB
+            diskSize: 50
+            diskAutoresize: true
+            tier: db-custom-2-7680
+            cascadingDelete: false
