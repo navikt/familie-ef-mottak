@@ -59,6 +59,7 @@ spec:
     outbound:
       rules:
         - application: familie-ef-sak
+        - application: familie-ef-maler
         - application: familie-dokument
       external:
         - host: infotrygd-enslig-forsoerger.prod-fss-pub.nais.io

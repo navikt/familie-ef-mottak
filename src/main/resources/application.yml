@@ -75,7 +75,7 @@ familie:
     integrasjoner:
       url: https://familie-integrasjoner.prod-fss-pub.nais.io/api
     pdfgenerator:
-      url: http://familie-ef-dokgen
+      url: http://familie-ef-maler
 
 prosessering:
   enabled: true
