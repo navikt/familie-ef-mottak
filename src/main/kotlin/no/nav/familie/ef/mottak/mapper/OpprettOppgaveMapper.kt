@@ -26,8 +26,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
     val KODEVERK_KLAGE = "ae0058"
 
     fun toJournalføringsoppgave(journalpost: Journalpost,
-                                behandlesAvApplikasjon: BehandlesAvApplikasjon,
-                                tilordnet: String? = null) =
+                                behandlesAvApplikasjon: BehandlesAvApplikasjon) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   journalpostId = journalpost.journalpostId,
@@ -39,7 +38,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = journalpost.journalforendeEnhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
-                                  tilordnetRessurs = tilordnet)
+                                  tilordnetRessurs = null)
 
     fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): OpprettOppgaveRequest =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),

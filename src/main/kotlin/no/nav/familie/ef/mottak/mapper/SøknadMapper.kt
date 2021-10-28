@@ -36,7 +36,7 @@ object SøknadMapper {
         return Søknad(søknadJson = objectMapper.writeValueAsString(skjemaForArbeidssøker),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-                      behandleINySaksbehandling = true)
+                      behandleINySaksbehandling = false)
     }
 
     fun fromDto(søknadSkolepenger: SøknadSkolepenger, behandleINySaksbehandling: Boolean): Søknad {
