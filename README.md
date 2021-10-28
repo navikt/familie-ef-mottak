@@ -13,9 +13,9 @@ Token kan da genereres ved å gå til url: http://localhost:8080/jwt
 
 ## Kommunisere med ef-sak lokalt
 Dersom man ønsker å sende søknader til ef-sak, må man sette opp noen miljøvariabler fordi ef-sak krever preprod-autentisering
-også lokalt. Følgende miljøvariabler må hentes fra applikasjonens mappe i preprod i vault:
-* `CLIENT_ID`
-* `CLIENT_SECRET`
+også lokalt. Følgende miljøvariabler må hentes fra azure secrets injectet i pod, og secrets-filen med navn familie-ef-mottak i dev-gcp:
+* `AZURE_APP_CLIENT_ID`
+* `AZURE_APP_CLIENT_SECRET`
 * `EF_SAK_SCOPE`
 
 Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables. 

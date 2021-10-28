@@ -10,7 +10,7 @@ env:
 
 jobs:
   build:
-    name: Build, push and deploy to dev-fss
+    name: Build, push and deploy to gcp
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -46,22 +46,22 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   deploy:
-    name: Deploy to NAIS
+    name: Deploy to GCP dev and prod
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Deploy til dev-fss
+      - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-fss
+          CLUSTER: dev-gcp
           RESOURCE: nais-dev.yaml
-      - name: Deploy til prod-fss
+      - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-fss
+          CLUSTER: prod-gcp
           RESOURCE: nais-prod.yaml
       - name: Post deploy failures to Slack
         if: failure()

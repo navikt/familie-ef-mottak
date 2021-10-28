@@ -1,33 +1,40 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://b27dbvl008.preprod.local:5432/familie-ef-mottak
+  flyway:
+    enabled: true
+    placeholders:
+      ignoreIfProd:
   kafka:
     bootstrap-servers: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     properties:
-      schema.registry.url: https://kafka-schema-registry.nais.preprod.local
+      schema.registry.url: https://kafka-schema-registry.nais-q.adeo.no/
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      connection-test-query: "select 1"
+      max-lifetime: 30000
+      minimum-idle: 1
 
 familie:
   dokument:
-    url: https://familie-dokument.dev.intern.nav.no
+    url: http://familie-dokument
     audience: dev-gcp:teamfamilie:familie-dokument
   ef:
     pdfgenerator:
-      url: https://familie-ef-dokgen.dev.intern.nav.no/
+      url: http://familie-ef-maler
+    integrasjoner:
+      url: https://familie-integrasjoner.dev-fss-pub.nais.io/api
 
 no.nav.security.jwt:
   issuer:
-    selvbetjening:
-      discoveryurl: ${LOGINSERVICE_IDPORTEN_DISCOVERY_URL}
-      acceptedaudience: ${LOGINSERVICE_IDPORTEN_AUDIENCE}
-      proxyurl: http://webproxy-nais.nav.no:8088
-      cookie_name: selvbetjening-idtoken
     tokenx:
       discoveryurl: ${TOKEN_X_WELL_KNOWN_URL}
       accepted_audience: ${TOKEN_X_CLIENT_ID}
     azuread:
       discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
       accepted_audience: ${AZURE_APP_CLIENT_ID}
-      proxyurl: http://webproxy-nais.nav.no:8088
       cookie_name: azure_token
   client:
     registration:
@@ -69,11 +76,14 @@ no.nav.security.jwt:
           client-auth-method: private_key_jwt
           client-jwk: ${TOKEN_X_PRIVATE_JWK}
 
-INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.dev.adeo.no
+INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.dev-fss-pub.nais.io
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
-EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais-q.adeo.no/
+
+EF_SAK_URL: http://familie-ef-sak
 ettersending.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
