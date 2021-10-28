@@ -252,7 +252,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave/opprett"
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
-        const val PATH_FINN_MAPPE = "oppgave/mappe"
+        const val PATH_FINN_MAPPE = "oppgave/mappe/sok"
         const val PATH_HENT_OPPGAVE = "oppgave"
         const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v2/ENF"
