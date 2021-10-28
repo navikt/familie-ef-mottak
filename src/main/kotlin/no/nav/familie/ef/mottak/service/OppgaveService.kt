@@ -236,7 +236,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-            val mappe = mapperResponse.mapper.find { it.navn.contains("EF Sak - 01", true) }
+            val mappe = mapperResponse.mapper.find { it.navn.contains("01 EF Sak", true) }
                         ?: error("Fant ikke mappe for uplassert oppgave (01 EF Sak)")
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
