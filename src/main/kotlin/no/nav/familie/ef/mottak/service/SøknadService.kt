@@ -65,7 +65,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
     }
 
     private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
-        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
+        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
         return when {
             erIDev -> søknad.behandleINySaksbehandling
             else -> false
