@@ -229,7 +229,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         if (kanFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)) {
-            val mapperResponse = integrasjonerClient.finnMappe(FinnMappeRequest(tema = listOf("ENF"),
+            val mapperResponse = integrasjonerClient.finnMappe(FinnMappeRequest(tema = listOf(),
                                                                                 enhetsnr = ENHETSNUMMER_NAY,
                                                                                 opprettetFom = null,
                                                                                 limit = 1000))
