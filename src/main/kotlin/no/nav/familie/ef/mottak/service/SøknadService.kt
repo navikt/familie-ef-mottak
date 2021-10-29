@@ -28,7 +28,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
@@ -44,52 +43,34 @@ class SøknadService(private val søknadRepository: SøknadRepository,
 
     @Transactional
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad,
-                                            skalBehandlesINySaksbehandling(søknad) || erAktuellForFørsteSak(søknad.søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, false)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, skalBehandlesINySaksbehandling(søknad))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, false)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
-        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-fss"
+        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
         return when {
             erIDev -> søknad.behandleINySaksbehandling
             else -> false
         }
     }
 
-    private fun erAktuellForFørsteSak(søknad: SøknadOvergangsstønad): Boolean {
-        val erAktuellForFørsteSakFT = featureToggleService.isEnabled("familie.ef.mottak.er-aktuell-for-forste-sak")
-        logger.info("Skal sjekke om søknad er aktuell for å plukkes som første sak i ny løsning: $erAktuellForFørsteSakFT")
 
-        if (!erAktuellForFørsteSakFT) {
-            return false
-        }
-        val dagensDato = LocalDate.now()
-
-
-        return søknad.barn.verdi.any {
-            val fødselsTermindato = it.fødselTermindato?.verdi ?: LocalDate.MIN
-            val fødselsdatoFraIdent = it.fødselsnummer?.verdi?.fødselsdato ?: LocalDate.MIN
-            val alderBasertPåTermindatoErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsTermindato)
-            val alderBasertPåIdentErMindreEnn6mnd = dagensDato.minusMonths(6).isBefore(fødselsdatoFraIdent)
-            alderBasertPåTermindatoErMindreEnn6mnd || alderBasertPåIdentErMindreEnn6mnd
-        }
-    }
 
     private fun motta(søknadDb: Søknad,
                       vedlegg: List<Vedlegg>,
