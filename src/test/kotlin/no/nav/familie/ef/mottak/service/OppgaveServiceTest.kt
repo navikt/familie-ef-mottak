@@ -143,6 +143,7 @@ internal class OppgaveServiceTest {
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
         every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
         every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
 
         oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
@@ -175,11 +176,24 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave mot infotrygd dersom det ikke finnes en behandling i ny løsning`() {
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette oppgave med behandlesAvApplikasjon=EF_SAK_INFOTRYGD dersom det ikke finnes en behandling i ny løsning`() {
         every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
         every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
         every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns true
+        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD) }
+    }
+
+    @Test
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave med behandlesAvApplikasjon=INFOTRYGD dersom finnes en sak mot infotrygd fra før`() {
+        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
+        every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }

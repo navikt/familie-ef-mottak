@@ -45,7 +45,7 @@ internal class SakServiceTest {
                 )))
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
-        assertThat(sakService.kanOppretteInfotrygdSak(søknad)).isFalse()
+        assertThat(sakService.finnesIkkeIInfotrygd(søknad)).isFalse()
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class SakServiceTest {
 
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
 
     @Test
@@ -104,7 +104,7 @@ internal class SakServiceTest {
                 )))
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
 
     @Test
@@ -151,7 +151,7 @@ internal class SakServiceTest {
 
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
     }
 
     @Test
@@ -173,7 +173,7 @@ internal class SakServiceTest {
                                                                              brevkode = "NAV 15-00.04")))))
 
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns ingenEnheter
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isFalse()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
 
     @Test
@@ -196,7 +196,7 @@ internal class SakServiceTest {
                                                                              brevkode = "NAV 15-00.04")))))
 
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
 
     }
 
@@ -221,7 +221,7 @@ internal class SakServiceTest {
                                                                              brevkode = "NAV 15-00.02")))))
         every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
 
-        assertThat(sakService.kanOppretteInfotrygdSak(soknad)).isTrue()
+        assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
     }
 
     private fun opprettInfotrygdSakRequest(stønadsklassifisering: String) =

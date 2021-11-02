@@ -203,7 +203,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
         return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
-        } else if (søknad.behandleINySaksbehandling && sakService.kanOppretteInfotrygdSak(søknad)) {
+        } else if (søknad.behandleINySaksbehandling && sakService.finnesIkkeIInfotrygd(søknad)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
@@ -214,6 +214,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
         return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
+        } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType)) {
+            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
         }

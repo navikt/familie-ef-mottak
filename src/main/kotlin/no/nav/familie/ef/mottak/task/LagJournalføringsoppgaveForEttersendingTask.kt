@@ -15,16 +15,21 @@ class LagJournalføringsoppgaveForEttersendingTask(private val oppgaveService: O
 
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForEttersendingId(task.payload)
-        task.metadata.apply {
-            this[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey] = oppgaveId.toString()
+        oppgaveId?.let {
+            task.metadata.apply {
+                this[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey] = it.toString()
+            }
+
         }
         taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
-                                 task.payload,
-                                 task.metadata))
+        task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.let {
+            taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
+                                     task.payload,
+                                     task.metadata))
+        }
     }
 
 

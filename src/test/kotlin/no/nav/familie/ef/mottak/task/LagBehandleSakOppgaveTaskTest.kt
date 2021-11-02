@@ -43,7 +43,7 @@ internal class LagBehandleSakOppgaveTaskTest {
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
         val taskSlot = slot<Task>()
 
-        every { sakService.kanOppretteInfotrygdSak(any()) } returns true
+        every { sakService.finnesIkkeIInfotrygd(any()) } returns true
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
         every { oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) } returns 99L
@@ -61,7 +61,7 @@ internal class LagBehandleSakOppgaveTaskTest {
     internal fun `skal ikke lage behandle-sak-oppgave dersom den er tidligere behandlet i ef-sak`() {
         val taskSlot = slot<Task>()
 
-        every { sakService.kanOppretteInfotrygdSak(any()) } returns false
+        every { sakService.finnesIkkeIInfotrygd(any()) } returns false
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
         every { oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) } returns 99L
@@ -77,7 +77,7 @@ internal class LagBehandleSakOppgaveTaskTest {
 
     @Test
     internal fun `skal ikke lage behandle-sak-oppgave dersom infotrygdsak finnes fra før`() {
-        every { sakService.kanOppretteInfotrygdSak(any()) } returns false
+        every { sakService.finnesIkkeIInfotrygd(any()) } returns false
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
 
@@ -90,7 +90,7 @@ internal class LagBehandleSakOppgaveTaskTest {
 
     @Test
     internal fun `hvis skalBehandlesINySaksbehandling er true så skal man ikke kalle på lagBehandleSakOppgave`() {
-        every { sakService.kanOppretteInfotrygdSak(any()) } returns true
+        every { sakService.finnesIkkeIInfotrygd(any()) } returns true
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD,
                                                            behandleINySaksbehandling = true)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
@@ -98,7 +98,7 @@ internal class LagBehandleSakOppgaveTaskTest {
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
 
         verify(exactly = 1) {
-            sakService.kanOppretteInfotrygdSak(any()) // skal kalle på kanOppretteInfotrygdSak pga logging
+            sakService.finnesIkkeIInfotrygd(any()) // skal kalle på kanOppretteInfotrygdSak pga logging
         }
         verify(exactly = 0) {
             oppgaveService.lagBehandleSakOppgave(any(), any())
