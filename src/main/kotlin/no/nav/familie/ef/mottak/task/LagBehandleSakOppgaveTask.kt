@@ -47,7 +47,7 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
 
     private fun skalAutomatiskJournalføresMotInfotrygd(søknad: Søknad,
                                                        stønadType: StønadType) =
-            sakService.kanOppretteInfotrygdSak(søknad)
+            sakService.finnesIkkeIInfotrygd(søknad)
             && !søknad.behandleINySaksbehandling
             && !saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
 

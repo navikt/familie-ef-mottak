@@ -15,20 +15,25 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
-        task.metadata.apply {
-            this[journalføringOppgaveIdKey] = oppgaveId.toString()
+        oppgaveId?.let {
+            task.metadata.apply {
+                this[journalføringOppgaveIdKey] = oppgaveId.toString()
+            }
         }
         taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
-                                 task.payload,
-                                 task.metadata))
+        task.metadata[journalføringOppgaveIdKey]?.let {
+            taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
+                                     task.payload,
+                                     task.metadata))
+        }
     }
 
 
     companion object {
+
         const val journalføringOppgaveIdKey = "journalføringOppgaveId"
         const val TYPE = "lagJournalføringsoppgave"
     }
