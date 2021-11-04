@@ -162,13 +162,14 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     }
 
     fun finnMappe(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
-        val mapperespons = postForEntity<Ressurs<FinnMappeResponseDto>>(finnMappeUri(), finnMappeRequest)
+        val mapperespons = getForEntity<Ressurs<FinnMappeResponseDto>>(finnMappeUri(finnMappeRequest))
         return mapperespons.getDataOrThrow()
     }
 
-    private fun finnMappeUri(): URI {
+    private fun finnMappeUri(finnMappeRequest: FinnMappeRequest): URI {
         return UriComponentsBuilder.fromUri(integrasjonerConfig.url)
                 .pathSegment(PATH_FINN_MAPPE)
+                .queryParams(finnMappeRequest.toQueryParams())
                 .build()
                 .toUri()
     }
