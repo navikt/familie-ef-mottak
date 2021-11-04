@@ -73,38 +73,36 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && it.sak?.fagsakId != null
             && gjelderStønad(stønadType, it)
         }
-        loggKanOppretteInfotrygdSak(fnr, fagsakFinnesForStønad, stønadType)
+        val finnesIInfotrygd = finnesIInfotrygd(fnr, fagsakFinnesForStønad, stønadType)
         val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
 
-        return !fagsakFinnesForStønad && erTilknyttetEnhet
+        return !fagsakFinnesForStønad && erTilknyttetEnhet && !finnesIInfotrygd
     }
 
-    private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, stønadType: StønadType?) {
+    private fun finnesIInfotrygd(personIdent: String,
+                                 fagsakFinnesForStønad: Boolean,
+                                 stønadType: StønadType?): Boolean {
         if (stønadType == null) {
-            return
+            return true
         }
-        try {
-            val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
-            val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
-            val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
-            val vedtakFinnes = vedtak.isNotEmpty()
-            val sakerFinnes = saker.isNotEmpty()
-            val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
-                                             " stønadType=$stønadType" +
-                                             " fagsakFinnesForStønad=$fagsakFinnesForStønad"
-            logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
+        val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
+        val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
+        val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
+        val vedtakFinnes = vedtak.isNotEmpty()
+        val sakerFinnes = saker.isNotEmpty()
+        val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
+                                         " stønadType=$stønadType" +
+                                         " fagsakFinnesForStønad=$fagsakFinnesForStønad"
+        logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
 
-            val finnesAllerede = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
-            if (finnesAllerede) {
-                secureLogger.info(kanOppretteInfotrygdSakLog +
-                                  " personIdent=$personIdent" +
-                                  " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
-                                  " saker=${saker.sortedBy(Saktreff::personIdent)}")
-            }
-        } catch (e: Exception) {
-            logger.warn("Feilet sjekk mot infotrygdReplika")
-            secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
+        val finnesIInfotrygd = vedtakFinnes || sakerFinnes
+        if (fagsakFinnesForStønad != finnesIInfotrygd) {
+            secureLogger.info(kanOppretteInfotrygdSakLog +
+                              " personIdent=$personIdent" +
+                              " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
+                              " saker=${saker.sortedBy(Saktreff::personIdent)}")
         }
+        return finnesIInfotrygd
     }
 
     private fun gjelderStønad(stønadType: StønadType?, journalpost: Journalpost): Boolean {
