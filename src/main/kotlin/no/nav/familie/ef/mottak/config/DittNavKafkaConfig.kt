@@ -56,9 +56,10 @@ class DittNavKafkaConfig(
 
     @Bean
     fun kafkaTemplate(): KafkaTemplate<Nokkel, Beskjed> {
-        return KafkaTemplate(producerFactory()).apply {
-            val producerListener = LoggingProducerListener<String, String>()
+        return KafkaTemplate(producerFactory()).apply<KafkaTemplate<Nokkel, Beskjed>> {
+            val producerListener = LoggingProducerListener<Nokkel, Beskjed>()
             producerListener.setIncludeContents(false)
+            setProducerListener(producerListener)
         }
     }
 }
