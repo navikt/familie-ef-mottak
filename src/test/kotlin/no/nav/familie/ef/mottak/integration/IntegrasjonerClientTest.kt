@@ -2,7 +2,12 @@ package no.nav.familie.ef.mottak.integration
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.okJson
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.put
+import com.github.tomakehurst.wiremock.client.WireMock.serverError
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.mockk.every
 import io.mockk.mockk
@@ -19,7 +24,11 @@ import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -57,10 +66,10 @@ internal class IntegrasjonerClientTest {
     }
 
     @Test
-    fun `skal kunne plukke ut hele feilmeldingen fra ressurs selv om body er større enn 400`() {
+    fun `Ved feil skal vi returnere riktig feilmelding i ressurs`() {
         val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
         wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
-                .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))))
+                                       .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))))
         try {
             integrasjonerClient.lagOppgave(OpprettOppgaveRequest(ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
                                                                  saksId = null,
@@ -74,7 +83,6 @@ internal class IntegrasjonerClientTest {
         } catch (e: HttpStatusCodeException) {
             val response: Ressurs<OppgaveResponse> = objectMapper.readValue(e.getResponseBodyAsString())
             assertThat(response.melding).contains(feilmelding)
-            assertThat(e.message).doesNotContain(feilmelding)
         }
 
     }

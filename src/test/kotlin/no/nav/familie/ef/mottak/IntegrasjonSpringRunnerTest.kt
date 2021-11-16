@@ -5,6 +5,7 @@ import ch.qos.logback.core.read.ListAppender
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
+import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -42,6 +43,7 @@ abstract class IntegrasjonSpringRunnerTest {
     @Autowired private lateinit var ettersendingRepository: EttersendingRepository
     @Autowired private lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
     @Autowired private lateinit var taskRepository: TaskRepository
+    @Autowired private lateinit var hendelsesloggRepository: HendelsesloggRepository
 
     @LocalServerPort
     private var port: Int? = 0
@@ -55,6 +57,7 @@ abstract class IntegrasjonSpringRunnerTest {
         taskRepository.deleteAll()
         ettersendingVedleggRepository.deleteAll()
         ettersendingRepository.deleteAll()
+        hendelsesloggRepository.deleteAll()
     }
 
     protected fun getPort(): String {

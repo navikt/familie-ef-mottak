@@ -20,7 +20,9 @@ fun ettersendingflyt() = listOf(
 val fallbacks = mapOf(
     TaskType(ArkiverSøknadTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
     TaskType(LagBehandleSakOppgaveTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
-    TaskType(OpprettSakTask.TYPE) to LagJournalføringsoppgaveTask.TYPE
+    TaskType(OpprettSakTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
+    TaskType(LagJournalføringsoppgaveTask.TYPE) to PlasserOppgaveIMappeOppgaveTask.TYPE,
+    TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE) to PlasserOppgaveIMappeOppgaveTask.TYPE
 )
 fun TaskType.nesteFallbackTask() = fallbacks[this] ?: error("Finner ikke fallback til $this")
 

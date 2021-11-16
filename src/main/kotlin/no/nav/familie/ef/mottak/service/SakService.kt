@@ -13,7 +13,10 @@ import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -43,7 +46,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun opprettSak(søknadId: String, oppgaveId: String): String? {
         val soknad = søknadService.get(søknadId)
-        return if (kanOppretteInfotrygdSak(soknad)) {
+        return if (finnesIkkeIInfotrygd(soknad)) {
             val opprettInfotrygdSakRequest = lagOpprettInfotrygdSakRequest(soknad, oppgaveId)
             val opprettInfotrygdSakResponse = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
@@ -55,8 +58,11 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
 
     }
 
-    fun kanOppretteInfotrygdSak(søknad: Søknad): Boolean {
-        val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(søknad.fnr, BrukerIdType.FNR),
+    fun finnesIkkeIInfotrygd(søknad: Søknad): Boolean = finnesIkkeIInfotrygd(søknad.fnr,
+                                                                             dokumenttypeTilStønadType(søknad.dokumenttype))
+
+    fun finnesIkkeIInfotrygd(fnr: String, stønadType: StønadType?): Boolean {
+        val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR),
                                                                           50,
                                                                           listOf(Tema.ENF),
                                                                           listOf(Journalposttype.I))
@@ -65,45 +71,45 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val fagsakFinnesForStønad = journalposter.any {
             it.sak?.fagsaksystem in listOf(INFOTRYGD, EF_SAK)
             && it.sak?.fagsakId != null
-            && gjelderStønad(søknad, it)
+            && gjelderStønad(stønadType, it)
         }
-        loggKanOppretteInfotrygdSak(søknad.fnr, fagsakFinnesForStønad, søknad.dokumenttype)
-        val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(søknad.fnr).isNotEmpty()
+        val finnesIInfotrygd = finnesIInfotrygd(fnr, fagsakFinnesForStønad, stønadType)
+        val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
 
-        return !fagsakFinnesForStønad && erTilknyttetEnhet
+        return !fagsakFinnesForStønad && erTilknyttetEnhet && !finnesIInfotrygd
     }
 
-    private fun loggKanOppretteInfotrygdSak(personIdent: String, fagsakFinnesForStønad: Boolean, dokumenttype: String) {
-        val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: return
-        try {
-            val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
-            val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
-            val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
-            val vedtakFinnes = vedtak.isNotEmpty()
-            val sakerFinnes = saker.isNotEmpty()
-            val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
-                                             " stønadType=$stønadType" +
-                                             " fagsakFinnesForStønad=$fagsakFinnesForStønad"
-            logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
-
-            val finnesAllerede = fagsakFinnesForStønad || vedtakFinnes || sakerFinnes
-            if (finnesAllerede) {
-                secureLogger.info(kanOppretteInfotrygdSakLog +
-                                  " personIdent=$personIdent" +
-                                  " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
-                                  " saker=${saker.sortedBy(Saktreff::personIdent)}")
-            }
-        } catch (e: Exception) {
-            logger.warn("Feilet sjekk mot infotrygdReplika")
-            secureLogger.warn("Feilet sjekk mot infotrygdReplika", e)
+    private fun finnesIInfotrygd(personIdent: String,
+                                 fagsakFinnesForStønad: Boolean,
+                                 stønadType: StønadType?): Boolean {
+        if (stønadType == null) {
+            return true
         }
+        val innslagHosInfotrygd = infotrygdService.hentInslagHosInfotrygd(personIdent)
+        val vedtak = innslagHosInfotrygd.vedtak.filter { it.stønadType == stønadType }
+        val saker = innslagHosInfotrygd.saker.filter { it.stønadType == stønadType }
+        val vedtakFinnes = vedtak.isNotEmpty()
+        val sakerFinnes = saker.isNotEmpty()
+        val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
+                                         " stønadType=$stønadType" +
+                                         " fagsakFinnesForStønad=$fagsakFinnesForStønad"
+        logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
+
+        val finnesIInfotrygd = vedtakFinnes || sakerFinnes
+        if (fagsakFinnesForStønad != finnesIInfotrygd) {
+            secureLogger.info(kanOppretteInfotrygdSakLog +
+                              " personIdent=$personIdent" +
+                              " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
+                              " saker=${saker.sortedBy(Saktreff::personIdent)}")
+        }
+        return finnesIInfotrygd
     }
 
-    private fun gjelderStønad(søknad: Søknad, journalpost: Journalpost): Boolean {
-        return when (søknad.dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> harBrevkode(journalpost, DokumentBrevkode.OVERGANGSSTØNAD)
-            DOKUMENTTYPE_BARNETILSYN -> harBrevkode(journalpost, DokumentBrevkode.BARNETILSYN)
-            DOKUMENTTYPE_SKOLEPENGER -> harBrevkode(journalpost, DokumentBrevkode.SKOLEPENGER)
+    private fun gjelderStønad(stønadType: StønadType?, journalpost: Journalpost): Boolean {
+        return when (stønadType) {
+            StønadType.OVERGANGSSTØNAD -> harBrevkode(journalpost, DokumentBrevkode.OVERGANGSSTØNAD)
+            StønadType.BARNETILSYN -> harBrevkode(journalpost, DokumentBrevkode.BARNETILSYN)
+            StønadType.SKOLEPENGER -> harBrevkode(journalpost, DokumentBrevkode.SKOLEPENGER)
             else -> false
         }
     }

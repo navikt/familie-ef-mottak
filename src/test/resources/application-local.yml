@@ -11,12 +11,16 @@ spring:
   kafka:
     bootstrap-servers: http://localhost:9092
     properties:
-      security.protocol: SASL_PLAINTEXT
-      sasl:
-        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="igroup" password="itest";
       schema.registry.url: http://localhost:8081
+      security:
+        protocol: PLAINTEXT
     consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       group-id: srvc01
+      max-poll-records: 1
+      auto-offset-reset: latest
+      enable-auto-commit: false
 
 familie:
   ef:
@@ -40,11 +44,10 @@ logging:
 
 no.nav.security.jwt:
   issuer:
-    selvbetjening:
+    tokenx:
       discoveryurl: http://metadata
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
-      proxyurl:
   client:
     registration:
       integrasjoner-client-credentials:
@@ -82,9 +85,15 @@ database:
     # 16, 24 or 32 bytes
     key: Det finnes mange gode eksempler.
 
-JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q1
-SRV_CREDENTIAL_USERNAME: test
-SRV_CREDENTIAL_PASSWORD: test
+KAFKA_KEYSTORE_PATH: path
+KAFKA_CREDSTORE_PASSWORD: password
+KAFKA_TRUSTSTORE_PATH: path
+
+JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering-v1
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: bootstrap_servers
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: schema_registry_url
+SERVICE_USER_USERNAME: test
+SERVICE_USER_PASSWORD: test
 
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/

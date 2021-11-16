@@ -14,11 +14,27 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                                    private val oppgaveService: OppgaveService) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
+        val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
+        oppgaveId?.let {
+            task.metadata.apply {
+                this[journalføringOppgaveIdKey] = oppgaveId.toString()
+            }
+        }
+        taskRepository.save(task)
+    }
+
+    override fun onCompletion(task: Task) {
+        task.metadata[journalføringOppgaveIdKey]?.let {
+            taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
+                                     task.payload,
+                                     task.metadata))
+        }
     }
 
 
     companion object {
+
+        const val journalføringOppgaveIdKey = "journalføringOppgaveId"
         const val TYPE = "lagJournalføringsoppgave"
     }
 }
