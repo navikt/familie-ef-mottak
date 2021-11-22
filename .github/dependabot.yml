@@ -17,3 +17,7 @@ updates:
     open-pull-requests-limit: 10
     registries:
       - familie-felles
+  - package-ecosystem: "github-actions"
+      directory: "/"
+      schedule:
+        interval: "daily"
