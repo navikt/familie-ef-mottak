@@ -15,10 +15,10 @@
     </parent>
 
     <properties>
+        <java.version>17</java.version>
         <revision>1.0</revision>
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
-        <jvmTarget>11</jvmTarget>
         <kotlin.version>1.6.0</kotlin.version>
         <springfox.version>3.0.0</springfox.version>
         <mockk.version>1.12.0</mockk.version>
@@ -318,17 +318,14 @@
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <version>1.11.0</version>
-
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
                         <goals>
-<!--                            <goal>idl-protocol</goal>-->
                             <goal>schema</goal>
                         </goals>
                         <configuration>
                             <sourceDirectory>src/main/resources/avro</sourceDirectory>
-
                             <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
                         </configuration>
                     </execution>
@@ -351,27 +348,11 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
                 <configuration>
-                    <jvmTarget>17</jvmTarget>
                     <compilerPlugins>
                         <plugin>spring</plugin>
                         <plugin>jpa</plugin>
                     </compilerPlugins>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -380,13 +361,6 @@
                     <fork>true</fork>
                     <mainClass>${start-class}</mainClass>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -412,6 +386,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
