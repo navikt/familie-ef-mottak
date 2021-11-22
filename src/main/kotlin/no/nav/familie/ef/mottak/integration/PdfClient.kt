@@ -17,7 +17,7 @@ class PdfClient(@Qualifier("restTemplateUnsecured") operations: RestOperations,
 
     fun lagPdf(labelValueJson: Map<String, Any>): Fil {
         val sendInnUri =
-                DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/template/soknad/download-pdf").build()
+                DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/api/generer-soknad").build()
         val byteArray = postForEntity<ByteArray>(sendInnUri, labelValueJson)
         return Fil(byteArray)
     }
