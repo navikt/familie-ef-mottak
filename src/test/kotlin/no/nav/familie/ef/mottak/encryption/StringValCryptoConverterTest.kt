@@ -34,7 +34,7 @@ internal class StringValCryptoConverterTest {
 
     @Test
     fun byteArrayToEntityAttribute() {
-        val byteArray = byteArrayOf('b'.toByte(), 'o'.toByte(), 'b'.toByte())
+        val byteArray = byteArrayOf('b'.code.toByte(), 'o'.code.toByte(), 'b'.code.toByte())
 
         val byteArrayToEntityAttribute = stringValCryptoConverter.byteArrayToEntityAttribute(byteArray)
 
@@ -43,7 +43,7 @@ internal class StringValCryptoConverterTest {
 
     @Test
     fun entityAttributeToByteArray() {
-        val byteArray = byteArrayOf('b'.toByte(), 'o'.toByte(), 'b'.toByte())
+        val byteArray = byteArrayOf('b'.code.toByte(), 'o'.code.toByte(), 'b'.code.toByte())
 
         val entityAttributeToByteArray = stringValCryptoConverter.entityAttributeToByteArray("bob")
 
