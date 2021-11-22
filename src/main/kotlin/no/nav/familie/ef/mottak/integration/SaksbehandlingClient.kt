@@ -23,7 +23,7 @@ class SaksbehandlingClient(@Value("\${EF_SAK_URL}")
     fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType? = null): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
                 .pathSegment("api/ekstern/behandling/finnes")
-        if(stønadType != null) {
+        if (stønadType != null) {
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))

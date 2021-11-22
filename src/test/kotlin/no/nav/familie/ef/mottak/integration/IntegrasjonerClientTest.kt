@@ -148,6 +148,7 @@ internal class IntegrasjonerClientTest {
             integrasjonerClient.arkiver(arkiverSøknadRequest)
         }
     }
+
     @Test
     fun `Skal finne infotrygdsaksnummer`() {
         // Gitt

@@ -16,7 +16,8 @@ import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Properties
+import java.util.UUID
 
 internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
@@ -132,7 +133,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                        fnr = FNR)
     }
 
-    private fun mockFeatureToggleMeldingDittNav(){
+    private fun mockFeatureToggleMeldingDittNav() {
         every { featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending") } returns false
     }
 

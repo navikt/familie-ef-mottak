@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
@@ -40,6 +39,7 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
     }
 
     companion object {
+
         const val TYPE = "oppdaterBehandleSakOppgave"
     }
 }

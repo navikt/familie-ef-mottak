@@ -1,8 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.DbMigreringRepository
-import no.nav.familie.ef.mottak.task.ArkiverSøknadTask
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service

@@ -15,6 +15,7 @@ class FerdigstillJournalføringTask(private val arkiveringService: ArkiveringSer
     }
 
     companion object {
+
         const val TYPE = "FerdigstillJournalføringTask"
     }
 }

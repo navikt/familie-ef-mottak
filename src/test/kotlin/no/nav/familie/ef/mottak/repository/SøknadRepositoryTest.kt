@@ -58,17 +58,20 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         val ident = "12345678"
 
         val søknadOvergangsstønad = søknadRepository.save(Søknad(søknadJson = "kåre",
-                                                                      fnr = ident,
-                                                                      dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                                                      taskOpprettet = true))
+                                                                 fnr = ident,
+                                                                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                                                 taskOpprettet = true))
 
         val søknadBarnetilsyn = søknadRepository.save(Søknad(søknadJson = "kåre",
-                                                                  fnr = ident,
-                                                                  dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                                                                  taskOpprettet = true))
+                                                             fnr = ident,
+                                                             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                                                             taskOpprettet = true))
 
         val søknader = søknadRepository.findAllByFnr(ident)
 
-        assertThat(søknader).usingRecursiveComparison().ignoringFields("opprettetTid").ignoringCollectionOrder().isEqualTo(listOf(søknadOvergangsstønad, søknadBarnetilsyn))
+        assertThat(søknader).usingRecursiveComparison()
+                .ignoringFields("opprettetTid")
+                .ignoringCollectionOrder()
+                .isEqualTo(listOf(søknadOvergangsstønad, søknadBarnetilsyn))
     }
 }

@@ -8,12 +8,12 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.Testdata
-import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 
 class SøknadServiceImplTest {
 

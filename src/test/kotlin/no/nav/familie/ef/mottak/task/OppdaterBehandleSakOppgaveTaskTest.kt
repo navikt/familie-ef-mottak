@@ -5,7 +5,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.service.FAGOMRÅDE_ENSLIG_FORSØRGER
 import no.nav.familie.ef.mottak.service.OppgaveService
@@ -14,7 +13,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Properties
 
 internal class OppdaterBehandleSakOppgaveTaskTest {
 

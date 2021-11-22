@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.config.*
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper.toDto
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -11,7 +14,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 internal class ArkiverDokumentRequestMapperTest {
 

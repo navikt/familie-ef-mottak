@@ -11,7 +11,11 @@ import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
-import no.nav.familie.kontrakter.felles.journalpost.*
+import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.journalpost.Sak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -43,7 +47,7 @@ internal class SakServiceTest {
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
                                                                 DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"))
                 )))
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(søknad)).isFalse()
     }
@@ -66,7 +70,7 @@ internal class SakServiceTest {
             søknadService.get("1")
         } returns søknad
 
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.opprettSak(søknad.id, "12")).isNull()
     }
@@ -85,7 +89,7 @@ internal class SakServiceTest {
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"))
                 )))
 
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
@@ -99,10 +103,10 @@ internal class SakServiceTest {
                                             journalposttype = Journalposttype.I,
                                             journalstatus = Journalstatus.FERDIGSTILT,
                                             sak = Sak(fagsakId = "23",
-                                            fagsaksystem = INFOTRYGD),
+                                                      fagsaksystem = INFOTRYGD),
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.04"))
                 )))
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
@@ -149,7 +153,7 @@ internal class SakServiceTest {
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.04")))))
 
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
     }
@@ -172,7 +176,7 @@ internal class SakServiceTest {
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.04")))))
 
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns ingenEnheter
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns ingenEnheter
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
     }
 
@@ -195,7 +199,7 @@ internal class SakServiceTest {
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.04")))))
 
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
 
     }
@@ -219,7 +223,7 @@ internal class SakServiceTest {
                                             dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
                                                                 DokumentInfo(dokumentInfoId = "123",
                                                                              brevkode = "NAV 15-00.02")))))
-        every {integrasjonerClient.finnBehandlendeEnhet(any())} returns enheterNay
+        every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
     }

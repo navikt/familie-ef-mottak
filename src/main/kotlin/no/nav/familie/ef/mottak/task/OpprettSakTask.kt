@@ -73,6 +73,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
+
         const val TYPE = "opprettSak"
     }
 }

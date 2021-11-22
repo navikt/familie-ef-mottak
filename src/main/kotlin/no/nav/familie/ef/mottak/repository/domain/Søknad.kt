@@ -3,8 +3,12 @@ package no.nav.familie.ef.mottak.repository.domain
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
 import java.time.LocalDateTime
-import java.util.*
-import javax.persistence.*
+import java.util.UUID
+import javax.persistence.Column
+import javax.persistence.Convert
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "soknad")

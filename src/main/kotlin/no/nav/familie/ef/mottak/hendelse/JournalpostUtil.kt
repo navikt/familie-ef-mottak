@@ -7,7 +7,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.log.IdUtils
 import no.nav.familie.log.mdc.MDCConstants
 import org.slf4j.MDC
-import java.util.*
+import java.util.Properties
 
 
 fun Journalpost.skalBehandles() = this.erTemaEnfOgTypeI() && this.journalstatus == Journalstatus.MOTTATT && this.gyldigKanal()
@@ -54,7 +54,7 @@ fun Journalpost.metadata(): Properties {
     }
 }
 
-fun Journalpost.getJournalpostState() : JournalpostState {
+fun Journalpost.getJournalpostState(): JournalpostState {
     return if (!this.erTemaEnfOgTypeI()) {
         JournalpostState.UGYLDIG
     } else if (this.journalstatus != Journalstatus.MOTTATT) {

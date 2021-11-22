@@ -9,12 +9,12 @@ import javax.persistence.PreUpdate
 
 @Entity
 data class EttersendingVedlegg(@Id
-                   val id: UUID,
-                   val ettersendingId: UUID,
-                   val navn: String,
-                   val tittel: String,
-                   @Convert(converter = FileCryptoConverter::class)
-                   val innhold: Fil) {
+                               val id: UUID,
+                               val ettersendingId: UUID,
+                               val navn: String,
+                               val tittel: String,
+                               @Convert(converter = FileCryptoConverter::class)
+                               val innhold: Fil) {
 
     @PreUpdate private fun preUpdate() {
         throw UnsupportedOperationException(UPDATE_FEILMELDING)

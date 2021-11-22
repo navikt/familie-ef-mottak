@@ -123,17 +123,17 @@ class JournalføringsoppgaveServiceTest {
     @Test
     fun `Journalposter som er mottatt uten ettersending eller søknad skal opprettes`() {
 
-        journalpost=  Journalpost("123",
-                                                  Journalposttype.I,
-                                                  Journalstatus.MOTTATT,
-                                                  tema = "ENF",
-                                                  behandlingstema = "abc123",
-                                                  bruker = Bruker("213",BrukerIdType.FNR),
-                                                  kanal = "NAV_NO"
+        journalpost = Journalpost("123",
+                                  Journalposttype.I,
+                                  Journalstatus.MOTTATT,
+                                  tema = "ENF",
+                                  behandlingstema = "abc123",
+                                  bruker = Bruker("213", BrukerIdType.FNR),
+                                  kanal = "NAV_NO"
         )
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns null
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null
-        every { mockTaskRepositoryUtvidet.save(any()) } returns Task("","" , Properties())
+        every { mockTaskRepositoryUtvidet.save(any()) } returns Task("", "", Properties())
 
         service.lagEksternJournalføringTask(journalpost)
 

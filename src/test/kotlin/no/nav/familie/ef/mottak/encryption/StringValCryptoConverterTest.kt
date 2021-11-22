@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.encryption
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Base64
 
 internal class StringValCryptoConverterTest {
 

@@ -71,7 +71,6 @@ class SøknadService(private val søknadRepository: SøknadRepository,
     }
 
 
-
     private fun motta(søknadDb: Søknad,
                       vedlegg: List<Vedlegg>,
                       dokumentasjonsbehov: List<Dokumentasjonsbehov>): Kvittering {

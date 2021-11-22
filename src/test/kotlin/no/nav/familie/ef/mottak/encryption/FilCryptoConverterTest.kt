@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.encryption
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Base64
 
 internal class FilCryptoConverterTest {
 

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(taskStepType = ArkiverEttersendingTask.TYPE, beskrivelse = "Arkiver ettersending")
 class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
-                        private val taskRepository: TaskRepository,
-                        private val ettersendingRepository: EttersendingRepository) : AsyncTaskStep {
+                              private val taskRepository: TaskRepository,
+                              private val ettersendingRepository: EttersendingRepository) : AsyncTaskStep {
 
     val logger = LoggerFactory.getLogger(this::class.java)
     val antallEttersendinger: Counter = Metrics.counter("alene.med.barn.journalposter.ettersending")
@@ -36,6 +36,7 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
     }
 
     companion object {
+
         const val TYPE = "arkiverEttersending"
     }
 
