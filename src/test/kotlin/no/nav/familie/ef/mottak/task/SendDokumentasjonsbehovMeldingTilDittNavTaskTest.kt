@@ -78,7 +78,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @Test
     internal fun `overgangsstønad - mangler vedlegg`() {
         testOgVerifiserMelding(listOf(Dokumentasjonsbehov("", "", false, emptyList())),
-                               "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. Se hva som mangler og last opp vedlegg.")
+                               "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
+                               "Se hva som mangler og last opp vedlegg.")
     }
 
     @Test

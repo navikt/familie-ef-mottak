@@ -119,7 +119,8 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                        ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
                        ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
                        ?.any {
-                           logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} og dokument=${it.dokumentInfoId}")
+                           logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} " +
+                                       "og dokument=${it.dokumentInfoId}")
                            return true
                        } ?: false
 

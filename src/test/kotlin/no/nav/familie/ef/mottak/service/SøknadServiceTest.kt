@@ -38,9 +38,8 @@ class SøknadServiceImplTest {
 
         every { søknadRepository.findAllByFnr(fnr) } returns søknader
 
-        every { dokumentasjonsbehovRepository.findByIdOrNull(any()) } returns Dokumentasjonsbehov("123",
-                                                                                                  objectMapper.writeValueAsString(
-                                                                                                          forventetDokumentasjonsbehov))
+        every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
+                .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)
 

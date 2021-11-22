@@ -16,9 +16,11 @@ fun Journalpost.gyldigKanal() = this.kanal?.substring(0, 5) == "SKAN_" || this.k
 
 fun Journalpost.erTemaEnfOgTypeI() = this.tema == "ENF" && this.journalposttype == Journalposttype.I
 
-fun Journalpost.statusIkkeMottattLogString() = "Ignorerer journalhendelse hvor journalpost=${this.journalpostId} har status ${this.journalstatus}"
+fun Journalpost.statusIkkeMottattLogString() =
+        "Ignorerer journalhendelse hvor journalpost=${this.journalpostId} har status ${this.journalstatus}"
 
-fun Journalpost.ikkeGyldigKanalLogString() = "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
+fun Journalpost.ikkeGyldigKanalLogString() =
+        "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
 
 fun Journalpost.kanalMetricName(): String {
     return when {

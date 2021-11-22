@@ -112,8 +112,9 @@ class SøknadService(private val søknadRepository: SøknadRepository,
                 .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
                 .map {
                     SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
-                                                    stønadType = StønadType.valueOf(SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
-                                                                                            .toString()),
+                                                    stønadType = StønadType
+                                                            .valueOf(SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                                                             .toString()),
                                                     søknadDato = it.opprettetTid.toLocalDate(),
                                                     dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
                                                             UUID.fromString(it.id)))

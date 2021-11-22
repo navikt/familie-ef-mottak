@@ -35,13 +35,14 @@ internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
     private fun request(): Map<StønadType, EttersendelseDto> {
         val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
         val personIdent = "12345678901"
-        return mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
-                                                                                               søknadsdata = null,
-                                                                                               dokumenttype = "DOKUMENTASJON_LÆRLING",
-                                                                                               beskrivelse = "Lærlingekontrakt",
-                                                                                               stønadType = StønadType.OVERGANGSSTØNAD,
-                                                                                               innsendingstidspunkt = null,
-                                                                                               vedlegg = listOf(vedlegg1))),
-                                                                    personIdent = personIdent))
+        return mapOf(StønadType.OVERGANGSSTØNAD to
+                             EttersendelseDto(listOf(Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
+                                                                         søknadsdata = null,
+                                                                         dokumenttype = "DOKUMENTASJON_LÆRLING",
+                                                                         beskrivelse = "Lærlingekontrakt",
+                                                                         stønadType = StønadType.OVERGANGSSTØNAD,
+                                                                         innsendingstidspunkt = null,
+                                                                         vedlegg = listOf(vedlegg1))),
+                                              personIdent = personIdent))
     }
 }

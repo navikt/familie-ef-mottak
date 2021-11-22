@@ -37,7 +37,8 @@ class JournalhendelseService(
                 journalføringsoppgaveService.lagEksternJournalføringTask(journalpost)
             } else {
                 alleredeBehandletJournalpostCounter.increment()
-                logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
+                logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for " +
+                            "journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
             }
             journalfoeringHendelseDbUtil.lagreHendelseslogg(hendelseRecord, offset)
         }
