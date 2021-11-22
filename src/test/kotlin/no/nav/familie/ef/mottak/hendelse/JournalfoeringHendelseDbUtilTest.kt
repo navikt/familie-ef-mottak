@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test
 
 internal class JournalfoeringHendelseDbUtilTest {
 
-    val hendelsesloggRepository = mockk<HendelsesloggRepository>()
+    private val hendelsesloggRepository = mockk<HendelsesloggRepository>()
     val taskRepository = mockk<TaskRepositoryUtvidet>()
-    val journalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(hendelsesloggRepository, taskRepository)
+    private val journalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(hendelsesloggRepository, taskRepository)
 
     @Test
     internal fun `skal kunne prosessere journalføringshendelse selv om den mangler bruker`() {

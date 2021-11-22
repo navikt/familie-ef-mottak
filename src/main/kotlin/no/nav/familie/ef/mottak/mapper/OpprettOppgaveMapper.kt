@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
@@ -17,13 +18,7 @@ import java.time.LocalDateTime
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
 
-    val logger = LoggerFactory.getLogger(javaClass)
-
-    /**
-     * En liten "hack", kanskje midlertidig.
-     * - Kode for "klage", som brukes for å evt sette behandlingstype tilsvarende "klage"
-     */
-    val KODEVERK_KLAGE = "ae0058"
+    val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun toJournalføringsoppgave(journalpost: Journalpost,
                                 behandlesAvApplikasjon: BehandlesAvApplikasjon) =
@@ -33,7 +28,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   tema = Tema.ENF,
                                   oppgavetype = Oppgavetype.Journalføring,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
                                   behandlingstype = settBehandlingstype(journalpost),
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = journalpost.journalforendeEnhet,
@@ -47,12 +42,12 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   oppgavetype = Oppgavetype.BehandleSak,
                                   journalpostId = journalpost.journalpostId,
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost) ?: "",
+                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
                                   behandlingstema = journalpost.behandlingstema,
                                   enhetsnummer = null,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
 
-    private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String? {
+    private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
         val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
         return "${behandlesAvApplikasjon.beskrivelsePrefix}$dokumentTittel"
@@ -107,6 +102,15 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         } else {
             gjeldendeTid.plusDays(1).toLocalDate()
         }
+    }
+
+    companion object {
+
+        /**
+         * En liten "hack", kanskje midlertidig.
+         * - Kode for "klage", som brukes for å evt sette behandlingstype tilsvarende "klage"
+         */
+        const val KODEVERK_KLAGE = "ae0058"
     }
 
 }

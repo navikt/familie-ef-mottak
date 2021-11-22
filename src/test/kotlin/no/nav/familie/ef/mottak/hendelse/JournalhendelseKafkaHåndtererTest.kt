@@ -26,7 +26,7 @@ class JournalhendelseKafkaHåndtererTest {
     @MockK(relaxed = true)
     lateinit var ack: Acknowledgment
 
-    lateinit var journalhendelseKafkaHåndterer: JournalhendelseKafkaHåndterer
+    private lateinit var journalhendelseKafkaHåndterer: JournalhendelseKafkaHåndterer
 
     @BeforeEach
     internal fun setUp() {

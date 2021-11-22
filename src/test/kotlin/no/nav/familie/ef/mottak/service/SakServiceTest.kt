@@ -132,7 +132,7 @@ internal class SakServiceTest {
 
         sakService.opprettSak("1", "987")
 
-        assertThat(slot.captured).isEqualToComparingFieldByField(opprettInfotrygdSakRequest("OG"))
+        assertThat(slot.captured).usingRecursiveComparison().isEqualTo(opprettInfotrygdSakRequest("OG"))
     }
 
     @Test

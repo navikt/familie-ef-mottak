@@ -39,7 +39,7 @@ class JournalføringsoppgaveServiceTest {
     @MockK(relaxed = true)
     lateinit var mockFeatureToggleService: FeatureToggleService
 
-    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+    private lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     @MockK(relaxed = true)
     lateinit var mockEttersendingRepository: EttersendingRepository

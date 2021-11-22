@@ -8,6 +8,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -17,7 +18,7 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
                               private val taskRepository: TaskRepository,
                               private val ettersendingRepository: EttersendingRepository) : AsyncTaskStep {
 
-    val logger = LoggerFactory.getLogger(this::class.java)
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val antallEttersendinger: Counter = Metrics.counter("alene.med.barn.journalposter.ettersending")
 
     override fun doTask(task: Task) {

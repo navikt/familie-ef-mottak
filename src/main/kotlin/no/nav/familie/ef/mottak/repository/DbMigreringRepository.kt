@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository
 
 
 @Repository
-interface DbMigreringRepository : JpaRepository<Task, Long> {
-
-
-}
+interface DbMigreringRepository : JpaRepository<Task, Long>

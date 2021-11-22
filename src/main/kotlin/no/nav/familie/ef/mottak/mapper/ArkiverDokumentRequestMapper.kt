@@ -47,7 +47,7 @@ object ArkiverDokumentRequestMapper {
 
     private fun lagHoveddokumentvarianterForEttersending(stønadType: StønadType,
                                                          ettersending: Ettersending): List<Dokument> {
-        val tittel = "Ettersending til søknad om ${stønadType}"
+        val tittel = "Ettersending til søknad om $stønadType"
         val dokumenttype = utledDokumenttypeForEttersending(stønadType)
 
         val dokumentSomPdf = ettersending.ettersendingPdf?.let {

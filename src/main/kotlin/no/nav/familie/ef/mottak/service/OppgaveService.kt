@@ -37,7 +37,6 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
-    private val ENHETSNUMMER_NAY: String = "4489"
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
         val søknad: Søknad = søknadService.get(søknadId)
@@ -149,7 +148,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
                 val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
                 log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                         "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY")
+                         "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=${ENHETSNUMMER_NAY}")
                 nyOppgave.oppgaveId
             } else {
                 throw httpStatusCodeException
@@ -172,7 +171,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
         log.info("Skipper oppretting av journalførings-oppgave. " +
-                 "Fant åpen oppgave av type ${oppgavetype} for " +
+                 "Fant åpen oppgave av type $oppgavetype for " +
                  "journalpostId=${journalpostId}")
     }
 
@@ -256,5 +255,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
             oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
             || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
+
+    companion object {
+
+        private const val ENHETSNUMMER_NAY: String = "4489"
+    }
 
 }

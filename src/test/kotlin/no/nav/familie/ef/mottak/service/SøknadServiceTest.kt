@@ -18,7 +18,7 @@ import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as Dokumentasjon
 class SøknadServiceImplTest {
 
     val søknadRepository = mockk<SøknadRepository>()
-    val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>()
+    private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>()
     val søknadService = SøknadService(søknadRepository, mockk(), mockk(), dokumentasjonsbehovRepository, mockk())
 
     @Test

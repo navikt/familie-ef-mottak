@@ -81,7 +81,7 @@ internal class IntegrasjonerClientTest {
                                                                  behandlingstema = "sad",
                                                                  enhetsnummer = null))
         } catch (e: HttpStatusCodeException) {
-            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(e.getResponseBodyAsString())
+            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(e.responseBodyAsString)
             assertThat(response.melding).contains(feilmelding)
         }
 
@@ -105,7 +105,7 @@ internal class IntegrasjonerClientTest {
 
         val testresultat = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
-        assertThat(testresultat).isEqualToComparingFieldByField(opprettInfotrygdSakResponse)
+        assertThat(testresultat).usingRecursiveComparison().isEqualTo(opprettInfotrygdSakResponse)
     }
 
     @Test

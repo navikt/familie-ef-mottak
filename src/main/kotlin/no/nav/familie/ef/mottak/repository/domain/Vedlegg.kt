@@ -24,6 +24,6 @@ data class Vedlegg(@Id
 
     companion object {
 
-        const val UPDATE_FEILMELDING: String = "Det går ikke å oppdatere vedlegg";
+        const val UPDATE_FEILMELDING: String = "Det går ikke å oppdatere vedlegg"
     }
 }
