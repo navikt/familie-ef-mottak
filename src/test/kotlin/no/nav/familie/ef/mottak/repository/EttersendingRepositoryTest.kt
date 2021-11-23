@@ -5,7 +5,6 @@ import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.kontrakter.ef.ettersending.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -27,12 +26,12 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val vedlegg = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
         val dokumentasjonsbehov = Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
-                                                       søknadsdata = null,
-                                                       dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-                                                       beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
-                                                       stønadType = StønadType.OVERGANGSSTØNAD,
-                                                       innsendingstidspunkt = null,
-                                                       vedlegg = listOf(vedlegg))
+                                                      søknadsdata = null,
+                                                      dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
+                                                      beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
+                                                      stønadType = StønadType.OVERGANGSSTØNAD,
+                                                      innsendingstidspunkt = null,
+                                                      vedlegg = listOf(vedlegg))
         val personIdent = "123456789010"
 
         val ettersendelseDto = EttersendelseDto(

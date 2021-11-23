@@ -16,7 +16,8 @@ import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Properties
+import java.util.UUID
 
 internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
@@ -77,7 +78,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @Test
     internal fun `overgangsstønad - mangler vedlegg`() {
         testOgVerifiserMelding(listOf(Dokumentasjonsbehov("", "", false, emptyList())),
-                               "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. Se hva som mangler og last opp vedlegg.")
+                               "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
+                               "Se hva som mangler og last opp vedlegg.")
     }
 
     @Test
@@ -132,7 +134,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                        fnr = FNR)
     }
 
-    private fun mockFeatureToggleMeldingDittNav(){
+    private fun mockFeatureToggleMeldingDittNav() {
         every { featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending") } returns false
     }
 

@@ -25,8 +25,7 @@ class StatistikkController(private val statistikkRepository: StatistikkRepositor
     fun søknader(): String {
         return statistikkRepository.antallSøknaderPerDokumentType()
                 .sortedWith(compareBy({ it.dato }, { it.type }))
-                .map { "${it.dato} ${String.format("%-${minSize}s", it.type)} ${it.antall}" }
-                .joinToString("\n")
+                .joinToString("\n") { "${it.dato} ${String.format("%-${minSize}s", it.type)} ${it.antall}" }
     }
 
 }

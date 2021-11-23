@@ -1,6 +1,10 @@
 package no.nav.familie.ef.mottak.service
 
-import io.mockk.*
+import io.mockk.CapturingSlot
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER

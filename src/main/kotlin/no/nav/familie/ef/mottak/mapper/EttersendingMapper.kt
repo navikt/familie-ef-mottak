@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.mapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.ettersending.EttersendingDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 

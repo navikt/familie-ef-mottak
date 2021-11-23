@@ -1,6 +1,10 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.kontrakter.ef.søknad.*
+import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Datoperiode
+import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
+import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -95,7 +99,7 @@ internal class FeltformatererTest {
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer Datoperiode korrekt`() {
-        val testverdi = Søknadsfelt("label", Datoperiode(LocalDate.of(2015, 2, 1), LocalDate.of(2018,7,14)))
+        val testverdi = Søknadsfelt("label", Datoperiode(LocalDate.of(2015, 2, 1), LocalDate.of(2018, 7, 14)))
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 

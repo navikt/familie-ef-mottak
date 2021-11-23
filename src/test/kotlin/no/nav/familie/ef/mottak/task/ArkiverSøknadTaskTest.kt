@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
-import java.util.*
+import java.util.Properties
+import java.util.UUID
 
 internal class ArkiverSøknadTaskTest {
 
@@ -87,7 +88,9 @@ internal class ArkiverSøknadTaskTest {
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
         val uuid = UUID.randomUUID()
-        arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = soknad.id, properties = Properties().apply { this["eventId"] = uuid }))
+        arkiverSøknadTaskTest.onCompletion(Task(type = "",
+                                                payload = soknad.id,
+                                                properties = Properties().apply { this["eventId"] = uuid }))
 
         assertNotEquals(uuid, slot.captured[1].metadata["eventID"])
     }

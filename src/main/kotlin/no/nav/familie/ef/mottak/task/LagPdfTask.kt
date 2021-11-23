@@ -18,11 +18,12 @@ class LagPdfTask(private val pdfService: PdfService,
 
     override fun onCompletion(task: Task) {
         taskRepository.save(Task(TaskType(TYPE).nesteHovedflytTask(),
-                                        task.payload,
-                                        task.metadata))
+                                 task.payload,
+                                 task.metadata))
     }
 
     companion object {
+
         const val TYPE = "lagPdf"
     }
 

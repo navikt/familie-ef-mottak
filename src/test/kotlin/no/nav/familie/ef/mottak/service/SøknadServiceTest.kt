@@ -8,17 +8,17 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.Testdata
-import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 
 class SøknadServiceImplTest {
 
     val søknadRepository = mockk<SøknadRepository>()
-    val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>()
+    private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>()
     val søknadService = SøknadService(søknadRepository, mockk(), mockk(), dokumentasjonsbehovRepository, mockk())
 
     @Test
@@ -38,9 +38,8 @@ class SøknadServiceImplTest {
 
         every { søknadRepository.findAllByFnr(fnr) } returns søknader
 
-        every { dokumentasjonsbehovRepository.findByIdOrNull(any()) } returns Dokumentasjonsbehov("123",
-                                                                                                  objectMapper.writeValueAsString(
-                                                                                                          forventetDokumentasjonsbehov))
+        every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
+                .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)
 

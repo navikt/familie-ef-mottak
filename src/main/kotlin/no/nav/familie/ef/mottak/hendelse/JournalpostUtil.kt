@@ -7,7 +7,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.log.IdUtils
 import no.nav.familie.log.mdc.MDCConstants
 import org.slf4j.MDC
-import java.util.*
+import java.util.Properties
 
 
 fun Journalpost.skalBehandles() = this.erTemaEnfOgTypeI() && this.journalstatus == Journalstatus.MOTTATT && this.gyldigKanal()
@@ -16,9 +16,11 @@ fun Journalpost.gyldigKanal() = this.kanal?.substring(0, 5) == "SKAN_" || this.k
 
 fun Journalpost.erTemaEnfOgTypeI() = this.tema == "ENF" && this.journalposttype == Journalposttype.I
 
-fun Journalpost.statusIkkeMottattLogString() = "Ignorerer journalhendelse hvor journalpost=${this.journalpostId} har status ${this.journalstatus}"
+fun Journalpost.statusIkkeMottattLogString() =
+        "Ignorerer journalhendelse hvor journalpost=${this.journalpostId} har status ${this.journalstatus}"
 
-fun Journalpost.ikkeGyldigKanalLogString() = "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
+fun Journalpost.ikkeGyldigKanalLogString() =
+        "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
 
 fun Journalpost.kanalMetricName(): String {
     return when {
@@ -54,7 +56,7 @@ fun Journalpost.metadata(): Properties {
     }
 }
 
-fun Journalpost.getJournalpostState() : JournalpostState {
+fun Journalpost.getJournalpostState(): JournalpostState {
     return if (!this.erTemaEnfOgTypeI()) {
         JournalpostState.UGYLDIG
     } else if (this.journalstatus != Journalstatus.MOTTATT) {
