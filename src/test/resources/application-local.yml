@@ -28,7 +28,7 @@ familie:
       url: http://localhost:8092/mockintegrasjoner/
     pdfgenerator:
       #url: http://localhost:8081/
-      url: https://familie-ef-dokgen.dev.intern.nav.no/
+      url: https://familie-brev.dev.intern.nav.no/
   dokument:
     url: http://localhost:8092/mockdokument/
 

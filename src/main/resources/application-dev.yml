@@ -23,7 +23,7 @@ familie:
     audience: dev-gcp:teamfamilie:familie-dokument
   ef:
     pdfgenerator:
-      url: http://familie-ef-maler
+      url: http://familie-brev
     integrasjoner:
       url: https://familie-integrasjoner.dev-fss-pub.nais.io/api
 
