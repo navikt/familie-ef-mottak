@@ -7,7 +7,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-interface EttersendingRepository : JpaRepository<Ettersending, UUID>{
+interface EttersendingRepository : JpaRepository<Ettersending, UUID> {
+
     fun findFirstByTaskOpprettetIsFalse(): Ettersending?
 
     fun findByJournalpostId(journalpostId: String): Ettersending?

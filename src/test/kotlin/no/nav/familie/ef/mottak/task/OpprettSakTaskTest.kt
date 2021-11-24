@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Properties
 
 internal class OpprettSakTaskTest {
 
@@ -36,7 +36,7 @@ internal class OpprettSakTaskTest {
     private val opprettSakTask = OpprettSakTask(taskRepository, sakService, dateTimeService, søknadRepository)
 
     private val saksnummer = "A01"
-    private val soknad = søknad(saksnummer = saksnummer,journalpostId = JOURNALPOST_DIGITALSØKNAD)
+    private val soknad = søknad(saksnummer = saksnummer, journalpostId = JOURNALPOST_DIGITALSØKNAD)
 
     private val soknadSlot = slot<Søknad>()
 

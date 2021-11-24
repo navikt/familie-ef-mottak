@@ -49,7 +49,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
 
     //Ikke endre til onCompletion
     private fun opprettNesteTask(task: Task, søknad: Søknad) {
-        val nesteTask = if (søknad?.saksnummer != null) {
+        val nesteTask = if (søknad.saksnummer != null) {
             Task(TaskType(TYPE).nesteHovedflytTask(), task.payload, task.metadata)
         } else {
             logger.warn("Det er allerede opprettet en sak for denne oppgaven - trolig gjort manuelt av saksbehandler")
@@ -73,6 +73,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
+
         const val TYPE = "opprettSak"
     }
 }

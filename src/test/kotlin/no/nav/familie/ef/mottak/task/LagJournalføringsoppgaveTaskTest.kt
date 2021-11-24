@@ -22,7 +22,7 @@ internal class LagJournalføringsoppgaveTaskTest {
     fun `skal kalle lagJournalføringsoppgaveForSøknadId hvis task payload er gyldig uuid`() {
         val uuid = UUID.randomUUID().toString()
 
-        every { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid)} returns 1234L
+        every { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid) } returns 1234L
         every { taskRepository.save(any()) } answers { firstArg() }
         lagJournalføringsoppgaveTask.doTask(Task(type = "", payload = uuid, properties = Properties()))
 

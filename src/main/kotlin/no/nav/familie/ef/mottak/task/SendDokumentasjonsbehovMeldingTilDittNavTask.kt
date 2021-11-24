@@ -13,7 +13,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
@@ -22,7 +22,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
                                                    private val søknadService: SøknadService,
                                                    private val dittNavConfig: DittNavConfig,
                                                    private val ettersendingConfig: EttersendingConfig,
-                                                   private val featureToggleService: FeatureToggleService): AsyncTaskStep {
+                                                   private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -54,7 +54,10 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = søknadstypeTekst(søknadType)
         val søknadId = UUID.fromString(søknad.id)
-        val link = if(featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending")) ettersendingConfig.ettersendingUrl else link(søknadId);
+        val link =
+                if (featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending")) {
+                    ettersendingConfig.ettersendingUrl
+                } else link(søknadId)
         return when {
             manglerVedlegg(dokumentasjonsbehov) -> {
                 LinkMelding(link,
@@ -78,6 +81,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
     }
 
     companion object {
+
         const val TYPE = "sendMeldingTilDittNav"
     }
 

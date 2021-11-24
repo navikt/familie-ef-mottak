@@ -95,7 +95,7 @@ class SøknadTreeWalkerTest {
         val mapEttersending = SøknadTreeWalker.mapEttersending(Ettersending(stønadType = "OVERGANGSSTØNAD",
                                                                             fnr = "23118612345",
                                                                             ettersendingJson = "",
-        opprettetTid = LocalDateTime.of(2021,5,1,12,0)),
+                                                                            opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0)),
                                                                listOf("Lærlingkontrakt", "Utgifter til pass av barn"))
 
         generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending.json")

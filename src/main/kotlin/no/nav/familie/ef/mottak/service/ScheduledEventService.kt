@@ -19,7 +19,7 @@ class ScheduledEventService(private val søknadRepository: SøknadRepository,
 
     @Scheduled(initialDelay = 10000, fixedDelay = 60000)
     fun opprettTaskForSøknad() {
-        if(!prosesserongEnabled) return
+        if (!prosesserongEnabled) return
 
         val soknad = søknadRepository.findFirstByTaskOpprettetIsFalse()
         try {
@@ -34,7 +34,7 @@ class ScheduledEventService(private val søknadRepository: SøknadRepository,
 
     @Scheduled(initialDelay = 10000, fixedDelay = 60000)
     fun opprettTaskForEttersending() {
-        if(!prosesserongEnabled) return
+        if (!prosesserongEnabled) return
 
         val ettersending = ettersendingRepository.findFirstByTaskOpprettetIsFalse()
         try {

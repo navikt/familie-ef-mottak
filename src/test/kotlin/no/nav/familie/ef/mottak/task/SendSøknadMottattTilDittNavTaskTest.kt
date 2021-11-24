@@ -12,7 +12,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Properties
+import java.util.UUID
 
 internal class SendSøknadMottattTilDittNavTaskTest {
 
@@ -26,12 +27,12 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
         sendSøknadMottattTilDittNavTask =
-            SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
+                SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
         task = Task(
-            payload = SØKNAD_ID,
-            type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-            properties = properties
+                payload = SØKNAD_ID,
+                type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+                properties = properties
         )
     }
 
@@ -67,11 +68,11 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
             dittNavKafkaProducer.sendToKafka(
-                FNR,
-                forventetTekst,
-                task.payload,
-                EVENT_ID,
-                ""
+                    FNR,
+                    forventetTekst,
+                    task.payload,
+                    EVENT_ID,
+                    ""
             )
         }
     }
@@ -79,10 +80,10 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadService.get(SØKNAD_ID) } returns
                 Søknad(
-                    id = SØKNAD_ID,
-                    søknadJson = "",
-                    dokumenttype = søknadType.dokumentType,
-                    fnr = FNR
+                        id = SØKNAD_ID,
+                        søknadJson = "",
+                        dokumenttype = søknadType.dokumentType,
+                        fnr = FNR
                 )
     }
 

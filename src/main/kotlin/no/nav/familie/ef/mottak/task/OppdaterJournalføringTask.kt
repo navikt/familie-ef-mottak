@@ -24,6 +24,7 @@ class OppdaterJournalføringTask(private val taskRepository: TaskRepository,
     }
 
     companion object {
+
         const val TYPE = "oppdaterJournalføring"
     }
 }

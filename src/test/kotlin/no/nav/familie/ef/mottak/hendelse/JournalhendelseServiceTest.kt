@@ -53,7 +53,7 @@ class JournalhendelseServiceTest {
     @MockK(relaxed = true)
     lateinit var mockJournalføringsoppgaveService: JournalføringsoppgaveService
 
-    lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+    private lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     lateinit var service: JournalhendelseService
 

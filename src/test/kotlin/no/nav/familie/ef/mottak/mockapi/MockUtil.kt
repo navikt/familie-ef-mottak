@@ -10,7 +10,7 @@ import kotlin.reflect.full.declaredMemberProperties
  */
 fun clearAllMocks(instance: Any) {
     instance::class.declaredMemberProperties.forEach { property ->
-        if(property.annotations.any { it.annotationClass == MockK::class }) {
+        if (property.annotations.any { it.annotationClass == MockK::class }) {
             clearMocks(property.getter.call(instance)!!)
         }
     }

@@ -9,12 +9,12 @@ import javax.persistence.PreUpdate
 
 @Entity
 data class EttersendingVedlegg(@Id
-                   val id: UUID,
-                   val ettersendingId: UUID,
-                   val navn: String,
-                   val tittel: String,
-                   @Convert(converter = FileCryptoConverter::class)
-                   val innhold: Fil) {
+                               val id: UUID,
+                               val ettersendingId: UUID,
+                               val navn: String,
+                               val tittel: String,
+                               @Convert(converter = FileCryptoConverter::class)
+                               val innhold: Fil) {
 
     @PreUpdate private fun preUpdate() {
         throw UnsupportedOperationException(UPDATE_FEILMELDING)
@@ -22,6 +22,6 @@ data class EttersendingVedlegg(@Id
 
     companion object {
 
-        const val UPDATE_FEILMELDING: String = "Det går ikke å oppdatere vedlegg";
+        const val UPDATE_FEILMELDING: String = "Det går ikke å oppdatere vedlegg"
     }
 }

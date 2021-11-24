@@ -18,18 +18,18 @@ import org.springframework.kafka.support.LoggingProducerListener
 
 /**
  * Config for å nå brukernotifikasjon topic som fortsatt er on-prem. Denne klassen kan fjernes når topic er klar i aiven i prod.
-*/
+ */
 @EnableKafka
 @Configuration
 class DittNavKafkaConfig(
-    @Value("\${KAFKA_ONPREM_BOOTSTRAP_SERVERS}")
-    private val bootstrapServers: String,
-    @Value("\${KAFKA_ONPREM_SCHEMA_REGISTRY_URL}")
-    private val schemaRegistryUrl: String,
-    @Value("\${SERVICE_USER_USERNAME}")
-    private val username: String,
-    @Value("\${SERVICE_USER_PASSWORD}")
-    private val password: String
+        @Value("\${KAFKA_ONPREM_BOOTSTRAP_SERVERS}")
+        private val bootstrapServers: String,
+        @Value("\${KAFKA_ONPREM_SCHEMA_REGISTRY_URL}")
+        private val schemaRegistryUrl: String,
+        @Value("\${SERVICE_USER_USERNAME}")
+        private val username: String,
+        @Value("\${SERVICE_USER_PASSWORD}")
+        private val password: String
 ) {
 
     @Bean
@@ -42,7 +42,7 @@ class DittNavKafkaConfig(
         props[ProducerConfig.CLIENT_ID_CONFIG] = username
         props[KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = schemaRegistryUrl
         props[SaslConfigs.SASL_JAAS_CONFIG] =
-            "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$username\" password=\"$password\";"
+                "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$username\" password=\"$password\";"
         props[SaslConfigs.SASL_MECHANISM] = "PLAIN"
         props[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = "SASL_SSL"
 

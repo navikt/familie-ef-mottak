@@ -48,6 +48,7 @@ class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProduce
 
 
     companion object {
+
         const val TYPE = "sendSøknadMottattTilDittNav"
     }
 }

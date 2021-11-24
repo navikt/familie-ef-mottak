@@ -25,13 +25,14 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.Properties
 
 internal class OppdaterJournalføringTaskTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val arkiveringService: ArkiveringService = ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
+    private val arkiveringService: ArkiveringService =
+            ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
     private val taskRepository: TaskRepository = mockk()
     private val oppdaterJournalføringTask = OppdaterJournalføringTask(taskRepository, arkiveringService)
 
