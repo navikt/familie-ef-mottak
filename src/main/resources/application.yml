@@ -36,6 +36,8 @@ spring:
     enabled: true
     baseline-version: 6
     ignore-missing-migrations: true
+    placeholders:
+      ignoreIfLocal:
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
     username: ${DB_USERNAME}

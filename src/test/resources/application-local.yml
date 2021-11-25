@@ -4,6 +4,10 @@ server:
     context-path: /
 
 spring:
+  flyway:
+    enabled: true
+    placeholders:
+      ignoreIfLocal: --
   datasource:
     username: postgres
     password: test
