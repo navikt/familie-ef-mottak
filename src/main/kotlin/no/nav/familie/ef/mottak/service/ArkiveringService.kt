@@ -27,10 +27,14 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun journalførSøknad(søknadId: String): String {
+        logger.info("Henter ut søknad")
         val søknad: Søknad = søknadService.get(søknadId)
+        logger.info("Henter ut vedlegg")
         val vedlegg = vedleggRepository.findBySøknadId(søknad.id)
+        logger.info("Journalfører søknad med vedlegg")
         val journalpostId: String = send(søknad, vedlegg)
         val søknadMedJournalpostId = søknad.copy(journalpostId = journalpostId)
+        logger.info("Oppdaterer søknad med journalpostId")
         søknadService.lagreSøknad(søknadMedJournalpostId)
         return journalpostId
     }
