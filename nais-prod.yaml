@@ -79,7 +79,7 @@ spec:
       - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
         diskSize: 50
         diskAutoresize: true
-        tier: db-g1-small
+        tier: db-n1-standard-1
         cascadingDelete: false
         highAvailability: true
         maintenance:
