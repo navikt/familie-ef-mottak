@@ -232,10 +232,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         if (kanFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)) {
-            val mapperResponse = integrasjonerClient.finnMappe(FinnMappeRequest(tema = listOf(),
-                                                                                enhetsnr = ENHETSNUMMER_NAY,
-                                                                                opprettetFom = null,
-                                                                                limit = 1000))
+            val finnMappeRequest = FinnMappeRequest(tema = listOf(),
+                                                    enhetsnr = oppgave.tildeltEnhetsnr
+                                                               ?: error("Oppgave mangler tildelt enhetsnummer"),
+                                                    opprettetFom = null,
+                                                    limit = 1000)
+            val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
@@ -250,7 +252,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun kanFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
                                                        && oppgave.mappeId == null
-                                                       && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
+                                                       && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
+                                                           || oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT)
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
             oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
@@ -259,6 +262,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     companion object {
 
         private const val ENHETSNUMMER_NAY: String = "4489"
+        private const val ENHETSNUMMER_EGEN_ANSATT: String = "4483"
     }
 
 }
