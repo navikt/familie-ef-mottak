@@ -79,8 +79,12 @@ spec:
       - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
         diskSize: 50
         diskAutoresize: true
-        tier: db-custom-2-7680
+        tier: db-n1-standard-1
         cascadingDelete: false
+        highAvailability: true
+        maintenance:
+          day: 1
+          hour: 4
         databases:
           - name: familie-ef-mottak
             envVarPrefix: DB
