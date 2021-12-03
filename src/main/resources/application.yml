@@ -13,14 +13,20 @@ spring:
     allow-bean-definition-overriding: true
     banner-mode: "off"
   kafka:
-    client-id: familie-ef-mottak
-    bootstrap-servers: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+    bootstrap-servers: ${KAFKA_BROKERS}
     properties:
-      schema.registry.url: https://kafka-schema-registry.nais.adeo.no
-      security.protocol: SASL_SSL
-      sasl:
-        mechanism: PLAIN
-        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SERVICE_USER_USERNAME}" password="${SERVICE_USER_PASSWORD}";
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY}
+      security:
+        protocol: SSL
+      ssl:
+        keystore:
+          type: PKCS12
+          location: ${KAFKA_KEYSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
+        truststore:
+          type: PKCS12
+          location: ${KAFKA_TRUSTSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
@@ -97,7 +103,7 @@ database:
 INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
 EF_SAK_URL: http://familie-ef-sak
 
-JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-p
+JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
 KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
 KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
 

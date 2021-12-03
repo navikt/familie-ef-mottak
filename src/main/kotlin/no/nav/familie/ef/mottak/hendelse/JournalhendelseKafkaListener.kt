@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer,
-                                   private val featureToggleService: FeatureToggleService,
-                                   private val hendelsesloggRepository: HendelsesloggRepository) {
+class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer) {
 
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
