@@ -20,7 +20,6 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
 
     fun håndterHendelse(consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         try {
-            logger.info("Hendelse mottatt. Hendelsetype: ${consumerRecord.value().hendelsesType}")
             val hendelseRecord = consumerRecord.value()
             val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()
             MDC.put(MDCConstants.MDC_CALL_ID, callId)
