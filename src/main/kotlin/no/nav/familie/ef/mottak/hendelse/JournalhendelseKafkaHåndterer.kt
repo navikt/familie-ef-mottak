@@ -18,7 +18,7 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
     val feilCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.feilet")
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseKafkaListener::class.java)
 
-    fun håndterHendelse(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
+    fun håndterHendelse(consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         try {
             val hendelseRecord = consumerRecord.value()
             val callId = hendelseRecord.kanalReferanseId.toStringOrNull() ?: IdUtils.generateId()

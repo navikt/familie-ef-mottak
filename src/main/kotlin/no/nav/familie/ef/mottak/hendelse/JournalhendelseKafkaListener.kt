@@ -21,7 +21,7 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    containerFactory = "kafkaJournalføringHendelseListenerContainerFactory",
                    idIsGroup = false,
                    groupId = "srvfamilie-ef-mot")
-    fun listen(consumerRecord: ConsumerRecord<Long, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
+    fun listen(consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
         kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 }

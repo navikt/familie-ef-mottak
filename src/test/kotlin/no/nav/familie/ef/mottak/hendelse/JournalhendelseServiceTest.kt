@@ -222,6 +222,6 @@ class JournalhendelseServiceTest {
         assertThat(slot.captured.offset).isEqualTo(OFFSET)
         assertThat(slot.captured.hendelseId).isEqualTo(journalføringHendelseRecord.hendelsesId)
         assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
+        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("JournalpostMottatt")
     }
 }
