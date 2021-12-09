@@ -21,7 +21,8 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun toJournalføringsoppgave(journalpost: Journalpost,
-                                behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+                                behandlesAvApplikasjon: BehandlesAvApplikasjon,
+                                enhet: String?) =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   journalpostId = journalpost.journalpostId,
@@ -31,11 +32,11 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
                                   behandlingstype = settBehandlingstype(journalpost),
                                   behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = journalpost.journalforendeEnhet,
+                                  enhetsnummer = journalpost.journalforendeEnhet ?: enhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
                                   tilordnetRessurs = null)
 
-    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): OpprettOppgaveRequest =
+    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon, enhet: String?): OpprettOppgaveRequest =
             OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
                                   saksId = null,
                                   tema = Tema.ENF,
@@ -44,7 +45,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
                                   fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
                                   beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
                                   behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = null,
+                                  enhetsnummer = enhet,
                                   behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
 
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
