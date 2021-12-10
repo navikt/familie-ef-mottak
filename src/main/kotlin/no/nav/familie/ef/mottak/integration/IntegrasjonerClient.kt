@@ -131,7 +131,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
      * Returnerer en liste med 0 eller 1 element - bruker beste match fra norg2
      */
     fun finnBehandlendeEnhetForPersonMedRelasjoner(fnr: String): List<Enhet> {
-        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
+        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetMedRelasjonerUri, PersonIdent(fnr)).getDataOrThrow()
     }
 
     fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {
