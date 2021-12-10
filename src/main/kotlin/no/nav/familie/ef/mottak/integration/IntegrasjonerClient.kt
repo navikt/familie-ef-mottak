@@ -270,7 +270,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
-        const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/{tema}/med-relasjoner/ENF"
+        const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/ENF/med-relasjoner"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"
         const val PATH_HENT_IDENTER = "personopplysning/v1/identer/ENF"
     }
