@@ -58,6 +58,9 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
     private val behandlendeEnhetUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
 
+    private val behandlendeEnhetMedRelasjonerUri =
+            UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER).build().toUri()
+
     private val journalpostsøkUri =
             UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_JOURNALPOST).build().toUri()
 
@@ -122,6 +125,13 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
         return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
+    }
+
+    /**
+     * Returnerer en liste med 0 eller 1 element - bruker beste match fra norg2
+     */
+    fun finnBehandlendeEnhetForPersonMedRelasjoner(fnr: String): List<Enhet> {
+        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetMedRelasjonerUri, PersonIdent(fnr)).getDataOrThrow()
     }
 
     fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {
@@ -260,6 +270,7 @@ class IntegrasjonerClient(@Qualifier("restTemplateAzure") operations: RestOperat
         const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
+        const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/ENF/med-relasjoner"
         const val PATH_INFOTRYGDSAK = "infotrygdsak"
         const val PATH_HENT_IDENTER = "personopplysning/v1/identer/ENF"
     }

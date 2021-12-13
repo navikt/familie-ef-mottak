@@ -79,8 +79,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon)
-        return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
+        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+        return opprettOppgave(opprettOppgave, journalpost)
     }
 
     fun settSaksnummerPåInfotrygdOppgave(oppgaveId: Long,
@@ -114,8 +114,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                 }
                 else -> {
                     val opprettOppgave =
-                            opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
-                    return opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave, journalpost)
+                            opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+                    return opprettOppgave(opprettOppgave, journalpost)
                 }
             }
         } else {
@@ -123,6 +123,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                               "fra MOTTATT til ${journalpost.journalstatus.name}")
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
+        }
+    }
+
+    private fun finnBehandlendeEnhet(journalpost: Journalpost): String? {
+        return finnPersonIdent(journalpost)?.let {
+            integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(it).firstOrNull()?.enhetId
         }
     }
 
@@ -136,8 +142,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun opprettOppgaveMedEnhetFraNorgEllerBrukNayHvisEnhetIkkeFinnes(opprettOppgave: OpprettOppgaveRequest,
-                                                                             journalpost: Journalpost): Long {
+    private fun opprettOppgave(opprettOppgave: OpprettOppgaveRequest,
+                               journalpost: Journalpost): Long {
 
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
@@ -146,14 +152,19 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             nyOppgave.oppgaveId
         } catch (httpStatusCodeException: HttpStatusCodeException) {
             if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
-                val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
-                log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                         "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=${ENHETSNUMMER_NAY}")
-                nyOppgave.oppgaveId
+                opprettOppgaveMedEnhetNAY(opprettOppgave, journalpost)
             } else {
                 throw httpStatusCodeException
             }
         }
+    }
+
+    private fun opprettOppgaveMedEnhetNAY(opprettOppgave: OpprettOppgaveRequest,
+                                          journalpost: Journalpost): Long {
+        val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
+        log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
+                 "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=${ENHETSNUMMER_NAY}")
+        return nyOppgave.oppgaveId
     }
 
     private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException: HttpStatusCodeException): Boolean {
