@@ -63,7 +63,7 @@ spec:
         - application: familie-brev
         - application: familie-dokument
       external:
-        - host: infotrygd-enslig-forsoerger.dev-fss-pub.nais.io
+        - host: familie-ef-infotrygd.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: kafka-schema-registry.nais-q.adeo.no
   env:
