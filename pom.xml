@@ -20,7 +20,7 @@
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>1.6.0</kotlin.version>
-        <springfox.version>3.0.0</springfox.version>
+        <springdoc.version>1.6.1</springdoc.version>
         <mockk.version>1.12.1</mockk.version>
         <felles.version>1.20211202083100_64f46dd</felles.version>
         <prosessering.version>1.20211025145734_17ac16f</prosessering.version>
@@ -99,9 +99,14 @@
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-kotlin</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

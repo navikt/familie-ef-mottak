@@ -35,7 +35,7 @@ import java.time.temporal.ChronoUnit
 @EntityScan(basePackages = ["no.nav.familie"])
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
-@EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
+@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableScheduling
 @Import(BearerTokenClientInterceptor::class,
         BearerTokenExchangeClientInterceptor::class,
