@@ -16,6 +16,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -56,6 +57,8 @@ internal class OppgaveServiceTest {
     @BeforeEach
     private fun init() {
         every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
+        every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
+        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(Enhet(enhetId = "4489", enhetNavn = "NAY"))
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
     }
 
@@ -94,7 +97,7 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
+        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, "4489")
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
         } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -115,7 +118,8 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD)
+        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns emptyList()
+        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, null)
 
 
         every {
@@ -147,7 +151,7 @@ internal class OppgaveServiceTest {
 
         oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART) }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART, "4489") }
     }
 
     @Test
@@ -161,7 +165,7 @@ internal class OppgaveServiceTest {
 
         oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
     }
 
     @Test
@@ -172,7 +176,7 @@ internal class OppgaveServiceTest {
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK) }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
     }
 
     @Test
@@ -184,7 +188,7 @@ internal class OppgaveServiceTest {
         every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns true
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD) }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
     }
 
     @Test
@@ -196,7 +200,7 @@ internal class OppgaveServiceTest {
         every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
     }
 
     private val ettersendingId = UUID.randomUUID().toString()
