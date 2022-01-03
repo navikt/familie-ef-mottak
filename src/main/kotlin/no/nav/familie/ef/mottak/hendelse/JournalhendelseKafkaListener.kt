@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer) : ConsumerSeekAware {
+class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer) {
 
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -21,19 +21,7 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    idIsGroup = false,
                    groupId = "srvfamilie-ef-mot")
     fun listen(consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
-        consumerRecord.timestamp()
         kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 
-
-    override fun onPartitionsAssigned(
-        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
-        callback: ConsumerSeekAware.ConsumerSeekCallback
-    ) {
-        assignments.keys.stream()
-            .filter { it.topic() == "teamdokumenthandtering.aapen-dok-journalfoering" }
-            .forEach {
-                callback.seekRelative("teamdokumenthandtering.aapen-dok-journalfoering", it.partition(), -20, false)
-            }
-    }
 }
