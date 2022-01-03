@@ -1,7 +1,5 @@
 package no.nav.familie.ef.mottak.hendelse
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
-import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.Logger
@@ -22,6 +20,7 @@ class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHån
                    idIsGroup = false,
                    groupId = "srvfamilie-ef-mot")
     fun listen(consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>, ack: Acknowledgment) {
+        consumerRecord.timestamp()
         kafkaHåndterer.håndterHendelse(consumerRecord, ack)
     }
 }
