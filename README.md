@@ -80,4 +80,4 @@ Les mer om postgres på nav [her](https://github.com/navikt/utvikling/blob/maste
 se [her](https://github.com/navikt/utvikling/blob/master/Vault.md). 
 
 ## Swagger 
-f.eks. http://localhost:8092/swagger-ui/index.html#
+f.eks. http://localhost:8092/swagger-ui.html

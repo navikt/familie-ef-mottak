@@ -58,6 +58,12 @@ spring:
 logging:
   config: "classpath:logback-spring.xml"
 
+springdoc:
+  packagesToScan: no.nav.familie.ef.mottak
+  pathsToMatch: /v3/api-docs,/api/**
+  swagger-ui:
+    disable-swagger-default-url: true
+
 management:
   endpoint.health.show-details: always
   endpoints.web:
@@ -102,7 +108,8 @@ database:
     # 16, 24 or 32 bytes
     key: ${DATABASEKEY}
 
-INFOTRYGD_REPLIKA_API_URL: https://infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
+INFOTRYGD_REPLIKA_API_URL: https://familie-ef-infotrygd.prod-fss-pub.nais.io
+INFOTRYGD_REPLIKA_SCOPE: api://prod-fss.teamfamilie.familie-ef-infotrygd/.default
 EF_SAK_URL: http://familie-ef-sak
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering

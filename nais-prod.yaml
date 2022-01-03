@@ -63,7 +63,7 @@ spec:
         - application: familie-brev
         - application: familie-dokument
       external:
-        - host: infotrygd-enslig-forsoerger.prod-fss-pub.nais.io
+        - host: familie-ef-infotrygd.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: kafka-schema-registry.nais.adeo.no
         - host: unleash.nais.io
@@ -79,7 +79,7 @@ spec:
       - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
         diskSize: 50
         diskAutoresize: true
-        tier: db-n1-standard-1
+        tier: db-custom-1-3840
         cascadingDelete: false
         highAvailability: true
         maintenance:
