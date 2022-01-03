@@ -8,7 +8,7 @@ import java.util.UUID
 
 fun journalføringHendelseRecord(
         journalpostId: String,
-        hendelseType: String = "MidlertidigJournalført",
+        hendelseType: String = "JournalpostMottatt",
         temaNytt: String = "ENF"
 ) =
         JournalfoeringHendelseRecord(

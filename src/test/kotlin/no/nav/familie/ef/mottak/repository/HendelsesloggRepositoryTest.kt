@@ -19,15 +19,9 @@ internal class HendelsesloggRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `skal hente max av kafka_offset`() {
         hendelsesloggRepository.save(Hendelseslogg(50, UUID.randomUUID().toString()))
-        hendelsesloggRepository.save(Hendelseslogg(200, UUID.randomUUID().toString()))
+        val hendelseId = UUID.randomUUID().toString()
+        hendelsesloggRepository.save(Hendelseslogg(200, hendelseId))
         hendelsesloggRepository.save(Hendelseslogg(100, UUID.randomUUID().toString()))
-        assertThat(hendelsesloggRepository.hentMaxOffset()).isEqualTo(200)
+        assertThat(hendelsesloggRepository.existsByHendelseId(hendelseId)).isTrue
     }
-
-    @Test
-    internal fun `hvis det ikke finnes offset i databasen fra tidligere har noe gått veldig galt`() {
-        assertThatThrownBy { hendelsesloggRepository.hentMaxOffset() }
-                .isInstanceOf(EmptyResultDataAccessException::class.java)
-    }
-
 }

@@ -180,9 +180,9 @@ class JournalhendelseServiceTest {
     }
 
     @Test
-    fun `Skal ignorere hendelse fordi den eksisterer i hendelseslogg da offset er det samme`() {
+    fun `Skal ignorere hendelse fordi hendelseId eksisterer i hendelseslogg-tabellen i db`() {
         val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
-        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET
+        every { mockHendelseloggRepository.existsByHendelseId(any()) } returns true
 
         service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
 
@@ -191,21 +191,10 @@ class JournalhendelseServiceTest {
         }
     }
 
-    @Test
-    fun `Skal ignorere hendelse fordi offset i databaser er høyere enn hendelserecord`() {
-        val journalføringhendelseRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
-        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET + 1
-
-        service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
-
-        verify(exactly = 0) {
-            mockHendelseloggRepository.save(any())
-        }
-    }
 
     @Test
     fun `Mottak av gyldig hendelse skal delegeres til service`() {
-        every { mockHendelseloggRepository.hentMaxOffset() } returns OFFSET - 1
+        every { mockHendelseloggRepository.existsByHendelseId(any()) } returns false
 
         every {
             mockTaskRepositoryUtvidet.existsByPayloadAndType(any(), any())
@@ -222,6 +211,6 @@ class JournalhendelseServiceTest {
         assertThat(slot.captured.offset).isEqualTo(OFFSET)
         assertThat(slot.captured.hendelseId).isEqualTo(journalføringHendelseRecord.hendelsesId)
         assertThat(slot.captured.metadata["journalpostId"]).isEqualTo(JOURNALPOST_PAPIRSØKNAD)
-        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("MidlertidigJournalført")
+        assertThat(slot.captured.metadata["hendelsesType"]).isEqualTo("JournalpostMottatt")
     }
 }

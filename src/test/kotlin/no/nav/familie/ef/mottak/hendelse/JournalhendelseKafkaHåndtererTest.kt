@@ -44,7 +44,7 @@ class JournalhendelseKafkaHåndtererTest {
         val consumerRecord = ConsumerRecord(
                 "topic", 1,
                 OFFSET,
-                42L, ugyldigHendelsetypeRecord
+                "42", ugyldigHendelsetypeRecord
         )
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
@@ -61,7 +61,7 @@ class JournalhendelseKafkaHåndtererTest {
 
         val consumerRecord = ConsumerRecord("topic", 1,
                                             OFFSET,
-                                            42L, ukjentTemaRecord)
+                                            "42", ukjentTemaRecord)
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
 
@@ -76,7 +76,7 @@ class JournalhendelseKafkaHåndtererTest {
         val consumerRecord = ConsumerRecord(
                 "topic", 1,
                 OFFSET,
-                42L, journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+                "42", journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
         )
         every {
             journalhendelseServiceMock.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
@@ -95,7 +95,7 @@ class JournalhendelseKafkaHåndtererTest {
     fun `send inn gyldig consumer record, forvent acknowledged`() {
         val consumerRecord = ConsumerRecord(
                 "topic", 1, OFFSET,
-                42L, journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+                "42", journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
         )
 
         every {

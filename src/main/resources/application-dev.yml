@@ -3,10 +3,6 @@ spring:
     enabled: true
     placeholders:
       ignoreIfProd:
-  kafka:
-    bootstrap-servers: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
-    properties:
-      schema.registry.url: https://kafka-schema-registry.nais-q.adeo.no/
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
     username: ${DB_USERNAME}
@@ -79,7 +75,6 @@ no.nav.security.jwt:
 INFOTRYGD_REPLIKA_API_URL: https://familie-ef-infotrygd.dev-fss-pub.nais.io
 INFOTRYGD_REPLIKA_SCOPE: api://dev-fss.teamfamilie.familie-ef-infotrygd/.default
 
-JOURNALFOERINGHENDELSE_V1_TOPIC_URL: aapen-dok-journalfoering-v1-q2
 dittnav.soknadfrontendUrl: https://www-q0.nav.no/familie/alene-med-barn/soknad
 dittnav.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
 
