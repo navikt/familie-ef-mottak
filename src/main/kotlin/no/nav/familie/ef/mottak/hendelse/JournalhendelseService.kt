@@ -31,7 +31,7 @@ class JournalhendelseService(
     fun prosesserNyHendelse(hendelseRecord: JournalfoeringHendelseRecord, offset: Long) {
 
         secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
-        if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(offset)) {
+        if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(hendelseRecord.hendelsesId.toString())) {
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {
                 val journalpost = journalpostClient.hentJournalpost(hendelseRecord.journalpostId.toString())
                 journalføringsoppgaveService.lagEksternJournalføringTask(journalpost)

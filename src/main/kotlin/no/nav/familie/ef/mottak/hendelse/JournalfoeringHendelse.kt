@@ -7,4 +7,4 @@ fun JournalfoeringHendelseRecord.skalProsesseres() = this.erTemaENF() && erHende
 fun JournalfoeringHendelseRecord.erTemaENF() = this.temaNytt?.toString() == "ENF"
 
 fun JournalfoeringHendelseRecord.erHendelsetypeGyldig() =
-        arrayOf("MidlertidigJournalført", "TemaEndret").contains(this.hendelsesType.toString())
+        arrayOf("JournalpostMottatt", "TemaEndret").contains(this.hendelsesType.toString())
