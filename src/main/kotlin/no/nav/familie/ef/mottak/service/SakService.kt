@@ -80,7 +80,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                 else -> integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
             }
 
-        } ?: true
+        } ?: false
 
         return !fagsakFinnesForStønad && erTilknyttetEnhet && !finnesIInfotrygd
     }
