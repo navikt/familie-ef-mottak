@@ -159,10 +159,10 @@ internal class SakServiceTest {
     }
 
     @Test
-    fun `skal ikke kunne opprette infotrygdsak for overgangsstønad hvis det ikke finnes enhet for søker`() {
+    fun `skal ikke kunne opprette infotrygdsak for barnetilsyn hvis det ikke finnes enhet for søker`() {
 
         val soknad = søknad(id = "1",
-                            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                             journalpostId = "15",
                             fnr = "123",
                             opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))

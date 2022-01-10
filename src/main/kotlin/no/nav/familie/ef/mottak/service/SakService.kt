@@ -74,7 +74,13 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             && gjelderStønad(stønadType, it)
         }
         val finnesIInfotrygd = finnesIInfotrygd(fnr, fagsakFinnesForStønad, stønadType)
-        val erTilknyttetEnhet = integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
+        val erTilknyttetEnhet = stønadType?.let {
+            when (it) {
+                StønadType.OVERGANGSSTØNAD -> true
+                else -> integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
+            }
+
+        } ?: false
 
         return !fagsakFinnesForStønad && erTilknyttetEnhet && !finnesIInfotrygd
     }
