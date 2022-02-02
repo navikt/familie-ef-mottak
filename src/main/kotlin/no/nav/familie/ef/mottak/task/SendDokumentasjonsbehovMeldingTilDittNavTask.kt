@@ -48,23 +48,18 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
 
     }
 
-    private fun link(søknadId: UUID) = "${dittNavConfig.soknadfrontendUrl}/innsendtsoknad?soknad=$søknadId"
-
     private fun lagLinkMelding(søknad: Søknad, dokumentasjonsbehov: List<Dokumentasjonsbehov>): LinkMelding {
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = søknadstypeTekst(søknadType)
-        val søknadId = UUID.fromString(søknad.id)
-        val link =
-                if (featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending")) {
-                    ettersendingConfig.ettersendingUrl
-                } else link(søknadId)
+
         return when {
             manglerVedlegg(dokumentasjonsbehov) -> {
-                LinkMelding(link,
+                LinkMelding(ettersendingConfig.ettersendingUrl,
                             "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
                             " Se hva som mangler og last opp vedlegg.")
             }
-            else -> LinkMelding(link, "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
+            else -> LinkMelding(ettersendingConfig.ettersendingUrl,
+                                "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
         }
     }
 
