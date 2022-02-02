@@ -39,7 +39,6 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                                                              mockk(relaxed = true),
                                                              mockk(relaxed = true),
                                                              featureToggleService)
-        mockFeatureToggleMeldingDittNav()
     }
 
     @Test
@@ -132,10 +131,6 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                        søknadJson = "",
                        dokumenttype = søknadType.dokumentType,
                        fnr = FNR)
-    }
-
-    private fun mockFeatureToggleMeldingDittNav() {
-        every { featureToggleService.isEnabled("familie.ef.mottak.melding-ditt-nav-til-ef-ettersending") } returns false
     }
 
     companion object {
