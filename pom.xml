@@ -27,7 +27,7 @@
         <confluent.version>7.0.1</confluent.version>
         <kontrakter.version>2.0_20220120144339_cc21190</kontrakter.version>
         <brukernotifikasjon-skjemas.version>1.2020.11.16-15.17-5f7495d2ba72</brukernotifikasjon-skjemas.version>
-        <token-validation.version>1.3.10</token-validation.version>
+        <token-validation.version>1.3.17</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
