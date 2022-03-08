@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.config.DittNavConfig
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -20,7 +19,6 @@ import java.util.UUID
                      beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
 class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNavKafkaProducer,
                                                    private val søknadService: SøknadService,
-                                                   private val dittNavConfig: DittNavConfig,
                                                    private val ettersendingConfig: EttersendingConfig,
                                                    private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
 
