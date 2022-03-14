@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
-import java.net.URI
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
@@ -20,8 +19,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
     @Value("\${KAFKA_TOPIC_DITTNAV}")
     private lateinit var topic: String
 
-
-    fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String, link: String?) {
+    fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String, link: URL?) {
         val nokkel = lagNøkkel(fnr, grupperingsnummer, eventId)
         val beskjed = lagBeskjed(melding, link)
 
@@ -46,7 +44,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
                     .withEventId(eventId)
                     .build()
 
-    private fun lagBeskjed(melding: String, link: String?): BeskjedInput {
+    private fun lagBeskjed(melding: String, link: URL?): BeskjedInput {
         val builder = BeskjedInputBuilder()
                 .withEksternVarsling(false)
                 .withSikkerhetsnivaa(4)
@@ -54,7 +52,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
                 .withTekst(melding)
                 .withTidspunkt(LocalDateTime.now(UTC))
 
-        if (link != null) builder.withLink(URL(link))
+        if (link != null) builder.withLink(link)
         return builder.build()
     }
 
