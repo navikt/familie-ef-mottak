@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import java.net.URI
+import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 
@@ -53,7 +54,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
                 .withTekst(melding)
                 .withTidspunkt(LocalDateTime.now(UTC))
 
-        if (link != null) builder.withLink(URI.create(link).toURL())
+        if (link != null) builder.withLink(URL(link))
         return builder.build()
     }
 
