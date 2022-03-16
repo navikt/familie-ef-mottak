@@ -24,7 +24,7 @@ class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProduce
                              lagLinkMelding(søknad.dokumenttype),
                              task.payload,
                              task.metadata["eventId"].toString(),
-                             "")
+                             null)
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 

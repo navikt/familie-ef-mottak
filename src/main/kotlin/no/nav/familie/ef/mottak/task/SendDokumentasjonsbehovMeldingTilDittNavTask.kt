@@ -12,6 +12,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.net.URL
 import java.util.UUID
 
 @Service
@@ -24,7 +25,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private data class LinkMelding(val link: String, val melding: String)
+    private data class LinkMelding(val link: URL, val melding: String)
 
     override fun doTask(task: Task) {
         val søknad = søknadService.get(task.payload)

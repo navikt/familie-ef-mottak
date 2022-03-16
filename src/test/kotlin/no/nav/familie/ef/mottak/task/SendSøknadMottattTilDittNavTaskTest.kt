@@ -72,7 +72,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                     forventetTekst,
                     task.payload,
                     EVENT_ID,
-                    ""
+                    null
             )
         }
     }

@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.Dokumentasjonsbe
 import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URL
 import java.time.LocalDateTime
 import java.util.Properties
 import java.util.UUID
@@ -103,7 +104,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
     private fun testOgVerifiserMelding(dokumentasjonsbehov: List<Dokumentasjonsbehov>,
                                        forventetMelding: String,
-                                       link: String? = null) {
+                                       link: URL? = null) {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov, SøknadType.OVERGANGSSTØNAD)
 
