@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
@@ -9,22 +8,19 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpStatusCodeException
 
 @Service
 class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
@@ -150,11 +146,11 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
             log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
                      "journalpost journalpostId=${journalpost.journalpostId}")
             nyOppgave.oppgaveId
-        } catch (httpStatusCodeException: HttpStatusCodeException) {
-            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException)) {
+        } catch (ressursException: RessursException) {
+            if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(ressursException)) {
                 opprettOppgaveMedEnhetNAY(opprettOppgave, journalpost)
             } else {
-                throw httpStatusCodeException
+                throw ressursException
             }
         }
     }
@@ -167,17 +163,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return nyOppgave.oppgaveId
     }
 
-    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(httpStatusCodeException: HttpStatusCodeException): Boolean {
-        try {
-            val response: Ressurs<OppgaveResponse> = objectMapper.readValue(httpStatusCodeException.responseBodyAsString)
-            val feilmelding = response.melding
-            secureLogger.warn("Feil ved oppretting av oppgave $feilmelding")
-            return feilmelding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
-        } catch (e: Exception) {
-            secureLogger.error("Feilet ved parsing av feilstatus", e)
-            throw httpStatusCodeException
-        }
-
+    private fun finnerIngenGyldigArbeidsfordelingsenhetForBruker(ressursException: RessursException): Boolean {
+        secureLogger.warn("Feil ved oppretting av oppgave ${ressursException.message}")
+        return ressursException.ressurs.melding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
     }
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {

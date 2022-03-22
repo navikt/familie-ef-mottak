@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
@@ -13,9 +14,11 @@ import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
@@ -25,12 +28,14 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.Sak
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
+import org.springframework.web.client.RestClientResponseException
 import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.util.UUID
@@ -97,13 +102,12 @@ internal class OppgaveServiceTest {
     @Test
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
-        val opprettOppgaveRequest = opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, "4489")
+        val opprettOppgaveRequest =
+                opprettOppgaveMapper.toJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, "4489")
+
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
-        } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
-                                          "Server error",
-                                          IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
-                                          Charset.defaultCharset())
+        } throws lagRessursException()
 
         every {
             integrasjonerClient.finnOppgaver(any(), any())
@@ -116,18 +120,15 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
+    fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil når enhet ikke blir funnet for bruker`() {
 
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns emptyList()
-        val behandleSakOppgaveRequest = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, null)
-
+        val behandleSakOppgaveRequest =
+                opprettOppgaveMapper.toBehandleSakOppgave(journalpost, BehandlesAvApplikasjon.INFOTRYGD, null)
 
         every {
             integrasjonerClient.lagOppgave(behandleSakOppgaveRequest)
-        } throws HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
-                                          "Server error",
-                                          IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
-                                          Charset.defaultCharset())
+        } throws lagRessursException()
 
         every {
             integrasjonerClient.finnOppgaver(any(), any())
@@ -137,6 +138,27 @@ internal class OppgaveServiceTest {
 
 
         assertEquals(1, oppgaveResponse)
+    }
+
+    private fun lagRessursException(): RessursException {
+        val httpServerErrorException = HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
+                                                                "Server error",
+                                                                IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
+                                                                Charset.defaultCharset())
+        return lesRessurs(httpServerErrorException)?.let { RessursException(it, httpServerErrorException) }!!
+    }
+
+
+    private fun lesRessurs(e: RestClientResponseException): Ressurs<Any>? {
+        return try {
+            if (e.responseBodyAsString.contains("status")) {
+                objectMapper.readValue<Ressurs<Any>>(e.responseBodyAsString)
+            } else {
+                null
+            }
+        } catch (ex: Exception) {
+            null
+        }
     }
 
     @Test
