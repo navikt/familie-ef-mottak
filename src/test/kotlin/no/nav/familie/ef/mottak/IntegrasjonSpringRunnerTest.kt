@@ -8,6 +8,7 @@ import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.util.DbContainerInitializer
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,17 +20,14 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
+@ContextConfiguration(initializers = [DbContainerInitializer::class])
 @SpringBootTest(classes = [ApplicationLocal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = [
-    "spring.datasource.url=jdbc:h2:mem:mottakdb;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=POSTGRESQL",
-    "spring.datasrouce.username=sa",
-    "spring.datasrouce.password=",
-    "spring.datasrouce.driver-class-name=org.h2.Driver"
-])
+@ActiveProfiles("local")
 abstract class IntegrasjonSpringRunnerTest {
 
     protected val listAppender = initLoggingEventListAppender()
@@ -51,9 +49,9 @@ abstract class IntegrasjonSpringRunnerTest {
     @AfterEach
     fun reset() {
         loggingEvents.clear()
-        dokumentasjonsbehovRepository.deleteAllInBatch()
-        vedleggRepository.deleteAllInBatch()
-        søknadRepository.deleteAllInBatch()
+        dokumentasjonsbehovRepository.deleteAll()
+        vedleggRepository.deleteAll()
+        søknadRepository.deleteAll()
         taskRepository.deleteAll()
         ettersendingVedleggRepository.deleteAll()
         ettersendingRepository.deleteAll()

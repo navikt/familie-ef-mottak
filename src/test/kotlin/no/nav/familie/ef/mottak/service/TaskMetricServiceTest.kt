@@ -10,11 +10,9 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
 import java.util.UUID
 
-@ActiveProfiles("local")
 internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var taskRepository: TaskRepository
