@@ -64,7 +64,7 @@ internal class EttersendingServiceTest {
         every { dokumentClient.hentVedlegg(vedlegg1.id) } returns dokument1
         every { dokumentClient.hentVedlegg(vedlegg2.id) } returns dokument2
         every {
-            ettersendingVedleggRepository.saveAll(capture(ettersendingVedleggSlot))
+            ettersendingVedleggRepository.insertAll(capture(ettersendingVedleggSlot))
         } answers { ettersendingVedleggSlot.captured }
         every {
             hint(Ettersending::class)
