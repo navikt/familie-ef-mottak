@@ -1,0 +1,5 @@
+ALTER TABLE task
+    ALTER COLUMN id SET DEFAULT NEXTVAL('task_seq');
+
+ALTER TABLE task_logg
+    ALTER COLUMN id SET DEFAULT NEXTVAL('task_logg_seq');
