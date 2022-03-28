@@ -20,7 +20,6 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
                 this[journalføringOppgaveIdKey] = oppgaveId.toString()
             }
         }
-        taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {
