@@ -19,9 +19,9 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `findFirstByTaskOpprettetIsFalse returnerer én soknad med taskOpprettet false`() {
 
-        søknadRepository.save(søknad())
-        søknadRepository.save(søknad())
-        søknadRepository.save(søknad(taskOpprettet = true))
+        søknadRepository.insert(søknad())
+        søknadRepository.insert(søknad())
+        søknadRepository.insert(søknad(taskOpprettet = true))
 
         val soknadUtenTask = søknadRepository.findFirstByTaskOpprettetIsFalse()
 
@@ -30,7 +30,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `findFirstByTaskOpprettetIsFalse takler null result`() {
-        søknadRepository.save(søknad(taskOpprettet = true))
+        søknadRepository.insert(søknad(taskOpprettet = true))
 
         val soknadUtenTask = søknadRepository.findFirstByTaskOpprettetIsFalse()
 
@@ -39,7 +39,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `findByJournalpostId skal returnere søknad`() {
-        søknadRepository.save(søknad(taskOpprettet = true, journalpostId = "123"))
+        søknadRepository.insert(søknad(taskOpprettet = true, journalpostId = "123"))
 
         val soknadUtenTask = søknadRepository.findByJournalpostId("123")
         assertThat(soknadUtenTask).isNotNull
@@ -47,7 +47,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `findByJournalpostId skal returnere null`() {
-        søknadRepository.save(søknad(taskOpprettet = true))
+        søknadRepository.insert(søknad(taskOpprettet = true))
         val soknadUtenTask = søknadRepository.findByJournalpostId("123")
         assertThat(soknadUtenTask).isNull()
     }
@@ -56,15 +56,15 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     internal fun `findAllByFnr returnerer flere søknader`() {
         val ident = "12345678"
 
-        val søknadOvergangsstønad = søknadRepository.save(Søknad(søknadJson = EncryptedString("kåre"),
-                                                                 fnr = ident,
-                                                                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                                                 taskOpprettet = true))
+        val søknadOvergangsstønad = søknadRepository.insert(Søknad(søknadJson = EncryptedString("kåre"),
+                                                                   fnr = ident,
+                                                                   dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                                                                   taskOpprettet = true))
 
-        val søknadBarnetilsyn = søknadRepository.save(Søknad(søknadJson = EncryptedString("kåre"),
-                                                             fnr = ident,
-                                                             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                                                             taskOpprettet = true))
+        val søknadBarnetilsyn = søknadRepository.insert(Søknad(søknadJson = EncryptedString("kåre"),
+                                                               fnr = ident,
+                                                               dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                                                               taskOpprettet = true))
 
         val søknader = søknadRepository.findAllByFnr(ident)
 

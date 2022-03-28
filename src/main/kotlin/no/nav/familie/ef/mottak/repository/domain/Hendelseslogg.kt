@@ -1,34 +1,34 @@
 package no.nav.familie.ef.mottak.repository.domain
 
-import no.nav.familie.prosessering.domene.PropertiesToStringConverter
+import no.nav.familie.prosessering.domene.PropertiesWrapper
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Transient
+import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDateTime
 import java.util.Properties
 import java.util.UUID
-import javax.persistence.Column
-import javax.persistence.Convert
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
-@Entity
-@Table(name = "HENDELSESLOGG")
 data class Hendelseslogg(
-        @Column(name = "kafka_offset")
+        @Column("kafka_offset")
         val offset: Long,
 
-        @Column(name = "hendelse_id")
+        @Column("hendelse_id")
         val hendelseId: String,
 
-        @Convert(converter = PropertiesToStringConverter::class)
-        @Column(name = "metadata")
-        val metadata: Properties = Properties(),
+        @Column("metadata")
+        val metadataWrapper: PropertiesWrapper = PropertiesWrapper(Properties()),
 
         @Id
         val id: UUID = UUID.randomUUID(),
 
-        @Column(name = "opprettet_tid", nullable = false, updatable = false)
+        @Column("opprettet_tid")
         val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
 
-        @Column(name = "ident", nullable = true)
+        @Column("ident")
         val ident: String? = null
-)
+) {
+
+    @Transient
+    val metadata: Properties = metadataWrapper.properties
+
+}

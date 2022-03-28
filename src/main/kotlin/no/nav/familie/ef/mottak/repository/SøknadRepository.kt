@@ -1,12 +1,14 @@
 package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import org.springframework.data.jpa.repository.JpaRepository
+import no.nav.familie.ef.mottak.repository.util.InsertUpdateRepository
+import no.nav.familie.ef.mottak.repository.util.RepositoryInterface
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface SøknadRepository : JpaRepository<Søknad, String> {
+interface SøknadRepository : RepositoryInterface<Søknad, String>,
+                             InsertUpdateRepository<Søknad> {
 
     fun findFirstByTaskOpprettetIsFalse(): Søknad?
 

@@ -1,13 +1,15 @@
 package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import org.springframework.data.jpa.repository.JpaRepository
+import no.nav.familie.ef.mottak.repository.util.InsertUpdateRepository
+import no.nav.familie.ef.mottak.repository.util.RepositoryInterface
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-interface EttersendingRepository : JpaRepository<Ettersending, UUID> {
+interface EttersendingRepository : RepositoryInterface<Ettersending, UUID>,
+                                   InsertUpdateRepository<Ettersending> {
 
     fun findFirstByTaskOpprettetIsFalse(): Ettersending?
 

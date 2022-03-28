@@ -26,13 +26,12 @@ class PdfService(private val søknadRepository: SøknadRepository,
                  private val pdfClient: PdfClient) {
 
     fun lagPdf(id: String) {
-
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.findTitlerBySøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
-        søknadRepository.saveAndFlush(oppdatertSoknad)
+        søknadRepository.update(oppdatertSoknad)
     }
 
     private fun lagFeltMap(innsending: Søknad, vedleggTitler: List<String>): Map<String, Any> {
@@ -62,6 +61,6 @@ class PdfService(private val søknadRepository: SøknadRepository,
     fun lagForsideForEttersending(ettersending: Ettersending, vedleggTitler: List<String>) {
         val feltMap = SøknadTreeWalker.mapEttersending(ettersending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
-        ettersendingRepository.saveAndFlush(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
+        ettersendingRepository.update(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
     }
 }

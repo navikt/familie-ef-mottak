@@ -1,34 +1,23 @@
 package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
-import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.persistence.Column
-import javax.persistence.Convert
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
-@Entity
-@Table(name = "soknad")
+@Table("soknad")
 data class Søknad(@Id
                   val id: String = UUID.randomUUID().toString(),
-                  @Convert(converter = StringValCryptoConverter::class)
-                  @Column(name = "soknad_json")
+                  @Column("soknad_json")
                   val søknadJson: EncryptedString,
-                  @Convert(converter = FileCryptoConverter::class)
-                  @Column(name = "soknad_pdf")
+                  @Column("soknad_pdf")
                   val søknadPdf: EncryptedFile? = null,
                   val dokumenttype: String,
-                  @Column(name = "journalpost_id")
                   val journalpostId: String? = null,
                   val saksnummer: String? = null,
                   val fnr: String,
-                  @Column(name = "task_opprettet")
                   val taskOpprettet: Boolean = false,
-                  @Column(name = "opprettet_tid")
                   val opprettetTid: LocalDateTime = LocalDateTime.now(),
-                  @Column(name = "behandle_i_ny_saksbehandling")
                   val behandleINySaksbehandling: Boolean = false)

@@ -1,11 +1,9 @@
 package no.nav.familie.ef.mottak.repository.domain
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Column
 
-@Entity
 data class Dokumentasjonsbehov(@Id
-                               @Column(name = "soknad_id")
+                               @Column("soknad_id")
                                val søknadId: String,
                                val data: String)

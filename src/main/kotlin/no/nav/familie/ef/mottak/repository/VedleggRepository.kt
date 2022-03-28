@@ -1,16 +1,18 @@
 package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
+import no.nav.familie.ef.mottak.repository.util.InsertUpdateRepository
+import no.nav.familie.ef.mottak.repository.util.RepositoryInterface
+import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface VedleggRepository : JpaRepository<Vedlegg, String> {
+interface VedleggRepository : RepositoryInterface<Vedlegg, String>,
+                              InsertUpdateRepository<Vedlegg> {
 
     fun findBySøknadId(søknadId: String): List<Vedlegg>
 
-    @Query(nativeQuery = true, value = "SELECT tittel FROM vedlegg WHERE soknad_id=:søknadId")
+    @Query("SELECT tittel FROM vedlegg WHERE soknad_id=:søknadId")
     fun findTitlerBySøknadId(søknadId: String): List<String>
 
 }

@@ -63,7 +63,7 @@ class JournalhendelseServiceTest {
         clearAllMocks(this)
 
         every {
-            mockHendelseloggRepository.save(any())
+            mockHendelseloggRepository.insert(any())
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
@@ -175,7 +175,7 @@ class JournalhendelseServiceTest {
         }
 
         verify(exactly = 1) {
-            mockHendelseloggRepository.save(any())
+            mockHendelseloggRepository.insert(any())
         }
     }
 
@@ -187,7 +187,7 @@ class JournalhendelseServiceTest {
         service.prosesserNyHendelse(journalføringhendelseRecord, OFFSET)
 
         verify(exactly = 0) {
-            mockHendelseloggRepository.save(any())
+            mockHendelseloggRepository.insert(any())
         }
     }
 
@@ -204,7 +204,7 @@ class JournalhendelseServiceTest {
 
         val slot = slot<Hendelseslogg>()
         verify(exactly = 1) {
-            mockHendelseloggRepository.save(capture(slot))
+            mockHendelseloggRepository.insert(capture(slot))
         }
 
         assertThat(slot.captured).isNotNull

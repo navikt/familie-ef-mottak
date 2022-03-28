@@ -110,9 +110,10 @@ class JournalføringsoppgaveServiceTest {
 
         every { journalpost.journalstatus } returns Journalstatus.MOTTATT
         every { journalpost.kanal } returns "NAV_NO"
-        every { mockEttersendingRepository.findByJournalpostId(any()) } returns Ettersending(ettersendingJson = EncryptedString(""),
-                                                                                             stønadType = "OVERGANGSSTØNAD",
-                                                                                             fnr = "")
+        every { mockEttersendingRepository.findByJournalpostId(any()) } returns
+                Ettersending(ettersendingJson = EncryptedString(""),
+                             stønadType = "OVERGANGSSTØNAD",
+                             fnr = "")
 
         service.lagEksternJournalføringTask(journalpost)
 

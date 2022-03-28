@@ -68,7 +68,7 @@ internal class EttersendingServiceTest {
         } answers { ettersendingVedleggSlot.captured }
         every {
             hint(Ettersending::class)
-            ettersendingRepository.save(capture(ettersendingSlot))
+            ettersendingRepository.insert(capture(ettersendingSlot))
         } answers { ettersendingSlot.captured }
 
         ettersendingService.mottaEttersending(mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(dokumentasjonsbehov1,

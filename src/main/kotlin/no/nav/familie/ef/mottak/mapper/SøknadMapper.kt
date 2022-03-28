@@ -20,7 +20,7 @@ object SøknadMapper {
     }
 
     fun fromDto(søknad: SøknadOvergangsstønad, behandleINySaksbehandling: Boolean): Søknad {
-        return Søknad(søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
+        return Søknad(søknadJson = EncryptedString(objectMapper.writeValueAsString (søknad)),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                       behandleINySaksbehandling = behandleINySaksbehandling)
