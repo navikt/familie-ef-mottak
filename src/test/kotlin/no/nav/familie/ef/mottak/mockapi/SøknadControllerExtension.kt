@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.mockapi
 
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.security.token.support.core.api.Unprotected
@@ -22,7 +22,7 @@ class SøknadControllerExtension(val søknadService: SøknadService) {
     }
 
     @GetMapping("{id}/pdf")
-    fun getPdf(@PathVariable id: String): Fil? {
+    fun getPdf(@PathVariable id: String): EncryptedFile? {
         return søknadService.get(id).søknadPdf
     }
 }

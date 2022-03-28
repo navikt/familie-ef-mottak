@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.repository
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import org.assertj.core.api.Assertions.assertThat
@@ -57,12 +58,12 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     internal fun `findAllByFnr returnerer flere søknader`() {
         val ident = "12345678"
 
-        val søknadOvergangsstønad = søknadRepository.save(Søknad(søknadJson = "kåre",
+        val søknadOvergangsstønad = søknadRepository.save(Søknad(søknadJson = EncryptedString("kåre"),
                                                                  fnr = ident,
                                                                  dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                                                                  taskOpprettet = true))
 
-        val søknadBarnetilsyn = søknadRepository.save(Søknad(søknadJson = "kåre",
+        val søknadBarnetilsyn = søknadRepository.save(Søknad(søknadJson = EncryptedString("kåre"),
                                                              fnr = ident,
                                                              dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                                                              taskOpprettet = true))

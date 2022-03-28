@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
@@ -41,7 +41,7 @@ class EttersendingService(
     fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> {
 
         return ettersendingRepository.findAllByFnr(personIdent.ident).map {
-            objectMapper.readValue(it.ettersendingJson)
+            objectMapper.readValue(it.ettersendingJson.data)
         }
     }
 
@@ -54,7 +54,7 @@ class EttersendingService(
                             ettersendingId = ettersendingDbId,
                             navn = vedlegg.navn,
                             tittel = vedlegg.tittel,
-                            innhold = Fil(dokumentClient.hentVedlegg(vedlegg.id))
+                            innhold = EncryptedFile(dokumentClient.hentVedlegg(vedlegg.id))
                     )
                 }
             }

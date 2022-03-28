@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.mockapi.clearAllMocks
@@ -109,7 +110,7 @@ class JournalføringsoppgaveServiceTest {
 
         every { journalpost.journalstatus } returns Journalstatus.MOTTATT
         every { journalpost.kanal } returns "NAV_NO"
-        every { mockEttersendingRepository.findByJournalpostId(any()) } returns Ettersending(ettersendingJson = "",
+        every { mockEttersendingRepository.findByJournalpostId(any()) } returns Ettersending(ettersendingJson = EncryptedString(""),
                                                                                              stønadType = "OVERGANGSSTØNAD",
                                                                                              fnr = "")
 

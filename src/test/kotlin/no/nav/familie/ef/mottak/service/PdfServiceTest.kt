@@ -8,11 +8,12 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -29,7 +30,7 @@ internal class PdfServiceTest {
     private val pdfClient: PdfClient = mockk()
     private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient)
 
-    private val pdf = Fil("321".toByteArray())
+    private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
     private val søknadOvergangsstønad = Søknad(id = søknadOvergangsstønadId,
                                                søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
@@ -103,10 +104,10 @@ internal class PdfServiceTest {
         }
     }
 
-    private fun pdfClientVilReturnere(pdf: Fil) {
+    private fun pdfClientVilReturnere(pdf: EncryptedFile) {
         every {
             pdfClient.lagPdf(any())
-        } returns pdf
+        } returns pdf.bytes
     }
 
     private fun søknadsRepositoryVilReturnere(vararg søknad: Søknad) {
@@ -117,8 +118,8 @@ internal class PdfServiceTest {
         }
     }
 
-    private fun createValidSøknadJson(søknad: Any): String {
-        return objectMapper.writeValueAsString(søknad)
+    private fun createValidSøknadJson(søknad: Any): EncryptedString {
+        return EncryptedString(objectMapper.writeValueAsString(søknad))
     }
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {

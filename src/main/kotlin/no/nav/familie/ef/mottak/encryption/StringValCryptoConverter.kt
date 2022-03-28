@@ -1,12 +1,14 @@
 package no.nav.familie.ef.mottak.encryption
 
-class StringValCryptoConverter : AbstractCryptoConverter<String?>() {
+data class EncryptedString(val data: String)
 
-    override fun byteArrayToEntityAttribute(dbData: ByteArray?): String? {
-        return dbData?.let { String(it) }
+class StringValCryptoConverter : AbstractCryptoConverter<EncryptedString?>() {
+
+    override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedString? {
+        return dbData?.let { EncryptedString(String(it)) }
     }
 
-    override fun entityAttributeToByteArray(attribute: String?): ByteArray? {
-        return attribute?.toByteArray()
+    override fun entityAttributeToByteArray(attribute: EncryptedString?): ByteArray? {
+        return attribute?.data?.toByteArray()
     }
 }

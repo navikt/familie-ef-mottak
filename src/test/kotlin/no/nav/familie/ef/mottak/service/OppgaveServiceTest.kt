@@ -6,13 +6,14 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.felles.StønadType
@@ -86,7 +87,7 @@ internal class OppgaveServiceTest {
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
             søknadService.get("123")
-        } returns Søknad(søknadJson = "{}",
+        } returns Søknad(søknadJson = EncryptedString("{}"),
                          dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                          journalpostId = "999",
                          fnr = Testdata.randomFnr())
@@ -250,8 +251,8 @@ internal class OppgaveServiceTest {
             )
 
     private val ettersending = Ettersending(id = UUID.randomUUID(),
-                                            ettersendingJson = "",
-                                            ettersendingPdf = Fil("abc".toByteArray()),
+                                            ettersendingJson = EncryptedString(""),
+                                            ettersendingPdf = EncryptedFile("abc".toByteArray()),
                                             stønadType = "OVERGANGSSTØNAD",
                                             journalpostId = "123Abc",
                                             fnr = "12345678901",

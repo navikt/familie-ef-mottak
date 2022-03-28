@@ -4,6 +4,7 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
@@ -128,7 +129,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private fun mockSøknad(søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
         every { søknadService.get(SØKNAD_ID) } returns
                 Søknad(id = SØKNAD_ID,
-                       søknadJson = "",
+                       søknadJson = EncryptedString(""),
                        dokumenttype = søknadType.dokumentType,
                        fnr = FNR)
     }

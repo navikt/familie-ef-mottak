@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
@@ -54,11 +55,12 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
     @Test
     internal fun `skal ikke opprette ekstern journalføringstask hvis det finnes en ettersending for journalposten`() {
 
-        every { ettersendingRepository.findByJournalpostId(any()) } returns Ettersending(ettersendingJson = "{a:1}",
-                                                                                         stønadType = "OVERGANGSSTØNAD",
-                                                                                         journalpostId = "1",
-                                                                                         fnr = "",
-                                                                                         taskOpprettet = false)
+        every { ettersendingRepository.findByJournalpostId(any()) } returns
+                Ettersending(ettersendingJson = EncryptedString("{a:1}"),
+                             stønadType = "OVERGANGSSTØNAD",
+                             journalpostId = "1",
+                             fnr = "",
+                             taskOpprettet = false)
         every { søknadRepository.findByJournalpostId(any()) } returns null
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
 

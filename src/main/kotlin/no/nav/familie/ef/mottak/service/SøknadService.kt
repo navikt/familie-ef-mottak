@@ -9,7 +9,7 @@ import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
@@ -92,7 +92,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
                         søknadId = søknadDbId,
                         navn = it.navn,
                         tittel = it.tittel,
-                        innhold = Fil(dokumentClient.hentVedlegg(it.id)))
+                        innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)))
             }
 
     fun get(id: String): Søknad {

@@ -16,7 +16,7 @@ data class Vedlegg(@Id
                    val navn: String,
                    val tittel: String,
                    @Convert(converter = FileCryptoConverter::class)
-                   val innhold: Fil) {
+                   val innhold: EncryptedFile) {
 
     @PreUpdate private fun preUpdate() {
         throw UnsupportedOperationException(UPDATE_FEILMELDING)

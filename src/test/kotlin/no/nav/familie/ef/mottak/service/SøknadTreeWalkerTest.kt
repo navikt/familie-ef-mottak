@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil.readFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -94,7 +95,7 @@ class SøknadTreeWalkerTest {
     fun `map ettersending med vedlegg`() {
         val mapEttersending = SøknadTreeWalker.mapEttersending(Ettersending(stønadType = "OVERGANGSSTØNAD",
                                                                             fnr = "23118612345",
-                                                                            ettersendingJson = "",
+                                                                            ettersendingJson = EncryptedString(""),
                                                                             opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0)),
                                                                listOf("Lærlingkontrakt", "Utgifter til pass av barn"))
 
