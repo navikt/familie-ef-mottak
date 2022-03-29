@@ -20,21 +20,21 @@ object SøknadMapper {
     }
 
     fun fromDto(søknad: SøknadOvergangsstønad, behandleINySaksbehandling: Boolean): Søknad {
-        return Søknad(søknadJson = EncryptedString( objectMapper.writeValueAsString (søknad)),
+        return Søknad(søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                       behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
     fun fromDto(søknad: SøknadBarnetilsyn, behandleINySaksbehandling: Boolean): Søknad {
-        return Søknad(søknadJson = EncryptedString( objectMapper.writeValueAsString (søknad)),
+        return Søknad(søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
                       fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                       behandleINySaksbehandling = behandleINySaksbehandling)
     }
 
     fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad {
-        return Søknad(søknadJson = EncryptedString( objectMapper.writeValueAsString (skjemaForArbeidssøker)),
+        return Søknad(søknadJson = EncryptedString(objectMapper.writeValueAsString(skjemaForArbeidssøker)),
                       fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
                       dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                       behandleINySaksbehandling = false)
