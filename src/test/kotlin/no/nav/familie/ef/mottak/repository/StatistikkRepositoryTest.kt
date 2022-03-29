@@ -6,9 +6,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("local")
 internal class StatistikkRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var søknadRepository: SøknadRepository
