@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -30,7 +31,7 @@ class PdfService(private val søknadRepository: SøknadRepository,
         val vedleggTitler = vedleggRepository.findTitlerBySøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
-        val oppdatertSoknad = innsending.copy(søknadPdf = søknadPdf)
+        val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.saveAndFlush(oppdatertSoknad)
     }
 
@@ -61,6 +62,6 @@ class PdfService(private val søknadRepository: SøknadRepository,
     fun lagForsideForEttersending(ettersending: Ettersending, vedleggTitler: List<String>) {
         val feltMap = SøknadTreeWalker.mapEttersending(ettersending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
-        ettersendingRepository.saveAndFlush(ettersending.copy(ettersendingPdf = søknadPdf))
+        ettersendingRepository.saveAndFlush(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
     }
 }

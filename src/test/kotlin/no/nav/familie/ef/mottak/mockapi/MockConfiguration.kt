@@ -5,7 +5,6 @@ import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.PdfClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
-import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
@@ -27,10 +26,10 @@ class MockConfiguration {
     @Profile("mock-pdf")
     fun pdfClient(): PdfClient = object : PdfClient(mockk(), mockk()) {
 
-        override fun lagPdf(labelValueJson: Map<String, Any>): Fil {
+        override fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
             val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
             log.info("Creating pdf: $pdf")
-            return Fil(labelValueJson.toString().toByteArray())
+            return labelValueJson.toString().toByteArray()
         }
     }
 

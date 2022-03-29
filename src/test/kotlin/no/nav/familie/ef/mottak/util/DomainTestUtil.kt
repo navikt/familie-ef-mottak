@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import java.time.LocalDateTime
@@ -46,7 +47,7 @@ fun søknad(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(12),
 ) =
         Søknad(
                 id = id,
-                søknadJson = "",
+                søknadJson = EncryptedString(""),
                 fnr = fnr,
                 dokumenttype = dokumenttype,
                 opprettetTid = opprettetTid,

@@ -18,7 +18,7 @@ internal class StringValCryptoConverterTest {
     internal fun `convertToDatabaseColumn konverterer input til String for lagring i base og tilbake til identisk string`() {
         val string = "Bob Marley"
 
-        val convertToDatabaseColumn = stringValCryptoConverter.convertToDatabaseColumn(string)
+        val convertToDatabaseColumn = stringValCryptoConverter.convertToDatabaseColumn(EncryptedString(string))
 
         assertThat(convertToDatabaseColumn).isNotEqualTo("Bob Marley")
     }
@@ -29,7 +29,7 @@ internal class StringValCryptoConverterTest {
 
         val toDatabaseColumn = stringValCryptoConverter.convertToEntityAttribute(Base64.getDecoder().decode(string))
 
-        assertThat(toDatabaseColumn).isEqualTo("Bob Marley")
+        assertThat(toDatabaseColumn?.data).isEqualTo("Bob Marley")
     }
 
     @Test
@@ -38,14 +38,14 @@ internal class StringValCryptoConverterTest {
 
         val byteArrayToEntityAttribute = stringValCryptoConverter.byteArrayToEntityAttribute(byteArray)
 
-        assertThat(byteArrayToEntityAttribute).isEqualTo("bob")
+        assertThat(byteArrayToEntityAttribute?.data).isEqualTo("bob")
     }
 
     @Test
     fun entityAttributeToByteArray() {
         val byteArray = byteArrayOf('b'.code.toByte(), 'o'.code.toByte(), 'b'.code.toByte())
 
-        val entityAttributeToByteArray = stringValCryptoConverter.entityAttributeToByteArray("bob")
+        val entityAttributeToByteArray = stringValCryptoConverter.entityAttributeToByteArray(EncryptedString("bob"))
 
         assertThat(entityAttributeToByteArray).isEqualTo(byteArray)
     }

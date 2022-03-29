@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.integration
 
 
 import no.nav.familie.ef.mottak.config.PdfgeneratorConfig
-import no.nav.familie.ef.mottak.repository.domain.Fil
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,10 +16,9 @@ class PdfClient(@Qualifier("restTemplateUnsecured") operations: RestOperations,
                 private val pdfgeneratorConfig: PdfgeneratorConfig) :
         AbstractRestClient(operations, "pdf") {
 
-    fun lagPdf(labelValueJson: Map<String, Any>): Fil {
+    fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
         val sendInnUri =
                 DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/api/generer-soknad").build()
-        val byteArray = postForEntity<ByteArray>(sendInnUri, labelValueJson, HttpHeaders().medContentTypeJsonUTF8())
-        return Fil(byteArray)
+        return postForEntity(sendInnUri, labelValueJson, HttpHeaders().medContentTypeJsonUTF8())
     }
 }

@@ -38,7 +38,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
 
         assertThat(ettersendingRepository.count()).isEqualTo(1)
-        assertThat(objectMapper.readValue(ettersending.ettersendingJson, EttersendelseDto::class.java)).usingRecursiveComparison()
+        assertThat(objectMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java)).usingRecursiveComparison()
                 .isEqualTo(ettersendelseDto)
     }
 

@@ -4,8 +4,9 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.mapper.ArkiverDokumentRequestMapper.toDto
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata
@@ -54,11 +55,11 @@ internal class ArkiverDokumentRequestMapperTest {
     }
 
     private fun lagSøknad(søknad: Any, dokumenttype: String): Søknad = Søknad(
-            søknadJson = objectMapper.writeValueAsString(søknad),
+            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = "123",
-            søknadPdf = Fil(byteArrayOf(12)),
+            søknadPdf = EncryptedFile(byteArrayOf(12)),
             dokumenttype = dokumenttype
     )
 
-    private fun lagVedlegg() = Vedlegg(UUID.randomUUID(), "id", "navn", "tittel", Fil(byteArrayOf(12)))
+    private fun lagVedlegg() = Vedlegg(UUID.randomUUID(), "id", "navn", "tittel", EncryptedFile(byteArrayOf(12)))
 }

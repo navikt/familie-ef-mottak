@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.repository.domain
 
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
 import java.time.LocalDateTime
@@ -16,10 +17,10 @@ data class Søknad(@Id
                   val id: String = UUID.randomUUID().toString(),
                   @Convert(converter = StringValCryptoConverter::class)
                   @Column(name = "soknad_json")
-                  val søknadJson: String,
+                  val søknadJson: EncryptedString,
                   @Convert(converter = FileCryptoConverter::class)
                   @Column(name = "soknad_pdf")
-                  val søknadPdf: Fil? = null,
+                  val søknadPdf: EncryptedFile? = null,
                   val dokumenttype: String,
                   @Column(name = "journalpost_id")
                   val journalpostId: String? = null,

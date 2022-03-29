@@ -21,7 +21,7 @@ object ArkiverDokumentRequestMapper {
               vedlegg: List<Vedlegg>): ArkiverDokumentRequest {
         val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
-                Dokument(søknad.søknadJson.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
+                Dokument(søknad.søknadJson.data.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
                 Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, dokumenttype.dokumentTittel(), dokumenttype)
         val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)
@@ -54,7 +54,7 @@ object ArkiverDokumentRequestMapper {
             Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
         } ?: error("Mangler forside for ettersendingen")
 
-        val dokumentSomJson = Dokument(ettersending.ettersendingJson.toByteArray(), Filtype.JSON, null, tittel, dokumenttype)
+        val dokumentSomJson = Dokument(ettersending.ettersendingJson.data.toByteArray(), Filtype.JSON, null, tittel, dokumenttype)
 
         return listOf(dokumentSomPdf, dokumentSomJson)
     }

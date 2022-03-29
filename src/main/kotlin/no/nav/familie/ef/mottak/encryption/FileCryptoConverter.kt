@@ -1,15 +1,15 @@
 package no.nav.familie.ef.mottak.encryption
 
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 
 
-class FileCryptoConverter : AbstractCryptoConverter<Fil?>() {
+class FileCryptoConverter : AbstractCryptoConverter<EncryptedFile?>() {
 
-    override fun byteArrayToEntityAttribute(dbData: ByteArray?): Fil? {
-        return dbData?.let { Fil(it) }
+    override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedFile? {
+        return dbData?.let { EncryptedFile(it) }
     }
 
-    override fun entityAttributeToByteArray(attribute: Fil?): ByteArray? {
+    override fun entityAttributeToByteArray(attribute: EncryptedFile?): ByteArray? {
         return attribute?.bytes
     }
 }

@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.encryption
 
-import no.nav.familie.ef.mottak.repository.domain.Fil
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.Base64
@@ -9,7 +9,7 @@ internal class FilCryptoConverterTest {
 
     private val fileCryptoConverter: FileCryptoConverter
 
-    private val fil = Fil(ByteArray(50) { i -> (i * i).toByte() })
+    private val fil = EncryptedFile(ByteArray(50) { i -> (i * i).toByte() })
 
     init {
         KeyProperty("kdjeuyfjkekhndlknvfdekljnolrhsdo")

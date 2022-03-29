@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.repository.domain
 
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.encryption.FileCryptoConverter
 import no.nav.familie.ef.mottak.encryption.StringValCryptoConverter
 import java.time.LocalDateTime
@@ -16,9 +17,9 @@ data class Ettersending(
         @Id
         val id: UUID = UUID.randomUUID(),
         @Convert(converter = StringValCryptoConverter::class)
-        val ettersendingJson: String,
+        val ettersendingJson: EncryptedString,
         @Convert(converter = FileCryptoConverter::class)
-        val ettersendingPdf: Fil? = null,
+        val ettersendingPdf: EncryptedFile? = null,
         @Column(name = "stonad_type")
         val stønadType: String,
         val journalpostId: String? = null,
