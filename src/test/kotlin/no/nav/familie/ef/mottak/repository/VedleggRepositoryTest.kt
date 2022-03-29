@@ -10,11 +10,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.TransactionSystemException
 import java.util.UUID
 
-@ActiveProfiles("local")
 internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var søknadRepository: SøknadRepository

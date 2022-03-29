@@ -17,11 +17,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate
 import java.util.UUID
 
-@ActiveProfiles("local")
 internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired(required = true) lateinit var søknadService: SøknadService

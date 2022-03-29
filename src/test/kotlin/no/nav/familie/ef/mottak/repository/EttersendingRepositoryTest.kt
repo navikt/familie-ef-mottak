@@ -11,10 +11,8 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ActiveProfiles
 import java.util.UUID
 
-@ActiveProfiles("local")
 internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired
