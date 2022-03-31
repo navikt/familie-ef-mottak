@@ -44,7 +44,7 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id)
         val journalpostId: String = sendEttersending(ettersending, vedlegg)
         val ettersendingMedJournalpostId = ettersending.copy(journalpostId = journalpostId)
-        ettersendingService.lagreEttersending(ettersendingMedJournalpostId)
+        ettersendingService.oppdaterEttersending(ettersendingMedJournalpostId)
         return journalpostId
     }
 

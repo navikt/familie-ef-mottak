@@ -72,7 +72,7 @@ class EttersendingService(
         return ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
     }
 
-    fun lagreEttersending(ettersending: Ettersending) {
-        ettersendingRepository.insert(ettersending)
+    fun oppdaterEttersending(ettersending: Ettersending) {
+        ettersendingRepository.update(ettersending)
     }
 }
