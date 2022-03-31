@@ -138,7 +138,8 @@ class SøknadService(private val søknadRepository: SøknadRepository,
                                       søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype))
     }
 
-    fun lagreSøknad(søknad: Søknad) {
-        søknadRepository.insert(søknad)
+    fun oppdaterSøknad(søknad: Søknad) {
+        søknadRepository.update(søknad)
     }
+
 }

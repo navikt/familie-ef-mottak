@@ -47,7 +47,7 @@ internal class OpprettSakTaskTest {
         } returns soknad
         every { dateTimeService.now() } returns LocalDateTime.of(2020, 1, 1, 12, 0)
         every {
-            søknadRepository.insert(capture(soknadSlot))
+            søknadRepository.update(capture(soknadSlot))
         } returns soknad
     }
 

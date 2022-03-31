@@ -35,7 +35,7 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         val journalpostId: String = send(søknad, vedlegg)
         val søknadMedJournalpostId = søknad.copy(journalpostId = journalpostId)
         logger.info("Oppdaterer søknad med journalpostId")
-        søknadService.lagreSøknad(søknadMedJournalpostId)
+        søknadService.oppdaterSøknad(søknadMedJournalpostId)
         return journalpostId
     }
 
