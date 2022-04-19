@@ -19,7 +19,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          #cache: 'maven'
+          cache: 'maven'
       - name: Bygg (dependabot)
         if: github.actor == 'dependabot[bot]'
         env:
