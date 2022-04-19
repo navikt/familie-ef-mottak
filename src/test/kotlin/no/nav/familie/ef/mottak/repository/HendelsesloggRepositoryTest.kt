@@ -3,10 +3,8 @@ package no.nav.familie.ef.mottak.repository
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.EmptyResultDataAccessException
 import java.util.UUID
 
 internal class HendelsesloggRepositoryTest : IntegrasjonSpringRunnerTest() {
@@ -16,10 +14,10 @@ internal class HendelsesloggRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `skal hente max av kafka_offset`() {
-        hendelsesloggRepository.save(Hendelseslogg(50, UUID.randomUUID().toString()))
+        hendelsesloggRepository.insert(Hendelseslogg(50, UUID.randomUUID().toString()))
         val hendelseId = UUID.randomUUID().toString()
-        hendelsesloggRepository.save(Hendelseslogg(200, hendelseId))
-        hendelsesloggRepository.save(Hendelseslogg(100, UUID.randomUUID().toString()))
+        hendelsesloggRepository.insert(Hendelseslogg(200, hendelseId))
+        hendelsesloggRepository.insert(Hendelseslogg(100, UUID.randomUUID().toString()))
         assertThat(hendelsesloggRepository.existsByHendelseId(hendelseId)).isTrue
     }
 }

@@ -41,7 +41,6 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
             task.metadata.apply {
                 this[behandleSakOppgaveIdKey] = lagBehandleSakOppgave.toString()
             }
-            taskRepository.save(task)
         }
     }
 

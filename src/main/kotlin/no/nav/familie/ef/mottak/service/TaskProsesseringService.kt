@@ -32,7 +32,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
         taskRepository.save(Task(SendSøknadMottattTilDittNavTask.TYPE,
                                  søknad.id,
                                  properties))
-        søknadRepository.save(søknad.copy(taskOpprettet = true))
+        søknadRepository.update(søknad.copy(taskOpprettet = true))
     }
 
     @Transactional
@@ -44,7 +44,7 @@ class TaskProsesseringService(private val taskRepository: TaskRepository,
                 }
 
         taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties))
-        ettersendingRepository.save(ettersending.copy(taskOpprettet = true))
+        ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
     }
 }
 

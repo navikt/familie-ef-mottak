@@ -36,7 +36,7 @@ class OpprettSakTask(private val taskRepository: TaskRepository,
             val sakId = sakService.opprettSak(task.payload, oppgaveId)?.trim()
             val soknad = søknadRepository.findByIdOrNull(task.payload) ?: error("Søknad har forsvunnet!")
             val soknadMedSaksnummer = soknad.copy(saksnummer = sakId)
-            søknadRepository.save(soknadMedSaksnummer)
+            søknadRepository.update(soknadMedSaksnummer)
             opprettNesteTask(task, soknadMedSaksnummer)
         } catch (e: Exception) {
             if (erKlokkenMellom21Og06()) {

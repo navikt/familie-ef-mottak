@@ -27,7 +27,6 @@ class ArkiverEttersendingTask(private val arkiveringService: ArkiveringService,
             this["journalpostId"] = journalpostId
         }
         antallEttersendinger.increment()
-        taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {

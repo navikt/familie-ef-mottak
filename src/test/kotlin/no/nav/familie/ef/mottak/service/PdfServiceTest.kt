@@ -100,7 +100,7 @@ internal class PdfServiceTest {
         // Then
         verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
         verify(exactly = 1) {
-            søknadRepository.saveAndFlush(slot.captured)
+            søknadRepository.update(slot.captured)
         }
     }
 
@@ -124,7 +124,7 @@ internal class PdfServiceTest {
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {
         every {
-            søknadRepository.saveAndFlush(capture(slot))
+            søknadRepository.update(capture(slot))
         } answers {
             slot.captured
         }

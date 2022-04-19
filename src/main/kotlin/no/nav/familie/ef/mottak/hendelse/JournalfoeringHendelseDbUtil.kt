@@ -5,12 +5,13 @@ import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.prosessering.domene.PropertiesWrapper
 import no.nav.familie.prosessering.domene.Task
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepository,
@@ -21,10 +22,10 @@ class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepo
     @Transactional
     fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord, offset: Long): Hendelseslogg {
         return hendelseloggRepository
-                .save(Hendelseslogg(offset,
-                                    hendelseRecord.hendelsesId.toString(),
-                                    mapOf("journalpostId" to hendelseRecord.journalpostId.toString(),
-                                          "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties()))
+                .insert(Hendelseslogg(offset,
+                                      hendelseRecord.hendelsesId.toString(),
+                                      PropertiesWrapper( mapOf ("journalpostId" to hendelseRecord.journalpostId.toString(),
+                                      "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties())))
     }
 
     fun erHendelseRegistrertIHendelseslogg(hendelsesId: String) =
@@ -38,7 +39,7 @@ class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepo
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
         val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
                                       payload = journalpost.journalpostId,
-                                      metadata = journalpost.metadata())
+                                      properties = journalpost.metadata())
         taskRepository.save(journalføringsTask)
     }
 

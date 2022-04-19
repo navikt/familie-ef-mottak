@@ -24,11 +24,11 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
     @Test
     internal fun `lagre og hent dokumentasjonsbehov`() {
 
-        val søknad = søknadRepository.save(Søknad(søknadJson = EncryptedString("bob"),
-                                                  fnr = "ded",
-                                                  dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD))
+        val søknad = søknadRepository.insert(Søknad(søknadJson = EncryptedString("bob"),
+                                                    fnr = "ded",
+                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD))
 
-        dokumentasjonsbehovRepository.save(Dokumentasjonsbehov(søknad.id, "data"))
+        dokumentasjonsbehovRepository.insert(Dokumentasjonsbehov(søknad.id, "data"))
         val dokumentasjonsbehov = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         assertThat(dokumentasjonsbehov).isNotNull
         assertThat(dokumentasjonsbehov?.data).isEqualTo("data")

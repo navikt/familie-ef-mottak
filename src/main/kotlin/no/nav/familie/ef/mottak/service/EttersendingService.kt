@@ -6,9 +6,9 @@ import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
-import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
@@ -63,8 +63,8 @@ class EttersendingService(
             ettersendingDb: Ettersending,
             vedlegg: List<EttersendingVedlegg>,
     ) {
-        val lagretSkjema = ettersendingRepository.save(ettersendingDb)
-        ettersendingVedleggRepository.saveAll(vedlegg)
+        val lagretSkjema = ettersendingRepository.insert(ettersendingDb)
+        ettersendingVedleggRepository.insertAll(vedlegg)
         logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
     }
 
@@ -72,7 +72,7 @@ class EttersendingService(
         return ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
     }
 
-    fun lagreEttersending(ettersending: Ettersending) {
-        ettersendingRepository.save(ettersending)
+    fun oppdaterEttersending(ettersending: Ettersending) {
+        ettersendingRepository.update(ettersending)
     }
 }

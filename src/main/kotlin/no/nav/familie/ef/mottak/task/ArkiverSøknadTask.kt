@@ -29,7 +29,6 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
             this["journalpostId"] = journalpostId
         }
         logger.info("Journalfør søknad for task=${task.id}")
-        taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {

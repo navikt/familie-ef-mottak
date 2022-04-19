@@ -21,7 +21,6 @@ class LagJournalføringsoppgaveForEttersendingTask(private val oppgaveService: O
             }
 
         }
-        taskRepository.save(task)
     }
 
     override fun onCompletion(task: Task) {

@@ -75,12 +75,12 @@ class SøknadService(private val søknadRepository: SøknadRepository,
     private fun motta(søknadDb: Søknad,
                       vedlegg: List<Vedlegg>,
                       dokumentasjonsbehov: List<Dokumentasjonsbehov>): Kvittering {
-        val lagretSkjema = søknadRepository.save(søknadDb)
-        vedleggRepository.saveAll(vedlegg)
+        val lagretSkjema = søknadRepository.insert(søknadDb)
+        vedleggRepository.insertAll(vedlegg)
 
         val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(søknadId = lagretSkjema.id,
                                                                       data = objectMapper.writeValueAsString(dokumentasjonsbehov))
-        dokumentasjonsbehovRepository.save(databaseDokumentasjonsbehov)
+        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
@@ -102,7 +102,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
-        val lagretSkjema = søknadRepository.save(søknadDb)
+        val lagretSkjema = søknadRepository.insert(søknadDb)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
 
         return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
@@ -138,7 +138,8 @@ class SøknadService(private val søknadRepository: SøknadRepository,
                                       søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype))
     }
 
-    fun lagreSøknad(søknad: Søknad) {
-        søknadRepository.save(søknad)
+    fun oppdaterSøknad(søknad: Søknad) {
+        søknadRepository.update(søknad)
     }
+
 }

@@ -41,20 +41,18 @@ internal class LagBehandleSakOppgaveTaskTest {
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
-        val taskSlot = slot<Task>()
-
         every { sakService.finnesIkkeIInfotrygd(any()) } returns true
         every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD)
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
         every { oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD) } returns 99L
-        every { taskRepository.save(capture(taskSlot)) }.answers { taskSlot.captured }
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), any()) } returns false
 
-        lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+        val task = Task(type = "", payload = "123L", properties = Properties())
+        lagBehandleSakOppgaveTask.doTask(task)
         verify(exactly = 1) {
             oppgaveService.lagBehandleSakOppgave(any(), BehandlesAvApplikasjon.INFOTRYGD)
         }
-        assertThat(taskSlot.captured.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
+        assertThat(task.metadata[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey]).isEqualTo("99")
     }
 
     @Test

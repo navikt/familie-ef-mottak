@@ -34,11 +34,12 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val ettersendelseDto = EttersendelseDto(
                 listOf(dokumentasjonsbehov), personIdent = personIdent)
-        val ettersending = ettersendingRepository.save(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
+        val ettersending = ettersendingRepository.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
 
         assertThat(ettersendingRepository.count()).isEqualTo(1)
-        assertThat(objectMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java)).usingRecursiveComparison()
+        assertThat(objectMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java))
+                .usingRecursiveComparison()
                 .isEqualTo(ettersendelseDto)
     }
 

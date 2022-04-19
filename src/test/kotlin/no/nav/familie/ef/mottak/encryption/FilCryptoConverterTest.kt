@@ -7,21 +7,23 @@ import java.util.Base64
 
 internal class FilCryptoConverterTest {
 
-    private val fileCryptoConverter: FileCryptoConverter
+    private val fileCryptoReadingConverter: FileCryptoReadingConverter
+    private val fileCryptoWritingConverter: FileCryptoWritingConverter
 
-    private val fil = EncryptedFile(ByteArray(50) { i -> (i * i).toByte() })
+    private val encryptedFile = EncryptedFile(ByteArray(50) { i -> (i * i).toByte() })
 
     init {
         KeyProperty("kdjeuyfjkekhndlknvfdekljnolrhsdo")
-        fileCryptoConverter = FileCryptoConverter()
+        fileCryptoReadingConverter = FileCryptoReadingConverter()
+        fileCryptoWritingConverter = FileCryptoWritingConverter()
     }
 
 
     @Test
     internal fun `convertToDatabaseColumn konverterer input til String for lagring i base og tilbake til identisk string`() {
-        val convertToDatabaseColumn = fileCryptoConverter.convertToDatabaseColumn(fil)
+        val convertToDatabaseColumn = fileCryptoWritingConverter.convert(encryptedFile)
 
-        Assertions.assertThat(convertToDatabaseColumn).isNotEqualTo(fil)
+        Assertions.assertThat(convertToDatabaseColumn).isNotEqualTo(encryptedFile)
     }
 
     @Test
@@ -30,9 +32,9 @@ internal class FilCryptoConverterTest {
         val encrypted = "wIFKKv38vySQRm7Y9Pusv2lzEy9I9/IyM4/UkA2e7RiziKK2oVz1K/N" +
                         "uU8DyXHh2vZsWvkCz7Bx0VCMwbO0VEUt4shyTDxYhuB5OdV0Utrk="
 
-        val convertToEntityAttribute = fileCryptoConverter.convertToEntityAttribute(Base64.getDecoder().decode(encrypted))
+        val convertToEntityAttribute = fileCryptoReadingConverter.convert(Base64.getDecoder().decode(encrypted))
 
-        Assertions.assertThat(convertToEntityAttribute).isEqualTo(fil)
+        Assertions.assertThat(convertToEntityAttribute).isEqualTo(encryptedFile)
 
     }
 
