@@ -203,7 +203,7 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette oppgave med behandlesAvApplikasjon=EF_SAK_INFOTRYGD dersom det ikke finnes en behandling i ny løsning`() {
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette oppgave med behandlesAvApplikasjon=EF_SAK dersom det ikke finnes en behandling i ny løsning`() {
         every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
         every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
         every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
@@ -211,11 +211,11 @@ internal class OppgaveServiceTest {
         every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns true
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave med behandlesAvApplikasjon=INFOTRYGD dersom finnes en sak mot infotrygd fra før`() {
+    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave med behandlesAvApplikasjon=EF_SAK selvom finnes en sak mot infotrygd fra før`() {
         every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
         every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
         every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
@@ -223,7 +223,7 @@ internal class OppgaveServiceTest {
         every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
         oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
     }
 
     private val ettersendingId = UUID.randomUUID().toString()

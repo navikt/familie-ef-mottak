@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.ef.StønadType.*
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
@@ -201,9 +202,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun utledBehandlesAvApplikasjon(søknad: Søknad): BehandlesAvApplikasjon {
         log.info("utledBehandlesAvApplikasjon dokumenttype=${søknad.dokumenttype}")
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
+
         return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
-        } else if (søknad.behandleINySaksbehandling && sakService.finnesIkkeIInfotrygd(søknad)) {
+        } else if (søknad.behandleINySaksbehandling) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
@@ -212,7 +214,11 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     private fun utledBehandlesAvApplikasjonForEttersending(fnr: String, stønadType: StønadType): BehandlesAvApplikasjon {
         log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
-        return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
+
+        return if (stønadType == OVERGANGSSTØNAD) {
+            BehandlesAvApplikasjon.EF_SAK
+        }
+        else if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
