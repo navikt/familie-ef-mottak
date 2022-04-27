@@ -203,7 +203,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
         return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
-        } else if (søknad.behandleINySaksbehandling && sakService.finnesIkkeIInfotrygd(søknad)) {
+        } else if (søknad.behandleINySaksbehandling &&
+            (stønadType != StønadType.OVERGANGSSTØNAD || sakService.finnesIkkeIInfotrygd(søknad))
+        ) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
@@ -214,7 +216,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
         return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
-        } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType)) {
+        } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType) || stønadType != StønadType.OVERGANGSSTØNAD) {
             BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
@@ -263,7 +265,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         else -> error("Kan ikke utlede stønadstype for behangdlingstema $behandlingstema")
     }
 
-    private fun kanFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
+    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
                                                        && oppgave.mappeId == null
                                                        && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
