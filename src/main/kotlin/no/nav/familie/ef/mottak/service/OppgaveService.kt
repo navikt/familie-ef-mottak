@@ -231,7 +231,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
 
-        if (utledSkalFlyttesTilMappe(oppgave)) {
+        if (skalFlyttesTilMappe(oppgave)) {
             val finnMappeRequest = FinnMappeRequest(tema = listOf(),
                                                     enhetsnr = oppgave.tildeltEnhetsnr
                                                                ?: error("Oppgave mangler tildelt enhetsnummer"),
@@ -249,10 +249,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun utledSkalFlyttesTilMappe(oppgave: Oppgave): Boolean {
+    private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean {
         val stønadType = behandlingstemaTilStønadType(oppgave.behandlingstema)
 
-        return kanFlyttesTilMappe(oppgave)
+        return kanOppgaveFlyttesTilMappe(oppgave)
                 && (stønadType == StønadType.OVERGANGSSTØNAD || kanBehandlesINyLøsning(oppgave))
     }
 
@@ -263,7 +263,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         else -> error("Kan ikke utlede stønadstype for behangdlingstema $behandlingstema")
     }
 
-    private fun kanFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
+    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
                                                        && oppgave.mappeId == null
                                                        && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
