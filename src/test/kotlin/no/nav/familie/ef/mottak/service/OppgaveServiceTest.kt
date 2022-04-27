@@ -16,11 +16,11 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -30,8 +30,12 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.Sak
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
+import no.nav.familie.kontrakter.felles.oppgave.MappeDto
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -66,6 +70,17 @@ internal class OppgaveServiceTest {
         every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(Enhet(enhetId = "4489", enhetNavn = "NAY"))
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
+        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+            antallTreffTotalt = 1,
+            mapper = listOf(
+                MappeDto(
+                    id = 123,
+                    navn = "EF Sak 01",
+                    enhetsnr = ""
+                )
+            )
+        )
+        every { integrasjonerClient.oppdaterOppgave(any(), any()) } returns 123
     }
 
     @Test
@@ -226,6 +241,72 @@ internal class OppgaveServiceTest {
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
     }
 
+
+    // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om "BehandlesAvApplikasjon" er satt til infotrygd`(){
+        val oppgaveId: Long = 123
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+        )
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+    }
+
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`(){
+        val oppgaveId: Long = 123
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+        )
+
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+
+    }
+
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`(){
+        val oppgaveId: Long = 123
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+        )
+
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+
+    }
+
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`(){
+        val oppgaveId: Long = 123
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD)
+
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+
+    }
+
     private val ettersendingId = UUID.randomUUID().toString()
     private val journalpost =
             Journalpost(
@@ -260,5 +341,14 @@ internal class OppgaveServiceTest {
                                             opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2)
 
     )
+
+    private fun lagOppgaveForFordeling(id: Long? = null, behandlingstema: String, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+        Oppgave(
+            id = id,
+            behandlingstema = behandlingstema,
+            status = StatusEnum.OPPRETTET,
+            tildeltEnhetsnr = "4489",
+            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
+        )
 
 }
