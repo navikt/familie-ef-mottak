@@ -9,8 +9,8 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.http.client.RessursException
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.BrukerIdType
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
@@ -230,7 +230,8 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-        if (kanFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)) {
+
+        if (skalFlyttesTilMappe(oppgave)) {
             val finnMappeRequest = FinnMappeRequest(tema = listOf(),
                                                     enhetsnr = oppgave.tildeltEnhetsnr
                                                                ?: error("Oppgave mangler tildelt enhetsnummer"),
@@ -248,7 +249,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun kanFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
+    private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean {
+        val stønadType = behandlingstemaTilStønadType(oppgave.behandlingstema)
+
+        return kanOppgaveFlyttesTilMappe(oppgave)
+                && (stønadType == StønadType.OVERGANGSSTØNAD || kanBehandlesINyLøsning(oppgave))
+    }
+
+    private fun behandlingstemaTilStønadType(behandlingstema: String?): StønadType = when (behandlingstema) {
+        BEHANDLINGSTEMA_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
+        BEHANDLINGSTEMA_BARNETILSYN -> StønadType.BARNETILSYN
+        BEHANDLINGSTEMA_SKOLEPENGER -> StønadType.SKOLEPENGER
+        else -> error("Kan ikke utlede stønadstype for behangdlingstema $behandlingstema")
+    }
+
+    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
                                                        && oppgave.mappeId == null
                                                        && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
