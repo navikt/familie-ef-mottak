@@ -255,22 +255,12 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
 
-//    private fun kanFlyttesGittBehandlingstema(behandlingstema: String?): StønadType = when (behandlingstema) {
-//        BEHANDLINGSTEMA_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
-//        BEHANDLINGSTEMA_BARNETILSYN -> StønadType.BARNETILSYN
-//        BEHANDLINGSTEMA_SKOLEPENGER -> StønadType.SKOLEPENGER
-//        else -> error("Kan ikke utlede stønadstype for behangdlingstema $behandlingstema")
-//    }
 
     private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
                                                        && oppgave.mappeId == null
                                                        && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
                                                            || oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT)
-
-//    private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
-//            oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
-//            || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when(oppgave.behandlingstema) {
