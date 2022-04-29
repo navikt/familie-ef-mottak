@@ -373,6 +373,23 @@ internal class OppgaveServiceTest {
 
     }
 
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis behandlingstema er null (arbeidssøkerskjema)`(){
+        val oppgaveId: Long = 123
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = null,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+        )
+
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+
+    }
+
     private val ettersendingId = UUID.randomUUID().toString()
     private val journalpostOvergangsstøand =
             Journalpost(
@@ -454,7 +471,7 @@ internal class OppgaveServiceTest {
 
     )
 
-    private fun lagOppgaveForFordeling(id: Long? = null, behandlingstema: String, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+    private fun lagOppgaveForFordeling(id: Long? = null, behandlingstema: String?, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
         Oppgave(
             id = id,
             behandlingstema = behandlingstema,
