@@ -6,7 +6,8 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
-import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResultat
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
@@ -111,6 +112,12 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         return finnesIInfotrygd
     }
 
+    fun finnesIkkeÅpenSakIInfotrygd(personIdent: String, stønadType: StønadType): Boolean {
+        val sakerForStønad = infotrygdService.hentSaker(personIdent).saker.filter { it.stønadType == stønadType }
+
+        return sakerForStønad.none { it.resultat == InfotrygdSakResultat.ÅPEN_SAK }
+    }
+
     private fun gjelderStønad(stønadType: StønadType?, journalpost: Journalpost): Boolean {
         return when (stønadType) {
             StønadType.OVERGANGSSTØNAD -> harBrevkode(journalpost, DokumentBrevkode.OVERGANGSSTØNAD)
@@ -119,6 +126,7 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
             else -> false
         }
     }
+
 
     private fun harBrevkode(journalpost: Journalpost, dokumentBrevkode: DokumentBrevkode): Boolean {
         return journalpost.dokumenter
@@ -131,7 +139,6 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                        } ?: false
 
     }
-
 
     private fun lagOpprettInfotrygdSakRequest(søknad: Søknad, oppgaveId: String): OpprettInfotrygdSakRequest {
         val stønadsklassifisering = stønadsklassifiseringMap[søknad.dokumenttype]

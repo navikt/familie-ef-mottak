@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdFinnesResponse
+import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResponse
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSøkRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -21,12 +22,18 @@ class InfotrygdReplikaClient(@Value("\${INFOTRYGD_REPLIKA_API_URL}")
     private val eksistererUri: URI =
             UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/stonad/eksisterer").build().toUri()
 
+    private val finnSakerUri: URI =
+        UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/saker/finn").build().toUri()
     /**
      * Infotrygd skal alltid returnere en stønadTreff for hver søknadType som er input
      */
     fun finnesIInfotrygd(request: InfotrygdSøkRequest): InfotrygdFinnesResponse {
         require(request.personIdenter.isNotEmpty()) { "Identer har ingen verdier" }
         return postForEntity(eksistererUri, request)
+    }
+
+    fun hentSaker(request: InfotrygdSøkRequest): InfotrygdSakResponse {
+        return postForEntity(finnSakerUri, request)
     }
 
     override val pingUri: URI
