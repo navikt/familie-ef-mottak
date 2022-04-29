@@ -233,6 +233,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
 
+
         if (skalFlyttesTilMappe(oppgave)) {
             val finnMappeRequest = FinnMappeRequest(tema = listOf(),
                                                     enhetsnr = oppgave.tildeltEnhetsnr
@@ -251,19 +252,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean {
-        val stønadType = behandlingstemaTilStønadType(oppgave.behandlingstema)
+    private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
+        kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
 
-        return kanOppgaveFlyttesTilMappe(oppgave)
-                && (stønadType == StønadType.OVERGANGSSTØNAD || kanBehandlesINyLøsning(oppgave))
-    }
-
-    private fun behandlingstemaTilStønadType(behandlingstema: String?): StønadType = when (behandlingstema) {
-        BEHANDLINGSTEMA_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
-        BEHANDLINGSTEMA_BARNETILSYN -> StønadType.BARNETILSYN
-        BEHANDLINGSTEMA_SKOLEPENGER -> StønadType.SKOLEPENGER
-        else -> error("Kan ikke utlede stønadstype for behangdlingstema $behandlingstema")
-    }
 
     private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
                                                        && oppgave.status != StatusEnum.FERDIGSTILT
@@ -272,9 +263,14 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                                            || oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT)
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
-            oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
-            || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
-
+        when(oppgave.behandlingstema) {
+            BEHANDLINGSTEMA_OVERGANGSSTØNAD -> true
+            BEHANDLINGSTEMA_BARNETILSYN -> oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
+                    || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
+            BEHANDLINGSTEMA_SKOLEPENGER -> false
+            null -> false
+            else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
+        }
     companion object {
 
         private const val ENHETSNUMMER_NAY: String = "4489"
