@@ -24,10 +24,7 @@ class InfotrygdService(private val integrasjonerClient: IntegrasjonerClient,
     fun hentSaker(personIdent: String): InfotrygdSakResponse {
         val personIdenter = integrasjonerClient.hentIdenter(personIdent, true).map { it.personIdent }.toSet()
 
-        val response = infotrygdReplikaClient.hentSaker(InfotrygdSøkRequest(personIdenter))
-        return response.copy(saker = response.saker
-            .sortedWith(compareByDescending<InfotrygdSak, LocalDate?>(nullsLast()) { it.vedtaksdato }
-                            .thenByDescending(nullsLast()) { it.mottattDato }))
+        return infotrygdReplikaClient.hentSaker(InfotrygdSøkRequest(personIdenter))
     }
 
 }
