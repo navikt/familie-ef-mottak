@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
@@ -39,6 +40,7 @@ import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -79,6 +81,11 @@ internal class OppgaveServiceTest {
                 MappeDto(
                     id = 123,
                     navn = "EF Sak 01",
+                    enhetsnr = ""
+                ),
+                MappeDto(
+                    id = 456,
+                    navn = "EF Sak - 65 Opplæring - 100029732",
                     enhetsnr = ""
                 )
             )
@@ -433,6 +440,66 @@ internal class OppgaveServiceTest {
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+
+    }
+
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til opplæringsmappe hvis barnetilsyn og skal behandles i ny løsning`(){
+        val oppgaveId: Long = 123
+        val oppgaveSlot = slot<Oppgave>()
+        val mappeIdOpplæring = 456
+
+        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+            antallTreffTotalt = 1,
+            mapper = listOf(
+                MappeDto(
+                    id = mappeIdOpplæring,
+                    navn = "EF Sak - 65 Opplæring - 100029732",
+                    enhetsnr = ""
+                )
+            )
+        )
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+        )
+        every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
+
+    }
+
+    @Test
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til uplassertMappe hvis overgangsstønad`(){
+        val oppgaveId: Long = 123
+        val oppgaveSlot = slot<Oppgave>()
+        val mappeIdUplassert = 123
+
+        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+            antallTreffTotalt = 1,
+            mapper = listOf(
+                MappeDto(
+                    id = mappeIdUplassert,
+                    navn = "EF Sak 01",
+                    enhetsnr = ""
+                )
+            )
+        )
+
+        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+            id = oppgaveId,
+            behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+        )
+        every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
 
     }
 
