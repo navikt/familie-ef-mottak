@@ -8,7 +8,11 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
+import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSak
+import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResponse
+import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResultat
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
@@ -27,8 +31,10 @@ internal class SakServiceTest {
 
     private val søknadService: SøknadService = mockk()
 
+    private val infotrygdService: InfotrygdService = mockk(relaxed = true)
+
     private val sakService = SakService(integrasjonerClient,
-                                        mockk(relaxed = true),
+                                        infotrygdService,
                                         søknadService)
 
     private val enheterNay = listOf(Enhet("4489", "NAY"))
@@ -226,6 +232,52 @@ internal class SakServiceTest {
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
+    }
+
+    @Test
+    fun `finnesIkkeÅpenSakIInfotrygd skal returnere true hvis det ikke finnes åpen sak i infotrygd for aktuell stønadstype`() {
+
+        val personIdent = "123"
+        every { infotrygdService.hentSaker(personIdent) } returns InfotrygdSakResponse(
+            saker = listOf(
+                InfotrygdSak(
+                    personIdent = personIdent,
+                    stønadType = StønadType.OVERGANGSSTØNAD,
+                    resultat = InfotrygdSakResultat.INNVILGET
+                ),
+                InfotrygdSak(
+                    personIdent = personIdent,
+                    stønadType = StønadType.SKOLEPENGER,
+                    resultat = InfotrygdSakResultat.ÅPEN_SAK
+                )
+            )
+        )
+
+        assertThat(sakService.finnesIkkeÅpenSakIInfotrygd(personIdent, StønadType.OVERGANGSSTØNAD)).isTrue
+
+    }
+
+    @Test
+    fun `finnesIkkeÅpenSakIInfotrygd skal returnere false hvis det finnes åpen sak i infotrygd for aktuell stønadstype`() {
+
+        val personIdent = "123"
+        every { infotrygdService.hentSaker(personIdent) } returns InfotrygdSakResponse(
+            saker = listOf(
+                InfotrygdSak(
+                    personIdent = personIdent,
+                    stønadType = StønadType.OVERGANGSSTØNAD,
+                    resultat = InfotrygdSakResultat.INNVILGET
+                ),
+                InfotrygdSak(
+                    personIdent = personIdent,
+                    stønadType = StønadType.SKOLEPENGER,
+                    resultat = InfotrygdSakResultat.ÅPEN_SAK
+                )
+            )
+        )
+
+        assertThat(sakService.finnesIkkeÅpenSakIInfotrygd(personIdent, StønadType.SKOLEPENGER)).isFalse
+
     }
 
     private fun opprettInfotrygdSakRequest(stønadsklassifisering: String) =

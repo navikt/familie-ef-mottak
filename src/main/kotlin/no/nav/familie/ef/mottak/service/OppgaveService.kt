@@ -4,6 +4,7 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.*
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -61,7 +62,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         try {
             log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
-                    if (finnesBehandlingForPerson) BehandlesAvApplikasjon.UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
+                    if (finnesBehandlingForPerson) UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
             return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
@@ -84,9 +85,9 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                                          saksnummer: String): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
-                saksreferanse = saksnummer,
-                beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_BLANKETT.applikasjon,
+            saksreferanse = saksnummer,
+            beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
+            behandlesAvApplikasjon = EF_SAK_BLANKETT.applikasjon,
         )
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
@@ -203,12 +204,13 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: return BehandlesAvApplikasjon.INFOTRYGD
         return if (finnesBehandlingINyLøsning(søknad.fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
-        } else if (søknad.behandleINySaksbehandling &&
-            (stønadType != StønadType.OVERGANGSSTØNAD || sakService.finnesIkkeIInfotrygd(søknad))
-        ) {
-            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         } else {
-            BehandlesAvApplikasjon.INFOTRYGD
+            when (stønadType) {
+                StønadType.OVERGANGSSTØNAD ->
+                    if (sakService.finnesIkkeIInfotrygd(søknad)) EF_SAK_INFOTRYGD else BehandlesAvApplikasjon.INFOTRYGD
+                StønadType.BARNETILSYN, StønadType.SKOLEPENGER ->
+                    if (sakService.finnesIkkeÅpenSakIInfotrygd(søknad.fnr, stønadType)) EF_SAK_INFOTRYGD else BehandlesAvApplikasjon.INFOTRYGD
+            }
         }
     }
 
@@ -217,7 +219,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType) || stønadType != StønadType.OVERGANGSSTØNAD) {
-            BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            EF_SAK_INFOTRYGD
         } else {
             BehandlesAvApplikasjon.INFOTRYGD
         }
@@ -266,7 +268,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         when(oppgave.behandlingstema) {
             BEHANDLINGSTEMA_OVERGANGSSTØNAD -> true
             BEHANDLINGSTEMA_BARNETILSYN -> oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
-                    || oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK_INFOTRYGD.applikasjon
+                    || oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
             BEHANDLINGSTEMA_SKOLEPENGER -> false
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
