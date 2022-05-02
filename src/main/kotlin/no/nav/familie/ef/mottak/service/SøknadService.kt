@@ -50,8 +50,7 @@ class SøknadService(private val søknadRepository: SøknadRepository,
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad,
-                                            featureToggleService.isEnabled("familie.ef.sak.mottak-behandle-barnetilsyn-i-ny-losning"))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
