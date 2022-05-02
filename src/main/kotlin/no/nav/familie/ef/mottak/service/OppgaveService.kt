@@ -269,11 +269,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     private fun hentOpplæringsmappeBarnetilsyn(
         mapperResponse: FinnMappeResponseDto,
     ) = (mapperResponse.mapper.find {
-        it.navn.contains("Ef Sak", true)
+        it.navn.contains("EF Sak", true)
                 && it.navn.contains("65 Opplæring", true)
-                && it.navn.contains("100029732", true)
     }
-        ?: error("Fant ikke mappe EF Sak - 65 Opplæring - 100029732, for plassering av barnetilsynoppgave"))
+        ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av barnetilsynoppgave"))
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)

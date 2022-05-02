@@ -85,7 +85,7 @@ internal class OppgaveServiceTest {
                 ),
                 MappeDto(
                     id = 456,
-                    navn = "EF Sak - 65 Opplæring - 100029732",
+                    navn = "EF Sak - 65 Opplæring",
                     enhetsnr = ""
                 )
             )
@@ -454,7 +454,7 @@ internal class OppgaveServiceTest {
             mapper = listOf(
                 MappeDto(
                     id = mappeIdOpplæring,
-                    navn = "EF Sak - 65 Opplæring - 100029732",
+                    navn = "EF Sak - 65 Opplæring",
                     enhetsnr = ""
                 )
             )
