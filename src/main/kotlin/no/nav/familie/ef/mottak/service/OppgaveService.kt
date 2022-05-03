@@ -4,7 +4,9 @@ import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
-import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.*
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.EF_SAK_BLANKETT
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.UAVKLART
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -15,6 +17,7 @@ import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -246,13 +249,30 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-            val mappe = mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
-                        ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
+            val mappe = if (oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY ) {
+                hentOpplæringsmappeBarnetilsyn(mapperResponse)
+            } else {
+                hentMappeEfSakUpplassert(mapperResponse)
+            }
+
+
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
     }
+
+    private fun hentMappeEfSakUpplassert(mapperResponse: FinnMappeResponseDto) =
+        (mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
+            ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)"))
+
+    private fun hentOpplæringsmappeBarnetilsyn(
+        mapperResponse: FinnMappeResponseDto,
+    ) = (mapperResponse.mapper.find {
+        it.navn.contains("EF Sak", true)
+                && it.navn.contains("65 Opplæring", true)
+    }
+        ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av barnetilsynoppgave"))
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
