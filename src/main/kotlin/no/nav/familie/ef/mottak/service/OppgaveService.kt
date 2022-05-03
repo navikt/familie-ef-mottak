@@ -249,7 +249,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-            val mappe = if (oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
+            val mappe = if (oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY ) {
                 hentOpplæringsmappeBarnetilsyn(mapperResponse)
             } else {
                 hentMappeEfSakUpplassert(mapperResponse)
