@@ -351,7 +351,6 @@ internal object Testdata {
                           Søknadsfelt("Navn", "Kari Nordmann"),
                           Søknadsfelt("Statsborgerskap", "Norsk"),
                           adresseSøknadsfelt(),
-                          Søknadsfelt("Telefonnummer", "12345678"),
                           Søknadsfelt("Sivilstand", "Ugift"))
     }
 
