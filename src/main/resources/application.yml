@@ -51,7 +51,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      maximum-pool-size: 2
+      maximum-pool-size: 10
       connection-test-query: "select 1"
       max-lifetime: 30000
       minimum-idle: 1
