@@ -16,15 +16,15 @@ fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
 }
 
 fun utledDokumenttypeForEttersending(stønadType: StønadType): Dokumenttype =
-        when (stønadType) {
-            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING
-            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING
-            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING
-        }
+    when (stønadType) {
+        StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING
+        StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_ETTERSENDING
+        StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING
+    }
 
 fun utledDokumenttypeForVedlegg(stønadType: StønadType): Dokumenttype =
-        when (stønadType) {
-            StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
-            StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
-            StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
-        }
+    when (stønadType) {
+        StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
+        StønadType.BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
+        StønadType.SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
+    }

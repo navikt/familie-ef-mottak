@@ -25,8 +25,10 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `overgangsstønad ok request`() {
-        verifySøknadMedVedleggRequest(SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg())),
-                                      "/api/soknad/overgangsstonad")
+        verifySøknadMedVedleggRequest(
+            SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg())),
+            "/api/soknad/overgangsstonad"
+        )
     }
 
     @Test
@@ -53,19 +55,25 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     internal fun `vedlegg savnes i listen med vedlegg`() {
         val request = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("finnes_ikke")))
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost("/api/soknad/overgangsstonad"),
-                                      HttpMethod.POST,
-                                      HttpEntity(request, headers))
+            restTemplate.exchange(
+                localhost("/api/soknad/overgangsstonad"),
+                HttpMethod.POST,
+                HttpEntity(request, headers)
+            )
         assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    private fun <T> verifySøknadMedVedleggRequest(søknad: SøknadMedVedlegg<T>,
-                                                  url: String,
-                                                  forventetHttpStatus: HttpStatus = HttpStatus.OK) {
+    private fun <T> verifySøknadMedVedleggRequest(
+        søknad: SøknadMedVedlegg<T>,
+        url: String,
+        forventetHttpStatus: HttpStatus = HttpStatus.OK
+    ) {
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost(url),
-                                      HttpMethod.POST,
-                                      HttpEntity(søknad, headers))
+            restTemplate.exchange(
+                localhost(url),
+                HttpMethod.POST,
+                HttpEntity(søknad, headers)
+            )
 
         assertThat(response.statusCode).isEqualTo(forventetHttpStatus)
     }

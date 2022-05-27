@@ -32,12 +32,14 @@ internal class LagBehandleSakOppgaveTaskTest {
     private val taskRepository: TaskRepository = mockk()
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val lagBehandleSakOppgaveTask =
-            LagBehandleSakOppgaveTask(oppgaveService,
-                                      søknadService,
-                                      integrasjonerClient,
-                                      sakService,
-                                      saksbehandlingClient,
-                                      taskRepository)
+        LagBehandleSakOppgaveTask(
+            oppgaveService,
+            søknadService,
+            integrasjonerClient,
+            sakService,
+            saksbehandlingClient,
+            taskRepository
+        )
 
     @Test
     internal fun `skal lage behandle-sak-oppgave dersom det ikke finnes infotrygdsak fra før`() {
@@ -89,8 +91,10 @@ internal class LagBehandleSakOppgaveTaskTest {
     @Test
     internal fun `hvis skalBehandlesINySaksbehandling er true så skal man ikke kalle på lagBehandleSakOppgave`() {
         every { sakService.finnesIkkeIInfotrygd(any()) } returns true
-        every { søknadService.get("123L") } returns søknad(journalpostId = JOURNALPOST_DIGITALSØKNAD,
-                                                           behandleINySaksbehandling = true)
+        every { søknadService.get("123L") } returns søknad(
+            journalpostId = JOURNALPOST_DIGITALSØKNAD,
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(any()) } returns mockJournalpost()
 
         lagBehandleSakOppgaveTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
@@ -104,15 +108,17 @@ internal class LagBehandleSakOppgaveTaskTest {
     }
 
     private fun mockJournalpost(): Journalpost {
-        return Journalpost(journalpostId = JOURNALPOST_DIGITALSØKNAD,
-                           journalposttype = Journalposttype.I,
-                           journalstatus = Journalstatus.MOTTATT,
-                           bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-                           tema = "ENF",
-                           kanal = "NAV_NO",
-                           behandlingstema = null,
-                           dokumenter = null,
-                           journalforendeEnhet = null,
-                           sak = null)
+        return Journalpost(
+            journalpostId = JOURNALPOST_DIGITALSØKNAD,
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+            tema = "ENF",
+            kanal = "NAV_NO",
+            behandlingstema = null,
+            dokumenter = null,
+            journalforendeEnhet = null,
+            sak = null
+        )
     }
 }

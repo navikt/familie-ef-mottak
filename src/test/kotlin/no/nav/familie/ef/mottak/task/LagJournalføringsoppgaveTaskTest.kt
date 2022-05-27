@@ -15,8 +15,7 @@ internal class LagJournalføringsoppgaveTaskTest {
     private val taskRepository: TaskRepository = mockk()
     private val oppgaveService: OppgaveService = mockk(relaxed = true)
     private val lagJournalføringsoppgaveTask: LagJournalføringsoppgaveTask =
-            LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
-
+        LagJournalføringsoppgaveTask(taskRepository, oppgaveService)
 
     @Test
     fun `skal kalle lagJournalføringsoppgaveForSøknadId hvis task payload er gyldig uuid`() {
@@ -28,6 +27,4 @@ internal class LagJournalføringsoppgaveTaskTest {
 
         verify { oppgaveService.lagJournalføringsoppgaveForSøknadId(uuid) }
     }
-
-
 }

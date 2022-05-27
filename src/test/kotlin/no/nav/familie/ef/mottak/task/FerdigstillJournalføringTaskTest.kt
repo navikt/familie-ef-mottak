@@ -20,7 +20,7 @@ internal class FerdigstillJournalføringTaskTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val arkiveringService: ArkiveringService =
-            ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
+        ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
     private val ferdigstillJournalføringTask = FerdigstillJournalføringTask(arkiveringService)
 
     @Test
@@ -32,10 +32,12 @@ internal class FerdigstillJournalføringTaskTest {
 
         every {
             søknadService.get("123L")
-        } returns Søknad(søknadJson = EncryptedString(""),
-                         dokumenttype = "noe",
-                         journalpostId = journalpostId,
-                         fnr = FnrGenerator.generer())
+        } returns Søknad(
+            søknadJson = EncryptedString(""),
+            dokumenttype = "noe",
+            journalpostId = journalpostId,
+            fnr = FnrGenerator.generer()
+        )
 
         every {
             integrasjonerClient.finnBehandlendeEnhet(any())
@@ -50,5 +52,4 @@ internal class FerdigstillJournalføringTaskTest {
         assertThat(journalpostIdSlot.captured).isEqualTo(journalpostId)
         assertThat(enhetSlot.captured).isEqualTo(enhetId)
     }
-
 }

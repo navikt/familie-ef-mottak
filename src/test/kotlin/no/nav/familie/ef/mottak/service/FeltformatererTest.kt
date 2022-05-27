@@ -14,7 +14,6 @@ import java.time.Month
 
 internal class FeltformatererTest {
 
-
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer Month korrekt`() {
         val testverdi = Søknadsfelt("label", Month.DECEMBER)
@@ -105,5 +104,4 @@ internal class FeltformatererTest {
 
         assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra 01.02.2015 til 14.07.2018"))
     }
-
 }

@@ -11,20 +11,26 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = TYPE,
-                     beskrivelse = "Send 'søknad mottatt' til ditt nav")
-class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProducer,
-                                      private val søknadService: SøknadService) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = TYPE,
+    beskrivelse = "Send 'søknad mottatt' til ditt nav"
+)
+class SendSøknadMottattTilDittNavTask(
+    private val producer: DittNavKafkaProducer,
+    private val søknadService: SøknadService
+) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
         val søknad = søknadService.get(task.payload)
-        producer.sendToKafka(søknad.fnr,
-                             lagLinkMelding(søknad.dokumenttype),
-                             task.payload,
-                             task.metadata["eventId"].toString(),
-                             null)
+        producer.sendToKafka(
+            søknad.fnr,
+            lagLinkMelding(søknad.dokumenttype),
+            task.payload,
+            task.metadata["eventId"].toString(),
+            null
+        )
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 
@@ -36,7 +42,6 @@ class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProduce
         return "Vi har mottatt søknaden din om ${søknadstypeTekst(søknadType)}."
     }
 
-
     private fun søknadstypeTekst(søknadType: SøknadType): String {
         return when (søknadType) {
             SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
@@ -46,10 +51,8 @@ class SendSøknadMottattTilDittNavTask(private val producer: DittNavKafkaProduce
         }
     }
 
-
     companion object {
 
         const val TYPE = "sendSøknadMottattTilDittNav"
     }
 }
-

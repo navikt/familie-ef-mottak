@@ -13,14 +13,16 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagEttersendingPdfTask.TYPE, beskrivelse = "Lag pdf for ettersending")
-class LagEttersendingPdfTask(private val pdfService: PdfService,
-                             private val taskRepository: TaskRepository,
-                             private val ettersendingRepository: EttersendingRepository,
-                             private val ettersendingVedleggRepository: EttersendingVedleggRepository) : AsyncTaskStep {
+class LagEttersendingPdfTask(
+    private val pdfService: PdfService,
+    private val taskRepository: TaskRepository,
+    private val ettersendingRepository: EttersendingRepository,
+    private val ettersendingVedleggRepository: EttersendingVedleggRepository
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val ettersending =
-                ettersendingRepository.findByIdOrNull(UUID.fromString(task.payload))
+            ettersendingRepository.findByIdOrNull(UUID.fromString(task.payload))
                 ?: error("Kan ikke finne ettersending med id ${task.payload}")
         val vedleggTitler = ettersendingVedleggRepository.findByEttersendingId(ettersending.id).map { it.tittel }
 
@@ -28,14 +30,17 @@ class LagEttersendingPdfTask(private val pdfService: PdfService,
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(TaskType(TYPE).nesteEttersendingsflytTask(),
-                                 task.payload,
-                                 task.metadata))
+        taskRepository.save(
+            Task(
+                TaskType(TYPE).nesteEttersendingsflytTask(),
+                task.payload,
+                task.metadata
+            )
+        )
     }
 
     companion object {
 
         const val TYPE = "lagPdfEttersending"
     }
-
 }

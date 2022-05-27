@@ -18,21 +18,25 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagBehandleSakOppgaveTask.TYPE,
-                     beskrivelse = "Lager behandle sak oppgave i GoSys")
-class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
-                                private val søknadService: SøknadService,
-                                private val integrasjonerClient: IntegrasjonerClient,
-                                private val sakService: SakService,
-                                private val saksbehandlingClient: SaksbehandlingClient,
-                                private val taskRepository: TaskRepository) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = LagBehandleSakOppgaveTask.TYPE,
+    beskrivelse = "Lager behandle sak oppgave i GoSys"
+)
+class LagBehandleSakOppgaveTask(
+    private val oppgaveService: OppgaveService,
+    private val søknadService: SøknadService,
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val sakService: SakService,
+    private val saksbehandlingClient: SaksbehandlingClient,
+    private val taskRepository: TaskRepository
+) : AsyncTaskStep {
 
     val antallJournalposterAutomatiskBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.automatisk.behandlet")
     val antallJournalposterManueltBehandlet: Counter = Metrics.counter("alene.med.barn.journalposter.manuelt.behandlet")
 
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
-        val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: error("...")  //TODO
+        val stønadType = dokumenttypeTilStønadType(søknad.dokumenttype) ?: error("...") // TODO
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
 
@@ -44,11 +48,13 @@ class LagBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
         }
     }
 
-    private fun skalAutomatiskJournalføresMotInfotrygd(søknad: Søknad,
-                                                       stønadType: StønadType) =
-            sakService.finnesIkkeIInfotrygd(søknad)
-            && !søknad.behandleINySaksbehandling
-            && !saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
+    private fun skalAutomatiskJournalføresMotInfotrygd(
+        søknad: Søknad,
+        stønadType: StønadType
+    ) =
+        sakService.finnesIkkeIInfotrygd(søknad) &&
+            !søknad.behandleINySaksbehandling &&
+            !saksbehandlingClient.finnesBehandlingForPerson(søknad.fnr, stønadType)
 
     override fun onCompletion(task: Task) {
 

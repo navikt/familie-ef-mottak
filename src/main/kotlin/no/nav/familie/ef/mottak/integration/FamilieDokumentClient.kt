@@ -10,17 +10,19 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class FamilieDokumentClient(@Value("\${familie.dokument.url}")
-                            private val dokumentApiURI: URI,
-                            @Qualifier("tokenExchange") restTemplate: RestOperations)
-    : AbstractPingableRestClient(restTemplate, "familie.dokument") {
+class FamilieDokumentClient(
+    @Value("\${familie.dokument.url}")
+    private val dokumentApiURI: URI,
+    @Qualifier("tokenExchange") restTemplate: RestOperations
+) :
+    AbstractPingableRestClient(restTemplate, "familie.dokument") {
 
     private val hentVedleggUri = UriComponentsBuilder.fromUri(dokumentApiURI).pathSegment(HENT).build().toUri()
 
     override val pingUri: URI = UriComponentsBuilder.fromUri(dokumentApiURI).pathSegment(PING).build().toUri()
 
     private fun vedleggUri(vedleggsId: String) =
-            UriComponentsBuilder.fromUri(hentVedleggUri).path(vedleggsId).build().toUri()
+        UriComponentsBuilder.fromUri(hentVedleggUri).path(vedleggsId).build().toUri()
 
     fun hentVedlegg(vedleggsId: String): ByteArray {
         val ressurs: Ressurs<ByteArray> = getForEntity(vedleggUri(vedleggsId))
@@ -32,5 +34,4 @@ class FamilieDokumentClient(@Value("\${familie.dokument.url}")
         private const val HENT = "/api/mapper/familievedlegg/"
         private const val PING = "/api/mapper/ping"
     }
-
 }

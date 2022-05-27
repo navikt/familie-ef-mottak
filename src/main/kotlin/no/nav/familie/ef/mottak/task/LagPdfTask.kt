@@ -9,22 +9,27 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = LagPdfTask.TYPE, beskrivelse = "Lag pdf")
-class LagPdfTask(private val pdfService: PdfService,
-                 private val taskRepository: TaskRepository) : AsyncTaskStep {
+class LagPdfTask(
+    private val pdfService: PdfService,
+    private val taskRepository: TaskRepository
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         pdfService.lagPdf(task.payload)
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(Task(TaskType(TYPE).nesteHovedflytTask(),
-                                 task.payload,
-                                 task.metadata))
+        taskRepository.save(
+            Task(
+                TaskType(TYPE).nesteHovedflytTask(),
+                task.payload,
+                task.metadata
+            )
+        )
     }
 
     companion object {
 
         const val TYPE = "lagPdf"
     }
-
 }

@@ -34,16 +34,16 @@ internal class OpprettOppgaveMapperTest {
     @Test
     fun `Skal sette frist for oppgave`() {
         val frister = listOf<Pair<LocalDateTime, LocalDate>>(
-                Pair(torsdag.morgen(), fredagFrist),
-                Pair(torsdag.kveld(), mandagFrist),
-                Pair(fredag.morgen(), mandagFrist),
-                Pair(fredag.kveld(), tirsdagFrist),
-                Pair(lørdag.morgen(), tirsdagFrist),
-                Pair(lørdag.kveld(), tirsdagFrist),
-                Pair(søndag.morgen(), tirsdagFrist),
-                Pair(søndag.kveld(), tirsdagFrist),
-                Pair(mandag.morgen(), tirsdagFrist),
-                Pair(mandag.kveld(), onsdagFrist),
+            Pair(torsdag.morgen(), fredagFrist),
+            Pair(torsdag.kveld(), mandagFrist),
+            Pair(fredag.morgen(), mandagFrist),
+            Pair(fredag.kveld(), tirsdagFrist),
+            Pair(lørdag.morgen(), tirsdagFrist),
+            Pair(lørdag.kveld(), tirsdagFrist),
+            Pair(søndag.morgen(), tirsdagFrist),
+            Pair(søndag.kveld(), tirsdagFrist),
+            Pair(mandag.morgen(), tirsdagFrist),
+            Pair(mandag.kveld(), onsdagFrist),
         )
 
         frister.forEach {
@@ -69,5 +69,4 @@ internal class OpprettOppgaveMapperTest {
     private val mandagFrist = LocalDate.of(2021, 4, 5)
     private val tirsdagFrist = LocalDate.of(2021, 4, 6)
     private val onsdagFrist = LocalDate.of(2021, 4, 7)
-
 }

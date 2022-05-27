@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface HendelsesloggRepository : RepositoryInterface<Hendelseslogg, UUID>,
-                                    InsertUpdateRepository<Hendelseslogg> {
+interface HendelsesloggRepository :
+    RepositoryInterface<Hendelseslogg, UUID>,
+    InsertUpdateRepository<Hendelseslogg> {
 
     fun existsByHendelseId(hendelseId: String): Boolean
 }

@@ -11,16 +11,17 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
-
 @Service
-class InfotrygdReplikaClient(@Value("\${INFOTRYGD_REPLIKA_API_URL}")
-                             private val infotrygdFeedUri: URI,
-                             @Qualifier("restTemplateAzure")
-                             restOperations: RestOperations)
-    : AbstractPingableRestClient(restOperations, "infotrygd.replika") {
+class InfotrygdReplikaClient(
+    @Value("\${INFOTRYGD_REPLIKA_API_URL}")
+    private val infotrygdFeedUri: URI,
+    @Qualifier("restTemplateAzure")
+    restOperations: RestOperations
+) :
+    AbstractPingableRestClient(restOperations, "infotrygd.replika") {
 
     private val eksistererUri: URI =
-            UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/stonad/eksisterer").build().toUri()
+        UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/stonad/eksisterer").build().toUri()
 
     private val finnSakerUri: URI =
         UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/saker/finn").build().toUri()
@@ -38,5 +39,4 @@ class InfotrygdReplikaClient(@Value("\${INFOTRYGD_REPLIKA_API_URL}")
 
     override val pingUri: URI
         get() = UriComponentsBuilder.fromUri(infotrygdFeedUri).pathSegment("api/ping").build().toUri()
-
 }

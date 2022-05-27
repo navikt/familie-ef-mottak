@@ -15,5 +15,4 @@ class PingController {
     fun ping(): String {
         return "Ack - vi har kontakt"
     }
-
 }

@@ -30,13 +30,13 @@ internal class JournalfoeringHendelseDbUtilTest {
         }
 
         journalfoeringHendelseDbUtil.lagreEksternJournalføringsTask(
-                Journalpost(
-                        journalpostId = "123",
-                        journalposttype = Journalposttype.I,
-                        journalstatus = Journalstatus.MOTTATT,
-                        tema = "ENF",
-                        behandlingstema = "abcdef"
-                )
+            Journalpost(
+                journalpostId = "123",
+                journalposttype = Journalposttype.I,
+                journalstatus = Journalstatus.MOTTATT,
+                tema = "ENF",
+                behandlingstema = "abcdef"
+            )
         )
         verify(exactly = 1) { taskRepository.save(any()) }
         Assertions.assertThat(slot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)

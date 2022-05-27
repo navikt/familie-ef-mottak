@@ -7,12 +7,12 @@ import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface VedleggRepository : RepositoryInterface<Vedlegg, String>,
-                              InsertUpdateRepository<Vedlegg> {
+interface VedleggRepository :
+    RepositoryInterface<Vedlegg, String>,
+    InsertUpdateRepository<Vedlegg> {
 
     fun findBySøknadId(søknadId: String): List<Vedlegg>
 
     @Query("SELECT tittel FROM vedlegg WHERE soknad_id=:søknadId")
     fun findTitlerBySøknadId(søknadId: String): List<String>
-
 }

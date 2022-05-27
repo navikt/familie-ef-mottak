@@ -8,10 +8,14 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveTask.TYPE,
-                     beskrivelse = "Lager oppgave i GoSys")
-class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
-                                   private val oppgaveService: OppgaveService) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = LagJournalføringsoppgaveTask.TYPE,
+    beskrivelse = "Lager oppgave i GoSys"
+)
+class LagJournalføringsoppgaveTask(
+    private val taskRepository: TaskRepository,
+    private val oppgaveService: OppgaveService
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
@@ -24,12 +28,15 @@ class LagJournalføringsoppgaveTask(private val taskRepository: TaskRepository,
 
     override fun onCompletion(task: Task) {
         task.metadata[journalføringOppgaveIdKey]?.let {
-            taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
-                                     task.payload,
-                                     task.metadata))
+            taskRepository.save(
+                Task(
+                    TaskType(TYPE).nesteFallbackTask(),
+                    task.payload,
+                    task.metadata
+                )
+            )
         }
     }
-
 
     companion object {
 

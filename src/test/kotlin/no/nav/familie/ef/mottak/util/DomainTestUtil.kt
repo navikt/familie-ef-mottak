@@ -8,23 +8,22 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 fun journalføringHendelseRecord(
-        journalpostId: String,
-        hendelseType: String = "JournalpostMottatt",
-        temaNytt: String = "ENF"
+    journalpostId: String,
+    hendelseType: String = "JournalpostMottatt",
+    temaNytt: String = "ENF"
 ) =
-        JournalfoeringHendelseRecord(
-                "hendelseId",
-                1,
-                hendelseType,
-                journalpostId.toLong(),
-                "M",
-                "ENF",
-                temaNytt,
-                "SKAN_NETS",
-                "kanalReferanseId",
-                "ENF"
-        )
-
+    JournalfoeringHendelseRecord(
+        "hendelseId",
+        1,
+        hendelseType,
+        journalpostId.toLong(),
+        "M",
+        "ENF",
+        temaNytt,
+        "SKAN_NETS",
+        "kanalReferanseId",
+        "ENF"
+    )
 
 object JournalføringHendelseRecordVars {
 
@@ -36,23 +35,24 @@ object JournalføringHendelseRecordVars {
     const val OFFSET = 21L
 }
 
-fun søknad(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(12),
-           id: String = UUID.randomUUID().toString(),
-           taskOpprettet: Boolean = false,
-           dokumenttype: String = DOKUMENTTYPE_OVERGANGSSTØNAD,
-           journalpostId: String? = null,
-           fnr: String = "11111122222",
-           saksnummer: String? = null,
-           behandleINySaksbehandling: Boolean = false
+fun søknad(
+    opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(12),
+    id: String = UUID.randomUUID().toString(),
+    taskOpprettet: Boolean = false,
+    dokumenttype: String = DOKUMENTTYPE_OVERGANGSSTØNAD,
+    journalpostId: String? = null,
+    fnr: String = "11111122222",
+    saksnummer: String? = null,
+    behandleINySaksbehandling: Boolean = false
 ) =
-        Søknad(
-                id = id,
-                søknadJson = EncryptedString(""),
-                fnr = fnr,
-                dokumenttype = dokumenttype,
-                opprettetTid = opprettetTid,
-                taskOpprettet = taskOpprettet,
-                journalpostId = journalpostId,
-                saksnummer = saksnummer,
-                behandleINySaksbehandling = behandleINySaksbehandling
-        )
+    Søknad(
+        id = id,
+        søknadJson = EncryptedString(""),
+        fnr = fnr,
+        dokumenttype = dokumenttype,
+        opprettetTid = opprettetTid,
+        taskOpprettet = taskOpprettet,
+        journalpostId = journalpostId,
+        saksnummer = saksnummer,
+        behandleINySaksbehandling = behandleINySaksbehandling
+    )

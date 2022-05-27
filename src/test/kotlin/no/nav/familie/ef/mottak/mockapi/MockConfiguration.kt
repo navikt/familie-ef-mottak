@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import java.net.URI
 
-
 @Configuration
 class MockConfiguration {
 
@@ -36,8 +35,10 @@ class MockConfiguration {
     @Bean
     @Primary
     @Profile("mock-integrasjon")
-    fun integrasjonerClient(): IntegrasjonerClient = object : IntegrasjonerClient(mockk(),
-                                                                                  IntegrasjonerConfig(URI.create("http://bac"))) {
+    fun integrasjonerClient(): IntegrasjonerClient = object : IntegrasjonerClient(
+        mockk(),
+        IntegrasjonerConfig(URI.create("http://bac"))
+    ) {
 
         override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
             return ArkiverDokumentResponse("journalpostId1", true)
@@ -64,6 +65,4 @@ class MockConfiguration {
             return true
         }
     }
-
-
 }

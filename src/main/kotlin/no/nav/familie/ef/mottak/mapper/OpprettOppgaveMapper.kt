@@ -20,33 +20,39 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
 
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun toJournalføringsoppgave(journalpost: Journalpost,
-                                behandlesAvApplikasjon: BehandlesAvApplikasjon,
-                                enhetsnummer: String?) =
-            OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
-                                  saksId = null,
-                                  journalpostId = journalpost.journalpostId,
-                                  tema = Tema.ENF,
-                                  oppgavetype = Oppgavetype.Journalføring,
-                                  fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
-                                  behandlingstype = settBehandlingstype(journalpost),
-                                  behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = journalpost.journalforendeEnhet ?: enhetsnummer,
-                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
-                                  tilordnetRessurs = null)
+    fun toJournalføringsoppgave(
+        journalpost: Journalpost,
+        behandlesAvApplikasjon: BehandlesAvApplikasjon,
+        enhetsnummer: String?
+    ) =
+        OpprettOppgaveRequest(
+            ident = tilOppgaveIdent(journalpost),
+            saksId = null,
+            journalpostId = journalpost.journalpostId,
+            tema = Tema.ENF,
+            oppgavetype = Oppgavetype.Journalføring,
+            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+            beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
+            behandlingstype = settBehandlingstype(journalpost),
+            behandlingstema = journalpost.behandlingstema,
+            enhetsnummer = journalpost.journalforendeEnhet ?: enhetsnummer,
+            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
+            tilordnetRessurs = null
+        )
 
     fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon, enhetsnummer: String?): OpprettOppgaveRequest =
-            OpprettOppgaveRequest(ident = tilOppgaveIdent(journalpost),
-                                  saksId = null,
-                                  tema = Tema.ENF,
-                                  oppgavetype = Oppgavetype.BehandleSak,
-                                  journalpostId = journalpost.journalpostId,
-                                  fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-                                  beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
-                                  behandlingstema = journalpost.behandlingstema,
-                                  enhetsnummer = enhetsnummer,
-                                  behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon)
+        OpprettOppgaveRequest(
+            ident = tilOppgaveIdent(journalpost),
+            saksId = null,
+            tema = Tema.ENF,
+            oppgavetype = Oppgavetype.BehandleSak,
+            journalpostId = journalpost.journalpostId,
+            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+            beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
+            behandlingstema = journalpost.behandlingstema,
+            enhetsnummer = enhetsnummer,
+            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
+        )
 
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
@@ -113,5 +119,4 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
          */
         const val KODEVERK_KLAGE = "ae0058"
     }
-
 }

@@ -7,12 +7,12 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResultat
-import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.ef.infotrygd.Saktreff
 import no.nav.familie.kontrakter.ef.infotrygd.Vedtakstreff
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -33,14 +33,18 @@ const val STØNADSKLASSIFISERING_BARNETILSYN = "BT"
 const val STØNADSKLASSIFISERING_SKOLEPENGER = "UT"
 
 val stønadsklassifiseringMap =
-        mapOf(DOKUMENTTYPE_OVERGANGSSTØNAD to STØNADSKLASSIFISERING_OVERGANGSSTØNAD,
-              DOKUMENTTYPE_BARNETILSYN to STØNADSKLASSIFISERING_BARNETILSYN,
-              DOKUMENTTYPE_SKOLEPENGER to STØNADSKLASSIFISERING_SKOLEPENGER)
+    mapOf(
+        DOKUMENTTYPE_OVERGANGSSTØNAD to STØNADSKLASSIFISERING_OVERGANGSSTØNAD,
+        DOKUMENTTYPE_BARNETILSYN to STØNADSKLASSIFISERING_BARNETILSYN,
+        DOKUMENTTYPE_SKOLEPENGER to STØNADSKLASSIFISERING_SKOLEPENGER
+    )
 
 @Service
-class SakService(private val integrasjonerClient: IntegrasjonerClient,
-                 private val infotrygdService: InfotrygdService,
-                 private val søknadService: SøknadService) {
+class SakService(
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val infotrygdService: InfotrygdService,
+    private val søknadService: SøknadService
+) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -56,23 +60,26 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         } else {
             null
         }
-
     }
 
-    fun finnesIkkeIInfotrygd(søknad: Søknad): Boolean = finnesIkkeIInfotrygd(søknad.fnr,
-                                                                             dokumenttypeTilStønadType(søknad.dokumenttype))
+    fun finnesIkkeIInfotrygd(søknad: Søknad): Boolean = finnesIkkeIInfotrygd(
+        søknad.fnr,
+        dokumenttypeTilStønadType(søknad.dokumenttype)
+    )
 
     fun finnesIkkeIInfotrygd(fnr: String, stønadType: StønadType?): Boolean {
-        val journalposterForBrukerRequest = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR),
-                                                                          50,
-                                                                          listOf(Tema.ENF),
-                                                                          listOf(Journalposttype.I))
+        val journalposterForBrukerRequest = JournalposterForBrukerRequest(
+            Bruker(fnr, BrukerIdType.FNR),
+            50,
+            listOf(Tema.ENF),
+            listOf(Journalposttype.I)
+        )
         val journalposter = integrasjonerClient.finnJournalposter(journalposterForBrukerRequest)
 
         val fagsakFinnesForStønad = journalposter.any {
-            it.sak?.fagsaksystem in listOf(INFOTRYGD, EF_SAK)
-            && it.sak?.fagsakId != null
-            && gjelderStønad(stønadType, it)
+            it.sak?.fagsaksystem in listOf(INFOTRYGD, EF_SAK) &&
+                it.sak?.fagsakId != null &&
+                gjelderStønad(stønadType, it)
         }
         val finnesIInfotrygd = finnesIInfotrygd(fnr, fagsakFinnesForStønad, stønadType)
         val erTilknyttetEnhet = stønadType?.let {
@@ -80,15 +87,16 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
                 StønadType.OVERGANGSSTØNAD -> true
                 else -> integrasjonerClient.finnBehandlendeEnhet(fnr).isNotEmpty()
             }
-
         } ?: false
 
         return !fagsakFinnesForStønad && erTilknyttetEnhet && !finnesIInfotrygd
     }
 
-    private fun finnesIInfotrygd(personIdent: String,
-                                 fagsakFinnesForStønad: Boolean,
-                                 stønadType: StønadType?): Boolean {
+    private fun finnesIInfotrygd(
+        personIdent: String,
+        fagsakFinnesForStønad: Boolean,
+        stønadType: StønadType?
+    ): Boolean {
         if (stønadType == null) {
             return true
         }
@@ -98,16 +106,18 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         val vedtakFinnes = vedtak.isNotEmpty()
         val sakerFinnes = saker.isNotEmpty()
         val kanOppretteInfotrygdSakLog = "kanOppretteInfotrygdSak -" +
-                                         " stønadType=$stønadType" +
-                                         " fagsakFinnesForStønad=$fagsakFinnesForStønad"
+            " stønadType=$stønadType" +
+            " fagsakFinnesForStønad=$fagsakFinnesForStønad"
         logger.info("$kanOppretteInfotrygdSakLog vedtakFinnes=$vedtakFinnes sakerFinnes=$sakerFinnes")
 
         val finnesIInfotrygd = vedtakFinnes || sakerFinnes
         if (fagsakFinnesForStønad != finnesIInfotrygd) {
-            secureLogger.info(kanOppretteInfotrygdSakLog +
-                              " personIdent=$personIdent" +
-                              " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
-                              " saker=${saker.sortedBy(Saktreff::personIdent)}")
+            secureLogger.info(
+                kanOppretteInfotrygdSakLog +
+                    " personIdent=$personIdent" +
+                    " vedtak=${vedtak.sortedBy(Vedtakstreff::personIdent)}" +
+                    " saker=${saker.sortedBy(Saktreff::personIdent)}"
+            )
         }
         return finnesIInfotrygd
     }
@@ -127,17 +137,17 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-
     private fun harBrevkode(journalpost: Journalpost, dokumentBrevkode: DokumentBrevkode): Boolean {
         return journalpost.dokumenter
-                       ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
-                       ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
-                       ?.any {
-                           logger.info("Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} " +
-                                       "og dokument=${it.dokumentInfoId}")
-                           return true
-                       } ?: false
-
+            ?.filter { dokument -> DokumentBrevkode.erGyldigBrevkode(dokument.brevkode) }
+            ?.filter { DokumentBrevkode.fraBrevkode(it.brevkode) == dokumentBrevkode }
+            ?.any {
+                logger.info(
+                    "Fant riktig brevkode=$dokumentBrevkode for journalpost=${journalpost.journalpostId} " +
+                        "og dokument=${it.dokumentInfoId}"
+                )
+                return true
+            } ?: false
     }
 
     private fun lagOpprettInfotrygdSakRequest(søknad: Søknad, oppgaveId: String): OpprettInfotrygdSakRequest {
@@ -148,16 +158,18 @@ class SakService(private val integrasjonerClient: IntegrasjonerClient,
         }
 
         val mottagendeEnhet = enheter.firstOrNull()?.enhetId
-                              ?: error("Ingen behandlende enhet funnet for søknad ${søknad.id} ")
+            ?: error("Ingen behandlende enhet funnet for søknad ${søknad.id} ")
 
-        return OpprettInfotrygdSakRequest(fnr = søknad.fnr,
-                                          fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
-                                          stonadsklassifisering2 = stønadsklassifisering,
-                                          type = SAKSTYPE_SØKNAD,
-                                          opprettetAvOrganisasjonsEnhetsId = mottagendeEnhet,
-                                          mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
-                                          mottattdato = søknad.opprettetTid.toLocalDate(),
-                                          sendBekreftelsesbrev = false,
-                                          oppgaveId = oppgaveId)
+        return OpprettInfotrygdSakRequest(
+            fnr = søknad.fnr,
+            fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
+            stonadsklassifisering2 = stønadsklassifisering,
+            type = SAKSTYPE_SØKNAD,
+            opprettetAvOrganisasjonsEnhetsId = mottagendeEnhet,
+            mottakerOrganisasjonsEnhetsId = mottagendeEnhet,
+            mottattdato = søknad.opprettetTid.toLocalDate(),
+            sendBekreftelsesbrev = false,
+            oppgaveId = oppgaveId
+        )
     }
 }

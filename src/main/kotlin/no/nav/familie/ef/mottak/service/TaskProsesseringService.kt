@@ -15,36 +15,45 @@ import java.util.Properties
 import java.util.UUID
 
 @Service
-class TaskProsesseringService(private val taskRepository: TaskRepository,
-                              private val søknadRepository: SøknadRepository,
-                              private val ettersendingRepository: EttersendingRepository) {
+class TaskProsesseringService(
+    private val taskRepository: TaskRepository,
+    private val søknadRepository: SøknadRepository,
+    private val ettersendingRepository: EttersendingRepository
+) {
 
     @Transactional
     fun startTaskProsessering(søknad: Søknad) {
         val properties =
-                Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
-                        .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskRepository.save(Task(LagPdfTask.TYPE,
-                                 søknad.id,
-                                 properties))
+            Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
+                .apply { this["dokumenttype"] = søknad.dokumenttype }
+        taskRepository.save(
+            Task(
+                LagPdfTask.TYPE,
+                søknad.id,
+                properties
+            )
+        )
 
         properties["eventId"] = UUID.randomUUID().toString()
-        taskRepository.save(Task(SendSøknadMottattTilDittNavTask.TYPE,
-                                 søknad.id,
-                                 properties))
+        taskRepository.save(
+            Task(
+                SendSøknadMottattTilDittNavTask.TYPE,
+                søknad.id,
+                properties
+            )
+        )
         søknadRepository.update(søknad.copy(taskOpprettet = true))
     }
 
     @Transactional
     fun startTaskProsessering(ettersending: Ettersending) {
         val properties =
-                Properties().apply {
-                    this["søkersFødselsnummer"] = ettersending.fnr
-                    this["stønadType"] = ettersending.stønadType
-                }
+            Properties().apply {
+                this["søkersFødselsnummer"] = ettersending.fnr
+                this["stønadType"] = ettersending.stønadType
+            }
 
         taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties))
         ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
     }
 }
-

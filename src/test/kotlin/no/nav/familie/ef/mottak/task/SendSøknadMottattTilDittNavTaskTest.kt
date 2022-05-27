@@ -28,12 +28,12 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
         sendSøknadMottattTilDittNavTask =
-                SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
+            SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
         task = Task(
-                payload = SØKNAD_ID,
-                type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-                properties = properties
+            payload = SØKNAD_ID,
+            type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+            properties = properties
         )
     }
 
@@ -69,23 +69,23 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
             dittNavKafkaProducer.sendToKafka(
-                    FNR,
-                    forventetTekst,
-                    task.payload,
-                    EVENT_ID,
-                    null
+                FNR,
+                forventetTekst,
+                task.payload,
+                EVENT_ID,
+                null
             )
         }
     }
 
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadService.get(SØKNAD_ID) } returns
-                Søknad(
-                        id = SØKNAD_ID,
-                        søknadJson = EncryptedString(""),
-                        dokumenttype = søknadType.dokumentType,
-                        fnr = FNR
-                )
+            Søknad(
+                id = SØKNAD_ID,
+                søknadJson = EncryptedString(""),
+                dokumenttype = søknadType.dokumentType,
+                fnr = FNR
+            )
     }
 
     companion object {

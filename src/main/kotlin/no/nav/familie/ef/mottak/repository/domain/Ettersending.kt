@@ -7,14 +7,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class Ettersending(
-        @Id
-        val id: UUID = UUID.randomUUID(),
-        val ettersendingJson: EncryptedString,
-        val ettersendingPdf: EncryptedFile? = null,
-        @Column("stonad_type")
-        val stønadType: String,
-        val journalpostId: String? = null,
-        val fnr: String,
-        val taskOpprettet: Boolean = false,
-        val opprettetTid: LocalDateTime = LocalDateTime.now(),
+    @Id
+    val id: UUID = UUID.randomUUID(),
+    val ettersendingJson: EncryptedString,
+    val ettersendingPdf: EncryptedFile? = null,
+    @Column("stonad_type")
+    val stønadType: String,
+    val journalpostId: String? = null,
+    val fnr: String,
+    val taskOpprettet: Boolean = false,
+    val opprettetTid: LocalDateTime = LocalDateTime.now(),
 )

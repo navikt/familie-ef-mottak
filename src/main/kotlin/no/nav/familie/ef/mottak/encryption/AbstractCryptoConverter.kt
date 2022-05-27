@@ -25,7 +25,6 @@ abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
         val decryptedBytes = cipher.doFinal(encryptedBytes)
         return byteArrayToEntityAttribute(decryptedBytes)
     }
-
 }
 
 abstract class AbstractCryptoWritingConverter<T> : Converter<T, ByteArray> {
@@ -47,5 +46,4 @@ abstract class AbstractCryptoWritingConverter<T> : Converter<T, ByteArray> {
         val encryptedBytes = cipher.doFinal(bytesToEncrypt)
         return cipher.iv + encryptedBytes
     }
-
 }

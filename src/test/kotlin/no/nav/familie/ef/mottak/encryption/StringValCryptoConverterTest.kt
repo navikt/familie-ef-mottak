@@ -15,7 +15,6 @@ internal class StringValCryptoConverterTest {
         stringValCryptoWritingConverter = StringValCryptoWritingConverter()
     }
 
-
     @Test
     internal fun `convertToDatabaseColumn konverterer input til String for lagring i base og tilbake til identisk string`() {
         val string = "Bob Marley"

@@ -12,12 +12,16 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = OppdaterBehandleSakOppgaveTask.TYPE,
-                     beskrivelse = "Oppdater behandle sak oppgave i GoSys")
-class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
-                                     private val søknadService: SøknadService,
-                                     private val integrasjonerClient: IntegrasjonerClient,
-                                     private val taskRepository: TaskRepository) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = OppdaterBehandleSakOppgaveTask.TYPE,
+    beskrivelse = "Oppdater behandle sak oppgave i GoSys"
+)
+class OppdaterBehandleSakOppgaveTask(
+    private val oppgaveService: OppgaveService,
+    private val søknadService: SøknadService,
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val taskRepository: TaskRepository
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
@@ -29,7 +33,6 @@ class OppdaterBehandleSakOppgaveTask(private val oppgaveService: OppgaveService,
                 }
                 oppgaveService.settSaksnummerPåInfotrygdOppgave(it.toLong(), saksnummer, infotrygdSaksnummer)
             } ?: error("Kan ikke oppdatere oppgave uten oppgaveId")
-
         } ?: error("Kan ikke oppdatere behandle-sak-oppgave ettersom søknad=${søknad.id} mangler saksnummer")
     }
 

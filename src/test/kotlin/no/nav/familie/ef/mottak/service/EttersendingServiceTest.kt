@@ -23,9 +23,11 @@ internal class EttersendingServiceTest {
     private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>()
     private val dokumentClient = mockFamilieDokumentClient()
 
-    private val ettersendingService = EttersendingService(ettersendingRepository = ettersendingRepository,
-                                                          ettersendingVedleggRepository = ettersendingVedleggRepository,
-                                                          dokumentClient = dokumentClient)
+    private val ettersendingService = EttersendingService(
+        ettersendingRepository = ettersendingRepository,
+        ettersendingVedleggRepository = ettersendingVedleggRepository,
+        dokumentClient = dokumentClient
+    )
 
     private val dokument1 = "1234".toByteArray()
     private val dokument2 = "999111".toByteArray()
@@ -44,20 +46,24 @@ internal class EttersendingServiceTest {
         val dokument2 = "999111".toByteArray()
         val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
         val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
-        val dokumentasjonsbehov1 = Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
-                                                       søknadsdata = null,
-                                                       dokumenttype = "DOKUMENTASJON_LÆRLING",
-                                                       beskrivelse = "Lærlingekontrakt",
-                                                       stønadType = StønadType.OVERGANGSSTØNAD,
-                                                       innsendingstidspunkt = null,
-                                                       vedlegg = listOf(vedlegg1))
-        val dokumentasjonsbehov2 = Dokumentasjonsbehov(id = UUID.randomUUID().toString(),
-                                                       søknadsdata = null,
-                                                       dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-                                                       beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
-                                                       stønadType = StønadType.OVERGANGSSTØNAD,
-                                                       innsendingstidspunkt = null,
-                                                       vedlegg = listOf(vedlegg2))
+        val dokumentasjonsbehov1 = Dokumentasjonsbehov(
+            id = UUID.randomUUID().toString(),
+            søknadsdata = null,
+            dokumenttype = "DOKUMENTASJON_LÆRLING",
+            beskrivelse = "Lærlingekontrakt",
+            stønadType = StønadType.OVERGANGSSTØNAD,
+            innsendingstidspunkt = null,
+            vedlegg = listOf(vedlegg1)
+        )
+        val dokumentasjonsbehov2 = Dokumentasjonsbehov(
+            id = UUID.randomUUID().toString(),
+            søknadsdata = null,
+            dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
+            beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
+            stønadType = StønadType.OVERGANGSSTØNAD,
+            innsendingstidspunkt = null,
+            vedlegg = listOf(vedlegg2)
+        )
         val personIdent = "123456789010"
         val ettersendingSlot = slot<Ettersending>()
         val ettersendingVedleggSlot = slot<List<EttersendingVedlegg>>()
@@ -71,9 +77,17 @@ internal class EttersendingServiceTest {
             ettersendingRepository.insert(capture(ettersendingSlot))
         } answers { ettersendingSlot.captured }
 
-        ettersendingService.mottaEttersending(mapOf(StønadType.OVERGANGSSTØNAD to EttersendelseDto(listOf(dokumentasjonsbehov1,
-                                                                                                          dokumentasjonsbehov2),
-                                                                                                   personIdent = personIdent)))
+        ettersendingService.mottaEttersending(
+            mapOf(
+                StønadType.OVERGANGSSTØNAD to EttersendelseDto(
+                    listOf(
+                        dokumentasjonsbehov1,
+                        dokumentasjonsbehov2
+                    ),
+                    personIdent = personIdent
+                )
+            )
+        )
 
         assertThat(ettersendingSlot.captured.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD.toString())
         assertThat(ettersendingSlot.captured.ettersendingPdf).isNull()
@@ -89,6 +103,5 @@ internal class EttersendingServiceTest {
         assertThat(ettersendingVedleggSlot.captured[1].ettersendingId).isEqualTo(ettersendingSlot.captured.id)
         assertThat(ettersendingVedleggSlot.captured[1].navn).isEqualTo(vedlegg2.navn)
         assertThat(ettersendingVedleggSlot.captured[1].innhold.bytes).isEqualTo(dokument2)
-
     }
 }

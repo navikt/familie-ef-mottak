@@ -26,64 +26,79 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
-@ComponentScan("no.nav.familie.prosessering",
-               "no.nav.familie.sikkerhet",
-               "no.nav.familie.ef.mottak")
+@ComponentScan(
+    "no.nav.familie.prosessering",
+    "no.nav.familie.sikkerhet",
+    "no.nav.familie.ef.mottak"
+)
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableScheduling
-@Import(BearerTokenClientInterceptor::class,
-        BearerTokenExchangeClientInterceptor::class,
-        RestTemplateBuilderBean::class,
-        MdcValuesPropagatingClientInterceptor::class,
-        ConsumerIdClientInterceptor::class)
+@Import(
+    BearerTokenClientInterceptor::class,
+    BearerTokenExchangeClientInterceptor::class,
+    RestTemplateBuilderBean::class,
+    MdcValuesPropagatingClientInterceptor::class,
+    ConsumerIdClientInterceptor::class
+)
 class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
-
     @Bean("tokenExchange")
-    fun restTemplate(bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
-                     mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
-                     consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+    fun restTemplate(
+        bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
+        mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+    ): RestOperations {
         return RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(25, ChronoUnit.SECONDS))
-                .interceptors(bearerTokenExchangeClientInterceptor,
-                              mdcValuesPropagatingClientInterceptor,
-                              consumerIdClientInterceptor)
-                .build()
+            .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(25, ChronoUnit.SECONDS))
+            .interceptors(
+                bearerTokenExchangeClientInterceptor,
+                mdcValuesPropagatingClientInterceptor,
+                consumerIdClientInterceptor
+            )
+            .build()
     }
 
     @Bean("restTemplateAzure")
-    fun restTemplateAzure(mdcInterceptor: MdcValuesPropagatingClientInterceptor,
-                          bearerTokenClientInterceptor: BearerTokenClientInterceptor,
-                          consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+    fun restTemplateAzure(
+        mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+        bearerTokenClientInterceptor: BearerTokenClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+    ): RestOperations {
         return RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(5, ChronoUnit.MINUTES))
-                .interceptors(mdcInterceptor,
-                              bearerTokenClientInterceptor,
-                              consumerIdClientInterceptor)
-                .build()
+            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(5, ChronoUnit.MINUTES))
+            .interceptors(
+                mdcInterceptor,
+                bearerTokenClientInterceptor,
+                consumerIdClientInterceptor
+            )
+            .build()
     }
 
     @Bean("restTemplateUnsecured")
-    fun restTemplate(mdcInterceptor: MdcValuesPropagatingClientInterceptor,
-                     consumerIdClientInterceptor: ConsumerIdClientInterceptor): RestOperations {
+    fun restTemplate(
+        mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+    ): RestOperations {
         return RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
-                .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
+            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+            .interceptors(mdcInterceptor, consumerIdClientInterceptor).build()
     }
 
     @Primary
     @Bean
     fun oAuth2HttpClient(): RetryOAuth2HttpClient {
-        return RetryOAuth2HttpClient(RestTemplateBuilder()
-                                             .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                                             .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)))
+        return RetryOAuth2HttpClient(
+            RestTemplateBuilder()
+                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+        )
     }
 
     @Bean

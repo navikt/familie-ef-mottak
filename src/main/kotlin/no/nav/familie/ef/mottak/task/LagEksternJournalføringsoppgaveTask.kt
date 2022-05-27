@@ -9,11 +9,14 @@ import no.nav.familie.prosessering.domene.Task
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagEksternJournalføringsoppgaveTask.TYPE,
-                     beskrivelse = "Lager oppgave i GoSys")
-class LagEksternJournalføringsoppgaveTask(private val ettersendingRepository: EttersendingRepository,
-                                          private val oppgaveService: OppgaveService,
-                                          private val søknadRepository: SøknadRepository
+@TaskStepBeskrivelse(
+    taskStepType = LagEksternJournalføringsoppgaveTask.TYPE,
+    beskrivelse = "Lager oppgave i GoSys"
+)
+class LagEksternJournalføringsoppgaveTask(
+    private val ettersendingRepository: EttersendingRepository,
+    private val oppgaveService: OppgaveService,
+    private val søknadRepository: SøknadRepository
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -27,14 +30,13 @@ class LagEksternJournalføringsoppgaveTask(private val ettersendingRepository: E
     }
 
     private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) =
-            søknadRepository.findByJournalpostId(journalpostId) == null
+        søknadRepository.findByJournalpostId(journalpostId) == null
 
     private fun finnesIkkeEttersendingMedJournalpostId(journalpostId: String) =
-            ettersendingRepository.findByJournalpostId(journalpostId) == null
+        ettersendingRepository.findByJournalpostId(journalpostId) == null
 
     companion object {
 
         const val TYPE = "lagEksternJournalføringsoppgave"
     }
-
 }

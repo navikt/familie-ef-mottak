@@ -17,7 +17,7 @@ import java.util.UUID
 @RestController
 @RequestMapping(path = ["/api/soknad/dokumentasjonsbehov"], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
-        issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
+    issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
 )
 class DokumentasjonsbehovController(val søknadService: SøknadService) {
 
@@ -30,13 +30,14 @@ class DokumentasjonsbehovController(val søknadService: SøknadService) {
         val fnrFraToken = EksternBrukerUtils.hentFnrFraToken()
         if (fnrFraToken != dokumentasjonsbehov.personIdent) {
             logger.warn("Fødselsnummer fra token matcher ikke fnr på søknaden")
-            secureLogger.info("TokenFnr={} matcher ikke søknadFnr={} søknadId={}",
-                              fnrFraToken,
-                              dokumentasjonsbehov.personIdent,
-                              søknadId)
+            secureLogger.info(
+                "TokenFnr={} matcher ikke søknadFnr={} søknadId={}",
+                fnrFraToken,
+                dokumentasjonsbehov.personIdent,
+                søknadId
+            )
             throw ApiFeil("Fnr fra token matcher ikke fnr på søknaden", HttpStatus.FORBIDDEN)
         }
         return ResponseEntity.ok(dokumentasjonsbehov)
     }
-
 }

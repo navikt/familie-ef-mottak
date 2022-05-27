@@ -10,7 +10,6 @@ class FileCryptoWritingConverter : AbstractCryptoWritingConverter<EncryptedFile?
     override fun entityAttributeToByteArray(attribute: EncryptedFile?): ByteArray? {
         return attribute?.bytes
     }
-
 }
 
 @ReadingConverter
@@ -19,5 +18,4 @@ class FileCryptoReadingConverter : AbstractCryptoReadingConverter<EncryptedFile?
     override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedFile? {
         return dbData?.let { EncryptedFile(it) }
     }
-
 }

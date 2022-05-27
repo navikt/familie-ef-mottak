@@ -76,13 +76,14 @@ abstract class IntegrasjonSpringRunnerTest {
         }
 
     fun getTestToken(fnr: String = "12345678910"): String {
-        val cookie = restTemplate.exchange(localhost("/local/cookie?subject=$fnr"),
-                                           HttpMethod.GET,
-                                           HttpEntity.EMPTY,
-                                           String::class.java)
+        val cookie = restTemplate.exchange(
+            localhost("/local/cookie?subject=$fnr"),
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            String::class.java
+        )
         return tokenFraRespons(cookie)
     }
-
 
     private fun tokenFraRespons(cookie: ResponseEntity<String>): String {
         return cookie.body!!.split("value\":\"".toRegex()).toTypedArray()[1].split("\"".toRegex()).toTypedArray()[0]

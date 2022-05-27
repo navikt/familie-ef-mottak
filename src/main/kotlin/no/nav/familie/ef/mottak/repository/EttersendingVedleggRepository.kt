@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface EttersendingVedleggRepository : RepositoryInterface<EttersendingVedlegg, UUID>,
-                                          InsertUpdateRepository<EttersendingVedlegg> {
+interface EttersendingVedleggRepository :
+    RepositoryInterface<EttersendingVedlegg, UUID>,
+    InsertUpdateRepository<EttersendingVedlegg> {
 
     fun findByEttersendingId(ettersendingId: UUID): List<EttersendingVedlegg>
 }

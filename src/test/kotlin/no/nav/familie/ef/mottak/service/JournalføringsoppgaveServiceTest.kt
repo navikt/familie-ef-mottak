@@ -61,10 +61,12 @@ class JournalføringsoppgaveServiceTest {
 
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
-        service = JournalføringsoppgaveService(mockFeatureToggleService,
-                                               mockSøknadRepository,
-                                               mockEttersendingRepository,
-                                               mockJournalfoeringHendelseDbUtil)
+        service = JournalføringsoppgaveService(
+            mockFeatureToggleService,
+            mockSøknadRepository,
+            mockEttersendingRepository,
+            mockJournalfoeringHendelseDbUtil
+        )
     }
 
     @Test
@@ -111,9 +113,11 @@ class JournalføringsoppgaveServiceTest {
         every { journalpost.journalstatus } returns Journalstatus.MOTTATT
         every { journalpost.kanal } returns "NAV_NO"
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns
-                Ettersending(ettersendingJson = EncryptedString(""),
-                             stønadType = "OVERGANGSSTØNAD",
-                             fnr = "")
+            Ettersending(
+                ettersendingJson = EncryptedString(""),
+                stønadType = "OVERGANGSSTØNAD",
+                fnr = ""
+            )
 
         service.lagEksternJournalføringTask(journalpost)
 
@@ -125,13 +129,14 @@ class JournalføringsoppgaveServiceTest {
     @Test
     fun `Journalposter som er mottatt uten ettersending eller søknad skal opprettes`() {
 
-        journalpost = Journalpost("123",
-                                  Journalposttype.I,
-                                  Journalstatus.MOTTATT,
-                                  tema = "ENF",
-                                  behandlingstema = "abc123",
-                                  bruker = Bruker("213", BrukerIdType.FNR),
-                                  kanal = "NAV_NO"
+        journalpost = Journalpost(
+            "123",
+            Journalposttype.I,
+            Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = "abc123",
+            bruker = Bruker("213", BrukerIdType.FNR),
+            kanal = "NAV_NO"
         )
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns null
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null

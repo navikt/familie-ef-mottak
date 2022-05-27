@@ -33,9 +33,11 @@ internal class SakServiceTest {
 
     private val infotrygdService: InfotrygdService = mockk(relaxed = true)
 
-    private val sakService = SakService(integrasjonerClient,
-                                        infotrygdService,
-                                        søknadService)
+    private val sakService = SakService(
+        integrasjonerClient,
+        infotrygdService,
+        søknadService
+    )
 
     private val enheterNay = listOf(Enhet("4489", "NAY"))
     private val ingenEnheter = emptyList<Enhet>()
@@ -45,14 +47,23 @@ internal class SakServiceTest {
 
         val søknad = søknad(journalpostId = "15")
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
-                                                                DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"))
-                )))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01")
+                        )
+                    )
+                )
+            )
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(søknad)).isFalse()
@@ -63,14 +74,23 @@ internal class SakServiceTest {
 
         val søknad = søknad(journalpostId = "15", id = "1")
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
-                                                                DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"))
-                )))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01")
+                        )
+                    )
+                )
+            )
 
         every {
             søknadService.get("1")
@@ -81,19 +101,25 @@ internal class SakServiceTest {
         assertThat(sakService.opprettSak(søknad.id, "12")).isNull()
     }
 
-
     @Test
     fun `skal ikke kunne opprette barnetilsyn-infotrygd-sak dersom den allerede eksisterer`() {
 
         val soknad = søknad(id = "1", dokumenttype = DOKUMENTTYPE_BARNETILSYN, journalpostId = "15")
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"))
-                )))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"))
+                    )
+                )
+            )
 
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
@@ -105,13 +131,20 @@ internal class SakServiceTest {
 
         val soknad = søknad(id = "1", dokumenttype = DOKUMENTTYPE_SKOLEPENGER, journalpostId = "15")
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.04"))
-                )))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.04"))
+                    )
+                )
+            )
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
@@ -122,16 +155,19 @@ internal class SakServiceTest {
 
         val slot = slot<OpprettInfotrygdSakRequest>()
         every { søknadService.get("1") }
-                .returns(søknad(id = "1",
-                                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                journalpostId = "15",
-                                fnr = "123",
-                                opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+            .returns(
+                søknad(
+                    id = "1",
+                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                    journalpostId = "15",
+                    fnr = "123",
+                    opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)
                 )
+            )
         every { integrasjonerClient.finnBehandlendeEnhet("123") }
-                .returns(listOf(Enhet("0315", "Flekkefjord")))
+            .returns(listOf(Enhet("0315", "Flekkefjord")))
         every { integrasjonerClient.opprettInfotrygdsak(capture(slot)) }
-                .returns(OpprettInfotrygdSakResponse())
+            .returns(OpprettInfotrygdSakResponse())
         every {
             integrasjonerClient.finnJournalposter(any())
         } returns emptyList()
@@ -144,20 +180,34 @@ internal class SakServiceTest {
     @Test
     fun `skal kunne opprette infotrygdsak for overgangsstønad`() {
 
-        val soknad = søknad(id = "1",
-                            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                            journalpostId = "15",
-                            fnr = "123",
-                            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+        val soknad = søknad(
+            id = "1",
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            journalpostId = "15",
+            fnr = "123",
+            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)
+        )
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
-                                                                DokumentInfo(dokumentInfoId = "123",
-                                                                             brevkode = "NAV 15-00.04")))))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                            DokumentInfo(
+                                dokumentInfoId = "123",
+                                brevkode = "NAV 15-00.04"
+                            )
+                        )
+                    )
+                )
+            )
 
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
@@ -167,20 +217,34 @@ internal class SakServiceTest {
     @Test
     fun `skal ikke kunne opprette infotrygdsak for barnetilsyn hvis det ikke finnes enhet for søker`() {
 
-        val soknad = søknad(id = "1",
-                            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                            journalpostId = "15",
-                            fnr = "123",
-                            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+        val soknad = søknad(
+            id = "1",
+            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+            journalpostId = "15",
+            fnr = "123",
+            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)
+        )
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
-                                                                DokumentInfo(dokumentInfoId = "123",
-                                                                             brevkode = "NAV 15-00.04")))))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.02"),
+                            DokumentInfo(
+                                dokumentInfoId = "123",
+                                brevkode = "NAV 15-00.04"
+                            )
+                        )
+                    )
+                )
+            )
 
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns ingenEnheter
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isFalse()
@@ -189,46 +253,73 @@ internal class SakServiceTest {
     @Test
     fun `skal kunne opprette infotrygdsak for barnetilsyn`() {
 
-        val soknad = søknad(id = "1",
-                            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                            journalpostId = "15",
-                            fnr = "123",
-                            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+        val soknad = søknad(
+            id = "1",
+            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+            journalpostId = "15",
+            fnr = "123",
+            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)
+        )
         every { søknadService.get("1") }.returns(soknad)
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
-                                                                DokumentInfo(dokumentInfoId = "123",
-                                                                             brevkode = "NAV 15-00.04")))))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
+                            DokumentInfo(
+                                dokumentInfoId = "123",
+                                brevkode = "NAV 15-00.04"
+                            )
+                        )
+                    )
+                )
+            )
 
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
-
     }
 
     @Test
     fun `opprettSakOmIngenFinnes oppretter sak om ingen finnes for skolepenger`() {
 
-        val soknad = søknad(id = "1",
-                            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-                            journalpostId = "15",
-                            fnr = "123",
-                            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45))
+        val soknad = søknad(
+            id = "1",
+            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+            journalpostId = "15",
+            fnr = "123",
+            opprettetTid = LocalDateTime.of(2014, 1, 16, 12, 45)
+        )
         every { søknadService.get("1") }
-                .returns(soknad)
+            .returns(soknad)
         every { integrasjonerClient.finnJournalposter(any()) }
-                .returns(listOf(Journalpost(journalpostId = "15",
-                                            journalposttype = Journalposttype.I,
-                                            journalstatus = Journalstatus.FERDIGSTILT,
-                                            sak = Sak(fagsakId = "23",
-                                                      fagsaksystem = INFOTRYGD),
-                                            dokumenter = listOf(DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
-                                                                DokumentInfo(dokumentInfoId = "123",
-                                                                             brevkode = "NAV 15-00.02")))))
+            .returns(
+                listOf(
+                    Journalpost(
+                        journalpostId = "15",
+                        journalposttype = Journalposttype.I,
+                        journalstatus = Journalstatus.FERDIGSTILT,
+                        sak = Sak(
+                            fagsakId = "23",
+                            fagsaksystem = INFOTRYGD
+                        ),
+                        dokumenter = listOf(
+                            DokumentInfo(dokumentInfoId = "123", brevkode = "NAV 15-00.01"),
+                            DokumentInfo(
+                                dokumentInfoId = "123",
+                                brevkode = "NAV 15-00.02"
+                            )
+                        )
+                    )
+                )
+            )
         every { integrasjonerClient.finnBehandlendeEnhet(any()) } returns enheterNay
 
         assertThat(sakService.finnesIkkeIInfotrygd(soknad)).isTrue()
@@ -254,7 +345,6 @@ internal class SakServiceTest {
         )
 
         assertThat(sakService.finnesIkkeÅpenSakIInfotrygd(personIdent, StønadType.OVERGANGSSTØNAD)).isTrue
-
     }
 
     @Test
@@ -277,20 +367,19 @@ internal class SakServiceTest {
         )
 
         assertThat(sakService.finnesIkkeÅpenSakIInfotrygd(personIdent, StønadType.SKOLEPENGER)).isFalse
-
     }
 
     private fun opprettInfotrygdSakRequest(stønadsklassifisering: String) =
-            OpprettInfotrygdSakRequest(fnr = "123",
-                                       fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
-                                       stonadsklassifisering2 = stønadsklassifisering,
-                                       type = SAKSTYPE_SØKNAD,
-                                       opprettetAvOrganisasjonsEnhetsId = "0315",
-                                       mottakerOrganisasjonsEnhetsId = "0315",
-                                       mottattdato = LocalDate.of(2014, 1, 16),
-                                       sendBekreftelsesbrev = false,
-                                       oppgaveId = "987",
-                                       oppgaveOrganisasjonsenhetId = null)
-
-
+        OpprettInfotrygdSakRequest(
+            fnr = "123",
+            fagomrade = FAGOMRÅDE_ENSLIG_FORSØRGER,
+            stonadsklassifisering2 = stønadsklassifisering,
+            type = SAKSTYPE_SØKNAD,
+            opprettetAvOrganisasjonsEnhetsId = "0315",
+            mottakerOrganisasjonsEnhetsId = "0315",
+            mottattdato = LocalDate.of(2014, 1, 16),
+            sendBekreftelsesbrev = false,
+            oppgaveId = "987",
+            oppgaveOrganisasjonsenhetId = null
+        )
 }

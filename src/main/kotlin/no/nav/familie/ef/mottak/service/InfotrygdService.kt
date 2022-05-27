@@ -3,15 +3,15 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.integration.InfotrygdReplikaClient
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdFinnesResponse
-import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSak
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSakResponse
 import no.nav.familie.kontrakter.ef.infotrygd.InfotrygdSøkRequest
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
-class InfotrygdService(private val integrasjonerClient: IntegrasjonerClient,
-                       private val infotrygdReplikaClient: InfotrygdReplikaClient) {
+class InfotrygdService(
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val infotrygdReplikaClient: InfotrygdReplikaClient
+) {
 
     /**
      * Finner om en person eksisterer i infotrygd og om det finnes noen aktiv sak for personen.
@@ -26,5 +26,4 @@ class InfotrygdService(private val integrasjonerClient: IntegrasjonerClient,
 
         return infotrygdReplikaClient.hentSaker(InfotrygdSøkRequest(personIdenter))
     }
-
 }

@@ -10,9 +10,11 @@ class CipherInitializer {
         return Cipher.getInstance(CIPHER_INSTANCE_NAME)
     }
 
-    internal fun initCipher(cipher: Cipher,
-                            encryptionMode: Int,
-                            iv: ByteArray) {
+    internal fun initCipher(
+        cipher: Cipher,
+        encryptionMode: Int,
+        iv: ByteArray
+    ) {
 
         val secretKey = SecretKeySpec(KeyProperty.DATABASE_ENCRYPTION_KEY, SECRET_KEY_ALGORITHM)
         val algorithmParameters = IvParameterSpec(iv)
@@ -24,5 +26,4 @@ class CipherInitializer {
         private const val CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding"
         private const val SECRET_KEY_ALGORITHM = "AES"
     }
-
 }

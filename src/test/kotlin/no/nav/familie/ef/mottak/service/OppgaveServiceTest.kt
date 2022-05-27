@@ -61,13 +61,15 @@ internal class OppgaveServiceTest {
     private val ettersendingService = mockk<EttersendingService>()
 
     private val oppgaveService: OppgaveService =
-            OppgaveService(integrasjonerClient = integrasjonerClient,
-                           featureToggleService = mockk(relaxed = true),
-                           søknadService = søknadService,
-                           opprettOppgaveMapper = opprettOppgaveMapper,
-                           sakService = sakService,
-                           saksbehandlingClient = saksbehandlingClient,
-                           ettersendingService = ettersendingService)
+        OppgaveService(
+            integrasjonerClient = integrasjonerClient,
+            featureToggleService = mockk(relaxed = true),
+            søknadService = søknadService,
+            opprettOppgaveMapper = opprettOppgaveMapper,
+            sakService = sakService,
+            saksbehandlingClient = saksbehandlingClient,
+            ettersendingService = ettersendingService
+        )
 
     @BeforeEach
     private fun init() {
@@ -96,27 +98,32 @@ internal class OppgaveServiceTest {
     @Test
     fun `Skal kalle integrasjonsklient ved opprettelse av oppgave`() {
         every { integrasjonerClient.hentJournalpost("999") }
-                .returns(Journalpost("999",
-                                     Journalposttype.I,
-                                     Journalstatus.MOTTATT,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     null,
-                                     listOf(DokumentInfo("1", "", "", null, null, null)),
-                                     null))
+            .returns(
+                Journalpost(
+                    "999",
+                    Journalposttype.I,
+                    Journalstatus.MOTTATT,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    listOf(DokumentInfo("1", "", "", null, null, null)),
+                    null
+                )
+            )
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
             søknadService.get("123")
-        } returns Søknad(søknadJson = EncryptedString("{}"),
-                         dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-                         journalpostId = "999",
-                         fnr = Testdata.randomFnr())
-
+        } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+            journalpostId = "999",
+            fnr = Testdata.randomFnr()
+        )
 
         oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
 
@@ -129,7 +136,7 @@ internal class OppgaveServiceTest {
     fun `Opprett oppgave med enhet NAY hvis opprettOppgave-kall får feil som følge av at enhet ikke blir funnet for bruker`() {
 
         val opprettOppgaveRequest =
-                opprettOppgaveMapper.toJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD, "4489")
+            opprettOppgaveMapper.toJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD, "4489")
 
         every {
             integrasjonerClient.lagOppgave(opprettOppgaveRequest)
@@ -141,7 +148,6 @@ internal class OppgaveServiceTest {
 
         val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
 
-
         assertEquals(1, oppgaveResponse)
     }
 
@@ -150,7 +156,7 @@ internal class OppgaveServiceTest {
 
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns emptyList()
         val behandleSakOppgaveRequest =
-                opprettOppgaveMapper.toBehandleSakOppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD, null)
+            opprettOppgaveMapper.toBehandleSakOppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD, null)
 
         every {
             integrasjonerClient.lagOppgave(behandleSakOppgaveRequest)
@@ -162,18 +168,18 @@ internal class OppgaveServiceTest {
 
         val oppgaveResponse = oppgaveService.lagBehandleSakOppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
 
-
         assertEquals(1, oppgaveResponse)
     }
 
     private fun lagRessursException(): RessursException {
-        val httpServerErrorException = HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
-                                                                "Server error",
-                                                                IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
-                                                                Charset.defaultCharset())
+        val httpServerErrorException = HttpServerErrorException(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "Server error",
+            IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
+            Charset.defaultCharset()
+        )
         return lesRessurs(httpServerErrorException)?.let { RessursException(it, httpServerErrorException) }!!
     }
-
 
     private fun lesRessurs(e: RestClientResponseException): Ressurs<Any>? {
         return try {
@@ -188,14 +194,16 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for overgangsstønad, hvis det finnes perioder i infotrygd`(){
+    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for overgangsstønad, hvis det finnes perioder i infotrygd`() {
         val søknadId = "enSøknadId"
         val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(søknadJson = EncryptedString("{}"),
-                                                             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                                             journalpostId = journalpostId,
-                                                             fnr = Testdata.randomFnr(),
-                                                             behandleINySaksbehandling = true)
+        every { søknadService.get(søknadId) } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            journalpostId = journalpostId,
+            fnr = Testdata.randomFnr(),
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns false
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -204,19 +212,19 @@ internal class OppgaveServiceTest {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-
-
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for barnetilsyn, selv om det finnes perioder i infotrygd`(){
+    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for barnetilsyn, selv om det finnes perioder i infotrygd`() {
         val søknadId = "enSøknadId"
         val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(søknadJson = EncryptedString("{}"),
-                                                             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                                                             journalpostId = journalpostId,
-                                                             fnr = Testdata.randomFnr(),
-                                                             behandleINySaksbehandling = true)
+        every { søknadService.get(søknadId) } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+            journalpostId = journalpostId,
+            fnr = Testdata.randomFnr(),
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -226,19 +234,19 @@ internal class OppgaveServiceTest {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
-
-
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for skolepenger, selv om det finnes perioder i infotrygd`(){
+    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for skolepenger, selv om det finnes perioder i infotrygd`() {
         val søknadId = "enSøknadId"
         val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(søknadJson = EncryptedString("{}"),
-                                                             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-                                                             journalpostId = journalpostId,
-                                                             fnr = Testdata.randomFnr(),
-                                                             behandleINySaksbehandling = true)
+        every { søknadService.get(søknadId) } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+            journalpostId = journalpostId,
+            fnr = Testdata.randomFnr(),
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -248,19 +256,19 @@ internal class OppgaveServiceTest {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
-
-
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for barnetilsyn, hvis det finnes åpen sak i infotrygd`(){
+    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for barnetilsyn, hvis det finnes åpen sak i infotrygd`() {
         val søknadId = "enSøknadId"
         val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(søknadJson = EncryptedString("{}"),
-                                                             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                                                             journalpostId = journalpostId,
-                                                             fnr = Testdata.randomFnr(),
-                                                             behandleINySaksbehandling = true)
+        every { søknadService.get(søknadId) } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+            journalpostId = journalpostId,
+            fnr = Testdata.randomFnr(),
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -270,19 +278,19 @@ internal class OppgaveServiceTest {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-
-
     }
 
     @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for skolepenger, hvis det finnes åpen sak i infotrygd`(){
+    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for skolepenger, hvis det finnes åpen sak i infotrygd`() {
         val søknadId = "enSøknadId"
         val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(søknadJson = EncryptedString("{}"),
-                                                             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-                                                             journalpostId = journalpostId,
-                                                             fnr = Testdata.randomFnr(),
-                                                             behandleINySaksbehandling = true)
+        every { søknadService.get(søknadId) } returns Søknad(
+            søknadJson = EncryptedString("{}"),
+            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+            journalpostId = journalpostId,
+            fnr = Testdata.randomFnr(),
+            behandleINySaksbehandling = true
+        )
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
         every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -292,8 +300,6 @@ internal class OppgaveServiceTest {
         oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-
-
     }
 
     @Test
@@ -360,10 +366,9 @@ internal class OppgaveServiceTest {
         verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
     }
 
-
     // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om "BehandlesAvApplikasjon" er satt til infotrygd`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om "BehandlesAvApplikasjon" er satt til infotrygd`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -378,7 +383,7 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -387,15 +392,13 @@ internal class OppgaveServiceTest {
             behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
         )
 
-
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -404,30 +407,27 @@ internal class OppgaveServiceTest {
             behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         )
 
-
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
             id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD)
-
+            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+        )
 
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis behandlingstema er null (arbeidssøkerskjema)`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis behandlingstema er null (arbeidssøkerskjema)`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -436,15 +436,13 @@ internal class OppgaveServiceTest {
             behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
         )
 
-
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til opplæringsmappe hvis barnetilsyn og skal behandles i ny løsning`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til opplæringsmappe hvis barnetilsyn og skal behandles i ny løsning`() {
         val oppgaveId: Long = 123
         val oppgaveSlot = slot<Oppgave>()
         val mappeIdOpplæring = 456
@@ -470,11 +468,10 @@ internal class OppgaveServiceTest {
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
-
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til uplassertMappe hvis overgangsstønad`(){
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til uplassertMappe hvis overgangsstønad`() {
         val oppgaveId: Long = 123
         val oppgaveSlot = slot<Oppgave>()
         val mappeIdUplassert = 123
@@ -500,87 +497,87 @@ internal class OppgaveServiceTest {
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
         Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
-
     }
 
     private val ettersendingId = UUID.randomUUID().toString()
     private val journalpostOvergangsstøand =
-            Journalpost(
-                    journalpostId = "111111111",
-                    journalposttype = Journalposttype.I,
-                    journalstatus = Journalstatus.MOTTATT,
-                    tema = "ENF",
-                    behandlingstema = "ab0071",
-                    tittel = "abrakadabra",
-                    bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
-                    journalforendeEnhet = "4817",
-                    kanal = "SKAN_IM",
-                    sak = Sak(null, null, null),
-                    dokumenter =
-                    listOf(
-                            DokumentInfo(
-                                    dokumentInfoId = "12345",
-                                    tittel = "Tittel",
-                                    brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                            )
-                    )
+        Journalpost(
+            journalpostId = "111111111",
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = "ab0071",
+            tittel = "abrakadabra",
+            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
+            journalforendeEnhet = "4817",
+            kanal = "SKAN_IM",
+            sak = Sak(null, null, null),
+            dokumenter =
+            listOf(
+                DokumentInfo(
+                    dokumentInfoId = "12345",
+                    tittel = "Tittel",
+                    brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                )
             )
+        )
 
     private val journalpostBarnetilsyn =
-            Journalpost(
-                    journalpostId = "111111111",
-                    journalposttype = Journalposttype.I,
-                    journalstatus = Journalstatus.MOTTATT,
-                    tema = "ENF",
-                    behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
-                    tittel = "abrakadabra",
-                    bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
-                    journalforendeEnhet = "4817",
-                    kanal = "SKAN_IM",
-                    sak = Sak(null, null, null),
-                    dokumenter =
-                    listOf(
-                            DokumentInfo(
-                                    dokumentInfoId = "12345",
-                                    tittel = "Tittel",
-                                    brevkode = DokumentBrevkode.BARNETILSYN.verdi,
-                                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                            )
-                    )
+        Journalpost(
+            journalpostId = "111111111",
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+            tittel = "abrakadabra",
+            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
+            journalforendeEnhet = "4817",
+            kanal = "SKAN_IM",
+            sak = Sak(null, null, null),
+            dokumenter =
+            listOf(
+                DokumentInfo(
+                    dokumentInfoId = "12345",
+                    tittel = "Tittel",
+                    brevkode = DokumentBrevkode.BARNETILSYN.verdi,
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                )
             )
+        )
 
     private val journalpostSkolepenger =
-            Journalpost(
-                    journalpostId = "111111111",
-                    journalposttype = Journalposttype.I,
-                    journalstatus = Journalstatus.MOTTATT,
-                    tema = "ENF",
-                    behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
-                    tittel = "abrakadabra",
-                    bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
-                    journalforendeEnhet = "4817",
-                    kanal = "SKAN_IM",
-                    sak = Sak(null, null, null),
-                    dokumenter =
-                    listOf(
-                            DokumentInfo(
-                                    dokumentInfoId = "12345",
-                                    tittel = "Tittel",
-                                    brevkode = DokumentBrevkode.SKOLEPENGER.verdi,
-                                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                            )
-                    )
+        Journalpost(
+            journalpostId = "111111111",
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
+            tittel = "abrakadabra",
+            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
+            journalforendeEnhet = "4817",
+            kanal = "SKAN_IM",
+            sak = Sak(null, null, null),
+            dokumenter =
+            listOf(
+                DokumentInfo(
+                    dokumentInfoId = "12345",
+                    tittel = "Tittel",
+                    brevkode = DokumentBrevkode.SKOLEPENGER.verdi,
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
+                )
             )
+        )
 
-    private val ettersending = Ettersending(id = UUID.randomUUID(),
-                                            ettersendingJson = EncryptedString(""),
-                                            ettersendingPdf = EncryptedFile("abc".toByteArray()),
-                                            stønadType = "OVERGANGSSTØNAD",
-                                            journalpostId = "123Abc",
-                                            fnr = "12345678901",
-                                            taskOpprettet = true,
-                                            opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2)
+    private val ettersending = Ettersending(
+        id = UUID.randomUUID(),
+        ettersendingJson = EncryptedString(""),
+        ettersendingPdf = EncryptedFile("abc".toByteArray()),
+        stønadType = "OVERGANGSSTØNAD",
+        journalpostId = "123Abc",
+        fnr = "12345678901",
+        taskOpprettet = true,
+        opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2)
 
     )
 
@@ -592,5 +589,4 @@ internal class OppgaveServiceTest {
             tildeltEnhetsnr = "4489",
             behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
         )
-
 }

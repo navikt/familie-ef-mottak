@@ -26,9 +26,9 @@ internal class TaskProsesseringServiceTest {
         val taskSlot = slot<Task>()
         val soknadSlot = slot<Søknad>()
         every { taskRepository.save(capture(taskSlot)) }
-                .answers { taskSlot.captured }
+            .answers { taskSlot.captured }
         every { søknadRepository.update(capture(soknadSlot)) }
-                .answers { soknadSlot.captured }
+            .answers { soknadSlot.captured }
 
         scheduledEventService.startTaskProsessering(soknad)
 

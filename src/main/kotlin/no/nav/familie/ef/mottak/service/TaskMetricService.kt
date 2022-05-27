@@ -7,8 +7,10 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class TaskMetricService(private val taskMetricRepository: TaskMetricRepository,
-                        private val søknadRepository: SøknadRepository) {
+class TaskMetricService(
+    private val taskMetricRepository: TaskMetricRepository,
+    private val søknadRepository: SøknadRepository
+) {
 
     @Scheduled(initialDelay = 5_000, fixedDelay = 5 * 60_000)
     fun oppdaterMetrikker() {

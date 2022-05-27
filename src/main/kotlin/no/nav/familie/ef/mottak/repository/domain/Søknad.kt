@@ -8,16 +8,18 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Table("soknad")
-data class Søknad(@Id
-                  val id: String = UUID.randomUUID().toString(),
-                  @Column("soknad_json")
-                  val søknadJson: EncryptedString,
-                  @Column("soknad_pdf")
-                  val søknadPdf: EncryptedFile? = null,
-                  val dokumenttype: String,
-                  val journalpostId: String? = null,
-                  val saksnummer: String? = null,
-                  val fnr: String,
-                  val taskOpprettet: Boolean = false,
-                  val opprettetTid: LocalDateTime = LocalDateTime.now(),
-                  val behandleINySaksbehandling: Boolean = false)
+data class Søknad(
+    @Id
+    val id: String = UUID.randomUUID().toString(),
+    @Column("soknad_json")
+    val søknadJson: EncryptedString,
+    @Column("soknad_pdf")
+    val søknadPdf: EncryptedFile? = null,
+    val dokumenttype: String,
+    val journalpostId: String? = null,
+    val saksnummer: String? = null,
+    val fnr: String,
+    val taskOpprettet: Boolean = false,
+    val opprettetTid: LocalDateTime = LocalDateTime.now(),
+    val behandleINySaksbehandling: Boolean = false
+)

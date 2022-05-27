@@ -27,13 +27,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
-                     private val featureToggleService: FeatureToggleService,
-                     private val søknadService: SøknadService,
-                     private val ettersendingService: EttersendingService,
-                     private val opprettOppgaveMapper: OpprettOppgaveMapper,
-                     private val sakService: SakService,
-                     private val saksbehandlingClient: SaksbehandlingClient) {
+class OppgaveService(
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val featureToggleService: FeatureToggleService,
+    private val søknadService: SøknadService,
+    private val ettersendingService: EttersendingService,
+    private val opprettOppgaveMapper: OpprettOppgaveMapper,
+    private val sakService: SakService,
+    private val saksbehandlingClient: SaksbehandlingClient
+) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -65,7 +67,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         try {
             log.info("journalPost=$journalpostId finnesBehandlingForPerson=$finnesBehandlingForPerson")
             val behandlesAvApplikasjon =
-                    if (finnesBehandlingForPerson) UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
+                if (finnesBehandlingForPerson) UAVKLART else BehandlesAvApplikasjon.INFOTRYGD
             return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
@@ -83,9 +85,11 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return opprettOppgave(opprettOppgave, journalpost)
     }
 
-    fun settSaksnummerPåInfotrygdOppgave(oppgaveId: Long,
-                                         saksblokk: String,
-                                         saksnummer: String): Long {
+    fun settSaksnummerPåInfotrygdOppgave(
+        oppgaveId: Long,
+        saksblokk: String,
+        saksnummer: String
+    ): Long {
         val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         val oppdatertOppgave = oppgave.copy(
             saksreferanse = saksnummer,
@@ -95,8 +99,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost,
-                                 behandlesAvApplikasjon: BehandlesAvApplikasjon): Long? {
+    fun lagJournalføringsoppgave(
+        journalpost: Journalpost,
+        behandlesAvApplikasjon: BehandlesAvApplikasjon
+    ): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -114,13 +120,15 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
                 }
                 else -> {
                     val opprettOppgave =
-                            opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+                        opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
                     return opprettOppgave(opprettOppgave, journalpost)
                 }
             }
         } else {
-            val error = IllegalStateException("Journalpost ${journalpost.journalpostId} har endret status " +
-                                              "fra MOTTATT til ${journalpost.journalstatus.name}")
+            val error = IllegalStateException(
+                "Journalpost ${journalpost.journalpostId} har endret status " +
+                    "fra MOTTATT til ${journalpost.journalstatus.name}"
+            )
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
@@ -142,13 +150,17 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun opprettOppgave(opprettOppgave: OpprettOppgaveRequest,
-                               journalpost: Journalpost): Long {
+    private fun opprettOppgave(
+        opprettOppgave: OpprettOppgaveRequest,
+        journalpost: Journalpost
+    ): Long {
 
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
-            log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                     "journalpost journalpostId=${journalpost.journalpostId}")
+            log.info(
+                "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
+                    "journalpost journalpostId=${journalpost.journalpostId}"
+            )
             nyOppgave.oppgaveId
         } catch (ressursException: RessursException) {
             if (finnerIngenGyldigArbeidsfordelingsenhetForBruker(ressursException)) {
@@ -159,11 +171,15 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun opprettOppgaveMedEnhetNAY(opprettOppgave: OpprettOppgaveRequest,
-                                          journalpost: Journalpost): Long {
+    private fun opprettOppgaveMedEnhetNAY(
+        opprettOppgave: OpprettOppgaveRequest,
+        journalpost: Journalpost
+    ): Long {
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
-        log.info("Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                 "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=${ENHETSNUMMER_NAY}")
+        log.info(
+            "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
+                "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY"
+        )
         return nyOppgave.oppgaveId
     }
 
@@ -173,19 +189,21 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
-        log.info("Skipper oppretting av journalførings-oppgave. " +
-                 "Fant åpen oppgave av type $oppgavetype for " +
-                 "journalpostId=${journalpostId}")
+        log.info(
+            "Skipper oppretting av journalførings-oppgave. " +
+                "Fant åpen oppgave av type $oppgavetype for " +
+                "journalpostId=$journalpostId"
+        )
     }
 
     private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
-            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L
+        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L
 
     private fun journalføringsoppgaveFinnes(journalpost: Journalpost) =
-            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
+        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
 
     private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
-            integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
+        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
     fun ferdigstillOppgaveForJournalpost(journalpostId: String) {
         val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
@@ -218,7 +236,7 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun utledBehandlesAvApplikasjonForEttersending(fnr: String, stønadType: StønadType): BehandlesAvApplikasjon {
-        log.info("utledBehandlesAvApplikasjon stønadType=${stønadType}")
+        log.info("utledBehandlesAvApplikasjon stønadType=$stønadType")
         return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
         } else if (sakService.finnesIkkeIInfotrygd(fnr, stønadType) || stønadType != StønadType.OVERGANGSSTØNAD) {
@@ -228,8 +246,10 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         }
     }
 
-    private fun finnesBehandlingINyLøsning(fnr: String,
-                                           stønadType: StønadType): Boolean {
+    private fun finnesBehandlingINyLøsning(
+        fnr: String,
+        stønadType: StønadType
+    ): Boolean {
         val finnesBehandlingForPerson = saksbehandlingClient.finnesBehandlingForPerson(fnr, stønadType)
         log.info("Sjekk om behandling finnes i ny løsning for personen - finnesBehandlingForPerson=$finnesBehandlingForPerson")
         return finnesBehandlingForPerson
@@ -238,23 +258,23 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
 
-
         if (skalFlyttesTilMappe(oppgave)) {
-            val finnMappeRequest = FinnMappeRequest(tema = listOf(),
-                                                    enhetsnr = oppgave.tildeltEnhetsnr
-                                                               ?: error("Oppgave mangler tildelt enhetsnummer"),
-                                                    opprettetFom = null,
-                                                    limit = 1000)
+            val finnMappeRequest = FinnMappeRequest(
+                tema = listOf(),
+                enhetsnr = oppgave.tildeltEnhetsnr
+                    ?: error("Oppgave mangler tildelt enhetsnummer"),
+                opprettetFom = null,
+                limit = 1000
+            )
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-            val mappe = if (oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY ) {
+            val mappe = if (oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY) {
                 hentOpplæringsmappeBarnetilsyn(mapperResponse)
             } else {
                 hentMappeEfSakUpplassert(mapperResponse)
             }
-
 
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
@@ -263,32 +283,38 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
     }
 
     private fun hentMappeEfSakUpplassert(mapperResponse: FinnMappeResponseDto) =
-        (mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
-            ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)"))
+        (
+            mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
+                ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
+            )
 
     private fun hentOpplæringsmappeBarnetilsyn(
         mapperResponse: FinnMappeResponseDto,
-    ) = (mapperResponse.mapper.find {
-        it.navn.contains("EF Sak", true)
-                && it.navn.contains("65 Opplæring", true)
-    }
-        ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av barnetilsynoppgave"))
+    ) = (
+        mapperResponse.mapper.find {
+            it.navn.contains("EF Sak", true) &&
+                it.navn.contains("65 Opplæring", true)
+        }
+            ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av barnetilsynoppgave")
+        )
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
 
-
-    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT
-                                                       && oppgave.status != StatusEnum.FERDIGSTILT
-                                                       && oppgave.mappeId == null
-                                                       && (oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
-                                                           || oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT)
+    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT &&
+        oppgave.status != StatusEnum.FERDIGSTILT &&
+        oppgave.mappeId == null &&
+        (
+            oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY ||
+                oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT
+            )
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
-        when(oppgave.behandlingstema) {
+        when (oppgave.behandlingstema) {
             BEHANDLINGSTEMA_OVERGANGSSTØNAD -> true
-            BEHANDLINGSTEMA_BARNETILSYN -> oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
-                    || oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
+            BEHANDLINGSTEMA_BARNETILSYN ->
+                oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon ||
+                    oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
             BEHANDLINGSTEMA_SKOLEPENGER -> false
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
@@ -298,5 +324,4 @@ class OppgaveService(private val integrasjonerClient: IntegrasjonerClient,
         private const val ENHETSNUMMER_NAY: String = "4489"
         private const val ENHETSNUMMER_EGEN_ANSATT: String = "4483"
     }
-
 }

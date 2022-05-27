@@ -8,11 +8,14 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = OppdaterJournalføringTask.TYPE,
-                     beskrivelse = "Oppdaterer journalføring med saksinfo")
-class OppdaterJournalføringTask(private val taskRepository: TaskRepository,
-                                private val arkiveringService: ArkiveringService) : AsyncTaskStep {
-
+@TaskStepBeskrivelse(
+    taskStepType = OppdaterJournalføringTask.TYPE,
+    beskrivelse = "Oppdaterer journalføring med saksinfo"
+)
+class OppdaterJournalføringTask(
+    private val taskRepository: TaskRepository,
+    private val arkiveringService: ArkiveringService
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         arkiveringService.oppdaterJournalpost(task.payload)

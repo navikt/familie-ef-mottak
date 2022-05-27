@@ -38,6 +38,5 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
 
     fun CharSequence.toStringOrNull(): String? {
         return if (this.isNotBlank()) this.toString() else null
-
     }
 }

@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface SøknadRepository : RepositoryInterface<Søknad, String>,
-                             InsertUpdateRepository<Søknad> {
+interface SøknadRepository :
+    RepositoryInterface<Søknad, String>,
+    InsertUpdateRepository<Søknad> {
 
     fun findFirstByTaskOpprettetIsFalse(): Søknad?
 
@@ -17,5 +18,4 @@ interface SøknadRepository : RepositoryInterface<Søknad, String>,
     fun findAllByFnr(fnr: String): List<Søknad>
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
-
 }

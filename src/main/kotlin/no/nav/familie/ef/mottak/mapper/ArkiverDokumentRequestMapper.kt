@@ -17,36 +17,48 @@ import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 
 object ArkiverDokumentRequestMapper {
 
-    fun toDto(søknad: Søknad,
-              vedlegg: List<Vedlegg>): ArkiverDokumentRequest {
+    fun toDto(
+        søknad: Søknad,
+        vedlegg: List<Vedlegg>
+    ): ArkiverDokumentRequest {
         val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
-                Dokument(søknad.søknadJson.data.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
+            Dokument(søknad.søknadJson.data.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
-                Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, dokumenttype.dokumentTittel(), dokumenttype)
+            Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, dokumenttype.dokumentTittel(), dokumenttype)
         val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)
-        return ArkiverDokumentRequest(søknad.fnr,
-                                      false,
-                                      hoveddokumentvarianter,
-                                      mapVedlegg(vedlegg, søknad.dokumenttype))
+        return ArkiverDokumentRequest(
+            søknad.fnr,
+            false,
+            hoveddokumentvarianter,
+            mapVedlegg(vedlegg, søknad.dokumenttype)
+        )
     }
 
-    fun fromEttersending(ettersending: Ettersending,
-                         vedlegg: List<EttersendingVedlegg>): ArkiverDokumentRequest {
+    fun fromEttersending(
+        ettersending: Ettersending,
+        vedlegg: List<EttersendingVedlegg>
+    ): ArkiverDokumentRequest {
 
         val stønadType = StønadType.valueOf(ettersending.stønadType)
 
         val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(stønadType, ettersending)
 
-        return ArkiverDokumentRequest(ettersending.fnr,
-                                      false,
-                                      hovedDokumentVarianter,
-                                      mapEttersendingVedlegg(vedlegg,
-                                                             stønadType))
+        return ArkiverDokumentRequest(
+            ettersending.fnr,
+            false,
+            hovedDokumentVarianter,
+            mapEttersendingVedlegg(
+                vedlegg,
+                stønadType
+            )
+        )
     }
 
-    private fun lagHoveddokumentvarianterForEttersending(stønadType: StønadType,
-                                                         ettersending: Ettersending): List<Dokument> {
+    private fun lagHoveddokumentvarianterForEttersending(
+        stønadType: StønadType,
+        ettersending: Ettersending
+    ): List<Dokument> {
         val tittel = "Ettersending til søknad om $stønadType"
         val dokumenttype = utledDokumenttypeForEttersending(stønadType)
 
@@ -58,7 +70,6 @@ object ArkiverDokumentRequestMapper {
 
         return listOf(dokumentSomPdf, dokumentSomJson)
     }
-
 
     private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
@@ -73,19 +84,23 @@ object ArkiverDokumentRequestMapper {
     }
 
     private fun tilDokument(vedlegg: Vedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
-        return Dokument(dokument = vedlegg.innhold.bytes,
-                        filtype = Filtype.PDFA,
-                        tittel = vedlegg.tittel,
-                        filnavn = vedlegg.id.toString(),
-                        dokumenttype = dokumenttypeVedlegg)
+        return Dokument(
+            dokument = vedlegg.innhold.bytes,
+            filtype = Filtype.PDFA,
+            tittel = vedlegg.tittel,
+            filnavn = vedlegg.id.toString(),
+            dokumenttype = dokumenttypeVedlegg
+        )
     }
 
     private fun tilEttersendingDokument(vedlegg: EttersendingVedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
-        return Dokument(dokument = vedlegg.innhold.bytes,
-                        filtype = Filtype.PDFA,
-                        tittel = vedlegg.tittel,
-                        filnavn = vedlegg.id.toString(),
-                        dokumenttype = dokumenttypeVedlegg)
+        return Dokument(
+            dokument = vedlegg.innhold.bytes,
+            filtype = Filtype.PDFA,
+            tittel = vedlegg.tittel,
+            filnavn = vedlegg.id.toString(),
+            dokumenttype = dokumenttypeVedlegg
+        )
     }
 
     private fun mapDokumenttype(dokumenttype: String): Dokumenttype {
@@ -96,7 +111,6 @@ object ArkiverDokumentRequestMapper {
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
     }
-
 }
 
 fun Dokumenttype?.dokumentTittel(): String {
