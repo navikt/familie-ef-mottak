@@ -23,7 +23,7 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
     private val søknadService: SøknadService = mockk(relaxed = true)
 
     private val oppdaterBehandleSakOppgaveTask =
-            OppdaterBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, taskRepository)
+        OppdaterBehandleSakOppgaveTask(oppgaveService, søknadService, integrasjonerClient, taskRepository)
 
     @Test
     internal fun `Skal oppdatere behandle-sak-oppgave med saksnummer fra infotrygd`() {
@@ -34,18 +34,24 @@ internal class OppdaterBehandleSakOppgaveTaskTest {
         val saksnummer = "12345A01"
         val saksblokkSlot = slot<String>()
         val saksnummerSlot = slot<String>()
-        val søknad = søknad(dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-                            saksnummer = saksblokk)
+        val søknad = søknad(
+            dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+            saksnummer = saksblokk
+        )
         every { søknadService.get(any()) } returns søknad
         every {
-            integrasjonerClient.finnInfotrygdSaksnummerForSak(saksblokk,
-                                                              FAGOMRÅDE_ENSLIG_FORSØRGER,
-                                                              any())
+            integrasjonerClient.finnInfotrygdSaksnummerForSak(
+                saksblokk,
+                FAGOMRÅDE_ENSLIG_FORSØRGER,
+                any()
+            )
         } returns saksnummer
         every {
-            oppgaveService.settSaksnummerPåInfotrygdOppgave(oppgaveId,
-                                                            capture(saksblokkSlot),
-                                                            capture(saksnummerSlot))
+            oppgaveService.settSaksnummerPåInfotrygdOppgave(
+                oppgaveId,
+                capture(saksblokkSlot),
+                capture(saksnummerSlot)
+            )
         } returns oppgaveId
         oppdaterBehandleSakOppgaveTask.doTask(Task(type = "", payload = "", properties = properties))
         assertThat(saksblokkSlot.captured).isEqualTo(saksblokk)

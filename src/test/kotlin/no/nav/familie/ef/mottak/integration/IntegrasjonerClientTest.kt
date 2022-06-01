@@ -65,20 +65,25 @@ internal class IntegrasjonerClientTest {
     @Test
     fun `Ved feil skal vi returnere riktig feilmelding i ressurs`() {
         val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
-                                       .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))))
-
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
+                .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json")))
+        )
 
         val exception = assertThrows<RessursException> {
-            integrasjonerClient.lagOppgave(OpprettOppgaveRequest(ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
-                                                                 saksId = null,
-                                                                 journalpostId = "123",
-                                                                 tema = Tema.ENF,
-                                                                 oppgavetype = Oppgavetype.Journalføring,
-                                                                 fristFerdigstillelse = LocalDate.now(),
-                                                                 beskrivelse = "",
-                                                                 behandlingstema = "sad",
-                                                                 enhetsnummer = null))
+            integrasjonerClient.lagOppgave(
+                OpprettOppgaveRequest(
+                    ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
+                    saksId = null,
+                    journalpostId = "123",
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.Journalføring,
+                    fristFerdigstillelse = LocalDate.now(),
+                    beskrivelse = "",
+                    behandlingstema = "sad",
+                    enhetsnummer = null
+                )
+            )
         }
 
         assertThat(exception.message).contains(feilmelding)
@@ -86,19 +91,23 @@ internal class IntegrasjonerClientTest {
 
     @Test
     fun `opprettInfotrygdsak returnerer OpprettInfotrygdsakResponse`() {
-        val opprettInfotrygdSakRequest = OpprettInfotrygdSakRequest(fagomrade = "ENF",
-                                                                    fnr = "fnr",
-                                                                    mottakerOrganisasjonsEnhetsId = "4408",
-                                                                    mottattdato = LocalDate.of(2010, 11, 12),
-                                                                    oppgaveId = "oppgaveId",
-                                                                    oppgaveOrganisasjonsenhetId = "4408",
-                                                                    opprettetAvOrganisasjonsEnhetsId = "4408",
-                                                                    sendBekreftelsesbrev = false,
-                                                                    stonadsklassifisering2 = "OG",
-                                                                    type = "K")
+        val opprettInfotrygdSakRequest = OpprettInfotrygdSakRequest(
+            fagomrade = "ENF",
+            fnr = "fnr",
+            mottakerOrganisasjonsEnhetsId = "4408",
+            mottattdato = LocalDate.of(2010, 11, 12),
+            oppgaveId = "oppgaveId",
+            oppgaveOrganisasjonsenhetId = "4408",
+            opprettetAvOrganisasjonsEnhetsId = "4408",
+            sendBekreftelsesbrev = false,
+            stonadsklassifisering2 = "OG",
+            type = "K"
+        )
         val opprettInfotrygdSakResponse = OpprettInfotrygdSakResponse(saksId = "OG65")
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/opprett"))
-                                       .willReturn(okJson(objectMapper.writeValueAsString(success(opprettInfotrygdSakResponse)))))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/opprett"))
+                .willReturn(okJson(objectMapper.writeValueAsString(success(opprettInfotrygdSakResponse))))
+        )
 
         val testresultat = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
 
@@ -109,10 +118,16 @@ internal class IntegrasjonerClientTest {
     fun `ferdigstillJournalpost sender melding om ferdigstilling parser payload og returnerer saksnummer`() {
         val journalpostId = "321"
         val journalførendeEnhet = "9999"
-        val json = objectMapper.writeValueAsString(success(mapOf("journalpostId" to journalpostId),
-                                                           "Ferdigstilt journalpost $journalpostId"))
-        wireMockServer.stubFor(put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
-                                       .willReturn(okJson(json)))
+        val json = objectMapper.writeValueAsString(
+            success(
+                mapOf("journalpostId" to journalpostId),
+                "Ferdigstilt journalpost $journalpostId"
+            )
+        )
+        wireMockServer.stubFor(
+            put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
+                .willReturn(okJson(json))
+        )
 
         val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
 
@@ -121,8 +136,10 @@ internal class IntegrasjonerClientTest {
 
     @Test
     fun `hentSaksnummer parser payload og returnerer saksnummer`() {
-        wireMockServer.stubFor(get(urlEqualTo("/${IntegrasjonerClient.PATH_HENT_SAKSNUMMER}?journalpostId=123"))
-                                       .willReturn(okJson(readFile("saksnummer.json"))))
+        wireMockServer.stubFor(
+            get(urlEqualTo("/${IntegrasjonerClient.PATH_HENT_SAKSNUMMER}?journalpostId=123"))
+                .willReturn(okJson(readFile("saksnummer.json")))
+        )
 
         assertThat(integrasjonerClient.hentSaksnummer("123")).isEqualTo("140258871")
     }
@@ -130,16 +147,20 @@ internal class IntegrasjonerClientTest {
     @Test
     fun `Skal arkivere søknad`() {
         // Gitt
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
-                                       .willReturn(okJson(success(arkiverDokumentResponse).toJson())))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
+                .willReturn(okJson(success(arkiverDokumentResponse).toJson()))
+        )
         // Vil gi resultat
         assertNotNull(integrasjonerClient.arkiver(arkiverSøknadRequest))
     }
 
     @Test
     fun `Skal ikke arkivere søknad`() {
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
-                                       .willReturn(okJson(failure<Any>("error").toJson())))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
+                .willReturn(okJson(failure<Any>("error").toJson()))
+        )
 
         assertFailsWith(IllegalStateException::class) {
             integrasjonerClient.arkiver(arkiverSøknadRequest)
@@ -153,12 +174,14 @@ internal class IntegrasjonerClientTest {
         val registrertNavEnhetId = "0304"
         val fagomrade = "ENF"
         val infotrygdSaker = listOf(
-                InfotrygdSak(fnr, "A01", registrertNavEnhetId, fagomrade),
-                InfotrygdSak(fnr, "A03", registrertNavEnhetId, fagomrade),
-                InfotrygdSak(fnr, "A02", registrertNavEnhetId, fagomrade)
+            InfotrygdSak(fnr, "A01", registrertNavEnhetId, fagomrade),
+            InfotrygdSak(fnr, "A03", registrertNavEnhetId, fagomrade),
+            InfotrygdSak(fnr, "A02", registrertNavEnhetId, fagomrade)
         )
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
-                                       .willReturn(okJson(success(infotrygdSaker).toJson())))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                .willReturn(okJson(success(infotrygdSaker).toJson()))
+        )
         // Vil gi resultat
         assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0304A01")
         assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A02", fagomrade, fnr)).isEqualTo("0304A02")
@@ -189,8 +212,10 @@ internal class IntegrasjonerClientTest {
                 "stacktrace": null
             }
         """.trimIndent()
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
-                                       .willReturn(okJson(infotrygdData)))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
+                .willReturn(okJson(infotrygdData))
+        )
         // Vil gi resultat
         assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0314A01")
         assertThrows<IllegalStateException> {
@@ -201,8 +226,10 @@ internal class IntegrasjonerClientTest {
     @Test
     internal fun `skal hente aktørid med flat json`() {
         val mockResponse = objectMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
-        wireMockServer.stubFor(post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
-                                       .willReturn(okJson(mockResponse)))
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
+                .willReturn(okJson(mockResponse))
+        )
 
         val personIdent = integrasjonerClient.hentIdentForAktørId("321")
         assertThat(personIdent).isEqualTo("123")
@@ -212,6 +239,3 @@ internal class IntegrasjonerClientTest {
         return this::class.java.getResource("/json/$filnavn").readText()
     }
 }
-
-
-

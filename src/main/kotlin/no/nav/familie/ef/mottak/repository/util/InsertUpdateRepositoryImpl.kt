@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.repository.util
 
-import no.nav.familie.ef.mottak.repository.util.InsertUpdateRepository
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

@@ -52,5 +52,4 @@ class TestTask : AsyncTaskStep {
             this["journalpostId"] = "Nytt verdi"
         }
     }
-
 }

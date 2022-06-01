@@ -18,9 +18,11 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
     private val ettersendingRepository = mockk<EttersendingRepository>()
     private val søknadRepository = mockk<SøknadRepository>()
     private val oppgaveServie = mockk<OppgaveService>()
-    private val lagEksternJournalføringsoppgaveTask = LagEksternJournalføringsoppgaveTask(ettersendingRepository,
-                                                                                          oppgaveServie,
-                                                                                          søknadRepository)
+    private val lagEksternJournalføringsoppgaveTask = LagEksternJournalføringsoppgaveTask(
+        ettersendingRepository,
+        oppgaveServie,
+        søknadRepository
+    )
 
     @Test
     internal fun `skal opprette ekstern journalføringstask`() {
@@ -29,9 +31,12 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
         every { søknadRepository.findByJournalpostId(any()) } returns null
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
 
-        lagEksternJournalføringsoppgaveTask.doTask(Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
-                                                        payload = "123",
-                                                        properties = Properties())
+        lagEksternJournalføringsoppgaveTask.doTask(
+            Task(
+                type = LagEksternJournalføringsoppgaveTask.TYPE,
+                payload = "123",
+                properties = Properties()
+            )
         )
 
         verify { oppgaveServie.lagJournalføringsoppgaveForJournalpostId("123") }
@@ -44,9 +49,12 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
         every { søknadRepository.findByJournalpostId(any()) } returns søknad()
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
 
-        lagEksternJournalføringsoppgaveTask.doTask(Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
-                                                        payload = "123",
-                                                        properties = Properties())
+        lagEksternJournalføringsoppgaveTask.doTask(
+            Task(
+                type = LagEksternJournalføringsoppgaveTask.TYPE,
+                payload = "123",
+                properties = Properties()
+            )
         )
 
         verify(inverse = true) { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) }
@@ -56,17 +64,22 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
     internal fun `skal ikke opprette ekstern journalføringstask hvis det finnes en ettersending for journalposten`() {
 
         every { ettersendingRepository.findByJournalpostId(any()) } returns
-                Ettersending(ettersendingJson = EncryptedString("{a:1}"),
-                             stønadType = "OVERGANGSSTØNAD",
-                             journalpostId = "1",
-                             fnr = "",
-                             taskOpprettet = false)
+            Ettersending(
+                ettersendingJson = EncryptedString("{a:1}"),
+                stønadType = "OVERGANGSSTØNAD",
+                journalpostId = "1",
+                fnr = "",
+                taskOpprettet = false
+            )
         every { søknadRepository.findByJournalpostId(any()) } returns null
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
 
-        lagEksternJournalføringsoppgaveTask.doTask(Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
-                                                        payload = "123",
-                                                        properties = Properties())
+        lagEksternJournalføringsoppgaveTask.doTask(
+            Task(
+                type = LagEksternJournalføringsoppgaveTask.TYPE,
+                payload = "123",
+                properties = Properties()
+            )
         )
 
         verify(inverse = true) { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) }

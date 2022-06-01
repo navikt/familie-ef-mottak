@@ -53,7 +53,6 @@ object Feltformaterer {
         }
     }
 
-
     private fun tilUtskriftsformat(verdi: Boolean) = if (verdi) "Ja" else "Nei"
     private fun tilUtskriftsformat(verdi: Double) = String.format("%.2f", verdi).replace(".", ",")
     private fun tilUtskriftsformat(verdi: Month) = verdi.getDisplayName(TextStyle.FULL, Locale("no"))
@@ -72,9 +71,11 @@ object Feltformaterer {
     }
 
     private fun tilUtskriftsformat(adresse: Adresse): String {
-        return listOf(adresse.adresse,
-                      listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
-                      adresse.land).joinToString("\n\n")
+        return listOf(
+            adresse.adresse,
+            listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
+            adresse.land
+        ).joinToString("\n\n")
     }
 
     fun feltMap(label: String, verdi: String, alternativer: List<String>? = null): Map<String, String> {
@@ -84,5 +85,4 @@ object Feltformaterer {
             mapOf("label" to label, "verdi" to verdi)
         }
     }
-
 }

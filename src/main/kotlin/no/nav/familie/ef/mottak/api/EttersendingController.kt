@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/ettersending"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
-        issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
+    issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
 )
 class EttersendingController(val ettersendingService: EttersendingService) {
 
@@ -38,5 +38,4 @@ class EttersendingController(val ettersendingService: EttersendingService) {
 
         return ResponseEntity.ok(ettersendingData)
     }
-
 }

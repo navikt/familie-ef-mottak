@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class DbMigreringService(@Suppress("unused")
-                         private val dbMigreringRepository: DbMigreringRepository) {
+class DbMigreringService(
+    @Suppress("unused")
+    private val dbMigreringRepository: DbMigreringRepository
+) {
 
     @Suppress("unused")
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -16,7 +18,7 @@ class DbMigreringService(@Suppress("unused")
     @Scheduled(initialDelay = 120000, fixedDelay = ÅR)
     @Transactional
     fun dbMigrering() {
-        //logger.info("Migrering fullført.")
+        // logger.info("Migrering fullført.")
     }
 
     companion object {

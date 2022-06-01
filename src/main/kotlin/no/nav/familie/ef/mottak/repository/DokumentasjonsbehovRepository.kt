@@ -6,5 +6,6 @@ import no.nav.familie.ef.mottak.repository.util.RepositoryInterface
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DokumentasjonsbehovRepository : RepositoryInterface<Dokumentasjonsbehov, String>,
-                                          InsertUpdateRepository<Dokumentasjonsbehov>
+interface DokumentasjonsbehovRepository :
+    RepositoryInterface<Dokumentasjonsbehov, String>,
+    InsertUpdateRepository<Dokumentasjonsbehov>

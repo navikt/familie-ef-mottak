@@ -20,5 +20,4 @@ internal class DbMigreringServiceTest : IntegrasjonSpringRunnerTest() {
     fun setUp() {
         dbMigreringService = DbMigreringService(dbMigreringRepository)
     }
-
 }

@@ -61,11 +61,13 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `skal kunne behandle sak med barn under 6 mnd i ny løsning`() {
-        val barnFødtIDag = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+        val barnFødtIDag = listOf(
+            søknadOvergangsstønad.barn.verdi.first().copy(
                 fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
-        ))
+            )
+        )
         val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
-                barn = Søknadsfelt("Barn", barnFødtIDag)
+            barn = Søknadsfelt("Barn", barnFødtIDag)
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
@@ -77,14 +79,14 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `skal kunne behandle sak med et barn under 6 mnd og et over i ny løsning`() {
         val barnFødtIDag = søknadOvergangsstønad.barn.verdi.first().copy(
-                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
         )
 
         val barnFødtforLengeSiden = søknadOvergangsstønad.barn.verdi.first().copy(
-                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusYears(3))
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusYears(3))
         )
         val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
-                barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag))
+            barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag))
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
@@ -98,12 +100,13 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         val fødselsdato = LocalDate.now().minusMonths(5)
         val ident = FnrGenerator.generer(fødselsdato.year, fødselsdato.month.value, fødselsdato.dayOfMonth)
 
-        val barn1mnd = listOf(søknadOvergangsstønad.barn.verdi.first().copy(
+        val barn1mnd = listOf(
+            søknadOvergangsstønad.barn.verdi.first().copy(
                 fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer(ident))
-        )
+            )
         )
         val søknadMedBarn1mnd = søknadOvergangsstønad.copy(
-                barn = Søknadsfelt("Barn", barn1mnd)
+            barn = Søknadsfelt("Barn", barn1mnd)
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg))
         val søknad = søknadService.get(kvittering.id)
@@ -123,7 +126,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         val dokumentasjonsbehov = listOf(Dokumentasjonsbehov("label", "id", false, emptyList()))
         val søknad = søknadOvergangsstønad
         val kvittering =
-                søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
+            søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
         val dokumentasjonsbehovDto = søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(kvittering.id))
 
         assertThat(dokumentasjonsbehovDto.personIdent).isEqualTo(søknad.personalia.verdi.fødselsnummer.verdi.verdi)
@@ -136,8 +139,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `hent dokumentasjonsbehov til søknad feiler når søknadId ikke finnes`() {
         assertThat(catchThrowable { søknadService.hentDokumentasjonsbehovForSøknad(UUID.randomUUID()) })
-                .hasMessageContaining("Fant ikke søknad for id ")
-                .isInstanceOf(ApiFeil::class.java)
+            .hasMessageContaining("Fant ikke søknad for id ")
+            .isInstanceOf(ApiFeil::class.java)
     }
-
 }

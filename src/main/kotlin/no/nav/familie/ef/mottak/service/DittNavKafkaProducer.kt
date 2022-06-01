@@ -36,21 +36,21 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
     }
 
     private fun lagNøkkel(fnr: String, grupperingsId: String, eventId: String): NokkelInput =
-            NokkelInputBuilder()
-                    .withAppnavn("familie-ef-mottak")
-                    .withNamespace("teamfamilie")
-                    .withFodselsnummer(fnr)
-                    .withGrupperingsId(grupperingsId)
-                    .withEventId(eventId)
-                    .build()
+        NokkelInputBuilder()
+            .withAppnavn("familie-ef-mottak")
+            .withNamespace("teamfamilie")
+            .withFodselsnummer(fnr)
+            .withGrupperingsId(grupperingsId)
+            .withEventId(eventId)
+            .build()
 
     private fun lagBeskjed(melding: String, link: URL?): BeskjedInput {
         val builder = BeskjedInputBuilder()
-                .withEksternVarsling(false)
-                .withSikkerhetsnivaa(4)
-                .withSynligFremTil(null)
-                .withTekst(melding)
-                .withTidspunkt(LocalDateTime.now(UTC))
+            .withEksternVarsling(false)
+            .withSikkerhetsnivaa(4)
+            .withSynligFremTil(null)
+            .withTekst(melding)
+            .withTidspunkt(LocalDateTime.now(UTC))
 
         if (link != null) builder.withLink(link)
         return builder.build()
@@ -61,5 +61,4 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
         private val logger = LoggerFactory.getLogger(this::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
-
 }

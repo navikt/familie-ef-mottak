@@ -22,40 +22,47 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-
 object SøknadTreeWalker {
 
     private val endNodes =
-            setOf<KClass<*>>(String::class,
-                             Int::class,
-                             Boolean::class,
-                             Double::class,
-                             Dokumentasjon::class,
-                             Fødselsnummer::class,
-                             MånedÅrPeriode::class,
-                             Datoperiode::class,
-                             Adresse::class,
-                             LocalDate::class,
-                             LocalDateTime::class,
-                             Month::class,
-                             Long::class)
+        setOf<KClass<*>>(
+            String::class,
+            Int::class,
+            Boolean::class,
+            Double::class,
+            Dokumentasjon::class,
+            Fødselsnummer::class,
+            MånedÅrPeriode::class,
+            Datoperiode::class,
+            Adresse::class,
+            LocalDate::class,
+            LocalDateTime::class,
+            Month::class,
+            Long::class
+        )
 
-    fun mapOvergangsstønad(søknad: SøknadOvergangsstønad,
-                           vedleggTitler: List<String>): Map<String, Any> {
+    fun mapOvergangsstønad(
+        søknad: SøknadOvergangsstønad,
+        vedleggTitler: List<String>
+    ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
-    fun mapBarnetilsyn(søknad: SøknadBarnetilsyn,
-                       vedleggTitler: List<String>): Map<String, Any> {
+    fun mapBarnetilsyn(
+        søknad: SøknadBarnetilsyn,
+        vedleggTitler: List<String>
+    ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
-    fun mapSkolepenger(søknad: SøknadSkolepenger,
-                       vedleggTitler: List<String>): Map<String, Any> {
+    fun mapSkolepenger(
+        søknad: SøknadSkolepenger,
+        vedleggTitler: List<String>
+    ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
@@ -67,12 +74,17 @@ object SøknadTreeWalker {
     }
 
     fun mapEttersending(ettersending: Ettersending, vedleggTitler: List<String>): Map<String, Any> {
-        val infoMap = feltlisteMap("Ettersending av vedlegg", listOf(
+        val infoMap = feltlisteMap(
+            "Ettersending av vedlegg",
+            listOf(
                 Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
                 Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
-                Feltformaterer.feltMap("Dato mottatt",
-                                       ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")))
-        ))
+                Feltformaterer.feltMap(
+                    "Dato mottatt",
+                    ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
+                )
+            )
+        )
         val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
     }
@@ -82,19 +94,19 @@ object SøknadTreeWalker {
         // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
         if (entitet is List<Any?>) {
             return entitet.filterNotNull()
-                    .map { finnFelter(it) }
-                    .flatten()
+                .map { finnFelter(it) }
+                .flatten()
         }
         val parametere = konstruktørparametere(entitet)
 
         val list = parametere
-                .asSequence()
-                .map { finnSøknadsfelt(entitet, it) }
-                .filter { it.visibility == KVisibility.PUBLIC }
-                .mapNotNull { getFeltverdi(it, entitet) }
-                .map { finnFelter(it) } // Kall rekursivt videre
-                .flatten()
-                .toList()
+            .asSequence()
+            .map { finnSøknadsfelt(entitet, it) }
+            .filter { it.visibility == KVisibility.PUBLIC }
+            .mapNotNull { getFeltverdi(it, entitet) }
+            .map { finnFelter(it) } // Kall rekursivt videre
+            .flatten()
+            .toList()
 
         if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!! is Dokumentasjon) {
@@ -124,17 +136,16 @@ object SøknadTreeWalker {
      * Henter ut verdien for felt på entitet.
      */
     private fun getFeltverdi(felt: KProperty1<out Any, Any?>, entitet: Any) =
-            felt.getter.call(entitet)
+        felt.getter.call(entitet)
 
     /**
      * Finn første (og eneste) felt på entiteten som har samme navn som konstruktørparameter.
      */
     private fun finnSøknadsfelt(entity: Any, konstruktørparameter: KParameter) =
-            entity::class.declaredMemberProperties.first { it.name == konstruktørparameter.name }
+        entity::class.declaredMemberProperties.first { it.name == konstruktørparameter.name }
 
     /**
      * Konstruktørparametere er det eneste som gir oss en garantert rekkefølge for feltene, så vi henter disse først.
      */
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
-
 }

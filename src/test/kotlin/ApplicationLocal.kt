@@ -14,10 +14,12 @@ class ApplicationLocal
 
 fun main(args: Array<String>) {
     SpringApplicationBuilder(ApplicationLocal::class.java)
-            .profiles("local",
-                      "mock-integrasjon",
-                      "mock-dokument",
-                      "mock-ef-sak",
-                      "mock-pdf")
-            .run(*args)
+        .profiles(
+            "local",
+            "mock-integrasjon",
+            "mock-dokument",
+            "mock-ef-sak",
+            "mock-pdf"
+        )
+        .run(*args)
 }

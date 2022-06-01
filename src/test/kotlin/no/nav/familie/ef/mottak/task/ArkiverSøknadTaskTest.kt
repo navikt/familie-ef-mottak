@@ -88,9 +88,13 @@ internal class ArkiverSøknadTaskTest {
         every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
         every { søknadRepository.findByIdOrNull(any()) } returns soknad
         val uuid = UUID.randomUUID()
-        arkiverSøknadTaskTest.onCompletion(Task(type = "",
-                                                payload = soknad.id,
-                                                properties = Properties().apply { this["eventId"] = uuid }))
+        arkiverSøknadTaskTest.onCompletion(
+            Task(
+                type = "",
+                payload = soknad.id,
+                properties = Properties().apply { this["eventId"] = uuid }
+            )
+        )
 
         assertNotEquals(uuid, slot.captured[1].metadata["eventID"])
     }

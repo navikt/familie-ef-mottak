@@ -14,18 +14,17 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class JournalhendelseService(
-        val journalpostClient: IntegrasjonerClient,
-        val søknadRepository: SøknadRepository,
-        val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
-        val journalføringsoppgaveService: JournalføringsoppgaveService,
-        val taskRepository: TaskRepositoryUtvidet
+    val journalpostClient: IntegrasjonerClient,
+    val søknadRepository: SøknadRepository,
+    val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
+    val journalføringsoppgaveService: JournalføringsoppgaveService,
+    val taskRepository: TaskRepositoryUtvidet
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     val alleredeBehandletJournalpostCounter: Counter =
-            Metrics.counter("alene.med.barn.journalhendelse.alleredeBehandletJournalpostHendelse")
-
+        Metrics.counter("alene.med.barn.journalhendelse.alleredeBehandletJournalpostHendelse")
 
     @Transactional
     fun prosesserNyHendelse(hendelseRecord: JournalfoeringHendelseRecord, offset: Long) {
@@ -37,8 +36,10 @@ class JournalhendelseService(
                 journalføringsoppgaveService.lagEksternJournalføringTask(journalpost)
             } else {
                 alleredeBehandletJournalpostCounter.increment()
-                logger.warn("Skipper opprettelse av LagEksternJournalføringsoppgaveTask for " +
-                            "journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere")
+                logger.warn(
+                    "Skipper opprettelse av LagEksternJournalføringsoppgaveTask for " +
+                        "journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere"
+                )
             }
             journalfoeringHendelseDbUtil.lagreHendelseslogg(hendelseRecord, offset)
         }

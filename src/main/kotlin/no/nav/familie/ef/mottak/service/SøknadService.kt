@@ -33,11 +33,13 @@ import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as Databas
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 
 @Service
-class SøknadService(private val søknadRepository: SøknadRepository,
-                    private val vedleggRepository: VedleggRepository,
-                    private val dokumentClient: FamilieDokumentClient,
-                    private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
-                    private val featureToggleService: FeatureToggleService) {
+class SøknadService(
+    private val søknadRepository: SøknadRepository,
+    private val vedleggRepository: VedleggRepository,
+    private val dokumentClient: FamilieDokumentClient,
+    private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
+    private val featureToggleService: FeatureToggleService
+) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -70,29 +72,36 @@ class SøknadService(private val søknadRepository: SøknadRepository,
         }
     }
 
-
-    private fun motta(søknadDb: Søknad,
-                      vedlegg: List<Vedlegg>,
-                      dokumentasjonsbehov: List<Dokumentasjonsbehov>): Kvittering {
+    private fun motta(
+        søknadDb: Søknad,
+        vedlegg: List<Vedlegg>,
+        dokumentasjonsbehov: List<Dokumentasjonsbehov>
+    ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
 
-        val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(søknadId = lagretSkjema.id,
-                                                                      data = objectMapper.writeValueAsString(dokumentasjonsbehov))
+        val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(
+            søknadId = lagretSkjema.id,
+            data = objectMapper.writeValueAsString(dokumentasjonsbehov)
+        )
         dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
-    private fun mapVedlegg(søknadDbId: String,
-                           vedleggMetadata: List<VedleggKontrakt>): List<Vedlegg> =
-            vedleggMetadata.map {
-                Vedlegg(id = UUID.fromString(it.id),
-                        søknadId = søknadDbId,
-                        navn = it.navn,
-                        tittel = it.tittel,
-                        innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)))
-            }
+    private fun mapVedlegg(
+        søknadDbId: String,
+        vedleggMetadata: List<VedleggKontrakt>
+    ): List<Vedlegg> =
+        vedleggMetadata.map {
+            Vedlegg(
+                id = UUID.fromString(it.id),
+                søknadId = søknadDbId,
+                navn = it.navn,
+                tittel = it.tittel,
+                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id))
+            )
+        }
 
     fun get(id: String): Søknad {
         return søknadRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
@@ -109,16 +118,21 @@ class SøknadService(private val søknadRepository: SøknadRepository,
 
     fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
         return søknadRepository.findAllByFnr(personIdent)
-                .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
-                .map {
-                    SøknadMedDokumentasjonsbehovDto(søknadId = it.id,
-                                                    stønadType = StønadType
-                                                            .valueOf(SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
-                                                                             .toString()),
-                                                    søknadDato = it.opprettetTid.toLocalDate(),
-                                                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
-                                                            UUID.fromString(it.id)))
-                }
+            .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
+            .map {
+                SøknadMedDokumentasjonsbehovDto(
+                    søknadId = it.id,
+                    stønadType = StønadType
+                        .valueOf(
+                            SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                .toString()
+                        ),
+                    søknadDato = it.opprettetTid.toLocalDate(),
+                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
+                        UUID.fromString(it.id)
+                    )
+                )
+            }
     }
 
     // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
@@ -128,17 +142,20 @@ class SøknadService(private val søknadRepository: SøknadRepository,
             objectMapper.readValue(it.data)
         } ?: emptyList()
         val søknad: Søknad =
-                søknadRepository.findByIdOrNull(søknadId.toString()) ?: throw ApiFeil("Fant ikke søknad for id $søknadId",
-                                                                                      HttpStatus.BAD_REQUEST)
+            søknadRepository.findByIdOrNull(søknadId.toString()) ?: throw ApiFeil(
+                "Fant ikke søknad for id $søknadId",
+                HttpStatus.BAD_REQUEST
+            )
 
-        return DokumentasjonsbehovDto(dokumentasjonsbehov = dokumentasjonsbehov,
-                                      innsendingstidspunkt = søknad.opprettetTid,
-                                      personIdent = søknad.fnr,
-                                      søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype))
+        return DokumentasjonsbehovDto(
+            dokumentasjonsbehov = dokumentasjonsbehov,
+            innsendingstidspunkt = søknad.opprettetTid,
+            personIdent = søknad.fnr,
+            søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
+        )
     }
 
     fun oppdaterSøknad(søknad: Søknad) {
         søknadRepository.update(søknad)
     }
-
 }

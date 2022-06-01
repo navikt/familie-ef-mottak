@@ -115,11 +115,10 @@ internal class OpprettSakTaskTest {
             slot.captured
         }
 
-
         val throwable = catchThrowable { opprettSakTask.doTask(lagTask()) }
         assertThat(throwable).isInstanceOf(RekjørSenereException::class.java)
         assertThat((throwable as RekjørSenereException).triggerTid)
-                .isEqualTo(dateTimeService.now().toLocalDate().plusDays(1).atTime(6, 0))
+            .isEqualTo(dateTimeService.now().toLocalDate().plusDays(1).atTime(6, 0))
 
         verify(exactly = 0) {
             taskRepository.save(any())
@@ -140,16 +139,19 @@ internal class OpprettSakTaskTest {
         val throwable = catchThrowable { opprettSakTask.doTask(lagTask()) }
         assertThat(throwable).isInstanceOf(RekjørSenereException::class.java)
         assertThat((throwable as RekjørSenereException).triggerTid)
-                .isEqualTo(dateTimeService.now().toLocalDate().atTime(6, 0))
+            .isEqualTo(dateTimeService.now().toLocalDate().atTime(6, 0))
 
         verify(exactly = 0) {
             taskRepository.save(any())
         }
     }
 
-    private fun lagTask() = Task(type = OpprettSakTask.TYPE, payload = "123", properties = Properties().apply {
-        this[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] = "999"
-    })
+    private fun lagTask() = Task(
+        type = OpprettSakTask.TYPE, payload = "123",
+        properties = Properties().apply {
+            this[LagBehandleSakOppgaveTask.behandleSakOppgaveIdKey] = "999"
+        }
+    )
 
     private fun mockOpprettSak(sakOpprettet: Boolean = true) {
         val response = if (sakOpprettet) saksnummer else null
@@ -157,5 +159,4 @@ internal class OpprettSakTaskTest {
             sakService.opprettSak(any(), any())
         } returns response
     }
-
 }

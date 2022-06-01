@@ -6,6 +6,8 @@ enum class BehandlesAvApplikasjon(val applikasjon: String?, val beskrivelsePrefi
     EF_SAK_BLANKETT("familie-ef-sak-blankett", ""),
 
     INFOTRYGD(null, ""),
-    UAVKLART(null,
-             "Søkeren har behandling i ny løsning, må undersøke evt saker i ny løsning før man velger fagsystem. ")
+    UAVKLART(
+        null,
+        "Søkeren har behandling i ny løsning, må undersøke evt saker i ny løsning før man velger fagsystem. "
+    )
 }

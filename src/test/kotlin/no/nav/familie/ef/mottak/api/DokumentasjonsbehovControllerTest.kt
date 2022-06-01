@@ -17,7 +17,6 @@ internal class DokumentasjonsbehovControllerTest : IntegrasjonSpringRunnerTest()
 
     @Autowired lateinit var søknadService: SøknadService
 
-
     @Test
     internal fun `fnr i token er lik fnr i søknaden`() {
         val søknad = SøknadMedVedlegg(Testdata.søknadOvergangsstønad, listOf())
@@ -25,9 +24,11 @@ internal class DokumentasjonsbehovControllerTest : IntegrasjonSpringRunnerTest()
         headers.setBearerAuth(getTestToken(søknad.søknad.personalia.verdi.fødselsnummer.verdi.verdi))
 
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost("/api/soknad/dokumentasjonsbehov/${kvittering.id}"),
-                                      HttpMethod.GET,
-                                      HttpEntity<Any>(headers))
+            restTemplate.exchange(
+                localhost("/api/soknad/dokumentasjonsbehov/${kvittering.id}"),
+                HttpMethod.GET,
+                HttpEntity<Any>(headers)
+            )
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
@@ -41,9 +42,11 @@ internal class DokumentasjonsbehovControllerTest : IntegrasjonSpringRunnerTest()
         headers.setBearerAuth(lokalTestToken)
 
         val response: ResponseEntity<Any> =
-                restTemplate.exchange(localhost("/api/soknad/dokumentasjonsbehov/${kvittering.id}"),
-                                      HttpMethod.GET,
-                                      HttpEntity<Any>(headers))
+            restTemplate.exchange(
+                localhost("/api/soknad/dokumentasjonsbehov/${kvittering.id}"),
+                HttpMethod.GET,
+                HttpEntity<Any>(headers)
+            )
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.FORBIDDEN)
     }

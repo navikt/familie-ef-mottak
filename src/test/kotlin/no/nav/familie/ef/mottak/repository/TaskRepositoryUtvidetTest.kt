@@ -13,14 +13,15 @@ internal class TaskRepositoryUtvidetTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var taskRepositoryUtvidet: TaskRepositoryUtvidet
 
-
     @Test
     internal fun `skal ikke få treff dersom det ikke eksisterer en task med riktig journalpostId som payload`() {
         val journalpostId = "12345678"
-        taskRepositoryUtvidet.save(Task(
+        taskRepositoryUtvidet.save(
+            Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
                 payload = "tullball"
-        ))
+            )
+        )
 
         assertThat(taskRepositoryUtvidet.existsByPayloadAndType(journalpostId, LagEksternJournalføringsoppgaveTask.TYPE)).isFalse
     }
@@ -28,13 +29,13 @@ internal class TaskRepositoryUtvidetTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `skal få treff dersom det  eksisterer en task med riktig type og journalpostId som payload`() {
         val journalpostId = "12345678"
-        taskRepositoryUtvidet.save(Task(
+        taskRepositoryUtvidet.save(
+            Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
                 payload = journalpostId
-        ))
+            )
+        )
 
         assertThat(taskRepositoryUtvidet.existsByPayloadAndType(journalpostId, LagEksternJournalføringsoppgaveTask.TYPE)).isTrue
     }
-
-
 }

@@ -8,10 +8,14 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagJournalføringsoppgaveForEttersendingTask.TYPE,
-                     beskrivelse = "Lager oppgave i GoSys")
-class LagJournalføringsoppgaveForEttersendingTask(private val oppgaveService: OppgaveService,
-                                                  private val taskRepository: TaskRepository) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = LagJournalføringsoppgaveForEttersendingTask.TYPE,
+    beskrivelse = "Lager oppgave i GoSys"
+)
+class LagJournalføringsoppgaveForEttersendingTask(
+    private val oppgaveService: OppgaveService,
+    private val taskRepository: TaskRepository
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForEttersendingId(task.payload)
@@ -19,18 +23,20 @@ class LagJournalføringsoppgaveForEttersendingTask(private val oppgaveService: O
             task.metadata.apply {
                 this[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey] = it.toString()
             }
-
         }
     }
 
     override fun onCompletion(task: Task) {
         task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.let {
-            taskRepository.save(Task(TaskType(TYPE).nesteFallbackTask(),
-                                     task.payload,
-                                     task.metadata))
+            taskRepository.save(
+                Task(
+                    TaskType(TYPE).nesteFallbackTask(),
+                    task.payload,
+                    task.metadata
+                )
+            )
         }
     }
-
 
     companion object {
 

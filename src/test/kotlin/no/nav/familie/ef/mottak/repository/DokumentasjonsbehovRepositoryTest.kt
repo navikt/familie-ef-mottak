@@ -20,18 +20,20 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
     @Autowired
     lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
 
-
     @Test
     internal fun `lagre og hent dokumentasjonsbehov`() {
 
-        val søknad = søknadRepository.insert(Søknad(søknadJson = EncryptedString("bob"),
-                                                    fnr = "ded",
-                                                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD))
+        val søknad = søknadRepository.insert(
+            Søknad(
+                søknadJson = EncryptedString("bob"),
+                fnr = "ded",
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD
+            )
+        )
 
         dokumentasjonsbehovRepository.insert(Dokumentasjonsbehov(søknad.id, "data"))
         val dokumentasjonsbehov = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         assertThat(dokumentasjonsbehov).isNotNull
         assertThat(dokumentasjonsbehov?.data).isEqualTo("data")
     }
-
 }

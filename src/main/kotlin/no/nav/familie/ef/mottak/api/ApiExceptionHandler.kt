@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
-
 @Suppress("unused")
 @ControllerAdvice
 class ApiExceptionHandler {
@@ -22,15 +21,14 @@ class ApiExceptionHandler {
         logger.error("En feil har oppstått: ${NestedExceptionUtils.getMostSpecificCause(throwable).javaClass.simpleName} ")
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Ressurs.failure("Uventet feil"))
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Ressurs.failure("Uventet feil"))
     }
 
     @ExceptionHandler(ApiFeil::class)
     fun handleThrowable(e: ApiFeil): ResponseEntity<Ressurs<String>> {
         return ResponseEntity
-                .status(e.httpStatus)
-                .body(Ressurs.failure(e.feil))
+            .status(e.httpStatus)
+            .body(Ressurs.failure(e.feil))
     }
-
 }

@@ -7,7 +7,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -16,9 +15,11 @@ import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
-class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
-                        private val taskRepository: TaskRepository,
-                        private val søknadRepository: SøknadRepository) : AsyncTaskStep {
+class ArkiverSøknadTask(
+    private val arkiveringService: ArkiveringService,
+    private val taskRepository: TaskRepository,
+    private val søknadRepository: SøknadRepository
+) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -38,11 +39,13 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
             Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         }
         val sendMeldingTilDittNavTask =
-                Task(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-                     task.payload,
-                     Properties(task.metadata).apply {
-                         this["eventId"] = UUID.randomUUID().toString()
-                     })
+            Task(
+                SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+                task.payload,
+                Properties(task.metadata).apply {
+                    this["eventId"] = UUID.randomUUID().toString()
+                }
+            )
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
     }
@@ -56,5 +59,4 @@ class ArkiverSøknadTask(private val arkiveringService: ArkiveringService,
 
         const val TYPE = "arkiverSøknad"
     }
-
 }

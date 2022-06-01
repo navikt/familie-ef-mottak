@@ -15,9 +15,11 @@ class StatistikkRepository(private val jdbcTemplate: NamedParameterJdbcTemplate)
         GROUP BY TO_CHAR(opprettet_tid, 'YYYY-MM'), dokumenttype
         """
         return jdbcTemplate.query(sql) { rs, _ ->
-            SøknaderPerDokumenttype(YearMonth.parse(rs.getString("dato")),
-                                    rs.getString("dokumenttype"),
-                                    rs.getInt("antall"))
+            SøknaderPerDokumenttype(
+                YearMonth.parse(rs.getString("dato")),
+                rs.getString("dokumenttype"),
+                rs.getInt("antall")
+            )
         }
     }
 }

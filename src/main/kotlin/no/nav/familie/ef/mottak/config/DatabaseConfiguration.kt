@@ -17,7 +17,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
-
 @Configuration
 @EnableJdbcAuditing
 @EnableJdbcRepositories("no.nav.familie")
@@ -35,13 +34,15 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
 
     @Bean
     override fun jdbcCustomConversions(): JdbcCustomConversions {
-        return JdbcCustomConversions(listOf(
+        return JdbcCustomConversions(
+            listOf(
                 StringTilPropertiesWrapperConverter(),
                 PropertiesWrapperTilStringConverter(),
                 FileCryptoReadingConverter(),
                 FileCryptoWritingConverter(),
                 StringValCryptoReadingConverter(),
                 StringValCryptoWritingConverter()
-        ))
+            )
+        )
     }
 }

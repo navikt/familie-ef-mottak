@@ -8,8 +8,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-interface EttersendingRepository : RepositoryInterface<Ettersending, UUID>,
-                                   InsertUpdateRepository<Ettersending> {
+interface EttersendingRepository :
+    RepositoryInterface<Ettersending, UUID>,
+    InsertUpdateRepository<Ettersending> {
 
     fun findFirstByTaskOpprettetIsFalse(): Ettersending?
 
@@ -18,5 +19,4 @@ interface EttersendingRepository : RepositoryInterface<Ettersending, UUID>,
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
     fun findAllByFnr(personIdent: String): List<Ettersending>
-
 }

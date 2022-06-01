@@ -14,33 +14,46 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class JournalfoeringHendelseDbUtil(val hendelseloggRepository: HendelsesloggRepository,
-                                   val taskRepository: TaskRepositoryUtvidet) {
+class JournalfoeringHendelseDbUtil(
+    val hendelseloggRepository: HendelsesloggRepository,
+    val taskRepository: TaskRepositoryUtvidet
+) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalfoeringHendelseDbUtil::class.java)
 
     @Transactional
     fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord, offset: Long): Hendelseslogg {
         return hendelseloggRepository
-                .insert(Hendelseslogg(offset,
-                                      hendelseRecord.hendelsesId.toString(),
-                                      PropertiesWrapper( mapOf ("journalpostId" to hendelseRecord.journalpostId.toString(),
-                                      "hendelsesType" to hendelseRecord.hendelsesType.toString()).toProperties())))
+            .insert(
+                Hendelseslogg(
+                    offset,
+                    hendelseRecord.hendelsesId.toString(),
+                    PropertiesWrapper(
+                        mapOf(
+                            "journalpostId" to hendelseRecord.journalpostId.toString(),
+                            "hendelsesType" to hendelseRecord.hendelsesType.toString()
+                        ).toProperties()
+                    )
+                )
+            )
     }
 
     fun erHendelseRegistrertIHendelseslogg(hendelsesId: String) =
-            hendelseloggRepository.existsByHendelseId(hendelsesId)
+        hendelseloggRepository.existsByHendelseId(hendelsesId)
 
     fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
-        return !taskRepository.existsByPayloadAndType(hendelseRecord.journalpostId.toString(),
-                                                      LagEksternJournalføringsoppgaveTask.TYPE)
+        return !taskRepository.existsByPayloadAndType(
+            hendelseRecord.journalpostId.toString(),
+            LagEksternJournalføringsoppgaveTask.TYPE
+        )
     }
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
-        val journalføringsTask = Task(type = LagEksternJournalføringsoppgaveTask.TYPE,
-                                      payload = journalpost.journalpostId,
-                                      properties = journalpost.metadata())
+        val journalføringsTask = Task(
+            type = LagEksternJournalføringsoppgaveTask.TYPE,
+            payload = journalpost.journalpostId,
+            properties = journalpost.metadata()
+        )
         taskRepository.save(journalføringsTask)
     }
-
 }

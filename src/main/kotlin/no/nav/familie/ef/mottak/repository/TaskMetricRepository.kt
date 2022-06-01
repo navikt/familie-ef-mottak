@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TaskMetricRepository : org.springframework.data.repository.Repository<Task, String> {
 
-    @Query("""SELECT t.type, count(t.id) as count FROM Task t
+    @Query(
+        """SELECT t.type, count(t.id) as count FROM Task t
                     WHERE t.status = 'FEILET'
-                    GROUP by t.type""")
+                    GROUP by t.type"""
+    )
     fun finnFeiledeTasks(): List<FeiletTaskMetric>
-
 }

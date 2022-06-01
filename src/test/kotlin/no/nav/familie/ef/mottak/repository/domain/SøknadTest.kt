@@ -27,15 +27,19 @@ internal class SøknadTest {
         assertTrue(one == other)
     }
 
-    private fun opprettSøknad(uuid: String,
-                              opprettet: LocalDateTime) =
-            Søknad(id = uuid,
-                   søknadJson = EncryptedString("string"),
-                   søknadPdf = EncryptedFile("321".toByteArray()),
-                   dokumenttype = "",
-                   journalpostId = "654",
-                   saksnummer = "789",
-                   fnr = "123",
-                   taskOpprettet = true,
-                   opprettetTid = opprettet)
+    private fun opprettSøknad(
+        uuid: String,
+        opprettet: LocalDateTime
+    ) =
+        Søknad(
+            id = uuid,
+            søknadJson = EncryptedString("string"),
+            søknadPdf = EncryptedFile("321".toByteArray()),
+            dokumenttype = "",
+            journalpostId = "654",
+            saksnummer = "789",
+            fnr = "123",
+            taskOpprettet = true,
+            opprettetTid = opprettet
+        )
 }

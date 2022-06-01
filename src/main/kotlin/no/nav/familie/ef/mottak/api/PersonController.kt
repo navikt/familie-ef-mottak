@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(consumes = [APPLICATION_JSON_VALUE], path = ["/api/person"], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
-        issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
+    issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
 )
 class PersonController(val søknadService: SøknadService) {
 
@@ -27,5 +27,4 @@ class PersonController(val søknadService: SøknadService) {
         }
         return ResponseEntity.ok().body(søknadService.hentDokumentasjonsbehovForPerson(personIdent.ident))
     }
-
 }

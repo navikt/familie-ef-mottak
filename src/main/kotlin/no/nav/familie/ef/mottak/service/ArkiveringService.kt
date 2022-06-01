@@ -18,11 +18,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
-                        private val søknadService: SøknadService,
-                        private val ettersendingService: EttersendingService,
-                        private val vedleggRepository: VedleggRepository,
-                        private val ettersendingVedleggRepository: EttersendingVedleggRepository) {
+class ArkiveringService(
+    private val integrasjonerClient: IntegrasjonerClient,
+    private val søknadService: SøknadService,
+    private val ettersendingService: EttersendingService,
+    private val vedleggRepository: VedleggRepository,
+    private val ettersendingVedleggRepository: EttersendingVedleggRepository
+) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -57,7 +59,7 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
             logger.warn("Fant mer enn 1 enhet for $søknadId: $enheter")
         }
         val journalførendeEnhet = enheter.firstOrNull()?.enhetId
-                                  ?: error("Ingen behandlende enhet funnet for søknad=${søknadId} ")
+            ?: error("Ingen behandlende enhet funnet for søknad=$søknadId ")
 
         integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
     }
@@ -73,13 +75,15 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         logger.info("Fant infotrygdsak med saksnummer=$infotrygdSaksnummer for søknad=$søknadId")
 
         val oppdatertJournalpost = OppdaterJournalpostRequest(
-                bruker = journalpost.bruker?.let {
-                    DokarkivBruker(idType = BrukerIdType.valueOf(it.type.toString()), id = it.id)
-                },
-                sak = Sak(fagsakId = infotrygdSaksnummer,
-                          fagsaksystem = Fagsystem.IT01,
-                          sakstype = "FAGSAK"),
-                tema = journalpost.tema?.let { Tema.valueOf(it) },
+            bruker = journalpost.bruker?.let {
+                DokarkivBruker(idType = BrukerIdType.valueOf(it.type.toString()), id = it.id)
+            },
+            sak = Sak(
+                fagsakId = infotrygdSaksnummer,
+                fagsaksystem = Fagsystem.IT01,
+                sakstype = "FAGSAK"
+            ),
+            tema = journalpost.tema?.let { Tema.valueOf(it) },
         )
 
         integrasjonerClient.oppdaterJournalpost(oppdatertJournalpost, journalpostId)
@@ -91,8 +95,10 @@ class ArkiveringService(private val integrasjonerClient: IntegrasjonerClient,
         return dokumentResponse.journalpostId
     }
 
-    private fun sendEttersending(ettersending: Ettersending,
-                                 vedlegg: List<EttersendingVedlegg>): String {
+    private fun sendEttersending(
+        ettersending: Ettersending,
+        vedlegg: List<EttersendingVedlegg>
+    ): String {
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
         return dokumentResponse.journalpostId

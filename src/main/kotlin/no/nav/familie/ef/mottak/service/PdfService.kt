@@ -20,10 +20,12 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class PdfService(private val søknadRepository: SøknadRepository,
-                 private val ettersendingRepository: EttersendingRepository,
-                 private val vedleggRepository: VedleggRepository,
-                 private val pdfClient: PdfClient) {
+class PdfService(
+    private val søknadRepository: SøknadRepository,
+    private val ettersendingRepository: EttersendingRepository,
+    private val vedleggRepository: VedleggRepository,
+    private val pdfClient: PdfClient
+) {
 
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")

@@ -16,12 +16,16 @@ import java.net.URL
 import java.util.UUID
 
 @Service
-@TaskStepBeskrivelse(taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-                     beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav")
-class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNavKafkaProducer,
-                                                   private val søknadService: SøknadService,
-                                                   private val ettersendingConfig: EttersendingConfig,
-                                                   private val featureToggleService: FeatureToggleService) : AsyncTaskStep {
+@TaskStepBeskrivelse(
+    taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+    beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav"
+)
+class SendDokumentasjonsbehovMeldingTilDittNavTask(
+    private val producer: DittNavKafkaProducer,
+    private val søknadService: SøknadService,
+    private val ettersendingConfig: EttersendingConfig,
+    private val featureToggleService: FeatureToggleService
+) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -37,14 +41,15 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
         if (dokumentasjonsbehov.isNotEmpty()) {
             val linkMelding = lagLinkMelding(søknad, dokumentasjonsbehov)
 
-            producer.sendToKafka(søknad.fnr,
-                                 linkMelding.melding,
-                                 task.payload,
-                                 task.metadata["eventId"].toString(),
-                                 linkMelding.link)
+            producer.sendToKafka(
+                søknad.fnr,
+                linkMelding.melding,
+                task.payload,
+                task.metadata["eventId"].toString(),
+                linkMelding.link
+            )
             logger.info("Send melding til ditt nav søknadId=${task.payload}")
         }
-
     }
 
     private fun lagLinkMelding(søknad: Søknad, dokumentasjonsbehov: List<Dokumentasjonsbehov>): LinkMelding {
@@ -53,17 +58,21 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
 
         return when {
             manglerVedlegg(dokumentasjonsbehov) -> {
-                LinkMelding(ettersendingConfig.ettersendingUrl,
-                            "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
-                            " Se hva som mangler og last opp vedlegg.")
+                LinkMelding(
+                    ettersendingConfig.ettersendingUrl,
+                    "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
+                        " Se hva som mangler og last opp vedlegg."
+                )
             }
-            else -> LinkMelding(ettersendingConfig.ettersendingUrl,
-                                "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.")
+            else -> LinkMelding(
+                ettersendingConfig.ettersendingUrl,
+                "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp."
+            )
         }
     }
 
     private fun manglerVedlegg(dokumentasjonsbehov: List<Dokumentasjonsbehov>) =
-            dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
+        dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
 
     private fun søknadstypeTekst(søknadType: SøknadType): String {
         return when (søknadType) {
@@ -78,5 +87,4 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(private val producer: DittNav
 
         const val TYPE = "sendMeldingTilDittNav"
     }
-
 }

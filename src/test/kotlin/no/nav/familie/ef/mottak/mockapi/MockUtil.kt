@@ -4,7 +4,6 @@ import io.mockk.clearMocks
 import io.mockk.impl.annotations.MockK
 import kotlin.reflect.full.declaredMemberProperties
 
-
 /**
  * clearAllMocks i mockk resetter mocks tvers klasser og tvers spring tester
  */

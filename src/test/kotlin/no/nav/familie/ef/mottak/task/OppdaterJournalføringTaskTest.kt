@@ -32,7 +32,7 @@ internal class OppdaterJournalføringTaskTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val arkiveringService: ArkiveringService =
-            ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
+        ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
     private val taskRepository: TaskRepository = mockk()
     private val oppdaterJournalføringTask = OppdaterJournalføringTask(taskRepository, arkiveringService)
 
@@ -49,8 +49,10 @@ internal class OppdaterJournalføringTaskTest {
 
         every {
             søknadService.get("123")
-        } returns søknad(saksnummer = saksnummer,
-                         journalpostId = JOURNALPOST_DIGITALSØKNAD)
+        } returns søknad(
+            saksnummer = saksnummer,
+            journalpostId = JOURNALPOST_DIGITALSØKNAD
+        )
 
         every {
             integrasjonerClient.oppdaterJournalpost(capture(oppdaterJournalpostRequestSlot), capture(journalpostIdSlot))
@@ -58,24 +60,29 @@ internal class OppdaterJournalføringTaskTest {
 
         every {
             integrasjonerClient.hentJournalpost(any())
-        } returns Journalpost(journalpostId = JOURNALPOST_DIGITALSØKNAD,
-                              journalposttype = Journalposttype.I,
-                              journalstatus = Journalstatus.MOTTATT,
-                              bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-                              tema = "ENF",
-                              kanal = "NAV_NO",
-                              behandlingstema = null,
-                              dokumenter = null,
-                              journalforendeEnhet = null,
-                              sak = null)
-
+        } returns Journalpost(
+            journalpostId = JOURNALPOST_DIGITALSØKNAD,
+            journalposttype = Journalposttype.I,
+            journalstatus = Journalstatus.MOTTATT,
+            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+            tema = "ENF",
+            kanal = "NAV_NO",
+            behandlingstema = null,
+            dokumenter = null,
+            journalforendeEnhet = null,
+            sak = null
+        )
 
         oppdaterJournalføringTask.doTask(Task(type = "", payload = "123", properties = Properties()))
 
         assertThat(journalpostIdSlot.captured).isEqualTo(JOURNALPOST_DIGITALSØKNAD)
-        assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(Sak(fagsakId = infotrygdSaksnummer,
-                                                                              fagsaksystem = Fagsystem.IT01,
-                                                                              sakstype = "FAGSAK"))
+        assertThat(oppdaterJournalpostRequestSlot.captured.sak).isEqualTo(
+            Sak(
+                fagsakId = infotrygdSaksnummer,
+                fagsaksystem = Fagsystem.IT01,
+                sakstype = "FAGSAK"
+            )
+        )
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.id).isEqualTo("123456789012")
         assertThat(oppdaterJournalpostRequestSlot.captured.bruker!!.idType).isEqualTo(BrukerIdType.AKTOERID)
     }
@@ -93,5 +100,4 @@ internal class OppdaterJournalføringTaskTest {
 
         Assertions.assertEquals(FerdigstillJournalføringTask.TYPE, slot.captured.type)
     }
-
 }

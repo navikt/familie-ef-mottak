@@ -25,24 +25,26 @@ class SøknadServiceImplTest {
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
         val fnr = "12345678"
         val søknader = listOf(
-                SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
-                SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
-                SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
-                SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
+            SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
+            SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
+            SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
+            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
         )
-        val forventetDokumentasjonsbehov = listOf(DokumentasjonsbehovKontrakter(
+        val forventetDokumentasjonsbehov = listOf(
+            DokumentasjonsbehovKontrakter(
                 "test",
                 UUID.randomUUID()
-                        .toString(),
-                false))
+                    .toString(),
+                false
+            )
+        )
 
         every { søknadRepository.findAllByFnr(fnr) } returns søknader
 
         every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
-                .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
+            .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)
-
 
         assertThat(søknadService.hentDokumentasjonsbehovForPerson(fnr)).hasSize(3)
     }

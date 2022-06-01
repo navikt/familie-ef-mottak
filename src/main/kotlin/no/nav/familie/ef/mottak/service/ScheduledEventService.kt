@@ -9,11 +9,13 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class ScheduledEventService(private val søknadRepository: SøknadRepository,
-                            private val ettersendingRepository: EttersendingRepository,
-                            private val taskProsesseringService: TaskProsesseringService,
-                            @Value("\${prosessering.enabled:true}")
-                            private val prosesserongEnabled: Boolean) {
+class ScheduledEventService(
+    private val søknadRepository: SøknadRepository,
+    private val ettersendingRepository: EttersendingRepository,
+    private val taskProsesseringService: TaskProsesseringService,
+    @Value("\${prosessering.enabled:true}")
+    private val prosesserongEnabled: Boolean
+) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

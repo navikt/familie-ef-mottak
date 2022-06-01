@@ -15,9 +15,9 @@ object EttersendingMapper {
 
     fun fromDto(stønadType: StønadType, ettersending: EttersendelseDto): Ettersending {
         return Ettersending(
-                ettersendingJson = EncryptedString(objectMapper.writeValueAsString(ettersending)),
-                fnr = ettersending.personIdent,
-                stønadType = stønadType.toString(),
+            ettersendingJson = EncryptedString(objectMapper.writeValueAsString(ettersending)),
+            fnr = ettersending.personIdent,
+            stønadType = stønadType.toString(),
         )
     }
 }

@@ -12,22 +12,23 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Service
-class SaksbehandlingClient(@Value("\${EF_SAK_URL}")
-                           private val uri: URI,
-                           @Qualifier("restTemplateAzure")
-                           restOperations: RestOperations)
-    : AbstractPingableRestClient(restOperations, "saksbehandling") {
+class SaksbehandlingClient(
+    @Value("\${EF_SAK_URL}")
+    private val uri: URI,
+    @Qualifier("restTemplateAzure")
+    restOperations: RestOperations
+) :
+    AbstractPingableRestClient(restOperations, "saksbehandling") {
 
     override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
 
     fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType? = null): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-                .pathSegment("api/ekstern/behandling/finnes")
+            .pathSegment("api/ekstern/behandling/finnes")
         if (stønadType != null) {
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
-
 }

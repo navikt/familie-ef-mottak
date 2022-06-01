@@ -16,10 +16,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class JournalføringsoppgaveService(val featureToggleService: FeatureToggleService,
-                                   val søknadRepository: SøknadRepository,
-                                   val ettersendingRepository: EttersendingRepository,
-                                   val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil) {
+class JournalføringsoppgaveService(
+    val featureToggleService: FeatureToggleService,
+    val søknadRepository: SøknadRepository,
+    val ettersendingRepository: EttersendingRepository,
+    val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)
 

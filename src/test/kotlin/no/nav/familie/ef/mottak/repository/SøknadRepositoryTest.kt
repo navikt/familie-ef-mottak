@@ -15,7 +15,6 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var søknadRepository: SøknadRepository
 
-
     @Test
     internal fun `findFirstByTaskOpprettetIsFalse returnerer én soknad med taskOpprettet false`() {
 
@@ -56,21 +55,29 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     internal fun `findAllByFnr returnerer flere søknader`() {
         val ident = "12345678"
 
-        val søknadOvergangsstønad = søknadRepository.insert(Søknad(søknadJson = EncryptedString("kåre"),
-                                                                   fnr = ident,
-                                                                   dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                                                                   taskOpprettet = true))
+        val søknadOvergangsstønad = søknadRepository.insert(
+            Søknad(
+                søknadJson = EncryptedString("kåre"),
+                fnr = ident,
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                taskOpprettet = true
+            )
+        )
 
-        val søknadBarnetilsyn = søknadRepository.insert(Søknad(søknadJson = EncryptedString("kåre"),
-                                                               fnr = ident,
-                                                               dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                                                               taskOpprettet = true))
+        val søknadBarnetilsyn = søknadRepository.insert(
+            Søknad(
+                søknadJson = EncryptedString("kåre"),
+                fnr = ident,
+                dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                taskOpprettet = true
+            )
+        )
 
         val søknader = søknadRepository.findAllByFnr(ident)
 
         assertThat(søknader).usingRecursiveComparison()
-                .ignoringFields("opprettetTid")
-                .ignoringCollectionOrder()
-                .isEqualTo(listOf(søknadOvergangsstønad, søknadBarnetilsyn))
+            .ignoringFields("opprettetTid")
+            .ignoringCollectionOrder()
+            .isEqualTo(listOf(søknadOvergangsstønad, søknadBarnetilsyn))
     }
 }

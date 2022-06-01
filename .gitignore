@@ -1,6 +1,7 @@
 .idea/
 .DS_Store
 target
+ktlint
 *.iml
 # Compiled class file
 *.class
