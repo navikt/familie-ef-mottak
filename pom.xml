@@ -27,7 +27,9 @@
         <confluent.version>7.1.1</confluent.version>
         <kontrakter.version>2.0_20220505111225_1683031</kontrakter.version>
         <brukernotifikasjon-skjemas.version>2.5.1</brukernotifikasjon-skjemas.version>
-        <token-validation.version>1.3.19</token-validation.version>
+        <token-validation.version>2.0.21</token-validation.version>
+        <okhttp3.version>4.9.1
+        </okhttp3.version> <!-- overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -265,7 +267,8 @@
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-test-support</artifactId>
+            <!--            <artifactId>token-validation-test-support</artifactId>-->
+            <artifactId>token-validation-spring-test</artifactId>
             <version>${token-validation.version}</version>
             <scope>test</scope>
         </dependency>
