@@ -7,14 +7,7 @@ Mottaksapplikasjon for søknader om overgangsstønad.
 `ApplicationLocal` launcher appen med Spring-profil `local` og appen blir tilgjengelig på port 8092.
 
 Hent ut token lokal:
-http://localhost:8092/local/cookie?issuerId=tokenx&audience=aud-localhost
-
-val uri = UriComponentsBuilder.fromUriString(LOCALHOST)
-.port(getPort())
-.pathSegment("/local/cookie")
-.queryParam("subject", fnr)
-.queryParam("audience", "aud-localhost")
-.queryParam("issuerId", "tokenx").build().toUri().toString()
+http://localhost:8092/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=[fnr]
 
 ## Kommunisere med ef-sak lokalt
 
