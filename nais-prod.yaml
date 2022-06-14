@@ -82,6 +82,7 @@ spec:
         tier: db-custom-1-3840
         cascadingDelete: false
         highAvailability: true
+        pointInTimeRecovery: true
         maintenance:
           day: 1
           hour: 4
