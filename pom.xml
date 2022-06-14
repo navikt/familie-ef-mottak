@@ -19,7 +19,7 @@
         <revision>1.0</revision>
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.0</kotlin.version>
         <springdoc.version>1.6.8</springdoc.version>
         <mockk.version>1.12.4</mockk.version>
         <felles.version>1.20220503150007_21cbfef</felles.version>
