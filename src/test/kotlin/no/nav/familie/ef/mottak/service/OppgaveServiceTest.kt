@@ -442,19 +442,19 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til opplæringsmappe hvis barnetilsyn og skal behandles i ny løsning`() {
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til "EF Sak 01" hvis barnetilsyn og skal behandles i ny løsning`() {
         val oppgaveId: Long = 123
         val oppgaveSlot = slot<Oppgave>()
-        val mappeIdOpplæring = 456
 
+        val mappeidUplassert = 123
         every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
             antallTreffTotalt = 1,
             mapper = listOf(
                 MappeDto(
-                    id = mappeIdOpplæring,
-                    navn = "EF Sak - 65 Opplæring",
+                    id = mappeidUplassert,
+                    navn = "EF Sak 01",
                     enhetsnr = ""
-                )
+                ),
             )
         )
 
@@ -467,7 +467,7 @@ internal class OppgaveServiceTest {
 
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
+        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
     }
 
     @Test
