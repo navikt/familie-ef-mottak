@@ -78,6 +78,7 @@ spec:
       - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
         diskAutoresize: true
         cascadingDelete: false
+        pointInTimeRecovery: true
         databases:
           - name: familie-ef-mottak
             envVarPrefix: DB
