@@ -20,10 +20,10 @@
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>1.7.0</kotlin.version>
-        <springdoc.version>1.6.8</springdoc.version>
+        <springdoc.version>1.6.9</springdoc.version>
         <mockk.version>1.12.4</mockk.version>
         <felles.version>1.20220610091149_ae616c5</felles.version>
-        <prosessering.version>1.20220331123748_03bdb3b</prosessering.version>
+        <prosessering.version>1.20220610091422_f8b17ff</prosessering.version>
         <confluent.version>7.1.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
         <kontrakter.version>2.0_20220610093124_b392e81</kontrakter.version>
@@ -224,7 +224,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.17.1</version>
+            <version>1.17.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -397,7 +397,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>ktlint</id>
