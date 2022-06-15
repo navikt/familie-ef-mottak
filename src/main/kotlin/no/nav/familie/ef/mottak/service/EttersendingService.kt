@@ -10,8 +10,8 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -76,5 +76,14 @@ class EttersendingService(
 
     fun oppdaterEttersending(ettersending: Ettersending) {
         ettersendingRepository.update(ettersending)
+    }
+
+    fun slettEttersending(ettersendingId: UUID) {
+        val søknad = ettersendingRepository.findByIdOrNull(ettersendingId) ?: return
+        if (søknad.journalpostId == null) {
+            throw IllegalStateException("Ettersending $ettersendingId er ikke journalført og kan ikke slettes.")
+        }
+        ettersendingVedleggRepository.deleteAllByEttersendingId(ettersendingId)
+        ettersendingRepository.deleteById(ettersendingId)
     }
 }

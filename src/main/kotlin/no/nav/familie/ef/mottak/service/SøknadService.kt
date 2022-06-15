@@ -13,7 +13,6 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -22,6 +21,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -33,6 +33,7 @@ import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as Databas
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
 
 @Service
+@Transactional
 class SøknadService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
@@ -157,5 +158,26 @@ class SøknadService(
 
     fun oppdaterSøknad(søknad: Søknad) {
         søknadRepository.update(søknad)
+    }
+
+    @Transactional
+    fun reduserSøknad(søknadId: String) {
+        val søknad = søknadRepository.findByIdOrNull(søknadId) ?: return
+        if (søknad.journalpostId == null) {
+            throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke reduseres.")
+        }
+        vedleggRepository.deleteBySøknadId(søknadId)
+        dokumentasjonsbehovRepository.deleteById(søknadId)
+        val t = søknad.copy(søknadPdf = null)
+        søknadRepository.update(t)
+    }
+
+    @Transactional
+    fun slettSøknad(søknadId: String) {
+        val søknad = søknadRepository.findByIdOrNull(søknadId) ?: return
+        if (søknad.journalpostId == null) {
+            throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke slettes.")
+        }
+        søknadRepository.deleteById(søknadId)
     }
 }

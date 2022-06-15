@@ -31,7 +31,7 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
         val søknadId = søknadRepository.insert(søknad()).id
         vedleggRepository.insert(Vedlegg(UUID.randomUUID(), søknadId, "navn", "tittel1", EncryptedFile(byteArrayOf(12))))
 
-        val vedlegg = vedleggRepository.findTitlerBySøknadId(søknadId)
+        val vedlegg = vedleggRepository.finnTitlerForSøknadId(søknadId)
 
         assertThat(vedlegg).hasSize(1)
     }

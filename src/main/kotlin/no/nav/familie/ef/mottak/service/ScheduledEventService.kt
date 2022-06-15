@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class ScheduledEventService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
     private val taskProsesseringService: TaskProsesseringService,
+    private val ryddeTaskService: RyddeTaskService,
     @Value("\${prosessering.enabled:true}")
     private val prosesserongEnabled: Boolean
 ) {
@@ -47,5 +49,19 @@ class ScheduledEventService(
         } catch (e: DataIntegrityViolationException) {
             logger.info("ConstraintViolation ved forsøk på å opprette task for ettersending med id ${ettersending?.id}")
         }
+    }
+
+    @Scheduled(cron = "\${DB_RYDDING_CRON_EXPRESSION}")
+    fun ryddGamleForekomster() {
+        val tidspunktFor3MånederSiden = LocalDateTime.now().minusMonths(3)
+        val søknaderTilReduksjon = søknadRepository.finnSøknaderKlarTilReduksjon(tidspunktFor3MånederSiden)
+        søknaderTilReduksjon.forEach { ryddeTaskService.opprettSøknadsreduksjonTask(it) }
+
+        val ettersendingerTilSletting = ettersendingRepository.finnEttersendingerKlarTilSletting(tidspunktFor3MånederSiden)
+        ettersendingerTilSletting.forEach { ryddeTaskService.opprettEttersendingsslettingTask(it) }
+
+        val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
+        val søknaderTilSletting = søknadRepository.finnSøknaderKlarTilSletting(tidspunktFor6MånederSiden)
+        søknaderTilSletting.forEach { ryddeTaskService.opprettSøknadsslettingTask(it) }
     }
 }

@@ -3,6 +3,8 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.mockapi.mockFamilieDokumentClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
@@ -10,17 +12,20 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.kontrakter.ef.ettersending.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
 internal class EttersendingServiceTest {
 
-    private val ettersendingRepository = mockk<EttersendingRepository>()
-    private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>()
+    private val ettersendingRepository = mockk<EttersendingRepository>(relaxed = true)
+    private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>(relaxed = true)
     private val dokumentClient = mockFamilieDokumentClient()
 
     private val ettersendingService = EttersendingService(
@@ -103,5 +108,30 @@ internal class EttersendingServiceTest {
         assertThat(ettersendingVedleggSlot.captured[1].ettersendingId).isEqualTo(ettersendingSlot.captured.id)
         assertThat(ettersendingVedleggSlot.captured[1].navn).isEqualTo(vedlegg2.navn)
         assertThat(ettersendingVedleggSlot.captured[1].innhold.bytes).isEqualTo(dokument2)
+    }
+
+    @Nested
+    inner class SlettSøknad {
+
+        @Test
+        fun `for ettersending som ikke er journalført feiler`() {
+            val ettersending = Ettersending(ettersendingJson = EncryptedString(""), fnr = "321321", stønadType = "OS")
+
+            every { ettersendingRepository.findByIdOrNull(ettersending.id) } returns ettersending
+
+            assertThrows<IllegalStateException> { ettersendingService.slettEttersending(ettersending.id) }
+        }
+
+        @Test
+        fun `sletter ettersending og ettersenndingsvedlegg for gitt ettersendingId`() {
+            val ettersendingTilSletting =
+                Ettersending(ettersendingJson = EncryptedString(""), fnr = "321321", stønadType = "OS", journalpostId = "321321")
+            every { ettersendingRepository.findByIdOrNull(ettersendingTilSletting.id) } returns ettersendingTilSletting
+
+            ettersendingService.slettEttersending(ettersendingTilSletting.id)
+
+            verify { ettersendingVedleggRepository.deleteAllByEttersendingId(ettersendingTilSletting.id) }
+            verify { ettersendingRepository.deleteById(ettersendingTilSletting.id) }
+        }
     }
 }

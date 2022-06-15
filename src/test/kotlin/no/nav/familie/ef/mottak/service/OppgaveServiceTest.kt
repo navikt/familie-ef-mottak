@@ -368,7 +368,7 @@ internal class OppgaveServiceTest {
 
     // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om "BehandlesAvApplikasjon" er satt til infotrygd`() {
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om BehandlesAvApplikasjon er satt til infotrygd`() {
         val oppgaveId: Long = 123
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -442,7 +442,7 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til "EF Sak 01" hvis barnetilsyn og skal behandles i ny løsning`() {
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til EF Sak 01 hvis barnetilsyn og skal behandles i ny løsning`() {
         val oppgaveId: Long = 123
         val oppgaveSlot = slot<Oppgave>()
 
