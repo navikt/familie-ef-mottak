@@ -1,24 +1,25 @@
 # familie-ef-mottak
+
 Mottaksapplikasjon for søknader om overgangsstønad.
 
 ## Kjøre appen
+
 `ApplicationLocal` launcher appen med Spring-profil `local` og appen blir tilgjengelig på port 8092.
 
-Kjør applikasjon familie-oidc-test-support på port 8080 
-https://github.com/navikt/familie-oidc-test
-f.eks: 
-docker build -t local:oidc-test-support . 
-docker run -it -p 8080:8080 local:oidc-test-support 
-Token kan da genereres ved å gå til url: http://localhost:8080/jwt
+Hent ut token lokal:
+http://localhost:8092/local/cookie?issuerId=tokenx&audience=aud-localhost&subject=[fnr]
 
 ## Kommunisere med ef-sak lokalt
-Dersom man ønsker å sende søknader til ef-sak, må man sette opp noen miljøvariabler fordi ef-sak krever preprod-autentisering
-også lokalt. Følgende miljøvariabler må hentes fra azure secrets injectet i pod, og secrets-filen med navn familie-ef-mottak i dev-gcp:
+
+Dersom man ønsker å sende søknader til ef-sak, må man sette opp noen miljøvariabler fordi ef-sak krever
+preprod-autentisering også lokalt. Følgende miljøvariabler må hentes fra azure secrets injectet i pod, og secrets-filen
+med navn familie-ef-mottak i dev-gcp:
+
 * `AZURE_APP_CLIENT_ID`
 * `AZURE_APP_CLIENT_SECRET`
 * `EF_SAK_SCOPE`
 
-Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables. 
+Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
 
 ## Kafka
 Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
