@@ -79,8 +79,8 @@ class EttersendingService(
     }
 
     fun slettEttersending(ettersendingId: UUID) {
-        val søknad = ettersendingRepository.findByIdOrNull(ettersendingId) ?: return
-        if (søknad.journalpostId == null) {
+        val ettersending = ettersendingRepository.findByIdOrNull(ettersendingId) ?: return
+        if (ettersending.journalpostId == null) {
             throw IllegalStateException("Ettersending $ettersendingId er ikke journalført og kan ikke slettes.")
         }
         ettersendingVedleggRepository.deleteAllByEttersendingId(ettersendingId)

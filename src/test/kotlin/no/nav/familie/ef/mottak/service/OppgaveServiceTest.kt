@@ -42,6 +42,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
@@ -75,7 +76,12 @@ internal class OppgaveServiceTest {
     private fun init() {
         every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
         every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
-        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(Enhet(enhetId = "4489", enhetNavn = "NAY"))
+        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(
+            Enhet(
+                enhetId = "4489",
+                enhetNavn = "NAY"
+            )
+        )
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
         every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
             antallTreffTotalt = 1,
@@ -146,13 +152,14 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
+        val oppgaveResponse =
+            oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
 
         assertEquals(1, oppgaveResponse)
     }
 
     @Test
-    fun `Opprett oppgave med enhet NAY hvis opprettBahandleSak-kall får feil når enhet ikke blir funnet for bruker`() {
+    fun `Opprett oppgave med enhet NAY hvis opprettBehandleSak-kall får feil når enhet ikke blir funnet for bruker`() {
 
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns emptyList()
         val behandleSakOppgaveRequest =
@@ -193,310 +200,319 @@ internal class OppgaveServiceTest {
         }
     }
 
-    @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for overgangsstønad, hvis det finnes perioder i infotrygd`() {
-        val søknadId = "enSøknadId"
-        val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(
-            søknadJson = EncryptedString("{}"),
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            journalpostId = journalpostId,
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true
-        )
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
-        every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns false
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any()) } returns false
-
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for barnetilsyn, selv om det finnes perioder i infotrygd`() {
-        val søknadId = "enSøknadId"
-        val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(
-            søknadJson = EncryptedString("{}"),
-            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-            journalpostId = journalpostId,
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true
-        )
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
-        every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-        every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns true
-
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for skolepenger, selv om det finnes perioder i infotrygd`() {
-        val søknadId = "enSøknadId"
-        val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(
-            søknadJson = EncryptedString("{}"),
-            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-            journalpostId = journalpostId,
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true
-        )
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
-        every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-        every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns true
-
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for barnetilsyn, hvis det finnes åpen sak i infotrygd`() {
-        val søknadId = "enSøknadId"
-        val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(
-            søknadJson = EncryptedString("{}"),
-            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-            journalpostId = journalpostId,
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true
-        )
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
-        every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-        every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns false
-
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForSøknadId skal sette behandlesAvApplikasjon=INFOTRYGD for skolepenger, hvis det finnes åpen sak i infotrygd`() {
-        val søknadId = "enSøknadId"
-        val journalpostId = "999"
-        every { søknadService.get(søknadId) } returns Søknad(
-            søknadJson = EncryptedString("{}"),
-            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-            journalpostId = journalpostId,
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true
-        )
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
-        every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-        every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns false
-
-        oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
-        val journalpostId = UUID.randomUUID().toString()
-        val journalpost = journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
-
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
-        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
-        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-
-        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=INFOTRYGD hvis det ikke finnes en behandling i ny løsning`() {
-        val journalpostId = UUID.randomUUID().toString()
-        val journalpost = journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
-
-        every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
-        every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns false
-        every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
-
-        oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave for ny løsning dersom det finnes en behandling i ny løsning`() {
-        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
-        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns true
-        every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette oppgave med behandlesAvApplikasjon=EF_SAK_INFOTRYGD dersom det ikke finnes en behandling i ny løsning`() {
-        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
-        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
-        every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns true
-        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
-    }
-
-    @Test
-    internal fun `lagJournalføringsoppgaveForEttersending skal opprette en oppgave med behandlesAvApplikasjon=INFOTRYGD dersom finnes en sak mot infotrygd fra før`() {
-        every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
-        every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
-        every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
-        every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-        every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
-        oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
-
-        verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
-    }
-
-    // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte overgangsstønad-oppgave til mappe selv om BehandlesAvApplikasjon er satt til infotrygd`() {
-        val oppgaveId: Long = 123
-
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-        )
-
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
-
-        verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-    }
-
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`() {
-        val oppgaveId: Long = 123
-
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-        )
-
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
-
-        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-    }
-
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`() {
-        val oppgaveId: Long = 123
-
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
-        )
-
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
-
-        verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-    }
-
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`() {
-        val oppgaveId: Long = 123
-
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-        )
-
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
-
-        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-    }
-
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis behandlingstema er null (arbeidssøkerskjema)`() {
-        val oppgaveId: Long = 123
-
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = null,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-        )
-
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
-
-        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-    }
-
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til EF Sak 01 hvis barnetilsyn og skal behandles i ny løsning`() {
-        val oppgaveId: Long = 123
-        val oppgaveSlot = slot<Oppgave>()
-
-        val mappeidUplassert = 123
-        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
-            antallTreffTotalt = 1,
-            mapper = listOf(
-                MappeDto(
-                    id = mappeidUplassert,
-                    navn = "EF Sak 01",
-                    enhetsnr = ""
-                ),
+    @Nested
+    inner class LagJournalføringsoppgaveForSøknadId {
+        @Test
+        fun `skal sette behandlesAvApplikasjon=INFOTRYGD for overgangsstønad, hvis det finnes perioder i infotrygd`() {
+            val søknadId = "enSøknadId"
+            val journalpostId = "999"
+            every { søknadService.get(søknadId) } returns Søknad(
+                søknadJson = EncryptedString("{}"),
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                journalpostId = journalpostId,
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true
             )
-        )
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
+            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns false
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any()) } returns false
 
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
-        )
-        every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        }
 
-        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
+        @Test
+        fun `skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for barnetilsyn, selv om det finnes perioder i infotrygd`() {
+            val søknadId = "enSøknadId"
+            val journalpostId = "999"
+            every { søknadService.get(søknadId) } returns Søknad(
+                søknadJson = EncryptedString("{}"),
+                dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                journalpostId = journalpostId,
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true
+            )
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
+            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns true
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
+        }
+
+        @Test
+        fun `skal sette behandlesAvApplikasjon=EF_SAK_INFOTRYGD for skolepenger, selv om det finnes perioder i infotrygd`() {
+            val søknadId = "enSøknadId"
+            val journalpostId = "999"
+            every { søknadService.get(søknadId) } returns Søknad(
+                søknadJson = EncryptedString("{}"),
+                dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+                journalpostId = journalpostId,
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true
+            )
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
+            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns true
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
+        }
+
+        @Test
+        fun `skal sette behandlesAvApplikasjon=INFOTRYGD for barnetilsyn, hvis det finnes åpen sak i infotrygd`() {
+            val søknadId = "enSøknadId"
+            val journalpostId = "999"
+            every { søknadService.get(søknadId) } returns Søknad(
+                søknadJson = EncryptedString("{}"),
+                dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                journalpostId = journalpostId,
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true
+            )
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostBarnetilsyn
+            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.BARNETILSYN) } returns false
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns false
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        }
+
+        @Test
+        fun `skal sette behandlesAvApplikasjon=INFOTRYGD for skolepenger, hvis det finnes åpen sak i infotrygd`() {
+            val søknadId = "enSøknadId"
+            val journalpostId = "999"
+            every { søknadService.get(søknadId) } returns Søknad(
+                søknadJson = EncryptedString("{}"),
+                dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+                journalpostId = journalpostId,
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true
+            )
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostSkolepenger
+            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.SKOLEPENGER) } returns false
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            every { sakService.finnesIkkeÅpenSakIInfotrygd(any(), any()) } returns false
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        }
     }
 
-    @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til uplassertMappe hvis overgangsstønad`() {
-        val oppgaveId: Long = 123
-        val oppgaveSlot = slot<Oppgave>()
-        val mappeIdUplassert = 123
+    @Nested
+    inner class LagJournalføringsoppgaveForJournalpostId {
+        @Test
+        fun `skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
+            val journalpostId = UUID.randomUUID().toString()
+            val journalpost =
+                journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
 
-        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
-            antallTreffTotalt = 1,
-            mapper = listOf(
-                MappeDto(
-                    id = mappeIdUplassert,
-                    navn = "EF Sak 01",
-                    enhetsnr = ""
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+            every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
+            every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+
+            oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART, "4489") }
+        }
+
+        @Test
+        fun `skal sette behandlesAvApplikasjon=INFOTRYGD hvis det ikke finnes en behandling i ny løsning`() {
+            val journalpostId = UUID.randomUUID().toString()
+            val journalpost =
+                journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+
+            every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
+            every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns false
+            every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
+
+            oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        }
+    }
+
+    @Nested
+    inner class LagJournalføringsoppgaveForEttersending {
+
+        @Test
+        fun `skal opprette en oppgave for ny løsning dersom det finnes en behandling i ny løsning`() {
+            every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+            every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns true
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
+        }
+
+        @Test
+        fun `skal opprette oppgave med behandlesAvApplikasjon=EF_SAK_INFOTRYGD om det ikke finnes en behandling i ny løsning`() {
+            every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+            every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns true
+            oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK_INFOTRYGD, "4489") }
+        }
+
+        @Test
+        fun `skal opprette en oppgave med behandlesAvApplikasjon=INFOTRYGD dersom finnes en sak mot infotrygd fra før`() {
+            every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
+            every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns false
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
+
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.INFOTRYGD, "4489") }
+        }
+    }
+
+    @Nested
+    inner class OppdaterOppgaveMedRiktigMappeId {
+
+        // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
+        @Test
+        fun `skal flytte overgangsstønad-oppgave til mappe selv om BehandlesAvApplikasjon er satt til infotrygd`() {
+            val oppgaveId: Long = 123
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+            )
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        }
+
+        @Test
+        fun `skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`() {
+            val oppgaveId: Long = 123
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+            )
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        }
+
+        @Test
+        fun `skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`() {
+            val oppgaveId: Long = 123
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            )
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        }
+
+        @Test
+        fun `skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`() {
+            val oppgaveId: Long = 123
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+            )
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        }
+
+        @Test
+        fun `skal ikke flytte oppgave til mappe hvis behandlingstema er null (arbeidssøkerskjema)`() {
+            val oppgaveId: Long = 123
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = null,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+            )
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        }
+
+        @Test
+        fun `skal flytte oppgave til EF Sak 01 hvis barnetilsyn og skal behandles i ny løsning`() {
+            val oppgaveId: Long = 123
+            val oppgaveSlot = slot<Oppgave>()
+
+            val mappeidUplassert = 123
+            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper = listOf(
+                    MappeDto(
+                        id = mappeidUplassert,
+                        navn = "EF Sak 01",
+                        enhetsnr = ""
+                    ),
                 )
             )
-        )
 
-        every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-            id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
-            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
-        )
-        every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            )
+            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
+            Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
+        }
+
+        @Test
+        fun `skal flytte oppgave til uplassertMappe hvis overgangsstønad`() {
+            val oppgaveId: Long = 123
+            val oppgaveSlot = slot<Oppgave>()
+            val mappeIdUplassert = 123
+
+            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper = listOf(
+                    MappeDto(
+                        id = mappeIdUplassert,
+                        navn = "EF Sak 01",
+                        enhetsnr = ""
+                    )
+                )
+            )
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            )
+            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+            Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
+        }
     }
 
     private val ettersendingId = UUID.randomUUID().toString()
@@ -581,9 +597,9 @@ internal class OppgaveServiceTest {
 
     )
 
-    private fun lagOppgaveForFordeling(id: Long? = null, behandlingstema: String?, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+    private fun lagOppgaveForFordeling(behandlingstema: String?, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
         Oppgave(
-            id = id,
+            id = 123L,
             behandlingstema = behandlingstema,
             status = StatusEnum.OPPRETTET,
             tildeltEnhetsnr = "4489",

@@ -65,14 +65,6 @@ class SøknadService(
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
-    private fun <T : Any> skalBehandlesINySaksbehandling(søknad: SøknadMedVedlegg<T>): Boolean {
-        val erIDev = System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp"
-        return when {
-            erIDev -> søknad.behandleINySaksbehandling
-            else -> false
-        }
-    }
-
     private fun motta(
         søknadDb: Søknad,
         vedlegg: List<Vedlegg>,
@@ -168,8 +160,6 @@ class SøknadService(
         }
         vedleggRepository.deleteBySøknadId(søknadId)
         dokumentasjonsbehovRepository.deleteById(søknadId)
-        val t = søknad.copy(søknadPdf = null)
-        søknadRepository.update(t)
     }
 
     @Transactional

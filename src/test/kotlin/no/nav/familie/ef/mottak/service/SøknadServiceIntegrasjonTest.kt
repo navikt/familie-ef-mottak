@@ -164,7 +164,6 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         søknadService.reduserSøknad(søknadFørReduksjon.id)
 
         val søknad = søknadService.get(søknadFørReduksjon.id)
-        assertThat(søknad.søknadPdf).isNull()
         assertThat(dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)).isNull()
         assertThat(vedleggRepository.findBySøknadId(søknad.id)).isEmpty()
     }

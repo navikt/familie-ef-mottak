@@ -55,13 +55,31 @@ class ScheduledEventService(
     fun ryddGamleForekomster() {
         val tidspunktFor3MånederSiden = LocalDateTime.now().minusMonths(3)
         val søknaderTilReduksjon = søknadRepository.finnSøknaderKlarTilReduksjon(tidspunktFor3MånederSiden)
-        søknaderTilReduksjon.forEach { ryddeTaskService.opprettSøknadsreduksjonTask(it) }
+        søknaderTilReduksjon.forEach {
+            try {
+                ryddeTaskService.opprettSøknadsreduksjonTask(it)
+            } catch (e: DataIntegrityViolationException) {
+                logger.info("ConstraintViolation ved forsøk på å opprette task for søknadsreduksjon med id $it")
+            }
+        }
 
         val ettersendingerTilSletting = ettersendingRepository.finnEttersendingerKlarTilSletting(tidspunktFor3MånederSiden)
-        ettersendingerTilSletting.forEach { ryddeTaskService.opprettEttersendingsslettingTask(it) }
+        ettersendingerTilSletting.forEach {
+            try {
+                ryddeTaskService.opprettEttersendingsslettingTask(it)
+            } catch (e: DataIntegrityViolationException) {
+                logger.info("ConstraintViolation ved forsøk på å opprette task for søknadssletting med id $it")
+            }
+        }
 
         val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
         val søknaderTilSletting = søknadRepository.finnSøknaderKlarTilSletting(tidspunktFor6MånederSiden)
-        søknaderTilSletting.forEach { ryddeTaskService.opprettSøknadsslettingTask(it) }
+        søknaderTilSletting.forEach {
+            try {
+                ryddeTaskService.opprettSøknadsslettingTask(it)
+            } catch (e: DataIntegrityViolationException) {
+                logger.info("ConstraintViolation ved forsøk på å opprette task for ettersendingssletting med id $it")
+            }
+        }
     }
 }

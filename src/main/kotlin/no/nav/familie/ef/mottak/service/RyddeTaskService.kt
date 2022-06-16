@@ -21,7 +21,7 @@ class RyddeTaskService(private val taskService: TaskService) {
         taskService.save(Task(SøknadsslettingTask.TYPE, søknadId))
     }
 
-    fun opprettEttersendingsslettingTask(søknadId: UUID) {
-        taskService.save(Task(EttersendingsslettingTask.TYPE, søknadId.toString()))
+    fun opprettEttersendingsslettingTask(ettersendingId: UUID) {
+        taskService.save(Task(EttersendingsslettingTask.TYPE, ettersendingId.toString()))
     }
 }

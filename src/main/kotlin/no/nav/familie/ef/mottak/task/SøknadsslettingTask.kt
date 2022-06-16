@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @TaskStepBeskrivelse(
     taskStepType = SøknadsslettingTask.TYPE,
-    beskrivelse = "Send 'søknad mottatt' til ditt nav"
+    beskrivelse = "Sletter en søknad fra mottak"
 )
 class SøknadsslettingTask(private val søknadService: SøknadService) : AsyncTaskStep {
 
