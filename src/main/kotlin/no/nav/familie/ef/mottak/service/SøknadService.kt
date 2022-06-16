@@ -60,7 +60,7 @@ class SøknadService(
 
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
-        val søknadDb = SøknadMapper.fromDto(søknad.søknad, featureToggleService.isEnabled("familie.ef.mottak.skolepenger"))
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
