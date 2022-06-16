@@ -10,6 +10,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.util.DbContainerInitializer
 import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,11 +24,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.web.util.UriComponentsBuilder
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(initializers = [DbContainerInitializer::class])
-@SpringBootTest(classes = [ApplicationLocal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("local")
+@SpringBootTest(classes = [ApplicationLocalConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles(
+    "local",
+    "mock-integrasjon",
+    "mock-dokument",
+    "mock-ef-sak",
+    "mock-pdf"
+)
+@EnableMockOAuth2Server
 abstract class IntegrasjonSpringRunnerTest {
 
     protected val listAppender = initLoggingEventListAppender()
@@ -35,13 +44,26 @@ abstract class IntegrasjonSpringRunnerTest {
     protected val restTemplate = TestRestTemplate()
     protected val headers = HttpHeaders()
 
-    @Autowired private lateinit var søknadRepository: SøknadRepository
-    @Autowired private lateinit var vedleggRepository: VedleggRepository
-    @Autowired private lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
-    @Autowired private lateinit var ettersendingRepository: EttersendingRepository
-    @Autowired private lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
-    @Autowired private lateinit var taskRepository: TaskRepository
-    @Autowired private lateinit var hendelsesloggRepository: HendelsesloggRepository
+    @Autowired
+    private lateinit var søknadRepository: SøknadRepository
+
+    @Autowired
+    private lateinit var vedleggRepository: VedleggRepository
+
+    @Autowired
+    private lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
+
+    @Autowired
+    private lateinit var ettersendingRepository: EttersendingRepository
+
+    @Autowired
+    private lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
+
+    @Autowired
+    private lateinit var taskRepository: TaskRepository
+
+    @Autowired
+    private lateinit var hendelsesloggRepository: HendelsesloggRepository
 
     @LocalServerPort
     private var port: Int? = 0
@@ -76,8 +98,15 @@ abstract class IntegrasjonSpringRunnerTest {
         }
 
     fun getTestToken(fnr: String = "12345678910"): String {
+        val uri = UriComponentsBuilder.fromUriString(LOCALHOST)
+            .port(getPort())
+            .pathSegment("/local/cookie")
+            .queryParam("subject", fnr)
+            .queryParam("audience", "aud-localhost")
+            .queryParam("issuerId", "tokenx").build().toUri().toString()
+
         val cookie = restTemplate.exchange(
-            localhost("/local/cookie?subject=$fnr"),
+            uri,
             HttpMethod.GET,
             HttpEntity.EMPTY,
             String::class.java
