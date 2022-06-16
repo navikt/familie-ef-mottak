@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.hendelse.JournalpostState
 import no.nav.familie.ef.mottak.hendelse.getJournalpostState
 import no.nav.familie.ef.mottak.hendelse.ikkeGyldigKanalLogString
+import no.nav.familie.ef.mottak.hendelse.ikkeGyldigLogString
 import no.nav.familie.ef.mottak.hendelse.incrementMetric
 import no.nav.familie.ef.mottak.hendelse.skalBehandles
 import no.nav.familie.ef.mottak.hendelse.statusIkkeMottattLogString
@@ -52,6 +53,8 @@ class JournalføringsoppgaveService(
         when (journalpost.getJournalpostState()) {
             JournalpostState.IKKE_MOTTATT -> logger.info(journalpost.statusIkkeMottattLogString())
             JournalpostState.UGYLDIG_KANAL -> logger.error(journalpost.ikkeGyldigKanalLogString())
+            JournalpostState.UGYLDIG -> logger.error(journalpost.ikkeGyldigLogString())
+            JournalpostState.GYLDIG -> {} // Ingen logging
         }
     }
 }

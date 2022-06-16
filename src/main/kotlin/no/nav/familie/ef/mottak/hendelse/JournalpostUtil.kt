@@ -21,6 +21,9 @@ fun Journalpost.statusIkkeMottattLogString() =
 fun Journalpost.ikkeGyldigKanalLogString() =
     "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
 
+fun Journalpost.ikkeGyldigLogString() =
+    "Ny journalhendelse ikke gyldig journalpost=${this.journalpostId}"
+
 fun Journalpost.kanalMetricName(): String {
     return when {
         this.kanal?.substring(0, 5) == "SKAN_" -> {
@@ -38,7 +41,7 @@ fun Journalpost.kanalMetricName(): String {
 fun Journalpost.incrementMetric() {
     when (this.getJournalpostState()) {
         JournalpostState.IKKE_MOTTATT -> Metrics.counter("alene.med.barn.journalhendelse.ignorerte").increment()
-        JournalpostState.UGYLDIG_KANAL,
+        JournalpostState.UGYLDIG_KANAL, JournalpostState.UGYLDIG,
         JournalpostState.GYLDIG -> Metrics.counter(this.kanalMetricName()).increment()
     }
 }
