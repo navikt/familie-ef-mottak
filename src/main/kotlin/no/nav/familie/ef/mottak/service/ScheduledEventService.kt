@@ -58,28 +58,36 @@ class ScheduledEventService(
         søknaderTilReduksjon.forEach {
             try {
                 ryddeTaskService.opprettSøknadsreduksjonTask(it)
+                logger.info("Task opprettet for reduksjon av søknad med id $it")
+
             } catch (e: DataIntegrityViolationException) {
                 logger.info("ConstraintViolation ved forsøk på å opprette task for søknadsreduksjon med id $it")
             }
         }
+        logger.info("Opprettet ${søknaderTilReduksjon.size} tasker for reduksjon av søknader.")
 
         val ettersendingerTilSletting = ettersendingRepository.finnEttersendingerKlarTilSletting(tidspunktFor3MånederSiden)
         ettersendingerTilSletting.forEach {
             try {
                 ryddeTaskService.opprettEttersendingsslettingTask(it)
+                logger.info("Task opprettet for sletting av ettersending med id $it")
             } catch (e: DataIntegrityViolationException) {
                 logger.info("ConstraintViolation ved forsøk på å opprette task for søknadssletting med id $it")
             }
         }
+        logger.info("Opprettet ${ettersendingerTilSletting.size} tasker for sletting av ettersendinger.")
 
         val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
         val søknaderTilSletting = søknadRepository.finnSøknaderKlarTilSletting(tidspunktFor6MånederSiden)
         søknaderTilSletting.forEach {
             try {
                 ryddeTaskService.opprettSøknadsslettingTask(it)
+                logger.info("Task opprettet for sletting av søknad med id $it")
             } catch (e: DataIntegrityViolationException) {
                 logger.info("ConstraintViolation ved forsøk på å opprette task for ettersendingssletting med id $it")
             }
         }
+        logger.info("Opprettet ${søknaderTilSletting.size} tasker for sletting av søknader.")
+
     }
 }
