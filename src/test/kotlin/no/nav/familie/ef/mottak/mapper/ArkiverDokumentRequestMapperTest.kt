@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
+import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -20,9 +21,16 @@ import java.util.UUID
 internal class ArkiverDokumentRequestMapperTest {
 
     @Test
-    internal fun `overgangsstønad toDto`() {
+    internal fun `overgangsstønad toDto - sjekk alle felt`() {
         val vedlegg = lagVedlegg()
-        val dto = toDto(lagSøknad(Testdata.søknadOvergangsstønad, DOKUMENTTYPE_OVERGANGSSTØNAD), listOf(vedlegg))
+        val søknad = lagSøknad(Testdata.søknadOvergangsstønad, DOKUMENTTYPE_OVERGANGSSTØNAD)
+        val dto = toDto(søknad, listOf(vedlegg))
+        assertThat(dto.fnr).isEqualTo(søknad.fnr)
+        assertThat(dto.forsøkFerdigstill).isFalse
+        assertThat(dto.hoveddokumentvarianter).hasSize(2)
+        assertThat(dto.hoveddokumentvarianter.first().dokumenttype.name).isEqualTo(søknad.dokumenttype)
+        assertThat(dto.hoveddokumentvarianter.first().tittel).isEqualTo(Dokumenttype.valueOf(søknad.dokumenttype).dokumentTittel())
+        assertThat(dto.hoveddokumentvarianter.first().filtype).isEqualTo(Filtype.PDFA)
         assertThat(dto.vedleggsdokumenter.first().dokumenttype)
             .isEqualTo(Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG)
         assertThat(dto.vedleggsdokumenter.first().filnavn).isEqualTo(vedlegg.id.toString())
