@@ -4,8 +4,8 @@ import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.familie.sikkerhet.EksternBrukerUtils.personIdentErLikInnloggetBruker
 import no.nav.security.token.support.core.api.ProtectedWithClaims

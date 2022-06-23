@@ -110,6 +110,7 @@ object SøknadTreeWalker {
 
         if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!! is Dokumentasjon) {
+                @Suppress("UNCHECKED_CAST")
                 return listOf(mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>))
             }
             if (entitet.verdi!!::class in endNodes) {
