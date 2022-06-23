@@ -134,7 +134,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
         }
 
-        every { søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(SØKNAD_ID)) } returns
+        every { søknadService.hentDokumentasjonsbehovForSøknad(any()) } returns
             DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
     }
 

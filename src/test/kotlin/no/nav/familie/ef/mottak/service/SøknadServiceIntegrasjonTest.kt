@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
@@ -14,11 +13,9 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
-import java.util.UUID
 
 internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
@@ -127,19 +124,12 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         val søknad = søknadOvergangsstønad
         val kvittering =
             søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
-        val dokumentasjonsbehovDto = søknadService.hentDokumentasjonsbehovForSøknad(UUID.fromString(kvittering.id))
+        val dokumentasjonsbehovDto = søknadService.hentDokumentasjonsbehovForSøknad(søknadService.get(kvittering.id))
 
         assertThat(dokumentasjonsbehovDto.personIdent).isEqualTo(søknad.personalia.verdi.fødselsnummer.verdi.verdi)
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov).hasSize(1)
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov[0].harSendtInn).isFalse
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov[0].opplastedeVedlegg).isEmpty()
         assertThat(dokumentasjonsbehovDto.søknadType).isEqualTo(SøknadType.OVERGANGSSTØNAD)
-    }
-
-    @Test
-    internal fun `hent dokumentasjonsbehov til søknad feiler når søknadId ikke finnes`() {
-        assertThat(catchThrowable { søknadService.hentDokumentasjonsbehovForSøknad(UUID.randomUUID()) })
-            .hasMessageContaining("Fant ikke søknad for id ")
-            .isInstanceOf(ApiFeil::class.java)
     }
 }

@@ -12,6 +12,7 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -104,7 +105,7 @@ class SøknadService(
         }
 
     fun get(id: String): Søknad {
-        return søknadRepository.findByIdOrNull(id) ?: error("Ugyldig primærnøkkel")
+        return søknadRepository.findByIdOrThrow(id)
     }
 
     @Transactional
@@ -128,24 +129,17 @@ class SøknadService(
                                 .toString()
                         ),
                     søknadDato = it.opprettetTid.toLocalDate(),
-                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(
-                        UUID.fromString(it.id)
-                    )
+                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it)
                 )
             }
     }
 
     // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
-    fun hentDokumentasjonsbehovForSøknad(søknadId: UUID): DokumentasjonsbehovDto {
-        val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknadId.toString())
+    fun hentDokumentasjonsbehovForSøknad(søknad: Søknad): DokumentasjonsbehovDto {
+        val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         val dokumentasjonsbehov: List<Dokumentasjonsbehov> = dokumentasjonsbehovJson?.let {
             objectMapper.readValue(it.data)
         } ?: emptyList()
-        val søknad: Søknad =
-            søknadRepository.findByIdOrNull(søknadId.toString()) ?: throw ApiFeil(
-                "Fant ikke søknad for id $søknadId",
-                HttpStatus.BAD_REQUEST
-            )
 
         return DokumentasjonsbehovDto(
             dokumentasjonsbehov = dokumentasjonsbehov,
