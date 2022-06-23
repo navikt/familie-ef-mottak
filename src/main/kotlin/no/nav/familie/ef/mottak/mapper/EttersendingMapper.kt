@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object EttersendingMapper {

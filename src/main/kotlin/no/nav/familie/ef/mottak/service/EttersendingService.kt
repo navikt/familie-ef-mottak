@@ -10,8 +10,8 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull

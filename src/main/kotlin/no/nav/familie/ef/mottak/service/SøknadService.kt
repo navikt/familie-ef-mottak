@@ -13,7 +13,6 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -22,6 +21,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
