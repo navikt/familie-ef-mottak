@@ -40,7 +40,7 @@ import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -75,7 +75,12 @@ internal class OppgaveServiceTest {
     private fun init() {
         every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
         every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
-        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(Enhet(enhetId = "4489", enhetNavn = "NAY"))
+        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(
+            Enhet(
+                enhetId = "4489",
+                enhetNavn = "NAY"
+            )
+        )
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
         every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
             antallTreffTotalt = 1,
@@ -146,7 +151,8 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
+        val oppgaveResponse =
+            oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
 
         assertEquals(1, oppgaveResponse)
     }
@@ -305,7 +311,8 @@ internal class OppgaveServiceTest {
     @Test
     internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
         val journalpostId = UUID.randomUUID().toString()
-        val journalpost = journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+        val journalpost =
+            journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
 
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
         every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
@@ -320,7 +327,8 @@ internal class OppgaveServiceTest {
     @Test
     internal fun `lagJournalføringsoppgaveForJournalpostId skal sette behandlesAvApplikasjon=INFOTRYGD hvis det ikke finnes en behandling i ny løsning`() {
         val journalpostId = UUID.randomUUID().toString()
-        val journalpost = journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
+        val journalpost =
+            journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
 
         every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
         every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns false
@@ -413,17 +421,32 @@ internal class OppgaveServiceTest {
     }
 
     @Test
-    internal fun `oppdaterOppgaveMedRiktigMappeId skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`() {
+    internal fun `oppdaterOppgaveMedRiktigMappeId skal flytte oppgave til opplæringsmappe hvis skolepenger og skal behandles i ny løsning`() {
         val oppgaveId: Long = 123
+        val oppgaveSlot = slot<Oppgave>()
+        val mappeIdOpplæring = 456
+
+        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+            antallTreffTotalt = 1,
+            mapper = listOf(
+                MappeDto(
+                    id = mappeIdOpplæring,
+                    navn = "EF Sak - 65 Opplæring",
+                    enhetsnr = ""
+                )
+            )
+        )
 
         every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
             id = oppgaveId,
-            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
+            behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
         )
+        every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-        verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+        assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
     }
 
     @Test
@@ -467,7 +490,7 @@ internal class OppgaveServiceTest {
 
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
+        assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
     }
 
     @Test
@@ -496,7 +519,7 @@ internal class OppgaveServiceTest {
 
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-        Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
+        assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
     }
 
     private val ettersendingId = UUID.randomUUID().toString()
@@ -581,7 +604,11 @@ internal class OppgaveServiceTest {
 
     )
 
-    private fun lagOppgaveForFordeling(id: Long? = null, behandlingstema: String?, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+    private fun lagOppgaveForFordeling(
+        id: Long? = null,
+        behandlingstema: String?,
+        behandlesAvApplikasjon: BehandlesAvApplikasjon
+    ) =
         Oppgave(
             id = id,
             behandlingstema = behandlingstema,

@@ -270,7 +270,12 @@ class OppgaveService(
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-            val mappe = hentMappeEfSakUpplassert(mapperResponse)
+            val mappe =
+                if (oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY) {
+                    hentOpplæringsmappeSkolepenger(mapperResponse)
+                } else {
+                    hentMappeEfSakUpplassert(mapperResponse)
+                }
 
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
@@ -283,6 +288,16 @@ class OppgaveService(
             mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
                 ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
             )
+
+    private fun hentOpplæringsmappeSkolepenger(
+        mapperResponse: FinnMappeResponseDto,
+    ) = (
+        mapperResponse.mapper.find {
+            it.navn.contains("EF Sak", true) &&
+                it.navn.contains("65 Opplæring", true)
+        }
+            ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av skolepengeroppgave")
+        )
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
@@ -301,7 +316,7 @@ class OppgaveService(
             BEHANDLINGSTEMA_BARNETILSYN ->
                 oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon ||
                     oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
-            BEHANDLINGSTEMA_SKOLEPENGER -> false
+            BEHANDLINGSTEMA_SKOLEPENGER -> true
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
         }
