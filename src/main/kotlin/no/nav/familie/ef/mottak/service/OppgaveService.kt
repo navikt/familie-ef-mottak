@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
@@ -12,12 +12,15 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.http.client.RessursException
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
+import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -29,7 +32,6 @@ import org.springframework.stereotype.Service
 @Service
 class OppgaveService(
     private val integrasjonerClient: IntegrasjonerClient,
-    private val featureToggleService: FeatureToggleService,
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
@@ -81,7 +83,8 @@ class OppgaveService(
     }
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
-        val opprettOppgave = opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+        val opprettOppgave =
+            opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
         return opprettOppgave(opprettOppgave, journalpost)
     }
 
@@ -120,8 +123,13 @@ class OppgaveService(
                 }
                 else -> {
                     val opprettOppgave =
-                        opprettOppgaveMapper.toJournalføringsoppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+                        opprettOppgaveMapper.toJournalføringsoppgave(
+                            journalpost,
+                            behandlesAvApplikasjon,
+                            finnBehandlendeEnhet(journalpost)
+                        )
                     return opprettOppgave(opprettOppgave, journalpost)
+                    // Legg i mappe
                 }
             }
         } else {
@@ -230,7 +238,11 @@ class OppgaveService(
                 StønadType.OVERGANGSSTØNAD ->
                     if (sakService.finnesIkkeIInfotrygd(søknad)) EF_SAK_INFOTRYGD else BehandlesAvApplikasjon.INFOTRYGD
                 StønadType.BARNETILSYN, StønadType.SKOLEPENGER ->
-                    if (sakService.finnesIkkeÅpenSakIInfotrygd(søknad.fnr, stønadType)) EF_SAK_INFOTRYGD else BehandlesAvApplikasjon.INFOTRYGD
+                    if (sakService.finnesIkkeÅpenSakIInfotrygd(
+                            søknad.fnr,
+                            stønadType
+                        )
+                    ) EF_SAK_INFOTRYGD else BehandlesAvApplikasjon.INFOTRYGD
             }
         }
     }
@@ -255,7 +267,7 @@ class OppgaveService(
         return finnesBehandlingForPerson
     }
 
-    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long) {
+    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String?) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
 
         if (skalFlyttesTilMappe(oppgave)) {
@@ -269,35 +281,56 @@ class OppgaveService(
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
-
             val mappe =
-                if (oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY) {
-                    hentOpplæringsmappeSkolepenger(mapperResponse)
+                if (erSkolepenger(oppgave)) {
+                    finnMappe(mapperResponse, "65 Opplæring")
+                } else if (erSelvstendig(søknadId, oppgave)) {
+                    finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
+                } else if (harTilsynskrevendeBarn(søknadId, oppgave)) {
+                    finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
                 } else {
-                    hentMappeEfSakUpplassert(mapperResponse)
+                    finnMappe(mapperResponse, "01 Uplassert")
                 }
-
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
     }
 
-    private fun hentMappeEfSakUpplassert(mapperResponse: FinnMappeResponseDto) =
-        (
-            mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
-                ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
-            )
+    private fun erSkolepenger(oppgave: Oppgave) =
+        oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
-    private fun hentOpplæringsmappeSkolepenger(
-        mapperResponse: FinnMappeResponseDto,
-    ) = (
-        mapperResponse.mapper.find {
-            it.navn.contains("EF Sak", true) &&
-                it.navn.contains("65 Opplæring", true)
+    private fun erSelvstendig(søknadId: String?, oppgave: Oppgave) =
+        if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
+            val søknadJson = søknadService.get(søknadId).søknadJson
+            val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
+            søknadOvergangsstønad.aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
+                søknadOvergangsstønad.aktivitet.verdi.aksjeselskap?.verdi?.isNotEmpty() ?: false ||
+                søknadOvergangsstønad.aktivitet.verdi.virksomhet?.verdi != null
+        } else {
+            false
         }
-            ?: error("Fant ikke mappe EF Sak - 65 Opplæring, for plassering av skolepengeroppgave")
-        )
+
+    private fun harTilsynskrevendeBarn(
+        søknadId: String?,
+        oppgave: Oppgave
+    ) = if (søknadId != null &&
+        oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD
+    ) {
+        val søknadJson = søknadService.get(søknadId).søknadJson
+        val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
+        søknadOvergangsstønad.situasjon.verdi.barnMedSærligeBehov?.verdi != null
+    } else {
+        false
+    }
+
+    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
+        return mapperResponse.mapper.filter {
+            it.navn.contains("EF Sak", true) &&
+                it.navn.contains(søkestreng, true)
+        }.maxByOrNull { it.id }
+            ?: error("Fant ikke mappe for $søkestreng") // Det finnes to versjoner av denne i prod - den siste med høyest id er i bruk
+    }
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
@@ -320,6 +353,7 @@ class OppgaveService(
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
         }
+
     companion object {
 
         private const val ENHETSNUMMER_NAY: String = "4489"

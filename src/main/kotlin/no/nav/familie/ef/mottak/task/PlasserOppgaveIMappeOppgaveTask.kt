@@ -16,7 +16,9 @@ class PlasserOppgaveIMappeOppgaveTask(private val oppgaveService: OppgaveService
     override fun doTask(task: Task) {
         val oppgaveId = task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.toString()?.toLong()
             ?: error("Kan ikke finne oppgaveId")
-        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+
+        val søknadId = task.payload
+        oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, søknadId)
     }
 
     companion object {

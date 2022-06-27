@@ -64,7 +64,6 @@ internal class OppgaveServiceTest {
     private val oppgaveService: OppgaveService =
         OppgaveService(
             integrasjonerClient = integrasjonerClient,
-            featureToggleService = mockk(relaxed = true),
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             sakService = sakService,
@@ -88,7 +87,7 @@ internal class OppgaveServiceTest {
             mapper = listOf(
                 MappeDto(
                     id = 123,
-                    navn = "EF Sak 01",
+                    navn = "EF Sak 01 Uplassert",
                     enhetsnr = ""
                 ),
                 MappeDto(
@@ -398,7 +397,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
@@ -412,7 +411,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
@@ -426,7 +425,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
@@ -454,7 +453,7 @@ internal class OppgaveServiceTest {
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
         }
@@ -468,7 +467,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
@@ -484,7 +483,7 @@ internal class OppgaveServiceTest {
                 mapper = listOf(
                     MappeDto(
                         id = mappeidUplassert,
-                        navn = "EF Sak 01",
+                        navn = "EF Sak 01 Uplassert",
                         enhetsnr = ""
                     ),
                 )
@@ -496,7 +495,7 @@ internal class OppgaveServiceTest {
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
         }
@@ -512,7 +511,7 @@ internal class OppgaveServiceTest {
                 mapper = listOf(
                     MappeDto(
                         id = mappeIdUplassert,
-                        navn = "EF Sak 01",
+                        navn = "EF Sak 01 Uplassert",
                         enhetsnr = ""
                     )
                 )
@@ -524,7 +523,7 @@ internal class OppgaveServiceTest {
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
         }
