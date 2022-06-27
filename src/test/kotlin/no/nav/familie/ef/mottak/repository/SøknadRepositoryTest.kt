@@ -57,14 +57,21 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     internal fun `findAllByFnr returnerer flere søknader`() {
         val ident = "12345678"
 
-        val søknadOvergangsstønad = søknadRepository.insert(
-            Søknad(
-                søknadJson = EncryptedString("kåre"),
-                fnr = ident,
-                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                taskOpprettet = true
-            )
+        val søknad = Søknad(
+            søknadJson = EncryptedString("kåre"),
+            fnr = ident,
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            taskOpprettet = true,
+            opprettetTid = LocalDateTime.now().minusDays(1)
         )
+        val søknad2 = Søknad(
+            søknadJson = EncryptedString("kåre"),
+            fnr = ident,
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            taskOpprettet = true
+        )
+        søknadRepository.insert(søknad)
+        val søknadOvergangsstønad = søknadRepository.insert(søknad2)
 
         val søknadBarnetilsyn = søknadRepository.insert(
             Søknad(
@@ -75,7 +82,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
             )
         )
 
-        val søknader = søknadRepository.findAllByFnr(ident)
+        val søknader = søknadRepository.finnSisteSøknadenPerStønadtype(ident)
 
         assertThat(søknader).usingRecursiveComparison()
             .ignoringFields("opprettetTid")

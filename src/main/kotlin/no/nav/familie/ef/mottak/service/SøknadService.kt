@@ -110,7 +110,7 @@ class SøknadService(
     }
 
     fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
-        return søknadRepository.findAllByFnr(personIdent)
+        return søknadRepository.finnSisteSøknadenPerStønadtype(personIdent)
             .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
             .map {
                 SøknadMedDokumentasjonsbehovDto(

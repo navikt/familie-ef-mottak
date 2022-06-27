@@ -16,7 +16,14 @@ interface SøknadRepository :
 
     fun findByJournalpostId(jounalpostId: String): Søknad?
 
-    fun findAllByFnr(fnr: String): List<Søknad>
+    @Query(
+        """
+        WITH q AS (SELECT s.*, ROW_NUMBER() OVER (PARTITION BY dokumenttype ORDER BY opprettet_tid DESC) rn 
+                   FROM soknad s WHERE fnr=:fnr)
+        SELECT * FROM q WHERE rn = 1
+    """
+    )
+    fun finnSisteSøknadenPerStønadtype(fnr: String): List<Søknad>
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
