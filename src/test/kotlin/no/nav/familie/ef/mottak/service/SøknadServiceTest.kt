@@ -72,9 +72,11 @@ class SøknadServiceTest {
         fun `sletter søknadPdf, dokumentasjonsbehov og vedlegg for gitt søknadId`() {
             val søknadTilReduksjon = søknad(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321321")
             every { søknadRepository.findByIdOrNull("UUID") } returns søknadTilReduksjon
+            every { søknadRepository.update(any()) } returns søknadTilReduksjon
 
             søknadService.reduserSøknad("UUID")
 
+            verify { søknadRepository.update(søknadTilReduksjon.copy(søknadPdf = null)) }
             verify { vedleggRepository.deleteBySøknadId("UUID") }
             verify { dokumentasjonsbehovRepository.deleteById("UUID") }
         }

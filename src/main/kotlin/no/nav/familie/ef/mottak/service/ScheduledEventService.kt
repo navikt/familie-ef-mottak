@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
 class ScheduledEventService(
@@ -60,7 +59,6 @@ class ScheduledEventService(
             try {
                 ryddeTaskService.opprettSøknadsreduksjonTask(it)
                 logger.info("Task opprettet for reduksjon av søknad med id $it")
-
             } catch (e: DataIntegrityViolationException) {
                 logger.info("ConstraintViolation ved forsøk på å opprette task for søknadsreduksjon med id $it")
             }
@@ -78,9 +76,9 @@ class ScheduledEventService(
         }
         logger.info("Opprettet ${ettersendingerTilSletting.size} tasker for sletting av ettersendinger.")
 
-        val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
+        // val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
         // val søknaderTilSletting = søknadRepository.finnSøknaderKlarTilSletting(tidspunktFor6MånederSiden)
-        // TODO Kommenter inn linje over og slett linje under. Hvis sletting av søknader blir aktuelt.
+        // TODO Kommenter inn linjer over og slett linje under. Hvis sletting av søknader blir aktuelt.
         val søknaderTilSletting = emptyList<String>()
         søknaderTilSletting.forEach {
             try {
@@ -91,6 +89,5 @@ class ScheduledEventService(
             }
         }
         logger.info("Opprettet ${søknaderTilSletting.size} tasker for sletting av søknader.")
-
     }
 }

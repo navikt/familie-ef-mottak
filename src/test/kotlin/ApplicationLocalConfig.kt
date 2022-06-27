@@ -6,6 +6,4 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 
 @SpringBootApplication(exclude = [ErrorMvcAutoConfiguration::class])
 @ConfigurationPropertiesScan
-class ApplicationLocalConfig {
-
-}
+class ApplicationLocalConfig
