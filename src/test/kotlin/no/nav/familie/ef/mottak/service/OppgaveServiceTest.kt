@@ -40,7 +40,7 @@ import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -432,16 +432,31 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for skolepenger`() {
+        fun `skal flytte oppgave til opplæringsmappe hvis skolepenger og skal behandles i ny løsning`() {
             val oppgaveId: Long = 123
+            val oppgaveSlot = slot<Oppgave>()
+            val mappeIdOpplæring = 456
+
+            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper = listOf(
+                    MappeDto(
+                        id = mappeIdOpplæring,
+                        navn = "EF Sak - 65 Opplæring",
+                        enhetsnr = ""
+                    )
+                )
+            )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER, behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+                behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
+            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdOpplæring.toLong())
         }
 
         @Test
@@ -483,7 +498,7 @@ internal class OppgaveServiceTest {
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-            Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeidUplassert.toLong())
         }
 
         @Test
@@ -511,7 +526,7 @@ internal class OppgaveServiceTest {
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId)
 
-            Assertions.assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
         }
     }
 
@@ -597,7 +612,10 @@ internal class OppgaveServiceTest {
 
     )
 
-    private fun lagOppgaveForFordeling(behandlingstema: String?, behandlesAvApplikasjon: BehandlesAvApplikasjon) =
+    private fun lagOppgaveForFordeling(
+        behandlingstema: String?,
+        behandlesAvApplikasjon: BehandlesAvApplikasjon
+    ) =
         Oppgave(
             id = 123L,
             behandlingstema = behandlingstema,
