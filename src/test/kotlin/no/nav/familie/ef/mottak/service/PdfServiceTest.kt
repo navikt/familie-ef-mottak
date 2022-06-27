@@ -68,7 +68,7 @@ internal class PdfServiceTest {
     private fun init() {
         søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn, søknadSkolepenger)
         every {
-            vedleggRepository.findTitlerBySøknadId(any())
+            vedleggRepository.finnTitlerForSøknadId(any())
         } returns vedlegg.map { it.tittel }
         pdfClientVilReturnere(pdf)
     }
@@ -103,7 +103,7 @@ internal class PdfServiceTest {
         // When
         pdfService.lagPdf(søknadBarnetilsynId)
         // Then
-        verify(exactly = 1) { vedleggRepository.findTitlerBySøknadId(any()) }
+        verify(exactly = 1) { vedleggRepository.finnTitlerForSøknadId(any()) }
         verify(exactly = 1) {
             søknadRepository.update(slot.captured)
         }

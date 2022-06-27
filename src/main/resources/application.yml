@@ -118,3 +118,5 @@ KAFKA_TOPIC_DITTNAV: min-side.aapen-brukernotifikasjon-beskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local
 dittnav.soknadfrontendUrl: https://www.nav.no/familie/alene-med-barn/soknad
 ettersending.ettersendingUrl: https://www.nav.no/familie/alene-med-barn/ettersending
+
+DB_RYDDING_CRON_EXPRESSION: 0 0 2 * * MON-FRI

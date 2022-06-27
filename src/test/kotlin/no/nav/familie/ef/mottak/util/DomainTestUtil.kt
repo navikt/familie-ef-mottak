@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.encryption.EncryptedString
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import java.time.LocalDateTime
@@ -41,6 +42,7 @@ fun søknad(
     taskOpprettet: Boolean = false,
     dokumenttype: String = DOKUMENTTYPE_OVERGANGSSTØNAD,
     journalpostId: String? = null,
+    søknadPdf: EncryptedFile? = null,
     fnr: String = "11111122222",
     saksnummer: String? = null,
     behandleINySaksbehandling: Boolean = false
@@ -48,6 +50,7 @@ fun søknad(
     Søknad(
         id = id,
         søknadJson = EncryptedString(""),
+        søknadPdf = søknadPdf,
         fnr = fnr,
         dokumenttype = dokumenttype,
         opprettetTid = opprettetTid,
