@@ -131,7 +131,6 @@ class OppgaveService(
                             finnBehandlendeEnhet(journalpost)
                         )
                     return opprettOppgave(opprettOppgave, journalpost)
-                    // Legg i mappe
                 }
             }
         } else {
