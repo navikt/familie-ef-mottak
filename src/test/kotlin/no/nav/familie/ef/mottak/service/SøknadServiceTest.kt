@@ -47,7 +47,7 @@ class SøknadServiceTest {
             )
         )
 
-        every { søknadRepository.findAllByFnr(fnr) } returns søknader
+        every { søknadRepository.finnSisteSøknadenPerStønadtype(fnr) } returns søknader
 
         every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
             .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
