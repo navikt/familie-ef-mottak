@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
@@ -35,6 +36,7 @@ class OppgaveService(
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
+    private val featureToggleService: FeatureToggleService,
     private val sakService: SakService,
     private val saksbehandlingClient: SaksbehandlingClient
 ) {
@@ -281,12 +283,17 @@ class OppgaveService(
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
+
             val mappe =
                 if (erSkolepenger(oppgave)) {
                     finnMappe(mapperResponse, "65 Opplæring")
-                } else if (erSelvstendig(søknadId, oppgave)) {
+                } else if (featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende") &&
+                    erSelvstendig(søknadId, oppgave)
+                ) {
                     finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
-                } else if (harTilsynskrevendeBarn(søknadId, oppgave)) {
+                } else if (featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende") &&
+                    harTilsynskrevendeBarn(søknadId, oppgave)
+                ) {
                     finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
                 } else {
                     finnMappe(mapperResponse, "01 Uplassert")

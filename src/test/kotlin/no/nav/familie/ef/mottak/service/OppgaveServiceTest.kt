@@ -68,7 +68,8 @@ internal class OppgaveServiceTest {
             opprettOppgaveMapper = opprettOppgaveMapper,
             sakService = sakService,
             saksbehandlingClient = saksbehandlingClient,
-            ettersendingService = ettersendingService
+            ettersendingService = ettersendingService,
+            featureToggleService = mockk(relaxed = true)
         )
 
     @BeforeEach
