@@ -64,11 +64,8 @@ internal class OppgaveServiceTest {
     private val oppgaveService: OppgaveService =
         OppgaveService(
             integrasjonerClient = integrasjonerClient,
-            featureToggleService = mockk(relaxed = true),
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
-            sakService = sakService,
-            saksbehandlingClient = saksbehandlingClient,
             ettersendingService = ettersendingService
         )
 
@@ -202,6 +199,7 @@ internal class OppgaveServiceTest {
 
     @Nested
     inner class LagJournalføringsoppgaveForSøknadId {
+
         @Test
         fun `skal sette behandlesAvApplikasjon=INFOTRYGD for overgangsstønad, hvis det finnes perioder i infotrygd`() {
             val søknadId = "enSøknadId"
@@ -314,6 +312,7 @@ internal class OppgaveServiceTest {
 
     @Nested
     inner class LagJournalføringsoppgaveForJournalpostId {
+
         @Test
         fun `skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
             val journalpostId = UUID.randomUUID().toString()
