@@ -78,3 +78,5 @@ INFOTRYGD_REPLIKA_SCOPE: api://dev-fss.teamfamilie.familie-ef-infotrygd/.default
 
 EF_SAK_URL: http://familie-ef-sak
 ettersending.ettersendingUrl: https://ensligmorellerfar.dev.nav.no/familie/alene-med-barn/ettersending
+
+DB_RYDDING_CRON_EXPRESSION: 0 0 * * * ?

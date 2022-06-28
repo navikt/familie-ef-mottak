@@ -1,6 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
+import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
@@ -14,12 +17,21 @@ import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 
 internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
-    @Autowired(required = true) lateinit var søknadService: SøknadService
+    @Autowired
+    lateinit var søknadService: SøknadService
+
+    @Autowired
+    lateinit var vedleggRepository: VedleggRepository
+
+    @Autowired
+    lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
 
     @Test
     internal fun `lagre skjema for arbeidssøker`() {
@@ -131,5 +143,30 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov[0].harSendtInn).isFalse
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov[0].opplastedeVedlegg).isEmpty()
         assertThat(dokumentasjonsbehovDto.søknadType).isEqualTo(SøknadType.OVERGANGSSTØNAD)
+    }
+
+    @Test
+    fun `reduserSøknad sletter søknadPdf, dokumentasjonsbehov og vedlegg for gitt søknadId`() {
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
+        val søknadFørReduksjon = søknadService.get(kvittering.id)
+        søknadService.oppdaterSøknad(søknadFørReduksjon.copy(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321"))
+
+        søknadService.reduserSøknad(søknadFørReduksjon.id)
+
+        val søknad = søknadService.get(søknadFørReduksjon.id)
+        assertThat(dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)).isNull()
+        assertThat(vedleggRepository.findBySøknadId(søknad.id)).isEmpty()
+    }
+
+    @Test
+    fun `slettSøknad sletter søknad for gitt søknadId`() {
+        val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
+        val søknad = søknadService.get(kvittering.id)
+        søknadService.oppdaterSøknad(søknad.copy(journalpostId = "321"))
+        søknadService.reduserSøknad(søknad.id)
+
+        søknadService.slettSøknad(søknad.id)
+
+        assertThrows<IllegalStateException> { (søknadService.get(søknad.id)) }
     }
 }
