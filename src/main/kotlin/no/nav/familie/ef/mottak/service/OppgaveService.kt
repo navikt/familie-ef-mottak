@@ -57,7 +57,8 @@ class OppgaveService(
         val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         val stønadType = StønadType.valueOf(ettersending.stønadType)
-        val behandlesAvApplikasjon = utledBehandlesAvApplikasjonForEttersending(fnr = ettersending.fnr, stønadType = stønadType)
+        val behandlesAvApplikasjon =
+            utledBehandlesAvApplikasjonForEttersending(fnr = ettersending.fnr, stønadType = stønadType)
         return lagJournalføringsoppgave(journalpost, behandlesAvApplikasjon)
     }
 
@@ -86,7 +87,11 @@ class OppgaveService(
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
         val opprettOppgave =
-            opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+            opprettOppgaveMapper.toBehandleSakOppgave(
+                journalpost,
+                behandlesAvApplikasjon,
+                finnBehandlendeEnhet(journalpost)
+            )
         return opprettOppgave(opprettOppgave, journalpost)
     }
 
@@ -218,11 +223,13 @@ class OppgaveService(
         val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
         when (oppgaver.antallTreffTotalt) {
             1L -> {
-                val oppgaveId = oppgaver.oppgaver.first().id ?: error("Finner ikke oppgaveId for journalpost=$journalpostId")
+                val oppgaveId =
+                    oppgaver.oppgaver.first().id ?: error("Finner ikke oppgaveId for journalpost=$journalpostId")
                 integrasjonerClient.ferdigstillOppgave(oppgaveId)
             }
             else -> {
-                val error = IllegalStateException("Fant ${oppgaver.antallTreffTotalt} oppgaver for journalpost=$journalpostId")
+                val error =
+                    IllegalStateException("Fant ${oppgaver.antallTreffTotalt} oppgaver for journalpost=$journalpostId")
                 log.warn("Kan ikke ferdigstille oppgave", error)
                 throw error
             }
@@ -248,7 +255,10 @@ class OppgaveService(
         }
     }
 
-    private fun utledBehandlesAvApplikasjonForEttersending(fnr: String, stønadType: StønadType): BehandlesAvApplikasjon {
+    private fun utledBehandlesAvApplikasjonForEttersending(
+        fnr: String,
+        stønadType: StønadType
+    ): BehandlesAvApplikasjon {
         log.info("utledBehandlesAvApplikasjon stønadType=$stønadType")
         return if (finnesBehandlingINyLøsning(fnr, stønadType)) {
             BehandlesAvApplikasjon.EF_SAK
@@ -306,6 +316,7 @@ class OppgaveService(
     private fun erSkolepenger(oppgave: Oppgave) =
         oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
+    // TODO oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY?????
     private fun erSelvstendig(søknadId: String?, oppgave: Oppgave) =
         if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
             val søknadJson = søknadService.get(søknadId).søknadJson
@@ -317,6 +328,7 @@ class OppgaveService(
             false
         }
 
+    // TODO oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY?????
     private fun harTilsynskrevendeBarn(
         søknadId: String?,
         oppgave: Oppgave

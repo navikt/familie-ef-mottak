@@ -515,14 +515,14 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til uplassert hvis vanlig søknad `() {
+        fun `skal flytte oppgave til mappe for særlig tilsynskrevende barn`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdUplassert = 123
+            val mappeIdTilsynskrevende = 3456
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(mappeIdUplassert = mappeIdUplassert)
+                mapper = lagMapper(mappeIdTilsynskrevende = mappeIdTilsynskrevende)
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -530,7 +530,29 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.get("123") } returns søknad(false)
+            every { søknadService.get("123") } returns søknad(erSelvstendig = false, harTilsynskrevendeBarn = true)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
+
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdTilsynskrevende.toLong())
+        }
+
+        @Test
+        fun `skal flytte oppgave til uplassert hvis vanlig søknad `() {
+            val oppgaveId: Long = 123
+            val oppgaveSlot = slot<Oppgave>()
+            val mappeIdUplassert = 123
+
+            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper = lagMapper(mappeIdUplassert = mappeIdUplassert,)
+            )
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            )
+            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            every { søknadService.get("123") } returns søknad(false,)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
@@ -634,11 +656,14 @@ internal class OppgaveServiceTest {
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdUplassert.toLong())
         }
 
-        private fun søknad(erSelvstendig: Boolean = false): Søknad {
+        private fun søknad(erSelvstendig: Boolean = false, harTilsynskrevendeBarn: Boolean = false): Søknad {
 
             val startSøknadMedAlt = Testdata.søknadOvergangsstønad
 
-            val situasjon = startSøknadMedAlt.situasjon.verdi.copy(barnMedSærligeBehov = null)
+            val situasjon = when (harTilsynskrevendeBarn) {
+                false -> startSøknadMedAlt.situasjon.verdi.copy(barnMedSærligeBehov = null)
+                true -> startSøknadMedAlt.situasjon.verdi
+            }
 
             val aktivitet = when (erSelvstendig) {
                 true -> startSøknadMedAlt.aktivitet
@@ -681,11 +706,20 @@ internal class OppgaveServiceTest {
         erIArbeidDokumentasjon = null
     )
 
-    private fun lagMapper(mappeIdSelvstendig: Int = 456, mappeIdUplassert: Int = 123) = listOf(
+    private fun lagMapper(
+        mappeIdSelvstendig: Int = 456,
+        mappeIdUplassert: Int = 123,
+        mappeIdTilsynskrevende: Int = 765
+    ) = listOf(
         MappeDto(
             id = 987,
             navn = "EF Sak - 65 Opplæring",
             enhetsnr = ""
+        ),
+        MappeDto(
+            id = mappeIdTilsynskrevende,
+            navn = "EF Sak - 60 Særlig tilsynskrevende",
+            enhetsnr = "4489"
         ),
         MappeDto(
             id = mappeIdSelvstendig,
