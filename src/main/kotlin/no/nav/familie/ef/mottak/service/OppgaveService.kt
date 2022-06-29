@@ -345,7 +345,7 @@ class OppgaveService(
             it.navn.contains("EF Sak", true) &&
                 it.navn.contains(søkestreng, true)
         }.maxByOrNull { it.id }
-            ?: error("Fant ikke mappe for $søkestreng") // Det finnes to versjoner av denne i prod - den siste med høyest id er i bruk
+            ?: error("Fant ikke mappe for $søkestreng")
     }
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
