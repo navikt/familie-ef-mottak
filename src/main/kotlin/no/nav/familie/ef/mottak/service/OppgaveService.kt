@@ -10,7 +10,10 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
+import no.nav.familie.kontrakter.ef.søknad.Aktivitet
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -238,14 +241,12 @@ class OppgaveService(
             val mappe =
                 if (erSkolepenger(oppgave)) {
                     finnMappe(mapperResponse, "65 Opplæring")
+                } else if (toggleEnabled && harTilsynskrevendeBarn(søknadId, oppgave)) {
+                    finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
+                } else if (toggleEnabled && erSelvstendig(søknadId, oppgave)) {
+                    finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
                 } else {
-                    if (toggleEnabled && harTilsynskrevendeBarn(søknadId, oppgave)) {
-                        finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
-                    } else if (toggleEnabled && erSelvstendig(søknadId, oppgave)) {
-                        finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
-                    } else {
-                        finnMappe(mapperResponse, "01 Uplassert")
-                    }
+                    finnMappe(mapperResponse, "01 Uplassert")
                 }
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
@@ -260,23 +261,34 @@ class OppgaveService(
         if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
             val søknadJson = søknadService.get(søknadId).søknadJson
             val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
-            søknadOvergangsstønad.aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
-                søknadOvergangsstønad.aktivitet.verdi.virksomhet?.verdi != null
+            erSelvstendig(søknadOvergangsstønad.aktivitet)
+        } else if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
+            val søknadJson = søknadService.get(søknadId).søknadJson
+            val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
+            erSelvstendig(søknadBarnetilsyn.aktivitet)
         } else {
             false
         }
 
+    private fun erSelvstendig(aktivitet: Søknadsfelt<Aktivitet>) =
+        aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
+            aktivitet.verdi.virksomhet?.verdi != null
+
     private fun harTilsynskrevendeBarn(
         søknadId: String?,
         oppgave: Oppgave
-    ) = if (søknadId != null &&
-        oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD
-    ) {
-        val søknadJson = søknadService.get(søknadId).søknadJson
-        val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
-        søknadOvergangsstønad.situasjon.verdi.barnMedSærligeBehov?.verdi != null
-    } else {
-        false
+    ): Boolean {
+        return if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
+            val søknadJson = søknadService.get(søknadId).søknadJson
+            val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
+            søknadOvergangsstønad.situasjon.verdi.barnMedSærligeBehov?.verdi != null
+        } else if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
+            val søknadJson = søknadService.get(søknadId).søknadJson
+            val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
+            søknadBarnetilsyn.barn.verdi.any { it.særligeTilsynsbehov != null }
+        } else {
+            false
+        }
     }
 
     private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
