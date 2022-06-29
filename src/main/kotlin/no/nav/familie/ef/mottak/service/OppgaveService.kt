@@ -232,20 +232,20 @@ class OppgaveService(
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
+            val toggleEnabled =
+                featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende")
 
             val mappe =
                 if (erSkolepenger(oppgave)) {
                     finnMappe(mapperResponse, "65 Opplæring")
-                } else if (featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende") &&
-                    erSelvstendig(søknadId, oppgave)
-                ) {
-                    finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
-                } else if (featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende") &&
-                    harTilsynskrevendeBarn(søknadId, oppgave)
-                ) {
-                    finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
                 } else {
-                    finnMappe(mapperResponse, "01 Uplassert")
+                    if (toggleEnabled && harTilsynskrevendeBarn(søknadId, oppgave)) {
+                        finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
+                    } else if (toggleEnabled && erSelvstendig(søknadId, oppgave)) {
+                        finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
+                    } else {
+                        finnMappe(mapperResponse, "01 Uplassert")
+                    }
                 }
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
