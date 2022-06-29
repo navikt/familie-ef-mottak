@@ -316,7 +316,6 @@ class OppgaveService(
     private fun erSkolepenger(oppgave: Oppgave) =
         oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
-    // TODO oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY?????
     private fun erSelvstendig(søknadId: String?, oppgave: Oppgave) =
         if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
             val søknadJson = søknadService.get(søknadId).søknadJson
@@ -328,7 +327,6 @@ class OppgaveService(
             false
         }
 
-    // TODO oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY?????
     private fun harTilsynskrevendeBarn(
         søknadId: String?,
         oppgave: Oppgave
