@@ -13,7 +13,6 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.net.URL
-import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
