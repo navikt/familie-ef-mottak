@@ -69,7 +69,11 @@ class OppgaveService(
 
     fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
         val opprettOppgave =
-            opprettOppgaveMapper.toBehandleSakOppgave(journalpost, behandlesAvApplikasjon, finnBehandlendeEnhet(journalpost))
+            opprettOppgaveMapper.toBehandleSakOppgave(
+                journalpost,
+                behandlesAvApplikasjon,
+                finnBehandlendeEnhet(journalpost)
+            )
         return opprettOppgave(opprettOppgave, journalpost)
     }
 
@@ -257,7 +261,6 @@ class OppgaveService(
             val søknadJson = søknadService.get(søknadId).søknadJson
             val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
             søknadOvergangsstønad.aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
-                søknadOvergangsstønad.aktivitet.verdi.aksjeselskap?.verdi?.isNotEmpty() ?: false ||
                 søknadOvergangsstønad.aktivitet.verdi.virksomhet?.verdi != null
         } else {
             false
