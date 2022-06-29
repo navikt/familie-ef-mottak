@@ -223,7 +223,7 @@ class OppgaveService(
 
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String?) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-
+        secureLogger.info("Skal flyttes til mappe: ${skalFlyttesTilMappe(oppgave)} Oppgave: $oppgave")
         if (skalFlyttesTilMappe(oppgave)) {
             val finnMappeRequest = FinnMappeRequest(
                 tema = listOf(),
@@ -237,6 +237,8 @@ class OppgaveService(
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
             val toggleEnabled =
                 featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende")
+
+            secureLogger.info("harTilsynskrevendeBarn: ${harTilsynskrevendeBarn(søknadId, oppgave)}")
 
             val mappe =
                 if (erSkolepenger(oppgave)) {
@@ -285,6 +287,7 @@ class OppgaveService(
         } else if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
             val søknadJson = søknadService.get(søknadId).søknadJson
             val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
+            secureLogger.info("JSON data barnetilsyn" + søknadJson.data)
             søknadBarnetilsyn.barn.verdi.any { it.særligeTilsynsbehov != null }
         } else {
             false
