@@ -39,8 +39,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
                 søknadService,
-                mockk(relaxed = true),
-                featureToggleService
+                mockk(relaxed = true)
             )
     }
 
