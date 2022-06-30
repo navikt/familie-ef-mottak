@@ -24,23 +24,26 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         journalpost: Journalpost,
         behandlesAvApplikasjon: BehandlesAvApplikasjon,
         enhetsnummer: String?
-    ) =
-        OpprettOppgaveRequest(
-            ident = tilOppgaveIdent(journalpost),
-            saksId = null,
-            journalpostId = journalpost.journalpostId,
-            tema = Tema.ENF,
-            oppgavetype = Oppgavetype.Journalføring,
-            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-            beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
-            behandlingstype = settBehandlingstype(journalpost),
-            behandlingstema = journalpost.behandlingstema,
-            enhetsnummer = journalpost.journalforendeEnhet ?: enhetsnummer,
-            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
-            tilordnetRessurs = null
-        )
+    ) = OpprettOppgaveRequest(
+        ident = tilOppgaveIdent(journalpost),
+        saksId = null,
+        journalpostId = journalpost.journalpostId,
+        tema = Tema.ENF,
+        oppgavetype = Oppgavetype.Journalføring,
+        fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
+        beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
+        behandlingstype = settBehandlingstype(journalpost),
+        behandlingstema = journalpost.behandlingstema,
+        enhetsnummer = utledEnhetsnummer(journalpost.journalforendeEnhet, enhetsnummer),
+        behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
+        tilordnetRessurs = null
+    )
 
-    fun toBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon, enhetsnummer: String?): OpprettOppgaveRequest =
+    fun toBehandleSakOppgave(
+        journalpost: Journalpost,
+        behandlesAvApplikasjon: BehandlesAvApplikasjon,
+        enhetsnummer: String?
+    ): OpprettOppgaveRequest =
         OpprettOppgaveRequest(
             ident = tilOppgaveIdent(journalpost),
             saksId = null,
@@ -110,6 +113,17 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
             gjeldendeTid.plusDays(1).toLocalDate()
         }
     }
+
+    private fun utledEnhetsnummer(
+        journalforendeEnhet: String?,
+        enhetsnummer: String?
+    ) = when {
+        harGyldigJournalførendeEnhet(journalforendeEnhet) -> journalforendeEnhet
+        else -> enhetsnummer
+    }
+
+    private fun harGyldigJournalførendeEnhet(journalforendeEnhet: String?) =
+        journalforendeEnhet != null && journalforendeEnhet != "9999"
 
     companion object {
 
