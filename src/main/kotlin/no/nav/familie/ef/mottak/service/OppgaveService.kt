@@ -234,20 +234,8 @@ class OppgaveService(
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
-            val toggleEnabled =
-                featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende")
 
-
-            val mappe =
-                if (erSkolepenger(oppgave)) {
-                    finnMappe(mapperResponse, "65 Opplæring")
-                } else if (toggleEnabled && harTilsynskrevendeBarn(søknadId, oppgave)) {
-                    finnMappe(mapperResponse, søkestreng = "60 Særlig tilsynskrevende")
-                } else if (toggleEnabled && erSelvstendig(søknadId, oppgave)) {
-                    finnMappe(mapperResponse, søkestreng = "61 Selvstendig næringsdrivende")
-                } else {
-                    finnMappe(mapperResponse, "01 Uplassert")
-                }
+            val mappe = finnMappe(mapperResponse, finnSøkestreng(oppgave, søknadId))
             integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
@@ -257,47 +245,9 @@ class OppgaveService(
     private fun erSkolepenger(oppgave: Oppgave) =
         oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
-    private fun erSelvstendig(søknadId: String?, oppgave: Oppgave) =
-        if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
-            val søknadJson = søknadService.get(søknadId).søknadJson
-            val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
-            erSelvstendig(søknadOvergangsstønad.aktivitet)
-        } else if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
-            val søknadJson = søknadService.get(søknadId).søknadJson
-            val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
-            erSelvstendig(søknadBarnetilsyn.aktivitet)
-        } else {
-            false
-        }
-
     private fun erSelvstendig(aktivitet: Søknadsfelt<Aktivitet>) =
         aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
             aktivitet.verdi.virksomhet?.verdi != null
-
-    private fun harTilsynskrevendeBarn(
-        søknadId: String?,
-        oppgave: Oppgave
-    ): Boolean {
-        return if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_OVERGANGSSTØNAD) {
-            val søknadJson = søknadService.get(søknadId).søknadJson
-            val søknadOvergangsstønad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
-            søknadOvergangsstønad.situasjon.verdi.barnMedSærligeBehov?.verdi != null
-        } else if (søknadId != null && oppgave.behandlingstema == BEHANDLINGSTEMA_BARNETILSYN) {
-            val søknadJson = søknadService.get(søknadId).søknadJson
-            val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
-            søknadBarnetilsyn.barn.verdi.any { it.barnepass?.verdi?.årsakBarnepass?.svarId == "trengerMerPassEnnJevnaldrede" }
-        } else {
-            false
-        }
-    }
-
-    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
-        return mapperResponse.mapper.filter {
-            it.navn.contains("EF Sak", true) &&
-                it.navn.contains(søkestreng, true)
-        }.maxByOrNull { it.id }
-            ?: error("Fant ikke mappe for $søkestreng")
-    }
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
@@ -321,9 +271,71 @@ class OppgaveService(
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
         }
 
+    private fun finnSøkestreng(
+        oppgave: Oppgave,
+        søknadId: String?
+    ): String {
+        return if (erSkolepenger(oppgave)) {
+            MappeSøkestreng.OPPLÆRING.søkestreng
+        } else {
+            mappeFraSøknad(søknadId, oppgave) ?: MappeSøkestreng.UPLASSERT.søkestreng
+        }
+    }
+
+    private fun mappeFraSøknad(søknadId: String?, oppgave: Oppgave): String? {
+        val toggleEnabled =
+            featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende")
+        if (søknadId == null || !toggleEnabled) return null
+
+        return when (oppgave.behandlingstema) {
+            BEHANDLINGSTEMA_OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknadId)
+            BEHANDLINGSTEMA_BARNETILSYN -> mappeFraBarnetilsyn(søknadId)
+            else -> null
+        }
+    }
+
+    private fun mappeFraBarnetilsyn(søknadId: String): String? {
+        val søknadJson = søknadService.get(søknadId).søknadJson
+        val søknad = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
+        return if (søknad.barn.verdi.any { it.barnepass?.verdi?.årsakBarnepass?.svarId == "trengerMerPassEnnJevnaldrede" }) {
+            MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
+        } else if (erSelvstendig(søknad.aktivitet)) {
+            MappeSøkestreng.SELVSTENDIG.søkestreng
+        } else {
+            null
+        }
+    }
+
+    private fun mappeFraOvergangsstønad(søknadId: String): String? {
+        val søknadJson = søknadService.get(søknadId).søknadJson
+        val søknad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
+        return if (søknad.situasjon.verdi.barnMedSærligeBehov?.verdi != null) {
+            MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
+        } else if (erSelvstendig(søknad.aktivitet)) {
+            MappeSøkestreng.SELVSTENDIG.søkestreng
+        } else {
+            null
+        }
+    }
+
+    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
+        return mapperResponse.mapper.filter {
+            it.navn.contains("EF Sak", true) &&
+                it.navn.contains(søkestreng, true)
+        }.maxByOrNull { it.id }
+            ?: error("Fant ikke mappe for $søkestreng")
+    }
+
     companion object {
 
         private const val ENHETSNUMMER_NAY: String = "4489"
         private const val ENHETSNUMMER_EGEN_ANSATT: String = "4483"
     }
+}
+
+enum class MappeSøkestreng(val søkestreng: String) {
+    SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
+    SELVSTENDIG("61 Selvstendig næringsdrivende"),
+    OPPLÆRING("65 Opplæring"),
+    UPLASSERT("01 Uplassert")
 }
