@@ -288,7 +288,7 @@ class OppgaveService(
             val søknadJson = søknadService.get(søknadId).søknadJson
             val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
             secureLogger.info("JSON data barnetilsyn" + søknadJson.data)
-            søknadBarnetilsyn.barn.verdi.any { it.særligeTilsynsbehov != null }
+            søknadBarnetilsyn.barn.verdi.any { it.barnepass?.verdi?.årsakBarnepass?.svarId == "trengerMerPassEnnJevnaldrede" }
         } else {
             false
         }

@@ -1,0 +1,669 @@
+{
+  "personalia": {
+    "label": "Søker",
+    "verdi": {
+      "fødselsnummer": {
+        "label": "Fødselsnummer",
+        "verdi": {
+          "verdi": "18928399504",
+          "erDNummer": false,
+          "erNAVSyntetisk": false,
+          "erSkattSyntetisk": true,
+          "fødselsdato": "1983-12-18"
+        },
+        "alternativer": null,
+        "svarId": null
+      },
+      "navn": {
+        "label": "Navn",
+        "verdi": "MOTSTANDSDYKTIG RINGDUE",
+        "alternativer": null,
+        "svarId": null
+      },
+      "statsborgerskap": {
+        "label": "Statsborgerskap",
+        "verdi": "NORGE",
+        "alternativer": null,
+        "svarId": null
+      },
+      "adresse": {
+        "label": "Adresse",
+        "verdi": {
+          "adresse": "Utsikten 256 H0106",
+          "postnummer": "9018",
+          "poststedsnavn": "TROMSØ",
+          "land": ""
+        },
+        "alternativer": null,
+        "svarId": null
+      },
+      "sivilstatus": {
+        "label": "Sivilstatus",
+        "verdi": "GIFT",
+        "alternativer": null,
+        "svarId": null
+      }
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "innsendingsdetaljer": {
+    "label": "Innsendingsdetaljer",
+    "verdi": {
+      "datoMottatt": {
+        "label": "Dato mottatt",
+        "verdi": "2022-06-29T15:46:41.127780458",
+        "alternativer": null,
+        "svarId": null
+      }
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "sivilstandsdetaljer": {
+    "label": "Årsak til alene med barn",
+    "verdi": {
+      "erUformeltGift": null,
+      "erUformeltGiftDokumentasjon": null,
+      "erUformeltSeparertEllerSkilt": null,
+      "erUformeltSeparertEllerSkiltDokumentasjon": null,
+      "søktOmSkilsmisseSeparasjon": {
+        "label": "Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?",
+        "verdi": false,
+        "alternativer": null,
+        "svarId": null
+      },
+      "datoSøktSeparasjon": null,
+      "separasjonsbekreftelse": null,
+      "årsakEnslig": {
+        "label": "Hvorfor er du alene med barn?",
+        "verdi": "Samlivsbrudd med den andre forelderen",
+        "alternativer": null,
+        "svarId": "samlivsbruddForeldre"
+      },
+      "samlivsbruddsdokumentasjon": {
+        "label": "Bekreftelse på samlivsbrudd med den andre forelderen",
+        "verdi": {
+          "harSendtInnTidligere": {
+            "label": "Jeg har sendt inn denne dokumentasjonen til NAV tidligere",
+            "verdi": true,
+            "alternativer": null,
+            "svarId": null
+          },
+          "dokumenter": []
+        },
+        "alternativer": null,
+        "svarId": null
+      },
+      "samlivsbruddsdato": {
+        "label": "Dato for samlivsbrudd",
+        "verdi": "2022-06-01",
+        "alternativer": null,
+        "svarId": null
+      },
+      "fraflytningsdato": null,
+      "endringSamværsordningDato": null,
+      "tidligereSamboerdetaljer": null
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "medlemskapsdetaljer": {
+    "label": "Opphold i Norge",
+    "verdi": {
+      "oppholderDuDegINorge": {
+        "label": "Oppholder du og barnet/barna dere i Norge?",
+        "verdi": true,
+        "alternativer": null,
+        "svarId": null
+      },
+      "bosattNorgeSisteÅrene": {
+        "label": "Har du oppholdt deg i Norge de siste 5 årene?",
+        "verdi": true,
+        "alternativer": null,
+        "svarId": null
+      },
+      "utenlandsopphold": {
+        "label": "Utenlandsopphold",
+        "verdi": [],
+        "alternativer": null,
+        "svarId": null
+      }
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "bosituasjon": {
+    "label": "Bosituasjonen din",
+    "verdi": {
+      "delerDuBolig": {
+        "label": "Deler du bolig med andre voksne?",
+        "verdi": "Nei, jeg bor alene med barn eller jeg er gravid og bor alene",
+        "alternativer": null,
+        "svarId": "borAleneMedBarnEllerGravid"
+      },
+      "samboerdetaljer": null,
+      "sammenflyttingsdato": null,
+      "datoFlyttetFraHverandre": null,
+      "tidligereSamboerFortsattRegistrertPåAdresse": null
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "sivilstandsplaner": {
+    "label": "Fremtidsplaner",
+    "verdi": {
+      "harPlaner": {
+        "label": "Har du konkrete planer om å gifte deg eller bli samboer?",
+        "verdi": false,
+        "alternativer": null,
+        "svarId": null
+      },
+      "fraDato": null,
+      "vordendeSamboerEktefelle": null
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "barn": {
+    "label": "Barna dine",
+    "verdi": [
+      {
+        "navn": {
+          "label": "Navn",
+          "verdi": "UVIRKSOM PIONER",
+          "alternativer": null,
+          "svarId": null
+        },
+        "fødselsnummer": {
+          "label": "Fødselsnummer eller d-nummer",
+          "verdi": {
+            "verdi": "16861199014",
+            "erDNummer": false,
+            "erNAVSyntetisk": false,
+            "erSkattSyntetisk": true,
+            "fødselsdato": "2011-06-16"
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "harSkalHaSammeAdresse": {
+          "label": "Har barnet samme adresse som deg?",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "ikkeRegistrertPåSøkersAdresseBeskrivelse": null,
+        "erBarnetFødt": {
+          "label": "Født",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "fødselTermindato": {
+          "label": "Fødselsdato",
+          "verdi": "2011-06-16",
+          "alternativer": null,
+          "svarId": null
+        },
+        "terminbekreftelse": null,
+        "annenForelder": {
+          "label": "Barnets andre forelder",
+          "verdi": {
+            "ikkeOppgittAnnenForelderBegrunnelse": null,
+            "bosattNorge": {
+              "label": "Bor UVIRKSOM PIONERs andre forelder i Norge?",
+              "verdi": true,
+              "alternativer": null,
+              "svarId": null
+            },
+            "land": null,
+            "person": {
+              "label": "Persondata",
+              "verdi": {
+                "navn": {
+                  "label": "Navn",
+                  "verdi": "KLASSISK KAI",
+                  "alternativer": null,
+                  "svarId": null
+                },
+                "fødselsnummer": {
+                  "label": "Fødselsnummer eller d-nummer",
+                  "verdi": {
+                    "verdi": "13918499045",
+                    "erDNummer": false,
+                    "erNAVSyntetisk": false,
+                    "erSkattSyntetisk": true,
+                    "fødselsdato": "1984-11-13"
+                  },
+                  "alternativer": null,
+                  "svarId": null
+                },
+                "fødselsdato": null,
+                "land": null
+              },
+              "alternativer": null,
+              "svarId": null
+            }
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "samvær": {
+          "label": "Samvær",
+          "verdi": {
+            "spørsmålAvtaleOmDeltBosted": {
+              "label": "Har du og den andre forelderen skriftlig avtale om delt fast bosted for UVIRKSOM PIONER?",
+              "verdi": false,
+              "alternativer": null,
+              "svarId": null
+            },
+            "avtaleOmDeltBosted": null,
+            "skalAnnenForelderHaSamvær": {
+              "label": "Har den andre forelderen samvær med UVIRKSOM PIONER?",
+              "verdi": "Nei, den andre forelderen har ikke samvær med barnet",
+              "alternativer": null,
+              "svarId": "nei"
+            },
+            "harDereSkriftligAvtaleOmSamvær": null,
+            "samværsavtale": null,
+            "skalBarnetBoHosSøkerMenAnnenForelderSamarbeiderIkke": null,
+            "hvordanPraktiseresSamværet": null,
+            "borAnnenForelderISammeHus": {
+              "label": "Bor du og den andre forelderen til UVIRKSOM PIONER i samme hus, blokk, gårdstun, kvartal eller vei/gate?",
+              "verdi": "Nei",
+              "alternativer": null,
+              "svarId": "nei"
+            },
+            "borAnnenForelderISammeHusBeskrivelse": null,
+            "harDereTidligereBoddSammen": {
+              "label": "Har du bodd sammen med den andre forelderen til UVIRKSOM PIONER før?",
+              "verdi": false,
+              "alternativer": null,
+              "svarId": null
+            },
+            "nårFlyttetDereFraHverandre": null,
+            "erklæringOmSamlivsbrudd": null,
+            "hvorMyeErDuSammenMedAnnenForelder": {
+              "label": "Hvor mye er du sammen med den andre forelderen til UVIRKSOM PIONER?",
+              "verdi": "Vi møtes ikke",
+              "alternativer": null,
+              "svarId": "møtesIkke"
+            },
+            "beskrivSamværUtenBarn": null
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "skalHaBarnepass": {
+          "label": "Søk om stønad til barnetilsyn for barnet",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "særligeTilsynsbehov": null,
+        "barnepass": {
+          "label": "Om barnepassordningen",
+          "verdi": {
+            "årsakBarnepass": {
+              "label": "Hvorfor trenger UVIRKSOM PIONER pass?",
+              "verdi": "Barnet har behov for vesentlig mer pass enn det som er vanlig for jevnaldrende",
+              "alternativer": null,
+              "svarId": "trengerMerPassEnnJevnaldrede"
+            },
+            "barnepassordninger": {
+              "label": "Barnepassordninger",
+              "verdi": [
+                {
+                  "hvaSlagsBarnepassOrdning": {
+                    "label": "Hva slags barnepassordning har UVIRKSOM PIONER?",
+                    "verdi": "Barnehage, SFO eller liknende",
+                    "alternativer": null,
+                    "svarId": "barnehageOgLiknende"
+                  },
+                  "navn": {
+                    "label": "Navn på barnepassordningen",
+                    "verdi": "a",
+                    "alternativer": null,
+                    "svarId": null
+                  },
+                  "periode": null,
+                  "datoperiode": {
+                    "label": "I hvilken periode har UVIRKSOM PIONER denne barnepassordningen?",
+                    "verdi": {
+                      "fra": "2022-01-01",
+                      "til": "2022-12-01"
+                    },
+                    "alternativer": null,
+                    "svarId": null
+                  },
+                  "belop": {
+                    "label": "Beløp pr måned (ikke inkludert kost)",
+                    "verdi": 4000.0,
+                    "alternativer": null,
+                    "svarId": null
+                  }
+                }
+              ],
+              "alternativer": null,
+              "svarId": null
+            }
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "lagtTilManuelt": false,
+        "skalBarnetBoHosSøker": null
+      },
+      {
+        "navn": {
+          "label": "Navn",
+          "verdi": "FLINK KUTTE",
+          "alternativer": null,
+          "svarId": null
+        },
+        "fødselsnummer": {
+          "label": "Fødselsnummer eller d-nummer",
+          "verdi": {
+            "verdi": "11920999702",
+            "erDNummer": false,
+            "erNAVSyntetisk": false,
+            "erSkattSyntetisk": true,
+            "fødselsdato": "2009-12-11"
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "harSkalHaSammeAdresse": {
+          "label": "Har barnet samme adresse som deg?",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "ikkeRegistrertPåSøkersAdresseBeskrivelse": null,
+        "erBarnetFødt": {
+          "label": "Født",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "fødselTermindato": {
+          "label": "Fødselsdato",
+          "verdi": "2009-12-11",
+          "alternativer": null,
+          "svarId": null
+        },
+        "terminbekreftelse": null,
+        "annenForelder": {
+          "label": "Barnets andre forelder",
+          "verdi": {
+            "ikkeOppgittAnnenForelderBegrunnelse": null,
+            "bosattNorge": {
+              "label": "Bor FLINK KUTTEs andre forelder i Norge?",
+              "verdi": true,
+              "alternativer": null,
+              "svarId": null
+            },
+            "land": null,
+            "person": {
+              "label": "Persondata",
+              "verdi": {
+                "navn": {
+                  "label": "Navn",
+                  "verdi": "KLASSISK KAI",
+                  "alternativer": null,
+                  "svarId": null
+                },
+                "fødselsnummer": {
+                  "label": "Fødselsnummer eller d-nummer",
+                  "verdi": {
+                    "verdi": "13918499045",
+                    "erDNummer": false,
+                    "erNAVSyntetisk": false,
+                    "erSkattSyntetisk": true,
+                    "fødselsdato": "1984-11-13"
+                  },
+                  "alternativer": null,
+                  "svarId": null
+                },
+                "fødselsdato": null,
+                "land": null
+              },
+              "alternativer": null,
+              "svarId": null
+            }
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "samvær": {
+          "label": "Samvær",
+          "verdi": {
+            "spørsmålAvtaleOmDeltBosted": {
+              "label": "Har du og den andre forelderen skriftlig avtale om delt fast bosted for FLINK KUTTE?",
+              "verdi": false,
+              "alternativer": null,
+              "svarId": null
+            },
+            "avtaleOmDeltBosted": null,
+            "skalAnnenForelderHaSamvær": {
+              "label": "Har den andre forelderen samvær med FLINK KUTTE?",
+              "verdi": "Nei, den andre forelderen har ikke samvær med barnet",
+              "alternativer": null,
+              "svarId": "nei"
+            },
+            "harDereSkriftligAvtaleOmSamvær": null,
+            "samværsavtale": null,
+            "skalBarnetBoHosSøkerMenAnnenForelderSamarbeiderIkke": null,
+            "hvordanPraktiseresSamværet": null,
+            "borAnnenForelderISammeHus": {
+              "label": "Bor du og den andre forelderen til FLINK KUTTE i samme hus, blokk, gårdstun, kvartal eller vei/gate?",
+              "verdi": "Nei",
+              "alternativer": null,
+              "svarId": "nei"
+            },
+            "borAnnenForelderISammeHusBeskrivelse": null,
+            "harDereTidligereBoddSammen": {
+              "label": "Har du bodd sammen med den andre forelderen til FLINK KUTTE før?",
+              "verdi": false,
+              "alternativer": null,
+              "svarId": null
+            },
+            "nårFlyttetDereFraHverandre": null,
+            "erklæringOmSamlivsbrudd": null,
+            "hvorMyeErDuSammenMedAnnenForelder": {
+              "label": "Hvor mye er du sammen med den andre forelderen til FLINK KUTTE?",
+              "verdi": "Vi møtes ikke",
+              "alternativer": null,
+              "svarId": "møtesIkke"
+            },
+            "beskrivSamværUtenBarn": null
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "skalHaBarnepass": {
+          "label": "Søk om stønad til barnetilsyn for barnet",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "særligeTilsynsbehov": null,
+        "barnepass": {
+          "label": "Om barnepassordningen",
+          "verdi": {
+            "årsakBarnepass": {
+              "label": "Hvorfor trenger FLINK KUTTE pass?",
+              "verdi": "Jeg må være borte fra hjemmet i lengre perioder på grunn av jobb",
+              "alternativer": null,
+              "svarId": "myeBortePgaJobb"
+            },
+            "barnepassordninger": {
+              "label": "Barnepassordninger",
+              "verdi": [
+                {
+                  "hvaSlagsBarnepassOrdning": {
+                    "label": "Hva slags barnepassordning har FLINK KUTTE?",
+                    "verdi": "Barnehage, SFO eller liknende",
+                    "alternativer": null,
+                    "svarId": "barnehageOgLiknende"
+                  },
+                  "navn": {
+                    "label": "Navn på barnepassordningen",
+                    "verdi": "a",
+                    "alternativer": null,
+                    "svarId": null
+                  },
+                  "periode": null,
+                  "datoperiode": {
+                    "label": "I hvilken periode har FLINK KUTTE denne barnepassordningen?",
+                    "verdi": {
+                      "fra": "2022-01-01",
+                      "til": "2022-12-01"
+                    },
+                    "alternativer": null,
+                    "svarId": null
+                  },
+                  "belop": {
+                    "label": "Beløp pr måned (ikke inkludert kost)",
+                    "verdi": 4000.0,
+                    "alternativer": null,
+                    "svarId": null
+                  }
+                }
+              ],
+              "alternativer": null,
+              "svarId": null
+            }
+          },
+          "alternativer": null,
+          "svarId": null
+        },
+        "lagtTilManuelt": false,
+        "skalBarnetBoHosSøker": null
+      }
+    ],
+    "alternativer": null,
+    "svarId": null
+  },
+  "aktivitet": {
+    "label": "Arbeid, utdanning og andre aktiviteter",
+    "verdi": {
+      "hvordanErArbeidssituasjonen": {
+        "label": "Hvordan er arbeidsituasjonen din?",
+        "verdi": [
+          "Jeg er arbeidstaker (og/eller lønnsmottaker som frilanser)"
+        ],
+        "alternativer": [
+          "Jeg er arbeidstaker (og/eller lønnsmottaker som frilanser)",
+          "Jeg er selvstendig næringsdrivende eller frilanser med enkeltpersonforetak",
+          "Jeg er selvstendig næringsdrivende og ansatt i mitt eget aksjeselskap (AS)",
+          "Jeg etablerer egen virksomhet"
+        ],
+        "svarId": [
+          "erArbeidstakerOgEllerLønnsmottakerFrilanser"
+        ]
+      },
+      "arbeidsforhold": {
+        "label": "Om arbeidsforholdet ditt",
+        "verdi": [
+          {
+            "arbeidsgivernavn": {
+              "label": "Navn på arbeidssted",
+              "verdi": "a",
+              "alternativer": null,
+              "svarId": null
+            },
+            "arbeidsmengde": null,
+            "fastEllerMidlertidig": {
+              "label": "Hva slags ansettelsesforhold har du?",
+              "verdi": "Fast stilling",
+              "alternativer": null,
+              "svarId": "fast"
+            },
+            "harSluttdato": null,
+            "sluttdato": null
+          }
+        ],
+        "alternativer": null,
+        "svarId": null
+      },
+      "selvstendig": null,
+      "firmaer": null,
+      "virksomhet": null,
+      "arbeidssøker": null,
+      "underUtdanning": null,
+      "aksjeselskap": null,
+      "erIArbeid": {
+        "label": "Er du i arbeid?",
+        "verdi": "Ja",
+        "alternativer": null,
+        "svarId": "JA"
+      },
+      "erIArbeidDokumentasjon": null
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "stønadsstart": {
+    "label": "Når søker du stønad fra?",
+    "verdi": {
+      "fraMåned": null,
+      "fraÅr": null,
+      "søkerFraBestemtMåned": {
+        "label": "Søker du om stønad til barnetilsyn fra en bestemt måned? ",
+        "verdi": false,
+        "alternativer": null,
+        "svarId": null
+      }
+    },
+    "alternativer": null,
+    "svarId": null
+  },
+  "dokumentasjon": {
+    "barnepassordningFaktura": {
+      "label": "Faktura fra barnepassordningen for perioden du søker om nå",
+      "verdi": {
+        "harSendtInnTidligere": {
+          "label": "Jeg har sendt inn denne dokumentasjonen til NAV tidligere",
+          "verdi": false,
+          "alternativer": null,
+          "svarId": null
+        },
+        "dokumenter": []
+      },
+      "alternativer": null,
+      "svarId": null
+    },
+    "avtaleBarnepasser": null,
+    "arbeidstid": null,
+    "roterendeArbeidstid": {
+      "label": "Dokumentasjon på at du jobber turnus eller skift, og jobber på tider utenom vanlig arbeidstid",
+      "verdi": {
+        "harSendtInnTidligere": {
+          "label": "Jeg har sendt inn denne dokumentasjonen til NAV tidligere",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "dokumenter": []
+      },
+      "alternativer": null,
+      "svarId": null
+    },
+    "spesielleBehov": {
+      "label": "Dokumentasjon på at barnet ditt har behov for vesentlig mer pass enn det som er vanlig for jevnaldrende",
+      "verdi": {
+        "harSendtInnTidligere": {
+          "label": "Jeg har sendt inn denne dokumentasjonen til NAV tidligere",
+          "verdi": true,
+          "alternativer": null,
+          "svarId": null
+        },
+        "dokumenter": []
+      },
+      "alternativer": null,
+      "svarId": null
+    }
+  }
+}

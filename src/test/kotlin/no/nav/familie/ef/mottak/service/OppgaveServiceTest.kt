@@ -22,6 +22,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.BrukerIdType
@@ -396,7 +397,7 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte barnetilsyn-oppgave til mappe for selvstendig `() {
+        fun `skal flytte barnetilsyn-oppgave til mappe for selvstendig`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
             val mappeIdSelvstendig = 456
@@ -415,6 +416,30 @@ internal class OppgaveServiceTest {
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdSelvstendig.toLong())
+        }
+
+        @Test
+        fun `les inn komplett barnetilsyn-søknad, oppgave til mappe for særlig tilsynskrevende`() {
+            val oppgaveId: Long = 123
+            val oppgaveSlot = slot<Oppgave>()
+            val mappeIdTilsynskrevende = 456
+
+            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper = lagMapper(mappeIdTilsynskrevende = mappeIdTilsynskrevende)
+            )
+
+            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
+                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+            )
+            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(IOTestUtil.readFile("barnetilsyn_særlige_tilsynsbehov_soknad.json"))
+
+            every { søknadService.get("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
+
+            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(mappeIdTilsynskrevende.toLong())
         }
 
         @Test
@@ -571,9 +596,11 @@ internal class OppgaveServiceTest {
 
         val startSøknadMedAlt = Testdata.søknadBarnetilsyn
 
+        val særligTilsynskrevende = startSøknadMedAlt.barn.verdi.first().barnepass?.verdi?.copy(årsakBarnepass = Søknadsfelt("årsak", "årsak", svarId = "trengerMerPassEnnJevnaldrede"))!!
+
         val barn = when (harTilsynskrevendeBarn) {
             true -> startSøknadMedAlt.barn.verdi.first()
-                .copy(særligeTilsynsbehov = Søknadsfelt("Særlige tilsynsbehov", "har særlige tilsynsbehov"))
+                .copy(barnepass = Søknadsfelt("barnepass", særligTilsynskrevende, svarId = særligTilsynskrevende))
             false -> startSøknadMedAlt.barn.verdi.first()
         }
 
@@ -588,13 +615,7 @@ internal class OppgaveServiceTest {
                 barn = Søknadsfelt("Barn", listOf(barn))
             )
 
-        val søknad = SøknadMedVedlegg(
-            søknad = søknadBarnetilsyn,
-            vedlegg = listOf(),
-            dokumentasjonsbehov = listOf(),
-            behandleINySaksbehandling = true
-        )
-        return SøknadMapper.fromDto(søknad.søknad, true)
+        return SøknadMapper.fromDto(søknadBarnetilsyn, true)
     }
 
     val tomAktivitet = Aktivitet(
