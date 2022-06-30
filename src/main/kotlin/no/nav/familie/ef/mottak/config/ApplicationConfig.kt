@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.config
 
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.http.client.RetryOAuth2HttpClient
 import no.nav.familie.http.config.RestTemplateBuilderBean
@@ -102,7 +103,14 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun kotlinModule(): KotlinModule = KotlinModule()
+    fun kotlinModule(): KotlinModule = KotlinModule.Builder()
+        .withReflectionCacheSize(512)
+        .configure(KotlinFeature.NullToEmptyCollection, false)
+        .configure(KotlinFeature.NullToEmptyMap, false)
+        .configure(KotlinFeature.NullIsSameAsDefault, false)
+        .configure(KotlinFeature.SingletonSupport, false)
+        .configure(KotlinFeature.StrictNullChecks, false)
+        .build()
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {

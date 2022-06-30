@@ -4,7 +4,7 @@ import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.kafka.listener.ContainerStoppingErrorHandler
+import org.springframework.kafka.listener.CommonContainerStoppingErrorHandler
 import org.springframework.kafka.listener.MessageListenerContainer
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 @Component
-class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerStoppingErrorHandler() {
+class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : CommonContainerStoppingErrorHandler() {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -22,14 +22,14 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
     private val counter = AtomicInteger(0)
     private val lastError = AtomicLong(0)
 
-    override fun handle(
+    override fun handleRemaining(
         e: Exception,
-        records: List<ConsumerRecord<*, *>>?,
+        records: MutableList<ConsumerRecord<*, *>>,
         consumer: Consumer<*, *>,
         container: MessageListenerContainer
     ) {
 
-        if (records.isNullOrEmpty()) {
+        if (records.isEmpty()) {
             logger.error("Feil ved konsumering av melding. Ingen records. ${consumer.subscription()}", e)
             scheduleRestart(e, records, consumer, container, "Ukjent topic")
         } else {
@@ -46,7 +46,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
 
     private fun scheduleRestart(
         e: Exception,
-        records: List<ConsumerRecord<*, *>>? = null,
+        records: MutableList<ConsumerRecord<*, *>>,
         consumer: Consumer<*, *>,
         container: MessageListenerContainer,
         topic: String
@@ -69,7 +69,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
             Instant.ofEpochMilli(now + delayTime)
         )
         logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(delayTime).toString())
-        super.handle(e, records, consumer, container)
+        super.handleRemaining(e, records, consumer, container)
     }
 
     companion object {

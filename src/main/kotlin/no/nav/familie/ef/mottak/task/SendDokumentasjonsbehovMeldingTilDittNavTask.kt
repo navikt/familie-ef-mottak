@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.EttersendingConfig
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -13,7 +12,6 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.net.URL
-import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -24,7 +22,6 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
     private val ettersendingConfig: EttersendingConfig,
-    private val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

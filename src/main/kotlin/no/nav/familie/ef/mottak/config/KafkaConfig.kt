@@ -15,13 +15,16 @@ import java.time.Duration
 class KafkaConfig {
 
     @Bean
-    fun kafkaJournalføringHendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord> {
+    fun kafkaJournalføringHendelseListenerContainerFactory(
+        properties: KafkaProperties,
+        kafkaErrorHandler: KafkaErrorHandler
+    ): ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord> {
         properties.properties["specific.avro.reader"] = "true"
         val factory = ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord>()
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
-        factory.containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(2)
+        factory.containerProperties.authExceptionRetryInterval = Duration.ofSeconds(2)
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
-        factory.setErrorHandler(kafkaErrorHandler)
+        factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }
 }

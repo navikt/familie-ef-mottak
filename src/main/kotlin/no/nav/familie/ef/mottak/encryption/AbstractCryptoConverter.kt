@@ -10,8 +10,8 @@ abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
 
     abstract fun byteArrayToEntityAttribute(dbData: ByteArray?): T
 
-    override fun convert(dbData: ByteArray?): T {
-        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData != null && dbData.isNotEmpty()) {
+    override fun convert(dbData: ByteArray): T? {
+        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData.isNotEmpty()) {
             return decrypt(dbData)
         }
         return byteArrayToEntityAttribute(dbData)
