@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.config
 
+import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
