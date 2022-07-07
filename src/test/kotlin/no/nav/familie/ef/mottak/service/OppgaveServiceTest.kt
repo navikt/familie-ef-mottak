@@ -10,7 +10,6 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
@@ -19,10 +18,10 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
-import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -55,7 +54,6 @@ internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
-    private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val ettersendingService = mockk<EttersendingService>()
 
     private val oppgaveService: OppgaveService =
@@ -189,7 +187,6 @@ internal class OppgaveServiceTest {
                 behandleINySaksbehandling = true
             )
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
-            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns false
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
 
             oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
@@ -208,7 +205,6 @@ internal class OppgaveServiceTest {
                 journalpostOvergangsstøand.copy(bruker = Bruker("1", type = BrukerIdType.FNR), journalpostId = journalpostId)
 
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
-            every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
             every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
 
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
@@ -223,7 +219,6 @@ internal class OppgaveServiceTest {
         @Test
         fun `skal opprette en oppgave for ny løsning dersom det finnes en behandling i ny løsning`() {
             every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
-            every { saksbehandlingClient.finnesBehandlingForPerson(ettersending.fnr, StønadType.OVERGANGSSTØNAD) } returns true
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)

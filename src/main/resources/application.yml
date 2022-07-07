@@ -108,8 +108,6 @@ database:
     # 16, 24 or 32 bytes
     key: ${DATABASEKEY}
 
-EF_SAK_URL: http://familie-ef-sak
-
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
 
 KAFKA_TOPIC_DITTNAV: min-side.aapen-brukernotifikasjon-beskjed-v1

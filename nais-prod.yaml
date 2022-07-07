@@ -58,7 +58,6 @@ spec:
           cluster: prod-gcp
     outbound:
       rules:
-        - application: familie-ef-sak
         - application: familie-ef-maler
         - application: familie-brev
         - application: familie-dokument
