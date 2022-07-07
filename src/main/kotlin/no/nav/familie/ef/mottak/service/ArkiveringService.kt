@@ -8,12 +8,6 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.kontrakter.felles.BrukerIdType
-import no.nav.familie.kontrakter.felles.Fagsystem
-import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.dokarkiv.DokarkivBruker
-import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
-import no.nav.familie.kontrakter.felles.dokarkiv.Sak
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -62,31 +56,6 @@ class ArkiveringService(
             ?: error("Ingen behandlende enhet funnet for søknad=$søknadId ")
 
         integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
-    }
-
-    fun oppdaterJournalpost(søknadId: String) {
-        val søknad: Søknad = søknadService.get(søknadId)
-        val journalpostId: String = søknad.journalpostId ?: error("Søknad=$søknadId mangler journalpostId")
-        val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        val infotrygdSaksnummer = søknad.saksnummer?.trim()?.let {
-            integrasjonerClient.finnInfotrygdSaksnummerForSak(it, FAGOMRÅDE_ENSLIG_FORSØRGER, søknad.fnr)
-        } ?: error("Søknaden mangler saksnummer - kan ikke finne infotrygdsak for søknad=$søknadId")
-
-        logger.info("Fant infotrygdsak med saksnummer=$infotrygdSaksnummer for søknad=$søknadId")
-
-        val oppdatertJournalpost = OppdaterJournalpostRequest(
-            bruker = journalpost.bruker?.let {
-                DokarkivBruker(idType = BrukerIdType.valueOf(it.type.toString()), id = it.id)
-            },
-            sak = Sak(
-                fagsakId = infotrygdSaksnummer,
-                fagsaksystem = Fagsystem.IT01,
-                sakstype = "FAGSAK"
-            ),
-            tema = journalpost.tema?.let { Tema.valueOf(it) },
-        )
-
-        integrasjonerClient.oppdaterJournalpost(oppdatertJournalpost, journalpostId)
     }
 
     private fun send(søknad: Søknad, vedlegg: List<Vedlegg>): String {

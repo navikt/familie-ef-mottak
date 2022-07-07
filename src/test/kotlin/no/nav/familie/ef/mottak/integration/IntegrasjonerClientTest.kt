@@ -20,8 +20,6 @@ import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
-import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -87,31 +85,6 @@ internal class IntegrasjonerClientTest {
         }
 
         assertThat(exception.message).contains(feilmelding)
-    }
-
-    @Test
-    fun `opprettInfotrygdsak returnerer OpprettInfotrygdsakResponse`() {
-        val opprettInfotrygdSakRequest = OpprettInfotrygdSakRequest(
-            fagomrade = "ENF",
-            fnr = "fnr",
-            mottakerOrganisasjonsEnhetsId = "4408",
-            mottattdato = LocalDate.of(2010, 11, 12),
-            oppgaveId = "oppgaveId",
-            oppgaveOrganisasjonsenhetId = "4408",
-            opprettetAvOrganisasjonsEnhetsId = "4408",
-            sendBekreftelsesbrev = false,
-            stonadsklassifisering2 = "OG",
-            type = "K"
-        )
-        val opprettInfotrygdSakResponse = OpprettInfotrygdSakResponse(saksId = "OG65")
-        wireMockServer.stubFor(
-            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/opprett"))
-                .willReturn(okJson(objectMapper.writeValueAsString(success(opprettInfotrygdSakResponse))))
-        )
-
-        val testresultat = integrasjonerClient.opprettInfotrygdsak(opprettInfotrygdSakRequest)
-
-        assertThat(testresultat).usingRecursiveComparison().isEqualTo(opprettInfotrygdSakResponse)
     }
 
     @Test

@@ -39,24 +39,6 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         tilordnetRessurs = null
     )
 
-    fun toBehandleSakOppgave(
-        journalpost: Journalpost,
-        behandlesAvApplikasjon: BehandlesAvApplikasjon,
-        enhetsnummer: String?
-    ): OpprettOppgaveRequest =
-        OpprettOppgaveRequest(
-            ident = tilOppgaveIdent(journalpost),
-            saksId = null,
-            tema = Tema.ENF,
-            oppgavetype = Oppgavetype.BehandleSak,
-            journalpostId = journalpost.journalpostId,
-            fristFerdigstillelse = lagFristForOppgave(LocalDateTime.now()),
-            beskrivelse = lagOppgavebeskrivelse(behandlesAvApplikasjon, journalpost),
-            behandlingstema = journalpost.behandlingstema,
-            enhetsnummer = enhetsnummer,
-            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
-        )
-
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
         val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
