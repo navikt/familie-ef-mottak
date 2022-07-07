@@ -30,7 +30,7 @@ class LagJournalføringsoppgaveForEttersendingTask(
         task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.let {
             taskRepository.save(
                 Task(
-                    TaskType(TYPE).nesteFallbackTask(),
+                    TaskType(TYPE).nesteEttersendingsflytTask(),
                     task.payload,
                     task.metadata
                 )
