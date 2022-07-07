@@ -19,7 +19,6 @@ import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -137,62 +136,6 @@ internal class IntegrasjonerClientTest {
 
         assertFailsWith(IllegalStateException::class) {
             integrasjonerClient.arkiver(arkiverSøknadRequest)
-        }
-    }
-
-    @Test
-    fun `Skal finne infotrygdsaksnummer`() {
-        // Gitt
-        val fnr = "12345678901"
-        val registrertNavEnhetId = "0304"
-        val fagomrade = "ENF"
-        val infotrygdSaker = listOf(
-            InfotrygdSak(fnr, "A01", registrertNavEnhetId, fagomrade),
-            InfotrygdSak(fnr, "A03", registrertNavEnhetId, fagomrade),
-            InfotrygdSak(fnr, "A02", registrertNavEnhetId, fagomrade)
-        )
-        wireMockServer.stubFor(
-            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
-                .willReturn(okJson(success(infotrygdSaker).toJson()))
-        )
-        // Vil gi resultat
-        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0304A01")
-        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A02", fagomrade, fnr)).isEqualTo("0304A02")
-        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A03", fagomrade, fnr)).isEqualTo("0304A03")
-        assertThrows<IllegalStateException> {
-            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
-        }
-    }
-
-    @Test
-    fun `Skal finne infotrygdsaksnummer med jsondata og unødige whitespaces`() {
-        // Gitt
-        val fnr = "04087420901"
-        val fagomrade = "ENF"
-        val infotrygdData = """
-            {
-                "data": [
-                    {
-                        "fnr": "04087420901",
-                        "saksnr": "A01       ",
-                        "registrertNavEnhetId": "0314",
-                        "fagomrade": "EF"
-                    }
-                ],
-                "status": "SUKSESS",
-                "melding": "Innhenting av data var vellykket",
-                "frontendFeilmelding": null,
-                "stacktrace": null
-            }
-        """.trimIndent()
-        wireMockServer.stubFor(
-            post(urlEqualTo("/${IntegrasjonerClient.PATH_INFOTRYGDSAK}/soek"))
-                .willReturn(okJson(infotrygdData))
-        )
-        // Vil gi resultat
-        assertThat(integrasjonerClient.finnInfotrygdSaksnummerForSak("A01", fagomrade, fnr)).isEqualTo("0314A01")
-        assertThrows<IllegalStateException> {
-            integrasjonerClient.finnInfotrygdSaksnummerForSak("A04", fagomrade, fnr)
         }
     }
 

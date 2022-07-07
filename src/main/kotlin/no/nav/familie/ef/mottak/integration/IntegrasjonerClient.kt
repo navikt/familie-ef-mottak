@@ -9,8 +9,6 @@ import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.FinnInfotrygdSakerRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
@@ -56,9 +54,6 @@ class IntegrasjonerClient(
             .pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER)
             .build()
             .toUri()
-
-    private val infotrygdsakUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_INFOTRYGDSAK).build().toUri()
 
     private val finnOppgaveUri =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FINN_OPPGAVE).build().toUri()
@@ -176,18 +171,6 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()["personIdent"].toString()
     }
 
-    fun finnInfotrygdSaksnummerForSak(saksnummer: String, fagområdeEnsligForsørger: String, fnr: String): String {
-        val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
-        val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri, request).getDataOrThrow()
-
-        return infotrygdSaker.find { it.saksnr.trim() == saksnummer }?.let {
-            it.registrertNavEnhetId + saksnummer
-        } ?: error("Kunne ikke finne infotrygdsaker med saksnr=$saksnummer")
-    }
-
-    private val lagFinnInfotrygdSakerUri =
-        UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
-
     private fun lagHentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
             .fromUri(integrasjonerConfig.url)
@@ -218,6 +201,5 @@ class IntegrasjonerClient(
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/ENF/med-relasjoner"
-        const val PATH_INFOTRYGDSAK = "infotrygdsak"
     }
 }
