@@ -1,14 +1,11 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.Properties
 import java.util.UUID
@@ -18,8 +15,8 @@ import java.util.UUID
 class ArkiverSøknadTask(
     private val arkiveringService: ArkiveringService,
     private val taskRepository: TaskRepository,
-    private val søknadRepository: SøknadRepository
 ) : AsyncTaskStep {
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -33,11 +30,7 @@ class ArkiverSøknadTask(
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = if (erSøknadOmStønad(task.payload)) {
-            Task(TaskType(TYPE).nesteHovedflytTask(), task.payload, task.metadata)
-        } else {
-            Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
-        }
+        val nesteTask = Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
         val sendMeldingTilDittNavTask =
             Task(
                 SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
@@ -48,11 +41,6 @@ class ArkiverSøknadTask(
             )
 
         taskRepository.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))
-    }
-
-    private fun erSøknadOmStønad(søknadId: String): Boolean {
-        val soknad = søknadRepository.findByIdOrNull(søknadId) ?: error("Søknad har forsvunnet!")
-        return soknad.dokumenttype != DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
     }
 
     companion object {
