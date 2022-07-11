@@ -58,9 +58,6 @@ class IntegrasjonerClient(
     private val finnOppgaveUri =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FINN_OPPGAVE).build().toUri()
 
-    private val ferdigstillOppgaveURI =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FERDIGSTILL_OPPGAVE).build().toUri()
-
     private fun hentOppgaveUri(oppgaveId: Long) =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString())
@@ -195,7 +192,6 @@ class IntegrasjonerClient(
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
         const val PATH_FINN_MAPPE = "oppgave/mappe/sok"
         const val PATH_HENT_OPPGAVE = "oppgave"
-        const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v2/ENF"
         const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
