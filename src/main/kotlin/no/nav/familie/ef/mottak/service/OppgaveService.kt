@@ -278,7 +278,11 @@ class OppgaveService(
     }
 
     private fun mappeFraBarnetilsyn(søknadId: String): String? {
-        val søknadJson = søknadService.get(søknadId).søknadJson
+        val søknadJson = søknadService.getOrNull(søknadId)?.søknadJson
+        if (søknadJson == null) {
+            log.warn("Finner ikke søknad - antar dette er en ettersending $søknadId")
+            return null
+        }
         val søknad = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
         return if (søknad.barn.verdi.any { it.barnepass?.verdi?.årsakBarnepass?.svarId == "trengerMerPassEnnJevnaldrede" }) {
             MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
@@ -290,7 +294,11 @@ class OppgaveService(
     }
 
     private fun mappeFraOvergangsstønad(søknadId: String): String? {
-        val søknadJson = søknadService.get(søknadId).søknadJson
+        val søknadJson = søknadService.getOrNull(søknadId)?.søknadJson
+        if (søknadJson == null) {
+            log.warn("Finner ikke søknad - antar dette er en ettersending $søknadId")
+            return null
+        }
         val søknad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
         return if (søknad.situasjon.verdi.barnMedSærligeBehov?.verdi != null) {
             MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
