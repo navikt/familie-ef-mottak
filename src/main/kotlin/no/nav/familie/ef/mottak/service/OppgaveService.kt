@@ -204,23 +204,6 @@ class OppgaveService(
     private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
         integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
-    fun ferdigstillOppgaveForJournalpost(journalpostId: String) {
-        val oppgaver = integrasjonerClient.finnOppgaver(journalpostId, Oppgavetype.Journalføring)
-        when (oppgaver.antallTreffTotalt) {
-            1L -> {
-                val oppgaveId =
-                    oppgaver.oppgaver.first().id ?: error("Finner ikke oppgaveId for journalpost=$journalpostId")
-                integrasjonerClient.ferdigstillOppgave(oppgaveId)
-            }
-            else -> {
-                val error =
-                    IllegalStateException("Fant ${oppgaver.antallTreffTotalt} oppgaver for journalpost=$journalpostId")
-                log.warn("Kan ikke ferdigstille oppgave", error)
-                throw error
-            }
-        }
-    }
-
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String?) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         if (skalFlyttesTilMappe(oppgave)) {
