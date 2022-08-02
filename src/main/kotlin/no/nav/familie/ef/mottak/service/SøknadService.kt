@@ -99,6 +99,10 @@ class SøknadService(
         return søknadRepository.findByIdOrThrow(id)
     }
 
+    fun getOrNull(id: String): Søknad? {
+        return søknadRepository.findByIdOrNull(id)
+    }
+
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
