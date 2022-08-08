@@ -8,15 +8,8 @@ import no.nav.familie.kontrakter.felles.Ressurs.Status
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
-import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostRequest
-import no.nav.familie.kontrakter.felles.dokarkiv.OppdaterJournalpostResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.FinnInfotrygdSakerRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.InfotrygdSak
-import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakRequest
-import no.nav.familie.kontrakter.felles.infotrygdsak.OpprettInfotrygdSakResponse
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
-import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
@@ -25,9 +18,7 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
-import no.nav.familie.kontrakter.felles.personopplysning.FinnPersonidenterResponse
 import no.nav.familie.kontrakter.felles.personopplysning.Ident
-import no.nav.familie.kontrakter.felles.personopplysning.PersonIdentMedHistorikk
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
@@ -59,22 +50,13 @@ class IntegrasjonerClient(
         UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
 
     private val behandlendeEnhetMedRelasjonerUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER).build().toUri()
-
-    private val journalpostsøkUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_JOURNALPOST).build().toUri()
-
-    private val infotrygdsakUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_INFOTRYGDSAK).build().toUri()
+        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER)
+            .build()
+            .toUri()
 
     private val finnOppgaveUri =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FINN_OPPGAVE).build().toUri()
-
-    private val ferdigstillOppgaveURI =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FERDIGSTILL_OPPGAVE).build().toUri()
-
-    private val hentIdenterURI =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_HENT_IDENTER).build().toUri()
 
     private fun hentOppgaveUri(oppgaveId: Long) =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url)
@@ -102,27 +84,10 @@ class IntegrasjonerClient(
             .build()
             .toUri()
 
-    private fun oppdaterJournalpostUri(journalpostId: String) =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
-            .pathSegment("arkiv", "v2", journalpostId)
-            .build()
-            .toUri()
-
     @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun hentJournalpost(journalpostId: String): Journalpost {
         val uri = journalpostUri(journalpostId)
         return getForEntity<Ressurs<Journalpost>>(uri).getDataOrThrow()
-    }
-
-    fun finnJournalposter(journalposterForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
-        return postForEntity<Ressurs<List<Journalpost>>>(journalpostsøkUri, journalposterForBrukerRequest).getDataOrThrow()
-    }
-
-    fun opprettInfotrygdsak(opprettInfotrygdSakRequest: OpprettInfotrygdSakRequest): OpprettInfotrygdSakResponse {
-        return postForEntity<Ressurs<OpprettInfotrygdSakResponse>>(
-            lagOpprettInfotrygdsakUri,
-            opprettInfotrygdSakRequest
-        ).getDataOrThrow()
     }
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
@@ -158,16 +123,6 @@ class IntegrasjonerClient(
                 "ENF"
             )
         return response.getDataOrThrow()
-    }
-
-    fun oppdaterJournalpost(
-        oppdaterJournalpostRequest: OppdaterJournalpostRequest,
-        journalpostId: String
-    ): OppdaterJournalpostResponse {
-        return putForEntity<Ressurs<OppdaterJournalpostResponse>>(
-            oppdaterJournalpostUri(journalpostId),
-            oppdaterJournalpostRequest
-        ).getDataOrThrow()
     }
 
     fun hentOppgave(oppgaveId: Long): Oppgave {
@@ -213,27 +168,6 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()["personIdent"].toString()
     }
 
-    fun finnInfotrygdSaksnummerForSak(saksnummer: String, fagområdeEnsligForsørger: String, fnr: String): String {
-        val request = FinnInfotrygdSakerRequest(fnr = fnr, fagomrade = fagområdeEnsligForsørger)
-        val infotrygdSaker = postForEntity<Ressurs<List<InfotrygdSak>>>(lagFinnInfotrygdSakerUri, request).getDataOrThrow()
-
-        return infotrygdSaker.find { it.saksnr.trim() == saksnummer }?.let {
-            it.registrertNavEnhetId + saksnummer
-        } ?: error("Kunne ikke finne infotrygdsaker med saksnr=$saksnummer")
-    }
-
-    fun hentIdenter(personident: String, medHistprikk: Boolean): List<PersonIdentMedHistorikk> {
-        val uri = UriComponentsBuilder.fromUri(hentIdenterURI).queryParam("historikk", medHistprikk).build().toUri()
-        val response = postForEntity<Ressurs<FinnPersonidenterResponse>>(uri, PersonIdent(personident))
-        return response.getDataOrThrow().identer
-    }
-
-    private val lagFinnInfotrygdSakerUri =
-        UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("soek").build().toUri()
-
-    private val lagOpprettInfotrygdsakUri =
-        UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
-
     private fun lagHentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
             .fromUri(integrasjonerConfig.url)
@@ -258,13 +192,10 @@ class IntegrasjonerClient(
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
         const val PATH_FINN_MAPPE = "oppgave/mappe/sok"
         const val PATH_HENT_OPPGAVE = "oppgave"
-        const val PATH_FERDIGSTILL_OPPGAVE = "oppgave"
         const val PATH_AKTØR = "aktoer/v2/ENF"
         const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/ENF/med-relasjoner"
-        const val PATH_INFOTRYGDSAK = "infotrygdsak"
-        const val PATH_HENT_IDENTER = "personopplysning/v1/identer/ENF"
     }
 }

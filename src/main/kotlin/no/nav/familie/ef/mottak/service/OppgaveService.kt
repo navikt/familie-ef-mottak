@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
-import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.EF_SAK_BLANKETT
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
@@ -14,6 +13,7 @@ import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
@@ -68,30 +68,6 @@ class OppgaveService(
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
         }
-    }
-
-    fun lagBehandleSakOppgave(journalpost: Journalpost, behandlesAvApplikasjon: BehandlesAvApplikasjon): Long {
-        val opprettOppgave =
-            opprettOppgaveMapper.toBehandleSakOppgave(
-                journalpost,
-                behandlesAvApplikasjon,
-                finnBehandlendeEnhet(journalpost)
-            )
-        return opprettOppgave(opprettOppgave, journalpost)
-    }
-
-    fun settSaksnummerPåInfotrygdOppgave(
-        oppgaveId: Long,
-        saksblokk: String,
-        saksnummer: String
-    ): Long {
-        val oppgave: Oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-        val oppdatertOppgave = oppgave.copy(
-            saksreferanse = saksnummer,
-            beskrivelse = "${oppgave.beskrivelse} - Saksblokk: $saksblokk, Saksnummer: $saksnummer [Automatisk journalført]",
-            behandlesAvApplikasjon = EF_SAK_BLANKETT.applikasjon,
-        )
-        return integrasjonerClient.oppdaterOppgave(oppgaveId, oppdatertOppgave)
     }
 
     fun lagJournalføringsoppgave(
@@ -226,7 +202,7 @@ class OppgaveService(
     }
 
     private fun erSkolepenger(oppgave: Oppgave) =
-        oppgave.behandlingstema == BEHANDLINGSTEMA_SKOLEPENGER && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
+        oppgave.behandlingstema == Behandlingstema.Skolepenger.value && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
     private fun erSelvstendig(aktivitet: Søknadsfelt<Aktivitet>) =
         aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
@@ -245,11 +221,11 @@ class OppgaveService(
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when (oppgave.behandlingstema) {
-            BEHANDLINGSTEMA_OVERGANGSSTØNAD -> true
-            BEHANDLINGSTEMA_BARNETILSYN ->
+            Behandlingstema.Overgangsstønad.value -> true
+            Behandlingstema.Barnetilsyn.value ->
                 oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon ||
                     oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
-            BEHANDLINGSTEMA_SKOLEPENGER -> true
+            Behandlingstema.Skolepenger.value -> true
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
         }
@@ -271,8 +247,8 @@ class OppgaveService(
         if (søknadId == null || !toggleEnabled) return null
 
         return when (oppgave.behandlingstema) {
-            BEHANDLINGSTEMA_OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknadId)
-            BEHANDLINGSTEMA_BARNETILSYN -> mappeFraBarnetilsyn(søknadId)
+            Behandlingstema.Overgangsstønad.value -> mappeFraOvergangsstønad(søknadId)
+            Behandlingstema.Barnetilsyn.value -> mappeFraBarnetilsyn(søknadId)
             else -> null
         }
     }
