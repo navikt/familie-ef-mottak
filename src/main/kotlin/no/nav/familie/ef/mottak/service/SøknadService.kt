@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
@@ -26,7 +25,6 @@ import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -99,6 +97,10 @@ class SøknadService(
 
     fun get(id: String): Søknad {
         return søknadRepository.findByIdOrThrow(id)
+    }
+
+    fun getOrNull(id: String): Søknad? {
+        return søknadRepository.findByIdOrNull(id)
     }
 
     @Transactional
