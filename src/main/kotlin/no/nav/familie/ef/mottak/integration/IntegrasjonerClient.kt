@@ -198,11 +198,6 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()
     }
 
-    fun ferdigstillOppgave(oppgaveId: Long): OppgaveResponse {
-        val respons = patchForEntity<Ressurs<OppgaveResponse>>(lagFerdigstillOppgaveUri(oppgaveId), "")
-        return respons.getDataOrThrow()
-    }
-
     fun hentSaksnummer(journalPostId: String): String {
         val response = getForEntity<Ressurs<Map<*, *>>>(lagHentSaksnummerUri(journalPostId))
         return response.getDataOrThrow()["saksnummer"].toString()
@@ -238,15 +233,6 @@ class IntegrasjonerClient(
 
     private val lagOpprettInfotrygdsakUri =
         UriComponentsBuilder.fromUri(infotrygdsakUri).pathSegment("opprett").build().toUri()
-
-    private fun lagFerdigstillOppgaveUri(oppgaveId: Long): URI {
-        return UriComponentsBuilder
-            .fromUri(ferdigstillOppgaveURI)
-            .pathSegment(oppgaveId.toString())
-            .pathSegment("ferdigstill")
-            .build()
-            .toUri()
-    }
 
     private fun lagHentSaksnummerUri(id: String): URI {
         return UriComponentsBuilder
