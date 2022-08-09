@@ -11,7 +11,6 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
-import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
@@ -25,10 +24,10 @@ import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
-import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.DokumentInfo
 import no.nav.familie.kontrakter.felles.journalpost.Dokumentvariant
@@ -60,9 +59,7 @@ internal class OppgaveServiceTest {
 
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val sakService: SakService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
-    private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val ettersendingService = mockk<EttersendingService>()
     private val featureToggleService = mockk<FeatureToggleService>()
 
@@ -166,31 +163,6 @@ internal class OppgaveServiceTest {
         assertEquals(1, oppgaveResponse)
     }
 
-    @Test
-    fun `Opprett oppgave med enhet NAY hvis opprettBehandleSak-kall får feil når enhet ikke blir funnet for bruker`() {
-
-        every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns emptyList()
-        val behandleSakOppgaveRequest =
-            opprettOppgaveMapper.toBehandleSakOppgave(
-                journalpostOvergangsstøand,
-                BehandlesAvApplikasjon.INFOTRYGD,
-                null
-            )
-
-        every {
-            integrasjonerClient.lagOppgave(behandleSakOppgaveRequest)
-        } throws lagRessursException()
-
-        every {
-            integrasjonerClient.finnOppgaver(any(), any())
-        } returns FinnOppgaveResponseDto(0, listOf())
-
-        val oppgaveResponse =
-            oppgaveService.lagBehandleSakOppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
-
-        assertEquals(1, oppgaveResponse)
-    }
-
     private fun lagRessursException(): RessursException {
         val httpServerErrorException = HttpServerErrorException(
             HttpStatus.INTERNAL_SERVER_ERROR,
@@ -228,9 +200,7 @@ internal class OppgaveServiceTest {
                 behandleINySaksbehandling = true
             )
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
-            every { saksbehandlingClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns false
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
-            every { sakService.finnesIkkeIInfotrygd(any()) } returns false
 
             oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
@@ -251,12 +221,7 @@ internal class OppgaveServiceTest {
                 )
 
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
-            every { saksbehandlingClient.finnesBehandlingForPerson("1", isNull()) } returns true
-            every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(
-                0,
-                emptyList()
-            )
-            every { sakService.finnesIkkeIInfotrygd(any(), any()) } returns false
+            every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(0, emptyList())
 
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
@@ -270,12 +235,6 @@ internal class OppgaveServiceTest {
         @Test
         fun `skal opprette en oppgave for ny løsning dersom det finnes en behandling i ny løsning`() {
             every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
-            every {
-                saksbehandlingClient.finnesBehandlingForPerson(
-                    ettersending.fnr,
-                    StønadType.OVERGANGSSTØNAD
-                )
-            } returns true
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
@@ -287,27 +246,12 @@ internal class OppgaveServiceTest {
     @Nested
     inner class OppdaterOppgaveMedRiktigMappeId {
 
-        // Saker med BehandlesAvApplikasjon=INFOTRYGD skal migreres og behandles i ny løsning for overgangsstønad
-        @Test
-        fun `skal flytte overgangsstønad-oppgave til mappe selv om BehandlesAvApplikasjon er satt til infotrygd`() {
-            val oppgaveId: Long = 123
-
-            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-            )
-
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
-
-            verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-        }
-
         @Test
         fun `skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`() {
             val oppgaveId: Long = 123
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
             )
 
@@ -321,7 +265,7 @@ internal class OppgaveServiceTest {
             val oppgaveId: Long = 123
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
 
@@ -342,7 +286,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlingstema = Behandlingstema.Overgangsstønad,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -364,7 +308,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlingstema = Behandlingstema.Overgangsstønad,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -389,7 +333,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -414,7 +358,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -439,7 +383,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -464,7 +408,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlingstema = Behandlingstema.Overgangsstønad,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -486,7 +430,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlingstema = Behandlingstema.Overgangsstønad,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -514,7 +458,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
+                behandlingstema = Behandlingstema.Skolepenger,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -556,7 +500,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
+                behandlingstema = Behandlingstema.Barnetilsyn,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -584,7 +528,7 @@ internal class OppgaveServiceTest {
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = BEHANDLINGSTEMA_OVERGANGSSTØNAD,
+                behandlingstema = Behandlingstema.Overgangsstønad,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
@@ -628,7 +572,14 @@ internal class OppgaveServiceTest {
 
         val startSøknadMedAlt = Testdata.søknadBarnetilsyn
 
-        val særligTilsynskrevende = startSøknadMedAlt.barn.verdi.first().barnepass?.verdi?.copy(årsakBarnepass = Søknadsfelt("årsak", "årsak", svarId = "trengerMerPassEnnJevnaldrede"))!!
+        val særligTilsynskrevende =
+            startSøknadMedAlt.barn.verdi.first().barnepass?.verdi?.copy(
+                årsakBarnepass = Søknadsfelt(
+                    "årsak",
+                    "årsak",
+                    svarId = "trengerMerPassEnnJevnaldrede"
+                )
+            )!!
 
         val barn = when (harTilsynskrevendeBarn) {
             true -> startSøknadMedAlt.barn.verdi.first()
@@ -721,52 +672,6 @@ internal class OppgaveServiceTest {
             )
         )
 
-    private val journalpostBarnetilsyn =
-        Journalpost(
-            journalpostId = "111111111",
-            journalposttype = Journalposttype.I,
-            journalstatus = Journalstatus.MOTTATT,
-            tema = "ENF",
-            behandlingstema = BEHANDLINGSTEMA_BARNETILSYN,
-            tittel = "abrakadabra",
-            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
-            journalforendeEnhet = "4817",
-            kanal = "SKAN_IM",
-            sak = Sak(null, null, null),
-            dokumenter =
-            listOf(
-                DokumentInfo(
-                    dokumentInfoId = "12345",
-                    tittel = "Tittel",
-                    brevkode = DokumentBrevkode.BARNETILSYN.verdi,
-                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                )
-            )
-        )
-
-    private val journalpostSkolepenger =
-        Journalpost(
-            journalpostId = "111111111",
-            journalposttype = Journalposttype.I,
-            journalstatus = Journalstatus.MOTTATT,
-            tema = "ENF",
-            behandlingstema = BEHANDLINGSTEMA_SKOLEPENGER,
-            tittel = "abrakadabra",
-            bruker = Bruker(type = BrukerIdType.AKTOERID, id = "3333333333333"),
-            journalforendeEnhet = "4817",
-            kanal = "SKAN_IM",
-            sak = Sak(null, null, null),
-            dokumenter =
-            listOf(
-                DokumentInfo(
-                    dokumentInfoId = "12345",
-                    tittel = "Tittel",
-                    brevkode = DokumentBrevkode.SKOLEPENGER.verdi,
-                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                )
-            )
-        )
-
     private val ettersending = Ettersending(
         id = UUID.randomUUID(),
         ettersendingJson = EncryptedString(""),
@@ -780,12 +685,12 @@ internal class OppgaveServiceTest {
     )
 
     private fun lagOppgaveForFordeling(
-        behandlingstema: String?,
+        behandlingstema: Behandlingstema?,
         behandlesAvApplikasjon: BehandlesAvApplikasjon
     ) =
         Oppgave(
             id = 123L,
-            behandlingstema = behandlingstema,
+            behandlingstema = behandlingstema?.value,
             status = StatusEnum.OPPRETTET,
             tildeltEnhetsnr = "4489",
             behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon

@@ -58,12 +58,10 @@ spec:
           cluster: prod-gcp
     outbound:
       rules:
-        - application: familie-ef-sak
         - application: familie-ef-maler
         - application: familie-brev
         - application: familie-dokument
       external:
-        - host: familie-ef-infotrygd.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: kafka-schema-registry.nais.adeo.no
         - host: unleash.nais.io

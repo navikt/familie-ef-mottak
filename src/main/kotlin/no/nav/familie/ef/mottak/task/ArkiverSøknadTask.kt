@@ -30,7 +30,7 @@ class ArkiverSøknadTask(
     }
 
     override fun onCompletion(task: Task) {
-        val nesteTask = Task(TaskType(TYPE).nesteFallbackTask(), task.payload, task.metadata)
+        val nesteTask = Task(TaskType(TYPE).nesteHovedflytTask(), task.payload, task.metadata)
         val sendMeldingTilDittNavTask =
             Task(
                 SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
