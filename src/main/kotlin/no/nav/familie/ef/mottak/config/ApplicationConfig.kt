@@ -7,6 +7,7 @@ import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
+import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
@@ -40,7 +41,8 @@ import java.time.temporal.ChronoUnit
     BearerTokenExchangeClientInterceptor::class,
     RestTemplateBuilderBean::class,
     MdcValuesPropagatingClientInterceptor::class,
-    ConsumerIdClientInterceptor::class
+    ConsumerIdClientInterceptor::class,
+    KafkaErrorHandler::class
 )
 class ApplicationConfig {
 
@@ -102,7 +104,7 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun kotlinModule(): KotlinModule = KotlinModule()
+    fun kotlinModule(): KotlinModule = KotlinModule.Builder().build()
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {

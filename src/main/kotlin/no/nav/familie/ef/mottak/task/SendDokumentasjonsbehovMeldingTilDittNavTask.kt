@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.EttersendingConfig
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -23,7 +22,6 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
     private val ettersendingConfig: EttersendingConfig,
-    private val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

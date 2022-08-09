@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -38,7 +37,6 @@ class SøknadService(
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
-    private val featureToggleService: FeatureToggleService
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

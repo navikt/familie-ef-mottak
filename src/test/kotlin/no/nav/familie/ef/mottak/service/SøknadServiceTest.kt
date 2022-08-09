@@ -27,7 +27,7 @@ class SøknadServiceTest {
     private val vedleggRepository = mockk<VedleggRepository>(relaxed = true)
     private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>(relaxed = true)
     private val søknadService =
-        SøknadService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository, mockk())
+        SøknadService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository)
 
     @Test
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
