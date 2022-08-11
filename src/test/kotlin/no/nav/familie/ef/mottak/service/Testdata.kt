@@ -13,7 +13,6 @@ import no.nav.familie.kontrakter.ef.søknad.Bosituasjon
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.GjeldendeUtdanning
 import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.Medlemskapsdetaljer
@@ -38,6 +37,7 @@ import no.nav.familie.kontrakter.ef.søknad.UnderUtdanning
 import no.nav.familie.kontrakter.ef.søknad.Utenlandsopphold
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.Virksomhet
+import no.nav.familie.kontrakter.felles.Fødselsnummer
 import java.time.LocalDate
 import java.time.Month
 import java.util.UUID
