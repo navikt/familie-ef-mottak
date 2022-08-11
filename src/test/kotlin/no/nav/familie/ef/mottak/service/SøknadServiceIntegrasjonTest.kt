@@ -10,10 +10,10 @@ import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.felles.Fødselsnummer
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

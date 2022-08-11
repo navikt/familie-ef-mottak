@@ -4,13 +4,13 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
-import no.nav.familie.kontrakter.ef.søknad.Fødselsnummer
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
+import no.nav.familie.kontrakter.felles.Fødselsnummer
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
