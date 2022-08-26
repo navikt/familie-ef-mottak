@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
-import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -45,35 +44,28 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.EF_SAK)
+        return lagJournalføringsoppgave(journalpost)
     }
 
     fun lagJournalføringsoppgaveForEttersendingId(ettersendingId: String): Long? {
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
         val journalpostId: String = ettersending.journalpostId ?: error("Ettersending mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.EF_SAK)
+        return lagJournalføringsoppgave(journalpost)
     }
 
-    /**
-     * Då vi ikke er sikre på at stønadstypen er riktig eller eksisterer på oppgaven så sjekker vi om den finnes i ny løsning
-     * Hvis den finnes setter vi att den må sjekkes opp før man behandler den
-     */
     fun lagJournalføringsoppgaveForJournalpostId(journalpostId: String): Long? {
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         try {
             log.info("journalPost=$journalpostId")
-            return lagJournalføringsoppgave(journalpost, BehandlesAvApplikasjon.UAVKLART)
+            return lagJournalføringsoppgave(journalpost)
         } catch (e: Exception) {
             secureLogger.warn("Kunne ikke opprette journalføringsoppgave for journalpost=$journalpost", e)
             throw e
         }
     }
 
-    fun lagJournalføringsoppgave(
-        journalpost: Journalpost,
-        behandlesAvApplikasjon: BehandlesAvApplikasjon
-    ): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
 
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
@@ -93,7 +85,7 @@ class OppgaveService(
                     val opprettOppgave =
                         opprettOppgaveMapper.toJournalføringsoppgave(
                             journalpost,
-                            behandlesAvApplikasjon,
+                            BehandlesAvApplikasjon.EF_SAK,
                             finnBehandlendeEnhet(journalpost)
                         )
                     return opprettOppgave(opprettOppgave, journalpost)
@@ -223,8 +215,7 @@ class OppgaveService(
         when (oppgave.behandlingstema) {
             Behandlingstema.Overgangsstønad.value -> true
             Behandlingstema.Barnetilsyn.value ->
-                oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon ||
-                    oppgave.behandlesAvApplikasjon == EF_SAK_INFOTRYGD.applikasjon
+                oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
             Behandlingstema.Skolepenger.value -> true
             null -> false
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")

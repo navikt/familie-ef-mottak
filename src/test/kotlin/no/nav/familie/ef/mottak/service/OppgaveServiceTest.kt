@@ -145,7 +145,7 @@ internal class OppgaveServiceTest {
         val opprettOppgaveRequest =
             opprettOppgaveMapper.toJournalføringsoppgave(
                 journalpostOvergangsstøand,
-                BehandlesAvApplikasjon.INFOTRYGD,
+                BehandlesAvApplikasjon.EF_SAK,
                 "4489"
             )
 
@@ -157,8 +157,7 @@ internal class OppgaveServiceTest {
             integrasjonerClient.finnOppgaver(any(), any())
         } returns FinnOppgaveResponseDto(0, listOf())
 
-        val oppgaveResponse =
-            oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand, BehandlesAvApplikasjon.INFOTRYGD)
+        val oppgaveResponse = oppgaveService.lagJournalføringsoppgave(journalpostOvergangsstøand)
 
         assertEquals(1, oppgaveResponse)
     }
@@ -212,7 +211,7 @@ internal class OppgaveServiceTest {
     inner class LagJournalføringsoppgaveForJournalpostId {
 
         @Test
-        fun `skal sette behandlesAvApplikasjon=UAVKLART hvis det finnes en behandling i ny løsning`() {
+        fun `skal opprette en ny journalføringsoppgave`() {
             val journalpostId = UUID.randomUUID().toString()
             val journalpost =
                 journalpostOvergangsstøand.copy(
@@ -225,7 +224,7 @@ internal class OppgaveServiceTest {
 
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
-            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.UAVKLART, "4489") }
+            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
         }
     }
 
@@ -247,26 +246,12 @@ internal class OppgaveServiceTest {
     inner class OppdaterOppgaveMedRiktigMappeId {
 
         @Test
-        fun `skal ikke flytte oppgave til mappe hvis sak ikke kan behandles i ny løsning for barnetilsyn`() {
-            val oppgaveId: Long = 123
-
-            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
-            )
-
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
-
-            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
-        }
-
-        @Test
         fun `skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`() {
             val oppgaveId: Long = 123
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
@@ -287,7 +272,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(erSelvstendig = true)
@@ -309,7 +294,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(
@@ -334,7 +319,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns søknadBarnetilsyn(
@@ -359,7 +344,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns søknadBarnetilsyn(
@@ -384,7 +369,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             val søknadBarnetilsyn =
@@ -409,7 +394,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns null
@@ -431,7 +416,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(false)
@@ -459,7 +444,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Skolepenger,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
@@ -474,7 +459,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = null,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
@@ -501,7 +486,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
@@ -529,7 +514,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK_INFOTRYGD
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
 
