@@ -33,7 +33,7 @@ internal class ArkiverSøknadTaskTest {
     fun `Skal gå til LagJournalføringsoppgaveTask når arkiver søknad task er utført`() {
         arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
-        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(VelgAutomatiskEllerManuellFlytTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE, slot.captured[1].type)
     }
 
@@ -43,7 +43,7 @@ internal class ArkiverSøknadTaskTest {
 
         arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(VelgAutomatiskEllerManuellFlytTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE, slot.captured[1].type)
     }
 
@@ -52,7 +52,7 @@ internal class ArkiverSøknadTaskTest {
         val soknad = søknad(dokumenttype = DOKUMENTTYPE_BARNETILSYN)
         arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(VelgAutomatiskEllerManuellFlytTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE, slot.captured[1].type)
     }
 
@@ -62,7 +62,7 @@ internal class ArkiverSøknadTaskTest {
 
         arkiverSøknadTaskTest.onCompletion(Task(type = "", payload = soknad.id, properties = Properties()))
 
-        assertEquals(LagJournalføringsoppgaveTask.TYPE, slot.captured[0].type)
+        assertEquals(VelgAutomatiskEllerManuellFlytTask.TYPE, slot.captured[0].type)
         assertEquals(SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE, slot.captured[1].type)
     }
 
