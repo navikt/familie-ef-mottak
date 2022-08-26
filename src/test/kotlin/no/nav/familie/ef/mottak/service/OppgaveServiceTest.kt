@@ -265,12 +265,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte oppgave til mappe for selvstendige hvis søknad har firma`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdSelvstendig = 456
             val gammelMappeIdSelvstendig = 1
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(mappeIdSelvstendig = 456, gammelMappeIdSelvstendig = gammelMappeIdSelvstendig)
+                mapper = lagMapper(gammelMappeIdSelvstendig = gammelMappeIdSelvstendig)
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -288,13 +287,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte oppgave til mappe for særlig tilsynskrevende barn for overgangsstønad`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdTilsynskrevende = 3456
             val gammelMappeIdTilsynskrevende = 3456
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    mappeIdTilsynskrevende = mappeIdTilsynskrevende,
                     gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende
                 )
             )
@@ -317,13 +314,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte oppgave til mappe for særlig tilsynskrevende barn for barnetilsyn`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdTilsynskrevende = 123
             val gammelMappeIdTilsynskrevende = 3456
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    mappeIdTilsynskrevende = mappeIdTilsynskrevende,
                     gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende
                 )
             )
@@ -346,13 +341,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte barnetilsyn-oppgave til mappe for selvstendig`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdSelvstendig = 456
             val gammelMappeIdSelvstendig = 1
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    mappeIdTilsynskrevende = mappeIdSelvstendig,
                     gammelMappeIdSelvstendig = gammelMappeIdSelvstendig
                 )
             )
@@ -375,12 +368,11 @@ internal class OppgaveServiceTest {
         fun `les inn komplett barnetilsyn-søknad, oppgave til mappe for særlig tilsynskrevende`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdTilsynskrevende = 456
             val gammelMappeIdTilsynskrevende = 654
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(mappeIdTilsynskrevende = mappeIdTilsynskrevende, gammelMappeIdTilsynskrevende = 654)
+                mapper = lagMapper(gammelMappeIdTilsynskrevende = 654)
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -401,13 +393,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte oppgave til uplassert hvis ettersending - finner ikke søknad  `() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdUplassert = 123
             val gammelMappeIdUpplassert = 1
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    mappeIdUplassert = mappeIdUplassert,
                     gammelMappeIdUplassert = gammelMappeIdUpplassert
                 )
             )
@@ -427,12 +417,11 @@ internal class OppgaveServiceTest {
         fun `skal flytte oppgave til uplassert hvis vanlig søknad `() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
-            val mappeIdUplassert = 123
             val gammelMappeIdUplassert = 1
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(mappeIdUplassert = mappeIdUplassert, gammelMappeIdUplassert = gammelMappeIdUplassert)
+                mapper = lagMapper(gammelMappeIdUplassert = gammelMappeIdUplassert)
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
