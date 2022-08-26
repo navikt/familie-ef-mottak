@@ -478,7 +478,7 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til EF Sak 01 hvis barnetilsyn og skal behandles i ny løsning`() {
+        fun `skal flytte oppgave til uplassert hvis barnetilsyn og skal behandles i ny løsning`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
 
@@ -488,7 +488,7 @@ internal class OppgaveServiceTest {
                 mapper = listOf(
                     MappeDto(
                         id = gammelMappeIdUplassert,
-                        navn = "01 Uplassert",
+                        navn = "Uplassert",
                         enhetsnr = ""
                     )
                 )
@@ -506,7 +506,7 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til uplassertMappe hvis overgangsstønad`() {
+        fun `skal flytte oppgave til uplassert mappe hvis overgangsstønad`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
             val gammelMappeIdUplassert = 123
@@ -516,7 +516,7 @@ internal class OppgaveServiceTest {
                 mapper = listOf(
                     MappeDto(
                         id = gammelMappeIdUplassert,
-                        navn = "01 Uplassert",
+                        navn = "Uplassert",
                         enhetsnr = ""
                     )
                 )
