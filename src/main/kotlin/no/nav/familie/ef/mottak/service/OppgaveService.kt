@@ -34,7 +34,7 @@ class OppgaveService(
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
-    private val featureToggleService: FeatureToggleService,
+    private val featureToggleService: FeatureToggleService
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -66,7 +66,6 @@ class OppgaveService(
     }
 
     fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
-
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
@@ -121,7 +120,6 @@ class OppgaveService(
         opprettOppgave: OpprettOppgaveRequest,
         journalpost: Journalpost
     ): Long {
-
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info(
@@ -278,7 +276,7 @@ class OppgaveService(
 
     private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
         return mapperResponse.mapper.filter {
-            it.navn.contains("EF Sak", true) &&
+            !it.navn.contains("EF Sak", true) &&
                 it.navn.contains(søkestreng, true)
         }.maxByOrNull { it.id }
             ?: error("Fant ikke mappe for $søkestreng")
@@ -295,5 +293,5 @@ enum class MappeSøkestreng(val søkestreng: String) {
     SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
     SELVSTENDIG("61 Selvstendig næringsdrivende"),
     OPPLÆRING("65 Opplæring"),
-    UPLASSERT("01 Uplassert")
+    UPLASSERT("Uplassert")
 }
