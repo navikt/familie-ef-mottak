@@ -15,10 +15,6 @@ fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
     }
 }
 
-fun erSøknadTilEFStønad(dokumenttype: String): Boolean {
-    return dokumenttypeTilStønadType(dokumenttype) != null
-}
-
 fun utledDokumenttypeForEttersending(stønadType: StønadType): Dokumenttype =
     when (stønadType) {
         StønadType.OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING

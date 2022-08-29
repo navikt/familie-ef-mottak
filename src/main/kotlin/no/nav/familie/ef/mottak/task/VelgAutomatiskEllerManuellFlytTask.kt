@@ -48,14 +48,13 @@ class VelgAutomatiskEllerManuellFlytTask(
         stønadstype: StønadType?,
         søknad: Søknad
     ): Boolean {
-        val kanAutomatiskJournalføre = when (stønadstype) {
+        return when (stønadstype) {
             OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER -> saksbehandlingClient.kanOppretteFørstegangsbehandling(
                 søknad.fnr,
                 stønadstype
             )
             else -> false
         }
-        return kanAutomatiskJournalføre
     }
 
     companion object {
