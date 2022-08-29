@@ -26,10 +26,13 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     private val velgAutomatiskEllerManuellFlytTask =
         VelgAutomatiskEllerManuellFlytTask(taskRepository, søknadService, saksbehandlingClient, featureToggleService)
 
+    private val arbeidssøkerSkjemaId = "999L"
+    private val overgangsstønadSøknadId = "123L"
+
     @BeforeEach
     internal fun setUp() {
         every {
-            søknadService.get("123L")
+            søknadService.get(overgangsstønadSøknadId)
         } returns Søknad(
             søknadJson = EncryptedString(""),
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
@@ -37,7 +40,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
             fnr = FnrGenerator.generer()
         )
         every {
-            søknadService.get("999L")
+            søknadService.get(arbeidssøkerSkjemaId)
         } returns Søknad(
             søknadJson = EncryptedString(""),
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
@@ -53,7 +56,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         val taskSlot = slot<Task>()
         every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
 
-        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(automatiskJournalføringFlyt().first().type)
     }
 
@@ -64,7 +67,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         val taskSlot = slot<Task>()
         every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
 
-        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
     }
 
@@ -74,7 +77,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         val taskSlot = slot<Task>()
         every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
 
-        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = "123L", properties = Properties()))
+        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
     }
 
@@ -84,7 +87,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         val taskSlot = slot<Task>()
         every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
 
-        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = "999L", properties = Properties()))
+        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = arbeidssøkerSkjemaId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
     }
 }
