@@ -185,7 +185,7 @@ class OppgaveService(
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
             val mappe = finnMappe(mapperResponse, finnSøkestreng(oppgave, søknadId))
-            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe.id.toLong()))
+            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe?.id?.toLong()))
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
@@ -274,12 +274,12 @@ class OppgaveService(
         }
     }
 
-    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto {
+    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto? {
         return mapperResponse.mapper.filter {
             !it.navn.contains("EF Sak", true) &&
                 it.navn.contains(søkestreng, true)
         }.maxByOrNull { it.id }
-            ?: error("Fant ikke mappe for $søkestreng")
+        null
     }
 
     companion object {
