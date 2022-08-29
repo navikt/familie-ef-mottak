@@ -22,6 +22,10 @@ fun ettersendingflyt() = listOf(
     TaskType(PlasserOppgaveIMappeOppgaveTask.TYPE),
 )
 
+fun eksternJournalføringFlyt() = listOf(
+    TaskType(LagEksternJournalføringsoppgaveTask.TYPE)
+)
+
 fun TaskType.nesteHovedflytTask() = hovedflyt().zipWithNext().first { this == it.first }.second.type
 fun TaskType.nesteManuellflytTask() = manuellJournalføringFlyt().zipWithNext().first { this == it.first }.second.type
 fun TaskType.nesteEttersendingsflytTask() = ettersendingflyt().zipWithNext().first { this == it.first }.second.type

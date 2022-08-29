@@ -4,6 +4,7 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.TaskRepositoryUtvidet
 import no.nav.familie.ef.mottak.repository.domain.Hendelseslogg
 import no.nav.familie.ef.mottak.task.LagEksternJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.eksternJournalføringFlyt
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.prosessering.domene.PropertiesWrapper
 import no.nav.familie.prosessering.domene.Task
@@ -49,8 +50,9 @@ class JournalfoeringHendelseDbUtil(
     }
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
+
         val journalføringsTask = Task(
-            type = LagEksternJournalføringsoppgaveTask.TYPE,
+            type = eksternJournalføringFlyt().first().type,
             payload = journalpost.journalpostId,
             properties = journalpost.metadata()
         )
