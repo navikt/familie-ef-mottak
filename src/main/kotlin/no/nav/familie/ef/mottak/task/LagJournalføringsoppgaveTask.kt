@@ -30,7 +30,7 @@ class LagJournalføringsoppgaveTask(
         task.metadata[journalføringOppgaveIdKey]?.let {
             taskRepository.save(
                 Task(
-                    TaskType(TYPE).nesteHovedflytTask(),
+                    TaskType(TYPE).nesteManuellflytTask(),
                     task.payload,
                     task.metadata
                 )
