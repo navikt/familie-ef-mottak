@@ -183,9 +183,13 @@ class OppgaveService(
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
 
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
-
             val mappe = finnMappe(mapperResponse, finnSøkestreng(oppgave, søknadId))
-            integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe?.id?.toLong()))
+            if (mappe == null && oppgave.mappeId == null) {
+                log.info("Flytter ikke oppgave da den allerede er uplassert")
+            }
+            else {
+                integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe?.id?.toLong()))
+            }
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
