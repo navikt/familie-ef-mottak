@@ -186,8 +186,7 @@ class OppgaveService(
             val mappe = finnMappe(mapperResponse, finnSøkestreng(oppgave, søknadId))
             if (mappe == null && oppgave.mappeId == null) {
                 log.info("Flytter ikke oppgave da den allerede er uplassert")
-            }
-            else {
+            } else {
                 integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe?.id?.toLong()))
             }
         } else {
@@ -279,11 +278,14 @@ class OppgaveService(
     }
 
     private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto? {
-        return mapperResponse.mapper.filter {
-            !it.navn.contains("EF Sak", true) &&
-                it.navn.contains(søkestreng, true)
-        }.maxByOrNull { it.id }
-        null
+        return if ("Uplassert".equals(søkestreng)) {
+            null
+        } else {
+            mapperResponse.mapper.filter {
+                !it.navn.contains("EF Sak", true) &&
+                    it.navn.contains(søkestreng, true)
+            }.maxByOrNull { it.id } ?: error("Fant ikke mappe for $søkestreng")
+        }
     }
 
     companion object {
