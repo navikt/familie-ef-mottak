@@ -248,7 +248,7 @@ internal class OppgaveServiceTest {
     inner class OppdaterOppgaveMedRiktigMappeId {
 
         @Test
-        fun `skal flytte oppgave til mappe hvis sak kan behandles i ny løsning for barnetilsyn`() {
+        fun `skal være uplassert hvis sak kan behandles i ny løsning for barnetilsyn`() {
             val oppgaveId: Long = 123
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
@@ -258,7 +258,7 @@ internal class OppgaveServiceTest {
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
-            verify(exactly = 1) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         @Test
@@ -390,7 +390,7 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til uplassert hvis ettersending - finner ikke søknad  `() {
+        fun `skal være uplassert hvis ettersending - finner ikke søknad  `() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
             val gammelMappeIdUpplassert = 1
@@ -410,11 +410,11 @@ internal class OppgaveServiceTest {
             every { søknadService.getOrNull("123") } returns null
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
-            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdUpplassert.toLong())
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         @Test
-        fun `skal flytte oppgave til uplassert hvis vanlig søknad `() {
+        fun `skal la være å oppdatere oppgave hvis vanlig søknad `() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
             val gammelMappeIdUplassert = 1
@@ -432,7 +432,7 @@ internal class OppgaveServiceTest {
             every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(false)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
-            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdUplassert.toLong())
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         @Test
@@ -478,7 +478,7 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til uplassert hvis barnetilsyn og skal behandles i ny løsning`() {
+        fun `skal være uplassert hvis barnetilsyn og skal behandles i ny løsning`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
 
@@ -502,11 +502,11 @@ internal class OppgaveServiceTest {
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
-            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdUplassert.toLong())
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         @Test
-        fun `skal flytte oppgave til uplassert mappe hvis overgangsstønad`() {
+        fun `skal ikke sette mappeId hvis overgangsstønad`() {
             val oppgaveId: Long = 123
             val oppgaveSlot = slot<Oppgave>()
             val gammelMappeIdUplassert = 123
@@ -530,7 +530,7 @@ internal class OppgaveServiceTest {
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
 
-            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdUplassert.toLong())
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         private fun søknadOvergangsstønad(

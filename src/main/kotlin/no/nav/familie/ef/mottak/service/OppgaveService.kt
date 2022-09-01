@@ -284,7 +284,8 @@ class OppgaveService(
             mapperResponse.mapper.filter {
                 !it.navn.contains("EF Sak", true) &&
                     it.navn.contains(søkestreng, true)
-            }.maxByOrNull { it.id } ?: error("Fant ikke mappe for $søkestreng")
+            }.maxByOrNull { it.id }
+                ?: error("Fant ikke mappe for $søkestreng")
         }
     }
 
