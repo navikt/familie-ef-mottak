@@ -15,6 +15,12 @@ fun automatiskJournalføringFlyt() = listOf(
     TaskType(AutomatiskJournalførTask.TYPE)
 )
 
+val fallbacks = mapOf(
+    TaskType(AutomatiskJournalførTask.TYPE) to LagJournalføringsoppgaveTask.TYPE,
+)
+
+fun TaskType.nesteFallbackTask() = fallbacks[this] ?: error("Finner ikke fallback til $this")
+
 fun ettersendingflyt() = listOf(
     TaskType(LagEttersendingPdfTask.TYPE),
     TaskType(ArkiverEttersendingTask.TYPE),
