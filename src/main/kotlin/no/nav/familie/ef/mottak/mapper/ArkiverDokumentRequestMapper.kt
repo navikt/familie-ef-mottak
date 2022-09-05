@@ -117,6 +117,10 @@ fun Dokumenttype?.dokumentTittel(): String {
     return when (this) {
         Dokumenttype.OVERGANGSSTØNAD_SØKNAD -> "Søknad om overgangsstønad"
         Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om overgangsstønad"
+        Dokumenttype.SKOLEPENGER_SØKNAD -> "Søknad om stønad til skolepenger"
+        Dokumenttype.SKOLEPENGER_ETTERSENDING -> "Ettersendelse til søknad om skolepenger"
+        Dokumenttype.BARNETILSYNSTØNAD_SØKNAD -> "Søknad om stønad til barnetilsyn"
+        Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om barnetilsyn"
         else -> "hoveddokument"
     }
 }
