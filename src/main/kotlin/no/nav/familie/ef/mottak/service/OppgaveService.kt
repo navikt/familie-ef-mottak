@@ -205,7 +205,8 @@ class OppgaveService(
 
     private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT &&
         oppgave.status != StatusEnum.FERDIGSTILT &&
-        oppgave.mappeId == null && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
+        oppgave.mappeId == null &&
+        oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when (oppgave.behandlingstema) {
