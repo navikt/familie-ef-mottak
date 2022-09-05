@@ -34,7 +34,7 @@ class AutomatiskJournalføringService(
                 saksbehandlingClient.journalførAutomatisk(arkiverDokumentRequest)
             infoLog(journalpostId, respons)
         } catch (e: Exception) {
-            logger.error("Feil ved prosessering av automatisk journalhendelser for $stønadstype: journalpostId: $journalpostId, fallback => manuell")
+            logger.error("Feil ved prosessering av automatisk journalhendelser for $stønadstype: journalpostId: $journalpostId")
             secureLogger.error("Feil ved prosessering av automatisk journalhendelser", e)
             return false
         }
