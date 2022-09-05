@@ -30,11 +30,11 @@ internal class AutomatiskJournalføringServiceTest {
     internal fun `Skal returnere true når journalføring i ef-sak går bra `() {
 
         every {
-            saksbehandlingClient.lagFørstegangsbehandlingOgBehandleSakOppgave(any())
+            saksbehandlingClient.journalførAutomatisk(any())
         } returns automatiskJournalføringResponse
 
         assertTrue {
-            automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
+            automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
                 journalpostId = "",
                 stønadstype = StønadType.OVERGANGSSTØNAD
@@ -46,11 +46,11 @@ internal class AutomatiskJournalføringServiceTest {
     internal fun `Skal returnere false når journalføring i ef-sak går bra `() {
 
         every {
-            saksbehandlingClient.lagFørstegangsbehandlingOgBehandleSakOppgave(any())
+            saksbehandlingClient.journalførAutomatisk(any())
         } throws RuntimeException("Feil")
 
         assertFalse {
-            automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
+            automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
                 journalpostId = "",
                 stønadstype = StønadType.OVERGANGSSTØNAD

@@ -33,7 +33,7 @@ class SaksbehandlingClient(
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 
-    fun lagFørstegangsbehandlingOgBehandleSakOppgave(
+    fun journalførAutomatisk(
         automatiskJournalføringRequest: AutomatiskJournalføringRequest
     ): AutomatiskJournalføringResponse {
 

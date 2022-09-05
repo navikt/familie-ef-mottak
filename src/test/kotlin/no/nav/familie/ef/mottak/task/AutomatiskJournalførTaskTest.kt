@@ -80,7 +80,7 @@ internal class AutomatiskJournalførTaskTest {
     }
 
     private fun MockKMatcherScope.automatiskJournalføring() =
-        automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
+        automatiskJournalføringService.journalførAutomatisk(
             any(),
             any(),
             any()

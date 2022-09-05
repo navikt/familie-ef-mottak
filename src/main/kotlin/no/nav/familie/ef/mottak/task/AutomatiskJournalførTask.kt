@@ -10,7 +10,6 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 @TaskStepBeskrivelse(taskStepType = AutomatiskJournalførTask.TYPE, beskrivelse = "Automatisk journalfør")
@@ -21,7 +20,6 @@ class AutomatiskJournalførTask(
 ) :
     AsyncTaskStep {
 
-    @Transactional
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
         val stønadstype: StønadType =
@@ -29,7 +27,7 @@ class AutomatiskJournalførTask(
         val journalpostId = task.metadata["journalpostId"].toString()
 
         val automatiskJournalføringFullført =
-            automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
+            automatiskJournalføringService.journalførAutomatisk(
                 personIdent = søknad.fnr,
                 journalpostId = journalpostId,
                 stønadstype = stønadstype

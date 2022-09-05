@@ -8,7 +8,6 @@ import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AutomatiskJournalføringService(
@@ -20,8 +19,7 @@ class AutomatiskJournalføringService(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
-    @Transactional
-    fun lagFørstegangsbehandlingOgBehandleSakOppgave(
+    fun journalførAutomatisk(
         personIdent: String,
         journalpostId: String,
         stønadstype: StønadType
@@ -32,9 +30,9 @@ class AutomatiskJournalføringService(
             stønadstype = stønadstype
         )
         try {
-            val lagFørstegangsbehandlingOgBehandleSakOppgave =
-                saksbehandlingClient.lagFørstegangsbehandlingOgBehandleSakOppgave(arkiverDokumentRequest)
-            infoLog(journalpostId, lagFørstegangsbehandlingOgBehandleSakOppgave)
+            val respons =
+                saksbehandlingClient.journalførAutomatisk(arkiverDokumentRequest)
+            infoLog(journalpostId, respons)
         } catch (e: Exception) {
             logger.error("Feil ved prosessering av automatisk journalhendelser for $stønadstype: journalpostId: $journalpostId, fallback => manuell")
             secureLogger.error("Feil ved prosessering av automatisk journalhendelser", e)
@@ -45,13 +43,13 @@ class AutomatiskJournalføringService(
 
     private fun infoLog(
         journalpostId: String,
-        lagFørstegangsbehandlingOgBehandleSakOppgave: AutomatiskJournalføringResponse
+        automatiskJournalføringResponse: AutomatiskJournalføringResponse
     ) {
         logger.info(
             "Automatisk journalført:$journalpostId: " +
-                "behandlingId: ${lagFørstegangsbehandlingOgBehandleSakOppgave.behandlingId}, " +
-                "fagsakId: ${lagFørstegangsbehandlingOgBehandleSakOppgave.fagsakId}, " +
-                "behandleSakOppgaveId: ${lagFørstegangsbehandlingOgBehandleSakOppgave.behandleSakOppgaveId}"
+                "behandlingId: ${automatiskJournalføringResponse.behandlingId}, " +
+                "fagsakId: ${automatiskJournalføringResponse.fagsakId}, " +
+                "behandleSakOppgaveId: ${automatiskJournalføringResponse.behandleSakOppgaveId}"
         )
     }
 }
