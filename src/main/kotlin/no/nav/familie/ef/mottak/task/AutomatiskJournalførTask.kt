@@ -9,8 +9,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,28 +23,21 @@ class AutomatiskJournalførTask(
 
     @Transactional
     override fun doTask(task: Task) {
-        val logger: Logger = LoggerFactory.getLogger(this::class.java)
         val søknad: Søknad = søknadService.get(task.payload)
         val stønadstype: StønadType =
             dokumenttypeTilStønadType(søknad.dokumenttype) ?: error("Må ha stønadstype for å automatisk journalføre")
         val journalpostId = task.metadata["journalpostId"].toString()
 
-        try {
-            val response = automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
+        val automatiskJournalføringFullført =
+            automatiskJournalføringService.lagFørstegangsbehandlingOgBehandleSakOppgave(
                 personIdent = søknad.fnr,
                 journalpostId = journalpostId,
                 stønadstype = stønadstype
             )
-            logger.info(
-                "Automatisk journalført:$journalpostId: " +
-                    "behandlingId: ${response.behandlingId}, " +
-                    "fagsakId: ${response.fagsakId}, " +
-                    "behandleSakOppgaveId: ${response.behandleSakOppgaveId}"
-            )
-        } catch (e: Exception) {
-            logger.warn("Feil ved prosessering av automatisk journalhendelser for $stønadstype: journalpostId: $journalpostId, fallback => manuell")
-            val nesteFallbackTask = TaskType(TYPE).nesteFallbackTask()
-            val fallback = Task(nesteFallbackTask, task.payload, task.metadata)
+
+        if (!automatiskJournalføringFullført) {
+            val nesteFallbackTaskType = manuellJournalføringFlyt().first().type
+            val fallback = Task(nesteFallbackTaskType, task.payload, task.metadata)
             taskRepository.save(fallback)
         }
     }
@@ -55,12 +46,3 @@ class AutomatiskJournalførTask(
         const val TYPE = "automatiskJournalfør"
     }
 }
-
-// TODO oppdatere metadata på denne tasken, eller en "resultatTask" hvis alt ok? Eller bare logge?
-// task.metadata.apply {
-//     this["behandleSakOppgaveId"] = response.behandleSakOppgaveId
-//     this["behandlingId"] = response.behandlingId
-//     this["fagsakId"] = response.fagsakId
-// }
-//  taskRepository.save(task)
-// val feilCounter: Counter = Metrics.counter("alene.med.barn.automatiskjournalføring.feilet")

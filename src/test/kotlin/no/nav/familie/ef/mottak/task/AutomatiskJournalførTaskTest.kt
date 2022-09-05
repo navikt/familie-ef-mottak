@@ -60,7 +60,7 @@ internal class AutomatiskJournalførTaskTest {
     internal fun `Skal bruke fallback manuell journalføring dersom vi får exception når vi kaller på ef-sak`() {
         val taskSlot = slot<Task>()
         every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
-        every { automatiskJournalføring() } throws RuntimeException("Feil")
+        every { automatiskJournalføring() } returns false
 
         automatiskJournalførTask.doTask(task)
 
@@ -74,7 +74,7 @@ internal class AutomatiskJournalførTaskTest {
             behandlingId = UUID.randomUUID(),
             behandleSakOppgaveId = 0
         )
-        every { automatiskJournalføring() } returns response
+        every { automatiskJournalføring() } returns true
         automatiskJournalførTask.doTask(task)
         verify(exactly = 0) { taskRepository.save(any()) }
     }
