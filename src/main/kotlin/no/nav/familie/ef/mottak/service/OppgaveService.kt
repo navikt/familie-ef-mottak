@@ -207,10 +207,7 @@ class OppgaveService(
     private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT &&
         oppgave.status != StatusEnum.FERDIGSTILT &&
         oppgave.mappeId == null &&
-        (
-            oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY ||
-                oppgave.tildeltEnhetsnr == ENHETSNUMMER_EGEN_ANSATT
-            )
+        oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when (oppgave.behandlingstema) {
@@ -292,7 +289,6 @@ class OppgaveService(
     companion object {
 
         private const val ENHETSNUMMER_NAY: String = "4489"
-        private const val ENHETSNUMMER_EGEN_ANSATT: String = "4483"
     }
 }
 
