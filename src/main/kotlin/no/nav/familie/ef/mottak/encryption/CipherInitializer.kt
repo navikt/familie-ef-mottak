@@ -15,7 +15,6 @@ class CipherInitializer {
         encryptionMode: Int,
         iv: ByteArray
     ) {
-
         val secretKey = SecretKeySpec(KeyProperty.DATABASE_ENCRYPTION_KEY, SECRET_KEY_ALGORITHM)
         val algorithmParameters = IvParameterSpec(iv)
         cipher.init(encryptionMode, secretKey, algorithmParameters)

@@ -50,7 +50,6 @@ class JournalfoeringHendelseDbUtil(
     }
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
-
         val journalføringsTask = Task(
             type = eksternJournalføringFlyt().first().type,
             payload = journalpost.journalpostId,

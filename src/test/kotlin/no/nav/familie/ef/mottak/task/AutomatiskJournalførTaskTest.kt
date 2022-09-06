@@ -7,8 +7,10 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.encryption.EncryptedString
+import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.AutomatiskJournalføringService
+import no.nav.familie.ef.mottak.service.MappeService
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringResponse
 import no.nav.familie.prosessering.domene.Task
@@ -25,11 +27,15 @@ internal class AutomatiskJournalførTaskTest {
     val automatiskJournalføringService: AutomatiskJournalføringService = mockk()
     val søknadService: SøknadService = mockk()
     val taskRepository: TaskRepository = mockk()
+    val integrasjonerClient: IntegrasjonerClient = mockk(relaxed = true)
+    val mappeService: MappeService = mockk(relaxed = true)
 
     val automatiskJournalførTask = AutomatiskJournalførTask(
         taskRepository = taskRepository,
         automatiskJournalføringService = automatiskJournalføringService,
-        søknadService = søknadService
+        søknadService = søknadService,
+        integrasjonerClient = integrasjonerClient,
+        mappeService = mappeService
     )
 
     private val task: Task
@@ -81,6 +87,7 @@ internal class AutomatiskJournalførTaskTest {
 
     private fun MockKMatcherScope.automatiskJournalføring() =
         automatiskJournalføringService.journalførAutomatisk(
+            any(),
             any(),
             any(),
             any()

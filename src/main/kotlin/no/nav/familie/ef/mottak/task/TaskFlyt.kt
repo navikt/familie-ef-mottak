@@ -3,12 +3,12 @@ package no.nav.familie.ef.mottak.task
 fun hovedflyt() = listOf(
     TaskType(LagPdfTask.TYPE),
     TaskType(ArkiverSøknadTask.TYPE),
-    TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
+    TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE)
 )
 
 fun manuellJournalføringFlyt() = listOf(
     TaskType(LagJournalføringsoppgaveTask.TYPE),
-    TaskType(PlasserOppgaveIMappeOppgaveTask.TYPE),
+    TaskType(PlasserOppgaveIMappeOppgaveTask.TYPE)
 )
 
 fun automatiskJournalføringFlyt() = listOf(
@@ -18,8 +18,7 @@ fun automatiskJournalføringFlyt() = listOf(
 fun ettersendingflyt() = listOf(
     TaskType(LagEttersendingPdfTask.TYPE),
     TaskType(ArkiverEttersendingTask.TYPE),
-    TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE),
-    TaskType(PlasserOppgaveIMappeOppgaveTask.TYPE),
+    TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE)
 )
 
 fun eksternJournalføringFlyt() = listOf(

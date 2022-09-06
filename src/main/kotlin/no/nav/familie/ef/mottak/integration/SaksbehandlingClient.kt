@@ -36,7 +36,6 @@ class SaksbehandlingClient(
     fun journalførAutomatisk(
         automatiskJournalføringRequest: AutomatiskJournalføringRequest
     ): AutomatiskJournalføringResponse {
-
         val sendInnUri = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/automatisk-journalforing/journalfor")
             .build()

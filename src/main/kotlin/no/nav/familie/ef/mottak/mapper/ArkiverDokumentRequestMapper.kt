@@ -39,7 +39,6 @@ object ArkiverDokumentRequestMapper {
         ettersending: Ettersending,
         vedlegg: List<EttersendingVedlegg>
     ): ArkiverDokumentRequest {
-
         val stønadType = StønadType.valueOf(ettersending.stønadType)
 
         val hovedDokumentVarianter = lagHoveddokumentvarianterForEttersending(stønadType, ettersending)

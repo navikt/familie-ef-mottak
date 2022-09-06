@@ -36,7 +36,7 @@ class SøknadServiceTest {
             SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
             SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
             SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
-            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
+            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker)
         )
         val forventetDokumentasjonsbehov = listOf(
             DokumentasjonsbehovKontrakter(
@@ -62,7 +62,6 @@ class SøknadServiceTest {
 
         @Test
         fun `for søknad som ikke er journalført feiler`() {
-
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()
 
             assertThrows<IllegalStateException> { søknadService.reduserSøknad("UUID") }
@@ -87,7 +86,6 @@ class SøknadServiceTest {
 
         @Test
         fun `for søknad som ikke er journalført feiler`() {
-
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()
 
             assertThrows<IllegalStateException> { søknadService.slettSøknad("UUID") }

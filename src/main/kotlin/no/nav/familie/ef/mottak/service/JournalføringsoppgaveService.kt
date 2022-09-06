@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.hendelse.JournalpostState
 import no.nav.familie.ef.mottak.hendelse.getJournalpostState
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class JournalføringsoppgaveService(
-    val featureToggleService: FeatureToggleService,
     val søknadRepository: SøknadRepository,
     val ettersendingRepository: EttersendingRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
@@ -27,7 +25,6 @@ class JournalføringsoppgaveService(
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)
 
     fun lagEksternJournalføringTask(journalpost: Journalpost) {
-
         if (journalpost.skalBehandles()) {
             opprettTaskDersomDetIkkeAlleredeFinnes(journalpost)
         } else {
