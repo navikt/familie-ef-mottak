@@ -47,6 +47,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClientResponseException
@@ -62,6 +63,7 @@ internal class OppgaveServiceTest {
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
     private val ettersendingService = mockk<EttersendingService>()
     private val featureToggleService = mockk<FeatureToggleService>()
+    private val cacheManager = ConcurrentMapCacheManager()
 
     private val oppgaveService: OppgaveService =
         OppgaveService(
@@ -69,7 +71,7 @@ internal class OppgaveServiceTest {
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
-            mappeService = MappeService(integrasjonerClient, søknadService)
+            mappeService = MappeService(integrasjonerClient, søknadService, cacheManager)
         )
 
     @BeforeEach

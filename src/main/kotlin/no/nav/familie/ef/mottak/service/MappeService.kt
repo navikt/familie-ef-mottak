@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.config.getValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.MappeSøkestreng.OPPLÆRING
@@ -19,12 +20,14 @@ import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
 
 @Service
 class MappeService(
     private val integrasjonerClient: IntegrasjonerClient,
-    private val søknadService: SøknadService
+    private val søknadService: SøknadService,
+    private val cacheManager: CacheManager
 ) {
 
     val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -39,16 +42,18 @@ class MappeService(
     }
 
     private fun finnMapperForEnhet(enhetsnummer: String): FinnMappeResponseDto {
-        val finnMappeRequest = FinnMappeRequest(
-            tema = listOf(),
-            enhetsnr = enhetsnummer,
-            opprettetFom = null,
-            limit = 1000
-        )
-        val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
-        log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
+        return cacheManager.getValue("oppgave-mappe", enhetsnummer) {
+            val finnMappeRequest = FinnMappeRequest(
+                tema = listOf(),
+                enhetsnr = enhetsnummer,
+                opprettetFom = null,
+                limit = 1000
+            )
+            val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
+            log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
-        return mapperResponse
+            mapperResponse
+        }
     }
 
     private fun finnSøkestrengForSøknad(søknadId: String): MappeSøkestreng {
