@@ -45,7 +45,7 @@ internal class AutomatiskJournalføringServiceTest {
     }
 
     @Test
-    internal fun `Skal returnere false når journalføring i ef-sak går bra `() {
+    internal fun `Skal returnere false når journalføring i ef-sak feiler `() {
         every {
             saksbehandlingClient.journalførAutomatisk(any())
         } throws RuntimeException("Feil")
