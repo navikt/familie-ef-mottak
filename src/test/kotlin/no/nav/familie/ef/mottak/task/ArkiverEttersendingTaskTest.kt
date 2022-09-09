@@ -21,7 +21,8 @@ import java.util.UUID
 internal class TaskTest : IntegrasjonSpringRunnerTest() {
 
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired private lateinit var taskWorker: TaskWorker
+    @Autowired
+    private lateinit var taskWorker: TaskWorker
 
     @Autowired private lateinit var taskRepository: TaskRepository
 

@@ -26,9 +26,10 @@ internal class AutomatiskJournalføringServiceTest {
         behandleSakOppgaveId = 0
     )
 
+    private val mappeId = 1L
+
     @Test
     internal fun `Skal returnere true når journalføring i ef-sak går bra `() {
-
         every {
             saksbehandlingClient.journalførAutomatisk(any())
         } returns automatiskJournalføringResponse
@@ -37,14 +38,14 @@ internal class AutomatiskJournalføringServiceTest {
             automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
                 journalpostId = "",
-                stønadstype = StønadType.OVERGANGSSTØNAD
+                stønadstype = StønadType.OVERGANGSSTØNAD,
+                mappeId = mappeId
             )
         }
     }
 
     @Test
-    internal fun `Skal returnere false når journalføring i ef-sak går bra `() {
-
+    internal fun `Skal returnere false når journalføring i ef-sak feiler `() {
         every {
             saksbehandlingClient.journalførAutomatisk(any())
         } throws RuntimeException("Feil")
@@ -53,7 +54,8 @@ internal class AutomatiskJournalføringServiceTest {
             automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
                 journalpostId = "",
-                stønadstype = StønadType.OVERGANGSSTØNAD
+                stønadstype = StønadType.OVERGANGSSTØNAD,
+                mappeId = mappeId
             )
         }
     }

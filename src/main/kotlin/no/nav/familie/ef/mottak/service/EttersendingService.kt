@@ -23,7 +23,7 @@ import java.util.UUID
 class EttersendingService(
     private val ettersendingRepository: EttersendingRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
-    private val dokumentClient: FamilieDokumentClient,
+    private val dokumentClient: FamilieDokumentClient
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -39,7 +39,6 @@ class EttersendingService(
     }
 
     fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> {
-
         return ettersendingRepository.findAllByFnr(personIdent.ident).map {
             objectMapper.readValue(it.ettersendingJson.data)
         }
@@ -63,7 +62,7 @@ class EttersendingService(
 
     private fun motta(
         ettersendingDb: Ettersending,
-        vedlegg: List<EttersendingVedlegg>,
+        vedlegg: List<EttersendingVedlegg>
     ) {
         val lagretSkjema = ettersendingRepository.insert(ettersendingDb)
         ettersendingVedleggRepository.insertAll(vedlegg)

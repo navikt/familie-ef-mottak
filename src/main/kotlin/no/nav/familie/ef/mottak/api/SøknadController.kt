@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
-    issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
+    issuer = EksternBrukerUtils.ISSUER_TOKENX,
+    claimMap = ["acr=Level4"]
 )
 class SøknadController(val søknadService: SøknadService) {
 

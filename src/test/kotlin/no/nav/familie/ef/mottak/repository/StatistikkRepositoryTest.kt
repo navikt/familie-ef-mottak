@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 internal class StatistikkRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var søknadRepository: SøknadRepository
+
     @Autowired lateinit var statistikkRepository: StatistikkRepository
 
     @Test

@@ -23,7 +23,6 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `lagre og hent ettersending`() {
-
         val vedlegg = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
         val dokumentasjonsbehov = Dokumentasjonsbehov(
             id = UUID.randomUUID().toString(),
@@ -37,7 +36,8 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
         val personIdent = "123456789010"
 
         val ettersendelseDto = EttersendelseDto(
-            listOf(dokumentasjonsbehov), personIdent = personIdent
+            listOf(dokumentasjonsbehov),
+            personIdent = personIdent
         )
         val ettersending = ettersendingRepository.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
@@ -49,7 +49,6 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `finnEttersendingerKlarTilSletting finner journalførte ettersendinger eldre enn 3 måneder`() {
-
         val journalFørtEldreEnn3Måneder =
             ettersendingRepository.insert(
                 Ettersending(

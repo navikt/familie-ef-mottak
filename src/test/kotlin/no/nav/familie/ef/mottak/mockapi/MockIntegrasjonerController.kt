@@ -23,7 +23,10 @@ import javax.validation.Valid
 class MockIntegrasjonerController {
 
     @PostMapping(path = ["/arkiv/v4"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun arkiverDokument(@RequestBody @Valid arkiverDokumentRequest: ArkiverDokumentRequest): ResponseEntity<Ressurs<ArkiverDokumentResponse>> {
+    fun arkiverDokument(
+        @RequestBody @Valid
+        arkiverDokumentRequest: ArkiverDokumentRequest
+    ): ResponseEntity<Ressurs<ArkiverDokumentResponse>> {
         val data = ArkiverDokumentResponse("JOURNALPOST_MOCK_ID", true)
         val ressurs: Ressurs<ArkiverDokumentResponse> = success(data)
         return ResponseEntity.status(HttpStatus.CREATED).body(ressurs)

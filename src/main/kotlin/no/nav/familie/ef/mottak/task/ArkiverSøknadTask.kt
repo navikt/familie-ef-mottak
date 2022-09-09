@@ -14,7 +14,7 @@ import java.util.UUID
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
 class ArkiverSøknadTask(
     private val arkiveringService: ArkiveringService,
-    private val taskRepository: TaskRepository,
+    private val taskRepository: TaskRepository
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

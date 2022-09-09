@@ -26,7 +26,6 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
 
     @Test
     internal fun `skal opprette ekstern journalføringstask`() {
-
         every { ettersendingRepository.findByJournalpostId(any()) } returns null
         every { søknadRepository.findByJournalpostId(any()) } returns null
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
@@ -44,7 +43,6 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
 
     @Test
     internal fun `skal ikke opprette ekstern journalføringstask hvis det finnes en søknad for journalposten`() {
-
         every { ettersendingRepository.findByJournalpostId(any()) } returns null
         every { søknadRepository.findByJournalpostId(any()) } returns søknad()
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
@@ -62,7 +60,6 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
 
     @Test
     internal fun `skal ikke opprette ekstern journalføringstask hvis det finnes en ettersending for journalposten`() {
-
         every { ettersendingRepository.findByJournalpostId(any()) } returns
             Ettersending(
                 ettersendingJson = EncryptedString("{a:1}"),

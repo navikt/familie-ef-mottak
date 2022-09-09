@@ -47,6 +47,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClientResponseException
@@ -62,6 +63,7 @@ internal class OppgaveServiceTest {
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
     private val ettersendingService = mockk<EttersendingService>()
     private val featureToggleService = mockk<FeatureToggleService>()
+    private val cacheManager = ConcurrentMapCacheManager()
 
     private val oppgaveService: OppgaveService =
         OppgaveService(
@@ -69,7 +71,7 @@ internal class OppgaveServiceTest {
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
-            featureToggleService = featureToggleService
+            mappeService = MappeService(integrasjonerClient, søknadService, cacheManager)
         )
 
     @BeforeEach
@@ -256,7 +258,9 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
+            every { søknadService.get(any()) } returns søknadBarnetilsyn()
+
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "1")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
@@ -277,7 +281,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(erSelvstendig = true)
+            every { søknadService.get("123") } returns søknadOvergangsstønad(erSelvstendig = true)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdSelvstendig.toLong())
@@ -301,7 +305,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(
+            every { søknadService.get("123") } returns søknadOvergangsstønad(
                 erSelvstendig = true,
                 harTilsynskrevendeBarn = true
             )
@@ -328,7 +332,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns søknadBarnetilsyn(
+            every { søknadService.get("123") } returns søknadBarnetilsyn(
                 erSelvstendig = true,
                 harTilsynskrevendeBarn = true
             )
@@ -355,7 +359,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns søknadBarnetilsyn(
+            every { søknadService.get("123") } returns søknadBarnetilsyn(
                 erSelvstendig = true,
                 harTilsynskrevendeBarn = false
             )
@@ -383,34 +387,10 @@ internal class OppgaveServiceTest {
             val søknadBarnetilsyn =
                 objectMapper.readValue<SøknadBarnetilsyn>(IOTestUtil.readFile("barnetilsyn_særlige_tilsynsbehov_soknad.json"))
 
-            every { søknadService.getOrNull("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
+            every { søknadService.get("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdTilsynskrevende.toLong())
-        }
-
-        @Test
-        fun `skal være uplassert hvis ettersending - finner ikke søknad  `() {
-            val oppgaveId: Long = 123
-            val oppgaveSlot = slot<Oppgave>()
-            val gammelMappeIdUpplassert = 1
-
-            every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
-                antallTreffTotalt = 1,
-                mapper = lagMapper(
-                    gammelMappeIdUplassert = gammelMappeIdUpplassert
-                )
-            )
-
-            every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
-                behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
-            )
-            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns null
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
-
-            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
 
         @Test
@@ -429,7 +409,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadService.getOrNull("123") } returns søknadOvergangsstønad(false)
+            every { søknadService.get("123") } returns søknadOvergangsstønad(false)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
@@ -457,8 +437,9 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            every { søknadService.get(any()) } returns søknadSkolepenger()
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdOpplæring.toLong())
         }
@@ -472,7 +453,7 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
@@ -499,8 +480,9 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            every { søknadService.get(any()) } returns søknadBarnetilsyn()
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
@@ -527,8 +509,9 @@ internal class OppgaveServiceTest {
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
+            every { søknadService.get(any()) } returns søknadOvergangsstønad()
 
-            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, null)
+            oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
         }
@@ -595,6 +578,10 @@ internal class OppgaveServiceTest {
             )
 
         return SøknadMapper.fromDto(søknadBarnetilsyn, true)
+    }
+
+    private fun søknadSkolepenger(): Søknad {
+        return SøknadMapper.fromDto(Testdata.søknadSkolepenger, true)
     }
 
     val tomAktivitet = Aktivitet(
