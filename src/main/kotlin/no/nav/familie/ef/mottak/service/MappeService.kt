@@ -27,7 +27,7 @@ class MappeService(
     private val søknadService: SøknadService
 ) {
 
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
+    val log: Logger = LoggerFactory.getLogger(javaClass)
 
     fun finnMappeIdForSøknadOgEnhet(søknadId: String, enhetsnummer: String?): Long? {
         if (enhetsnummer != OppgaveService.ENHETSNUMMER_NAY) {
