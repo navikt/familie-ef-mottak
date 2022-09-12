@@ -416,9 +416,8 @@ internal class OppgaveServiceTest {
         }
 
         @Test
-        fun `skal flytte oppgave til opplæringsmappe hvis skolepenger og skal behandles i ny løsning`() {
+        fun `skal være en uplassert oppgave hvis skolepenger og skal behandles i ny løsning`() {
             val oppgaveId: Long = 123
-            val oppgaveSlot = slot<Oppgave>()
             val gammelMappeIdOpplæring = 1
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
@@ -436,12 +435,11 @@ internal class OppgaveServiceTest {
                 behandlingstema = Behandlingstema.Skolepenger,
                 behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
             )
-            every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get(any()) } returns søknadSkolepenger()
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
-            assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdOpplæring.toLong())
+            verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(oppgaveId, any()) }
         }
 
         @Test

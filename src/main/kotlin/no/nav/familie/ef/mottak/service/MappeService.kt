@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.getValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.MappeSøkestreng.OPPLÆRING
 import no.nav.familie.ef.mottak.service.MappeSøkestreng.SELVSTENDIG
 import no.nav.familie.ef.mottak.service.MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE
 import no.nav.familie.ef.mottak.service.MappeSøkestreng.UPLASSERT
@@ -62,7 +61,7 @@ class MappeService(
         return when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
             StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknad)
             StønadType.BARNETILSYN -> mappeFraBarnetilsyn(søknad)
-            StønadType.SKOLEPENGER -> OPPLÆRING
+            StønadType.SKOLEPENGER -> UPLASSERT
             else -> UPLASSERT
         }
     }
@@ -111,6 +110,5 @@ class MappeService(
 enum class MappeSøkestreng(val verdi: String) {
     SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
     SELVSTENDIG("61 Selvstendig næringsdrivende"),
-    OPPLÆRING("65 Opplæring"),
     UPLASSERT("Uplassert")
 }
