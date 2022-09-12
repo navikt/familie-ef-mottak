@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics.counter
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.AutomatiskJournalføringService
@@ -27,6 +29,7 @@ class AutomatiskJournalførTask(
     AsyncTaskStep {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalført")
 
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
@@ -44,12 +47,17 @@ class AutomatiskJournalførTask(
                 mappeId = mappeId
             )
 
-        if (!automatiskJournalføringFullført) {
-            logger.warn("Kunne ikke automatisk journalføre $journalpostId - fortsetter derfor på manuell journalføringsflyt")
-            val nesteFallbackTaskType = manuellJournalføringFlyt().first().type
-            val fallback = Task(nesteFallbackTaskType, task.payload, task.metadata)
-            taskRepository.save(fallback)
+        when (automatiskJournalføringFullført) {
+            true -> antallAutomatiskJournalført.increment()
+            false -> brukManuellJournalføring(journalpostId, task)
         }
+    }
+
+    private fun brukManuellJournalføring(journalpostId: String, task: Task) {
+        logger.warn("Kunne ikke automatisk journalføre $journalpostId - fortsetter derfor på manuell journalføringsflyt")
+        val nesteFallbackTaskType = manuellJournalføringFlyt().first().type
+        val fallback = Task(nesteFallbackTaskType, task.payload, task.metadata)
+        taskRepository.save(fallback)
     }
 
     companion object {
