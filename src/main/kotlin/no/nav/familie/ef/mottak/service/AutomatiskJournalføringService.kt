@@ -22,12 +22,14 @@ class AutomatiskJournalføringService(
     fun journalførAutomatisk(
         personIdent: String,
         journalpostId: String,
-        stønadstype: StønadType
+        stønadstype: StønadType,
+        mappeId: Long?
     ): Boolean {
         val arkiverDokumentRequest = AutomatiskJournalføringRequest(
             personIdent = personIdent,
             journalpostId = journalpostId,
-            stønadstype = stønadstype
+            stønadstype = stønadstype,
+            mappeId = mappeId
         )
         try {
             val respons =

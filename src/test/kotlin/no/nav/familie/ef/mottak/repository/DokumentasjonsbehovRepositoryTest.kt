@@ -22,7 +22,6 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
 
     @Test
     internal fun `lagre og hent dokumentasjonsbehov`() {
-
         val søknad = søknadRepository.insert(
             Søknad(
                 søknadJson = EncryptedString("bob"),

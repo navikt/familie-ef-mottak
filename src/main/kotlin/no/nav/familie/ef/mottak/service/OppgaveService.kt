@@ -1,25 +1,15 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
-import no.nav.familie.kontrakter.ef.søknad.Aktivitet
-import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
-import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
-import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -34,7 +24,7 @@ class OppgaveService(
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
-    private val featureToggleService: FeatureToggleService
+    private val mappeService: MappeService
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -170,36 +160,19 @@ class OppgaveService(
     private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
         integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
-    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String?) {
+    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         if (skalFlyttesTilMappe(oppgave)) {
-            val finnMappeRequest = FinnMappeRequest(
-                tema = listOf(),
-                enhetsnr = oppgave.tildeltEnhetsnr
-                    ?: error("Oppgave mangler tildelt enhetsnummer"),
-                opprettetFom = null,
-                limit = 1000
-            )
-            val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
-
-            log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
-            val mappe = finnMappe(mapperResponse, finnSøkestreng(oppgave, søknadId))
-            if (mappe == null && oppgave.mappeId == null) {
+            val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknadId, oppgave.tildeltEnhetsnr)
+            if (mappeId == null && oppgave.mappeId == null) {
                 log.info("Flytter ikke oppgave da den allerede er uplassert")
             } else {
-                integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappe?.id?.toLong()))
+                integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappeId))
             }
         } else {
             secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
     }
-
-    private fun erSkolepenger(oppgave: Oppgave) =
-        oppgave.behandlingstema == Behandlingstema.Skolepenger.value && oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
-
-    private fun erSelvstendig(aktivitet: Søknadsfelt<Aktivitet>) =
-        aktivitet.verdi.firmaer?.verdi?.isNotEmpty() ?: false ||
-            aktivitet.verdi.virksomhet?.verdi != null
 
     private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
@@ -219,82 +192,8 @@ class OppgaveService(
             else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
         }
 
-    private fun finnSøkestreng(
-        oppgave: Oppgave,
-        søknadId: String?
-    ): String {
-        return if (erSkolepenger(oppgave)) {
-            MappeSøkestreng.OPPLÆRING.søkestreng
-        } else {
-            mappeFraSøknad(søknadId, oppgave) ?: MappeSøkestreng.UPLASSERT.søkestreng
-        }
-    }
-
-    private fun mappeFraSøknad(søknadId: String?, oppgave: Oppgave): String? {
-        val toggleEnabled =
-            featureToggleService.isEnabled("familie.ef.mottak.mappe.selvstendig.tilsynskrevende")
-        if (søknadId == null || !toggleEnabled) return null
-
-        return when (oppgave.behandlingstema) {
-            Behandlingstema.Overgangsstønad.value -> mappeFraOvergangsstønad(søknadId)
-            Behandlingstema.Barnetilsyn.value -> mappeFraBarnetilsyn(søknadId)
-            else -> null
-        }
-    }
-
-    private fun mappeFraBarnetilsyn(søknadId: String): String? {
-        val søknadJson = søknadService.getOrNull(søknadId)?.søknadJson
-        if (søknadJson == null) {
-            log.warn("Finner ikke søknad - antar dette er en ettersending $søknadId")
-            return null
-        }
-        val søknad = objectMapper.readValue<SøknadBarnetilsyn>(søknadJson.data)
-        return if (søknad.barn.verdi.any { it.barnepass?.verdi?.årsakBarnepass?.svarId == "trengerMerPassEnnJevnaldrede" }) {
-            MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
-        } else if (erSelvstendig(søknad.aktivitet)) {
-            MappeSøkestreng.SELVSTENDIG.søkestreng
-        } else {
-            null
-        }
-    }
-
-    private fun mappeFraOvergangsstønad(søknadId: String): String? {
-        val søknadJson = søknadService.getOrNull(søknadId)?.søknadJson
-        if (søknadJson == null) {
-            log.warn("Finner ikke søknad - antar dette er en ettersending $søknadId")
-            return null
-        }
-        val søknad = objectMapper.readValue<SøknadOvergangsstønad>(søknadJson.data)
-        return if (søknad.situasjon.verdi.barnMedSærligeBehov?.verdi != null) {
-            MappeSøkestreng.SÆRLIG_TILSYNSKREVENDE.søkestreng
-        } else if (erSelvstendig(søknad.aktivitet)) {
-            MappeSøkestreng.SELVSTENDIG.søkestreng
-        } else {
-            null
-        }
-    }
-
-    private fun finnMappe(mapperResponse: FinnMappeResponseDto, søkestreng: String): MappeDto? {
-        return if ("Uplassert".equals(søkestreng)) {
-            null
-        } else {
-            mapperResponse.mapper.filter {
-                !it.navn.contains("EF Sak", true) &&
-                    it.navn.contains(søkestreng, true)
-            }.maxByOrNull { it.id }
-                ?: error("Fant ikke mappe for $søkestreng")
-        }
-    }
-
     companion object {
 
-        private const val ENHETSNUMMER_NAY: String = "4489"
+        const val ENHETSNUMMER_NAY: String = "4489"
     }
-}
-
-enum class MappeSøkestreng(val søkestreng: String) {
-    SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
-    SELVSTENDIG("61 Selvstendig næringsdrivende"),
-    OPPLÆRING("65 Opplæring"),
-    UPLASSERT("Uplassert")
 }

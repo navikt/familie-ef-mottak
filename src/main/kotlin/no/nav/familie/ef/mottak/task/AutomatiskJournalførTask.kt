@@ -2,8 +2,10 @@ package no.nav.familie.ef.mottak.task
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
+import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.AutomatiskJournalføringService
+import no.nav.familie.ef.mottak.service.MappeService
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Service
 class AutomatiskJournalførTask(
     val søknadService: SøknadService,
     val taskRepository: TaskRepository,
-    val automatiskJournalføringService: AutomatiskJournalføringService
+    val automatiskJournalføringService: AutomatiskJournalføringService,
+    val integrasjonerClient: IntegrasjonerClient,
+    val mappeService: MappeService
 ) :
     AsyncTaskStep {
 
@@ -33,11 +37,14 @@ class AutomatiskJournalførTask(
             dokumenttypeTilStønadType(søknad.dokumenttype) ?: error("Må ha stønadstype for å automatisk journalføre")
         val journalpostId = task.metadata["journalpostId"].toString()
 
+        val enhet = integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(søknad.fnr).firstOrNull()?.enhetId
+        val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknad.id, enhet)
         val automatiskJournalføringFullført =
             automatiskJournalføringService.journalførAutomatisk(
                 personIdent = søknad.fnr,
                 journalpostId = journalpostId,
-                stønadstype = stønadstype
+                stønadstype = stønadstype,
+                mappeId = mappeId
             )
 
         when (automatiskJournalføringFullført) {

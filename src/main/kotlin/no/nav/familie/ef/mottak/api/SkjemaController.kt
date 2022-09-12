@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/skjema"], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
-    issuer = EksternBrukerUtils.ISSUER_TOKENX, claimMap = ["acr=Level4"]
+    issuer = EksternBrukerUtils.ISSUER_TOKENX,
+    claimMap = ["acr=Level4"]
 )
 class SkjemaController(val søknadService: SøknadService) {
 

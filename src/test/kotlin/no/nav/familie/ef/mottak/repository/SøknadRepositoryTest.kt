@@ -19,7 +19,6 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `findFirstByTaskOpprettetIsFalse returnerer én soknad med taskOpprettet false`() {
-
         søknadRepository.insert(søknad())
         søknadRepository.insert(søknad())
         søknadRepository.insert(søknad(taskOpprettet = true))
@@ -92,7 +91,6 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `finnSøknaderKlarTilReduksjon finner journalførte søknader eldre enn 3 måneder med søknadPdf`() {
-
         val ikkeJournalFørtEldreEnn3måneder = søknadRepository.insert(søknad(opprettetTid = LocalDateTime.now().minusMonths(4)))
         val journalFørtEldreEnn3MånederUtenPdf =
             søknadRepository.insert(
@@ -131,7 +129,6 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `finnSøknaderKlarTilSletting finner journalførte søknader eldre enn 3 måneder uten søknadPdf`() {
-
         val ikkeJournalFørtEldreEnn3måneder = søknadRepository.insert(søknad(opprettetTid = LocalDateTime.now().minusMonths(4)))
         val journalFørtEldreEnn3MånederUtenPdf =
             søknadRepository.insert(
