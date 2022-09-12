@@ -29,7 +29,7 @@ class AutomatiskJournalførTask(
     AsyncTaskStep {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalført")
+    val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalfort")
 
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
