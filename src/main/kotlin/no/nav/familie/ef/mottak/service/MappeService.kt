@@ -61,6 +61,7 @@ class MappeService(
         return when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
             StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknad)
             StønadType.BARNETILSYN -> mappeFraBarnetilsyn(søknad)
+            StønadType.SKOLEPENGER -> UPLASSERT
             else -> UPLASSERT
         }
     }
