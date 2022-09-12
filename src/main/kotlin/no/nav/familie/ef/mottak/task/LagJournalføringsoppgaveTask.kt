@@ -19,7 +19,7 @@ class LagJournalføringsoppgaveTask(
     private val oppgaveService: OppgaveService
 ) : AsyncTaskStep {
 
-    val antallTilManuellJournalføring: Counter = Metrics.counter("alene.med.barn.manueltJournalført")
+    val antallTilManuellJournalføring: Counter = Metrics.counter("alene.med.barn.manueltjournalfort")
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
         oppgaveId?.let {
