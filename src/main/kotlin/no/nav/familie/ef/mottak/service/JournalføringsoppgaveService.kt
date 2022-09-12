@@ -27,7 +27,6 @@ class JournalføringsoppgaveService(
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)
 
     fun lagEksternJournalføringTask(journalpost: Journalpost) {
-
         if (journalpost.skalBehandles()) {
             opprettTaskDersomDetIkkeAlleredeFinnes(journalpost)
         } else {

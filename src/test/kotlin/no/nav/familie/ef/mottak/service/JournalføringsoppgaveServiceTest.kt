@@ -71,7 +71,6 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Hendelser hvor journalpost er alt FERDIGSTILT skal ignoreres`() {
-
         every { journalpost.journalstatus } returns Journalstatus.FERDIGSTILT
 
         service.lagEksternJournalføringTask(journalpost)
@@ -83,7 +82,6 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Utgående journalposter skal ignoreres`() {
-
         every { journalpost.journalstatus } returns Journalstatus.UTGAAR
 
         service.lagEksternJournalføringTask(journalpost)
@@ -95,7 +93,6 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Journalposter som har en søknad skal ikke opprette task`() {
-
         every { journalpost.journalstatus } returns Journalstatus.MOTTATT
         every { journalpost.kanal } returns "NAV_NO"
         every { mockSøknadRepository.findByJournalpostId(any()) } returns søknad()
@@ -109,7 +106,6 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Journalposter som har en ettersending skal ikke opprette task`() {
-
         every { journalpost.journalstatus } returns Journalstatus.MOTTATT
         every { journalpost.kanal } returns "NAV_NO"
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns
@@ -128,7 +124,6 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Journalposter som er mottatt uten ettersending eller søknad skal opprettes`() {
-
         journalpost = Journalpost(
             "123",
             Journalposttype.I,

@@ -35,8 +35,8 @@ class MockController {
             .replace("###expires_at###", "" + Instant.now().plusSeconds(3600).epochSecond)
     }
 
-    @Suppress("LongLine")
     // language=jSon
+    @Suppress("LongLine")
     val token: String =
         """{"token_type": "Bearer","scope":"###expires_at###","expires_at":"28021078036","ext_expires_in":"30","expires_in":"30","access_token":"somerandomaccesstoken"}"""
 }

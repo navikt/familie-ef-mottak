@@ -28,7 +28,6 @@ class JournalhendelseService(
 
     @Transactional
     fun prosesserNyHendelse(hendelseRecord: JournalfoeringHendelseRecord, offset: Long) {
-
         secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
         if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(hendelseRecord.hendelsesId.toString())) {
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {

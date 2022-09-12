@@ -16,8 +16,11 @@ import java.util.UUID
 internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Autowired lateinit var taskRepository: TaskRepository
+
     @Autowired lateinit var taskMetricRepository: TaskMetricRepository
+
     @Autowired lateinit var søknadRepository: SøknadRepository
+
     @Autowired lateinit var taskMetricService: TaskMetricService
 
     @Test
