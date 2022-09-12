@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -17,6 +19,7 @@ class LagJournalføringsoppgaveTask(
     private val oppgaveService: OppgaveService
 ) : AsyncTaskStep {
 
+    val antallTilManuellJournalføring: Counter = Metrics.counter("alene.med.barn.manueltJournalført")
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
         oppgaveId?.let {
@@ -27,6 +30,7 @@ class LagJournalføringsoppgaveTask(
     }
 
     override fun onCompletion(task: Task) {
+        antallTilManuellJournalføring.increment()
         task.metadata[journalføringOppgaveIdKey]?.let {
             taskRepository.save(
                 Task(

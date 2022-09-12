@@ -18,8 +18,7 @@ fun automatiskJournalføringFlyt() = listOf(
 fun ettersendingflyt() = listOf(
     TaskType(LagEttersendingPdfTask.TYPE),
     TaskType(ArkiverEttersendingTask.TYPE),
-    TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE),
-    TaskType(PlasserOppgaveIMappeOppgaveTask.TYPE)
+    TaskType(LagJournalføringsoppgaveForEttersendingTask.TYPE)
 )
 
 fun eksternJournalføringFlyt() = listOf(

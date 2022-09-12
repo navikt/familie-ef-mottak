@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.mockapi.clearAllMocks
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
@@ -37,9 +36,6 @@ class JournalføringsoppgaveServiceTest {
     @MockK(relaxed = true)
     lateinit var mockHendelseloggRepository: HendelsesloggRepository
 
-    @MockK(relaxed = true)
-    lateinit var mockFeatureToggleService: FeatureToggleService
-
     private lateinit var mockJournalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
 
     @MockK(relaxed = true)
@@ -53,8 +49,6 @@ class JournalføringsoppgaveServiceTest {
         MockKAnnotations.init(this)
         clearAllMocks(this)
 
-        every { mockFeatureToggleService.isEnabled(any()) } returns true
-
         every { journalpost.tema } returns "ENF"
         every { journalpost.journalposttype } returns Journalposttype.I
         every { journalpost.journalpostId } returns "1"
@@ -62,7 +56,6 @@ class JournalføringsoppgaveServiceTest {
         mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
 
         service = JournalføringsoppgaveService(
-            mockFeatureToggleService,
             mockSøknadRepository,
             mockEttersendingRepository,
             mockJournalfoeringHendelseDbUtil
