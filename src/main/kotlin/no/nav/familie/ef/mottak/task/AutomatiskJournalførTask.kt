@@ -48,8 +48,8 @@ class AutomatiskJournalførTask(
             )
 
         when (automatiskJournalføringFullført) {
-            false -> brukManuellJournalføring(journalpostId, task)
             true -> antallAutomatiskJournalført.increment()
+            false -> brukManuellJournalføring(journalpostId, task)
         }
     }
 
