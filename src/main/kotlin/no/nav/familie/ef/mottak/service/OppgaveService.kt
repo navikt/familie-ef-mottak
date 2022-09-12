@@ -226,7 +226,7 @@ class OppgaveService(
         søknadId: String?
     ): String {
         return if (erSkolepenger(oppgave)) {
-            MappeSøkestreng.OPPLÆRING.søkestreng
+            MappeSøkestreng.UPLASSERT.søkestreng
         } else {
             mappeFraSøknad(søknadId, oppgave) ?: MappeSøkestreng.UPLASSERT.søkestreng
         }
@@ -294,6 +294,5 @@ class OppgaveService(
 enum class MappeSøkestreng(val søkestreng: String) {
     SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
     SELVSTENDIG("61 Selvstendig næringsdrivende"),
-    OPPLÆRING("65 Opplæring"),
     UPLASSERT("01 Uplassert")
 }
