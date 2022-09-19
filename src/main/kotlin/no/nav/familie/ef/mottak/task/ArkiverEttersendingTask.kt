@@ -38,9 +38,8 @@ class ArkiverEttersendingTask(
                 e
             )
             val ettersending: Ettersending = ettersendingService.hentEttersending(task.payload)
-            val callId = task.metadata["callId"].toString()
             arkiveringService.hentJournalpostIdForBrukerOgEksternReferanseId(
-                callId,
+                task.callId,
                 Bruker(id = ettersending.fnr, type = BrukerIdType.FNR)
             )?.journalpostId
                 ?: error("Fant ikke journalpost for callId (eksternReferanseId) for ettersending $task.payload ")
