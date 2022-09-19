@@ -63,21 +63,18 @@ internal class ArkiverEttersendingTaskTest {
     }
 
     @Test
-    fun `skal kaste feil hvis vi ikke finner journalpost gitt eksternReferanseId`() {
+    fun `Task skal feile hvis det kastes exception vi ikke håndterer`() {
         val uuid = UUID.randomUUID().toString()
-
-        every { arkiveringService.journalførEttersending(any()) } throws conflictException
-
-        every { ettersendingService.hentEttersending(any()) } returns ettersending
-        every {
-            arkiveringService.hentJournalpostIdForBrukerOgEksternReferanseId(
-                any(),
-                any()
+        every { arkiveringService.journalførEttersending(any()) } throws IllegalStateException()
+        assertThrows<Exception> {
+            arkiverEttersendingTask.doTask(
+                Task(
+                    type = "",
+                    payload = uuid,
+                    properties = Properties()
+                )
             )
-        } throws RuntimeException()
-
-        val task = Task(type = "", payload = uuid, properties = Properties())
-        assertThrows<IllegalStateException> { arkiverEttersendingTask.doTask(task) }
+        }
     }
 
     private fun lagJournalpost(forventetJournalpostId: String) = Journalpost(
