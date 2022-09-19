@@ -1,9 +1,7 @@
 package no.nav.familie.ef.mottak.integration
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.matching
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.put
@@ -32,7 +30,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestOperations
 import java.net.URI
 import java.time.LocalDate
@@ -128,19 +125,6 @@ internal class IntegrasjonerClientTest {
         )
         // Vil gi resultat
         assertNotNull(integrasjonerClient.arkiver(arkiverSøknadRequest))
-    }
-
-    @Test
-    fun `Skal kaste feil 409 TODO `() {
-        wireMockServer.stubFor(
-            post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
-                .withRequestBody(matching(".*denneSkalKaste409.*"))
-                .willReturn(aResponse().withStatus(409).withHeader("Content-Type", "application/json").withBody(""))
-        )
-
-        assertFailsWith(HttpClientErrorException.Conflict::class) {
-            integrasjonerClient.arkiver(arkiverSøknadRequest.copy(eksternReferanseId = "denneSkalKaste409"))
-        }
     }
 
     @Test
