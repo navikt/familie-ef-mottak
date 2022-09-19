@@ -74,7 +74,7 @@ internal class ArkiverEttersendingTaskTest {
                 any(),
                 any()
             )
-        } throws RuntimeException()
+        } throws IllegalStateException()
 
         val task = Task(type = "", payload = uuid, properties = Properties())
         assertThrows<IllegalStateException> { arkiverEttersendingTask.doTask(task) }
