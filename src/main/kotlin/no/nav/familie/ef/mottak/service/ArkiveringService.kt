@@ -8,6 +8,11 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.journalpost.Bruker
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -71,5 +76,18 @@ class ArkiveringService(
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
         return dokumentResponse.journalpostId
+    }
+
+    fun hentJournalpostIdForBrukerOgEksternReferanseId(eksternReferanseId: String, bruker: Bruker): Journalpost? {
+        val request = JournalposterForBrukerRequest(
+            brukerId = bruker,
+            antall = 1000,
+            tema = listOf(Tema.ENF),
+            journalposttype = listOf(Journalposttype.I)
+        )
+        val journalposterForBruker =
+            integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
+
+        return journalposterForBruker.find { it.eksternReferanseId == eksternReferanseId }
     }
 }

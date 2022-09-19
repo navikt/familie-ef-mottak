@@ -1,56 +1,90 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
-import no.nav.familie.prosessering.AsyncTaskStep
-import no.nav.familie.prosessering.TaskStepBeskrivelse
+import io.mockk.every
+import io.mockk.mockk
+import no.nav.familie.ef.mottak.encryption.EncryptedString
+import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.service.ArkiveringService
+import no.nav.familie.ef.mottak.service.EttersendingService
+import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
-import no.nav.familie.prosessering.internal.TaskWorker
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
+import org.junit.jupiter.api.assertThrows
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpClientErrorException
+import java.time.LocalDateTime
+import java.util.Properties
 import java.util.UUID
 
-/**
- * Vi oppdaterer task.metadata i flere tasker, denne sjekker att det er mulig, sånn att ikke blir endringer i prosessering
- * Hvis denne brekker må man vurdere hur de ellers burde oppdateres
- */
-internal class TaskTest : IntegrasjonSpringRunnerTest() {
+internal class ArkiverEttersendingTaskTest {
 
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private lateinit var taskWorker: TaskWorker
+    val ettersendingService: EttersendingService = mockk()
+    val taskRepository: TaskRepository = mockk()
 
-    @Autowired private lateinit var taskRepository: TaskRepository
+    val arkiveringService: ArkiveringService = mockk()
+
+    private val arkiverEttersendingTask: ArkiverEttersendingTask =
+        ArkiverEttersendingTask(arkiveringService, taskRepository, ettersendingService)
+
+    private val conflictException =
+        HttpClientErrorException.Conflict.create(null, HttpStatus.CONFLICT, null, null, null, null)
+
+    private val ettersending = Ettersending(
+        id = UUID.randomUUID(),
+        ettersendingJson = EncryptedString(data = ""),
+        stønadType = "",
+        fnr = "",
+        taskOpprettet = false,
+        opprettetTid = LocalDateTime.now()
+    )
 
     @Test
-    internal fun `skal oppdatere task med journalpostId etter att doTask er kjørt, i doActualWork, hvis ikke får man optimistic lock failure`() {
-        val task = taskRepository.save(Task(TEST_TASK_TYPE, UUID.randomUUID().toString()))
+    fun `skal hente journalpostId fra joark hvis den allerede finnes for eksternReferanseId`() {
+        val uuid = UUID.randomUUID().toString()
+        val forventetJournalpostId = "123"
 
-        taskWorker.markerPlukket(task.id)
-        taskWorker.doActualWork(task.id)
+        every { arkiveringService.journalførEttersending(any()) } throws conflictException
 
-        val oppdatertTask = taskRepository.findByIdOrThrow(task.id)
-        assertThat(task.metadata["journalpostId"]).isNull()
-        assertThat(oppdatertTask.metadata["journalpostId"]).isEqualTo("Nytt verdi")
+        every { ettersendingService.hentEttersending(any()) } returns ettersending
+        every {
+            arkiveringService.hentJournalpostIdForBrukerOgEksternReferanseId(
+                any(),
+                any()
+            )
+        } returns lagJournalpost(forventetJournalpostId)
+
+        val task = Task(type = "", payload = uuid, properties = Properties())
+        arkiverEttersendingTask.doTask(task)
+        Assertions.assertThat(task.metadata["journalpostId"]).isEqualTo(forventetJournalpostId)
     }
-}
 
-private const val TEST_TASK_TYPE = "TestTask"
+    @Test
+    fun `skal kaste feil hvis vi ikke finner journalpost gitt eksternReferanseId`() {
+        val uuid = UUID.randomUUID().toString()
 
-@Service
-@TaskStepBeskrivelse(taskStepType = TEST_TASK_TYPE, beskrivelse = "")
-class TestTask : AsyncTaskStep {
+        every { arkiveringService.journalførEttersending(any()) } throws conflictException
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+        every { ettersendingService.hentEttersending(any()) } returns ettersending
+        every {
+            arkiveringService.hentJournalpostIdForBrukerOgEksternReferanseId(
+                any(),
+                any()
+            )
+        } throws RuntimeException()
 
-    override fun doTask(task: Task) {
-        logger.info("Håndterer task id=${task.id}")
-        task.metadata.apply {
-            this["journalpostId"] = "Nytt verdi"
-        }
+        val task = Task(type = "", payload = uuid, properties = Properties())
+        assertThrows<IllegalStateException> { arkiverEttersendingTask.doTask(task) }
     }
+
+    private fun lagJournalpost(forventetJournalpostId: String) = Journalpost(
+        journalpostId = forventetJournalpostId,
+        journalposttype = Journalposttype.I,
+        journalstatus = Journalstatus.MOTTATT,
+        dokumenter = listOf(),
+        relevanteDatoer = listOf()
+    )
 }
