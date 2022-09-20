@@ -24,7 +24,8 @@ internal class TaskTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     private lateinit var taskWorker: TaskWorker
 
-    @Autowired private lateinit var taskRepository: TaskRepository
+    @Autowired
+    private lateinit var taskRepository: TaskRepository
 
     @Test
     internal fun `skal oppdatere task med journalpostId etter att doTask er kjørt, i doActualWork, hvis ikke får man optimistic lock failure`() {

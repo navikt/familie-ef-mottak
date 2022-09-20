@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.task
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics
-import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.service.ArkiveringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -16,15 +15,14 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = ArkiverEttersendingTask.TYPE, beskrivelse = "Arkiver ettersending")
 class ArkiverEttersendingTask(
     private val arkiveringService: ArkiveringService,
-    private val taskRepository: TaskRepository,
-    private val ettersendingRepository: EttersendingRepository
+    private val taskRepository: TaskRepository
 ) : AsyncTaskStep {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    val logger: Logger = LoggerFactory.getLogger(javaClass)
     val antallEttersendinger: Counter = Metrics.counter("alene.med.barn.journalposter.ettersending")
 
     override fun doTask(task: Task) {
-        val journalpostId = arkiveringService.journalførEttersending(task.payload)
+        val journalpostId: String = arkiveringService.journalførEttersending(task.payload, task.callId)
         task.metadata.apply {
             this["journalpostId"] = journalpostId
         }

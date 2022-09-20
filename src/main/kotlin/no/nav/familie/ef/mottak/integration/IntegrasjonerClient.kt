@@ -10,6 +10,7 @@ import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
+import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
@@ -77,6 +78,12 @@ class IntegrasjonerClient(
             .build()
             .toUri()
 
+    private fun journalpostForBrukerUri() =
+        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_JOURNALPOST)
+            .build()
+            .toUri()
+
     private fun ferdigstillJournalpostUri(journalpostId: String, journalfoerendeEnhet: String) =
         UriComponentsBuilder.fromUri(integrasjonerConfig.url)
             .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
@@ -88,6 +95,13 @@ class IntegrasjonerClient(
     fun hentJournalpost(journalpostId: String): Journalpost {
         val uri = journalpostUri(journalpostId)
         return getForEntity<Ressurs<Journalpost>>(uri).getDataOrThrow()
+    }
+
+    fun hentJournalposterForBruker(journalpostForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
+        return postForEntity<Ressurs<List<Journalpost>>>(
+            journalpostForBrukerUri(),
+            journalpostForBrukerRequest
+        ).getDataOrThrow()
     }
 
     fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
