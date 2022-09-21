@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service
     beskrivelse = "Lager oppgave i GoSys"
 )
 class LagJournalføringsoppgaveForEttersendingTask(
-    private val oppgaveService: OppgaveService,
-    private val taskRepository: TaskRepository
+    private val oppgaveService: OppgaveService
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -23,18 +22,6 @@ class LagJournalføringsoppgaveForEttersendingTask(
             task.metadata.apply {
                 this[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey] = it.toString()
             }
-        }
-    }
-
-    override fun onCompletion(task: Task) {
-        task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.let {
-            taskRepository.save(
-                Task(
-                    TaskType(TYPE).nesteEttersendingsflytTask(),
-                    task.payload,
-                    task.metadata
-                )
-            )
         }
     }
 
