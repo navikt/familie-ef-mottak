@@ -22,7 +22,7 @@ fun Journalpost.ikkeGyldigKanalLogString() =
     "Ny journalhendelse med journalpost=${this.journalpostId} med status MOTTATT og kanal ${this.kanal}"
 
 fun Journalpost.ikkeGyldigLogString() =
-    "Ny journalhendelse ikke gyldig journalpost=${this.journalpostId}"
+    "Ny journalhendelse ikke gyldig journalpost=${this.journalpostId} tema=${this.tema} journalposttype=${this.journalposttype}"
 
 fun Journalpost.kanalMetricName(): String {
     return when {
