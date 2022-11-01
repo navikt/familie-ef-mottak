@@ -162,19 +162,15 @@ class OppgaveService(
 
     fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
-        if (skalFlyttesTilMappe(oppgave)) {
+        if (kanFlyttesTilMappe(oppgave)) {
             val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknadId, oppgave.tildeltEnhetsnr)
-            if (mappeId == null && oppgave.mappeId == null) {
-                log.info("Flytter ikke oppgave da den allerede er uplassert")
-            } else {
+            if (mappeId != null) {
                 integrasjonerClient.oppdaterOppgave(oppgaveId, oppgave.copy(mappeId = mappeId))
             }
-        } else {
-            secureLogger.info("Flytter ikke oppgave til mappe $oppgave")
         }
     }
 
-    private fun skalFlyttesTilMappe(oppgave: Oppgave): Boolean =
+    private fun kanFlyttesTilMappe(oppgave: Oppgave): Boolean =
         kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
 
     private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT &&
