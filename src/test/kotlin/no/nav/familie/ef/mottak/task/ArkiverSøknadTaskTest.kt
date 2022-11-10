@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
@@ -18,15 +18,15 @@ import java.util.UUID
 
 internal class ArkiverSøknadTaskTest {
 
-    private val taskRepository: TaskRepository = mockk()
-    private val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskRepository)
+    private val taskService: TaskService = mockk()
+    private val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskService)
 
     private val slot = slot<List<Task>>()
 
     @BeforeEach
     internal fun setUp() {
         slot.clear()
-        every { taskRepository.saveAll(capture(slot)) } answers { slot.captured }
+        every { taskService.saveAll(capture(slot)) } answers { slot.captured }
     }
 
     @Test

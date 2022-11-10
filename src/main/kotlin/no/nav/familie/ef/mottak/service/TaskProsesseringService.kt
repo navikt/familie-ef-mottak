@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.task.LagEttersendingPdfTask
 import no.nav.familie.ef.mottak.task.LagPdfTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Service
 class TaskProsesseringService(
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository
 ) {
@@ -26,7 +26,7 @@ class TaskProsesseringService(
         val properties =
             Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
                 .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskRepository.save(
+        taskService.save(
             Task(
                 LagPdfTask.TYPE,
                 søknad.id,
@@ -35,7 +35,7 @@ class TaskProsesseringService(
         )
 
         properties["eventId"] = UUID.randomUUID().toString()
-        taskRepository.save(
+        taskService.save(
             Task(
                 SendSøknadMottattTilDittNavTask.TYPE,
                 søknad.id,
@@ -53,7 +53,7 @@ class TaskProsesseringService(
                 this["stønadType"] = ettersending.stønadType
             }
 
-        taskRepository.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties))
+        taskService.save(Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties))
         ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
     }
 }

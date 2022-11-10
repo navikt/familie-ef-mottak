@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.repository.DbMigreringRepository
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -12,7 +12,7 @@ internal class DbMigreringServiceTest : IntegrasjonSpringRunnerTest() {
     lateinit var dbMigreringRepository: DbMigreringRepository
 
     @Autowired
-    lateinit var taskRepository: TaskRepository
+    lateinit var taskService: TaskService
 
     lateinit var dbMigreringService: DbMigreringService
 

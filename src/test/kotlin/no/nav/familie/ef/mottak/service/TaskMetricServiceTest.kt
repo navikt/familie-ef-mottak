@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.TaskMetricRepository
 import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ import java.util.UUID
 
 internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
 
-    @Autowired lateinit var taskRepository: TaskRepository
+    @Autowired lateinit var taskService: TaskService
 
     @Autowired lateinit var taskMetricRepository: TaskMetricRepository
 
@@ -25,7 +25,7 @@ internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `henting av metrics går fint`() {
-        taskRepository.deleteAll()
+        taskService.deleteAll(taskService.findAll())
         søknadRepository.insert(søknad())
         // oppretter 2 søknader som har opprettet tid nå som ikke skal vises
         søknadRepository.insert(søknad(LocalDateTime.now()))
@@ -34,7 +34,7 @@ internal class TaskMetricServiceTest : IntegrasjonSpringRunnerTest() {
         søknadRepository.insert(søknad(taskOpprettet = true))
         søknadRepository.insert(søknad(taskOpprettet = true))
 
-        taskRepository.save(Task("test2", UUID.randomUUID().toString()).copy(status = Status.FEILET))
+        taskService.save(Task("test2", UUID.randomUUID().toString()).copy(status = Status.FEILET))
 
         assertThat(søknadRepository.countByTaskOpprettetFalseAndOpprettetTidBefore()).isEqualTo(1)
         assertThat(taskMetricRepository.finnFeiledeTasks()).hasSize(1)

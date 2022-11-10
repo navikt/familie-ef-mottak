@@ -19,6 +19,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Properties
@@ -29,6 +30,9 @@ class JournalføringsoppgaveServiceTest {
 
     @MockK
     lateinit var mockTaskRepositoryUtvidet: TaskRepositoryUtvidet
+
+    @MockK
+    lateinit var mockTaskService: TaskService
 
     @MockK(relaxed = true)
     lateinit var mockSøknadRepository: SøknadRepository
@@ -53,7 +57,8 @@ class JournalføringsoppgaveServiceTest {
         every { journalpost.journalposttype } returns Journalposttype.I
         every { journalpost.journalpostId } returns "1"
 
-        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
+        mockJournalfoeringHendelseDbUtil =
+            JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskService, mockTaskRepositoryUtvidet)
 
         service = JournalføringsoppgaveService(
             mockSøknadRepository,
@@ -69,7 +74,7 @@ class JournalføringsoppgaveServiceTest {
         service.lagEksternJournalføringTask(journalpost)
 
         verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
     }
 
@@ -80,7 +85,7 @@ class JournalføringsoppgaveServiceTest {
         service.lagEksternJournalføringTask(journalpost)
 
         verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
     }
 
@@ -93,7 +98,7 @@ class JournalføringsoppgaveServiceTest {
         service.lagEksternJournalføringTask(journalpost)
 
         verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
     }
 
@@ -111,7 +116,7 @@ class JournalføringsoppgaveServiceTest {
         service.lagEksternJournalføringTask(journalpost)
 
         verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
     }
 
@@ -128,12 +133,12 @@ class JournalføringsoppgaveServiceTest {
         )
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns null
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null
-        every { mockTaskRepositoryUtvidet.save(any()) } returns Task("", "", Properties())
+        every { mockTaskService.save(any()) } returns Task("", "", Properties())
 
         service.lagEksternJournalføringTask(journalpost)
 
         verify(exactly = 1) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
     }
 }

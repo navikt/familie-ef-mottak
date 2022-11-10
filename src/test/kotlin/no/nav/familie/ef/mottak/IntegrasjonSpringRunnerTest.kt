@@ -9,7 +9,7 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.util.DbContainerInitializer
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -60,7 +60,7 @@ abstract class IntegrasjonSpringRunnerTest {
     private lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
 
     @Autowired
-    private lateinit var taskRepository: TaskRepository
+    private lateinit var taskService: TaskService
 
     @Autowired
     private lateinit var hendelsesloggRepository: HendelsesloggRepository
@@ -74,7 +74,7 @@ abstract class IntegrasjonSpringRunnerTest {
         dokumentasjonsbehovRepository.deleteAll()
         vedleggRepository.deleteAll()
         søknadRepository.deleteAll()
-        taskRepository.deleteAll()
+        taskService.deleteAll(taskService.findAll().toList())
         ettersendingVedleggRepository.deleteAll()
         ettersendingRepository.deleteAll()
         hendelsesloggRepository.deleteAll()

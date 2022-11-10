@@ -5,7 +5,7 @@ import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.familie.prosessering.internal.TaskWorker
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -25,16 +25,16 @@ internal class TaskTest : IntegrasjonSpringRunnerTest() {
     private lateinit var taskWorker: TaskWorker
 
     @Autowired
-    private lateinit var taskRepository: TaskRepository
+    private lateinit var taskService: TaskService
 
     @Test
     internal fun `skal oppdatere task med journalpostId etter att doTask er kjørt, i doActualWork, hvis ikke får man optimistic lock failure`() {
-        val task = taskRepository.save(Task(TEST_TASK_TYPE, UUID.randomUUID().toString()))
+        val task = taskService.save(Task(TEST_TASK_TYPE, UUID.randomUUID().toString()))
 
         taskWorker.markerPlukket(task.id)
         taskWorker.doActualWork(task.id)
 
-        val oppdatertTask = taskRepository.findByIdOrThrow(task.id)
+        val oppdatertTask = taskService.findById(task.id)
         assertThat(task.metadata["journalpostId"]).isNull()
         assertThat(oppdatertTask.metadata["journalpostId"]).isEqualTo("Nytt verdi")
     }

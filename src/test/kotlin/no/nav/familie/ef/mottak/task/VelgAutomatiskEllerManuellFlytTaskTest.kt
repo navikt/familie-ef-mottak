@@ -11,7 +11,7 @@ import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -19,12 +19,12 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 internal class VelgAutomatiskEllerManuellFlytTaskTest {
-    private val taskRepository: TaskRepository = mockk()
+    private val taskService: TaskService = mockk()
     private val saksbehandlingClient: SaksbehandlingClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val featureToggleService: FeatureToggleService = mockk()
     private val velgAutomatiskEllerManuellFlytTask =
-        VelgAutomatiskEllerManuellFlytTask(taskRepository, søknadService, saksbehandlingClient, featureToggleService)
+        VelgAutomatiskEllerManuellFlytTask(taskService, søknadService, saksbehandlingClient, featureToggleService)
 
     private val arbeidssøkerSkjemaId = "999L"
     private val overgangsstønadSøknadId = "123L"
@@ -54,7 +54,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { saksbehandlingClient.kanOppretteFørstegangsbehandling(any(), any()) } returns true
         val taskSlot = slot<Task>()
-        every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
+        every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
 
         velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(automatiskJournalføringFlyt().first().type)
@@ -65,7 +65,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         every { featureToggleService.isEnabled(any()) } returns true
         every { saksbehandlingClient.kanOppretteFørstegangsbehandling(any(), any()) } returns false
         val taskSlot = slot<Task>()
-        every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
+        every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
 
         velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
@@ -75,7 +75,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     internal fun `skal velge manuell flyt hvis featuretoggle er slått av`() {
         every { featureToggleService.isEnabled(any()) } returns false
         val taskSlot = slot<Task>()
-        every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
+        every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
 
         velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
@@ -85,7 +85,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     internal fun `skal velge manuell flyt for arbeidssøknadsskjema`() {
         every { featureToggleService.isEnabled(any()) } returns true
         val taskSlot = slot<Task>()
-        every { taskRepository.save(capture(taskSlot)) } answers { taskSlot.captured }
+        every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
 
         velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = arbeidssøkerSkjemaId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)

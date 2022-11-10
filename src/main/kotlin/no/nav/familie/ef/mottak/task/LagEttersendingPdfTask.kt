@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.service.PdfService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -15,7 +15,7 @@ import java.util.UUID
 @TaskStepBeskrivelse(taskStepType = LagEttersendingPdfTask.TYPE, beskrivelse = "Lag pdf for ettersending")
 class LagEttersendingPdfTask(
     private val pdfService: PdfService,
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val ettersendingRepository: EttersendingRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository
 ) : AsyncTaskStep {
@@ -30,7 +30,7 @@ class LagEttersendingPdfTask(
     }
 
     override fun onCompletion(task: Task) {
-        taskRepository.save(
+        taskService.save(
             Task(
                 TaskType(TYPE).nesteEttersendingsflytTask(),
                 task.payload,

@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
     beskrivelse = "Lager oppgave i GoSys"
 )
 class LagJournalføringsoppgaveTask(
-    private val taskRepository: TaskRepository,
+    private val taskService: TaskService,
     private val oppgaveService: OppgaveService
 ) : AsyncTaskStep {
 
@@ -32,7 +32,7 @@ class LagJournalføringsoppgaveTask(
     override fun onCompletion(task: Task) {
         antallTilManuellJournalføring.increment()
         task.metadata[journalføringOppgaveIdKey]?.let {
-            taskRepository.save(
+            taskService.save(
                 Task(
                     TaskType(TYPE).nesteManuellflytTask(),
                     task.payload,
