@@ -21,7 +21,7 @@
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>1.7.21</kotlin.version>
         <springdoc.version>1.6.13</springdoc.version>
-        <mockk.version>1.12.5</mockk.version>
+        <mockk.version>1.13.2</mockk.version>
         <felles.version>1.20221101085322_cc4d556</felles.version>
         <prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
         <confluent.version>7.2.2</confluent.version>
