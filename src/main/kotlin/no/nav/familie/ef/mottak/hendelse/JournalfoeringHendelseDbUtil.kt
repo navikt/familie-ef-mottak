@@ -8,6 +8,7 @@ import no.nav.familie.ef.mottak.task.eksternJournalføringFlyt
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.prosessering.domene.PropertiesWrapper
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class JournalfoeringHendelseDbUtil(
     val hendelseloggRepository: HendelsesloggRepository,
-    val taskRepository: TaskRepositoryUtvidet
+    val taskService: TaskService,
+    val taskRepositoryUtvidet: TaskRepositoryUtvidet
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalfoeringHendelseDbUtil::class.java)
@@ -43,7 +45,7 @@ class JournalfoeringHendelseDbUtil(
         hendelseloggRepository.existsByHendelseId(hendelsesId)
 
     fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
-        return !taskRepository.existsByPayloadAndType(
+        return !taskRepositoryUtvidet.existsByPayloadAndType(
             hendelseRecord.journalpostId.toString(),
             LagEksternJournalføringsoppgaveTask.TYPE
         )
@@ -55,6 +57,6 @@ class JournalfoeringHendelseDbUtil(
             payload = journalpost.journalpostId,
             properties = journalpost.metadata()
         )
-        taskRepository.save(journalføringsTask)
+        taskService.save(journalføringsTask)
     }
 }

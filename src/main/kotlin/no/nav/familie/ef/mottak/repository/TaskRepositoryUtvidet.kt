@@ -1,10 +1,11 @@
 package no.nav.familie.ef.mottak.repository
 
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TaskRepositoryUtvidet : TaskRepository {
+interface TaskRepositoryUtvidet : org.springframework.data.repository.Repository<Task, Long> {
 
     fun existsByPayloadAndType(payload: String, type: String): Boolean
 }

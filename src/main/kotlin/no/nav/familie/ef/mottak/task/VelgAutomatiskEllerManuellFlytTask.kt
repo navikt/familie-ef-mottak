@@ -12,7 +12,7 @@ import no.nav.familie.kontrakter.felles.ef.StønadType.SKOLEPENGER
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
     beskrivelse = "Velg automatisk eller manuell flyt"
 )
 class VelgAutomatiskEllerManuellFlytTask(
-    val taskRepository: TaskRepository,
+    val taskService: TaskService,
     val søknadService: SøknadService,
     val saksbehandlingClient: SaksbehandlingClient,
     val featureToggleService: FeatureToggleService
@@ -41,7 +41,7 @@ class VelgAutomatiskEllerManuellFlytTask(
             }
 
         val nesteTask = Task(neste.type, task.payload, task.metadata)
-        taskRepository.save(nesteTask)
+        taskService.save(nesteTask)
     }
 
     private fun skalAutomatiskJournalføre(
