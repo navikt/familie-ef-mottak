@@ -15,7 +15,7 @@ internal class AutomatiskJournalføringServiceTest {
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val automatiskJournalføringService =
         AutomatiskJournalføringService(
-            taskRepository = mockk(),
+            taskService = mockk(),
             søknadService = mockk(),
             saksbehandlingClient = saksbehandlingClient
         )

@@ -12,7 +12,7 @@ import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = AutomatiskJournalførTask.TYPE, beskrivelse = "Automatisk journalfør")
 class AutomatiskJournalførTask(
     val søknadService: SøknadService,
-    val taskRepository: TaskRepository,
+    val taskService: TaskService,
     val automatiskJournalføringService: AutomatiskJournalføringService,
     val integrasjonerClient: IntegrasjonerClient,
     val mappeService: MappeService
@@ -57,7 +57,7 @@ class AutomatiskJournalførTask(
         logger.warn("Kunne ikke automatisk journalføre $journalpostId - fortsetter derfor på manuell journalføringsflyt")
         val nesteFallbackTaskType = manuellJournalføringFlyt().first().type
         val fallback = Task(nesteFallbackTaskType, task.payload, task.metadata)
-        taskRepository.save(fallback)
+        taskService.save(fallback)
     }
 
     companion object {

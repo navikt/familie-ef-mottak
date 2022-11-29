@@ -26,6 +26,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,6 +41,9 @@ class JournalhendelseServiceTest {
 
     @MockK
     lateinit var mockTaskRepositoryUtvidet: TaskRepositoryUtvidet
+
+    @MockK
+    lateinit var mockTaskService: TaskService
 
     @MockK(relaxed = true)
     lateinit var mockFeatureToggleService: FeatureToggleService
@@ -67,7 +71,7 @@ class JournalhendelseServiceTest {
         } returns Hendelseslogg(offset = 1L, hendelseId = "")
 
         every {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         } answers { it.invocation.args[0] as Task }
 
         // Inngående papirsøknad, Mottatt
@@ -136,7 +140,8 @@ class JournalhendelseServiceTest {
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
 
-        mockJournalfoeringHendelseDbUtil = JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskRepositoryUtvidet)
+        mockJournalfoeringHendelseDbUtil =
+            JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskService, mockTaskRepositoryUtvidet)
 
         service = JournalhendelseService(
             integrasjonerClient,
@@ -183,7 +188,7 @@ class JournalhendelseServiceTest {
         service.prosesserNyHendelse(record, OFFSET)
 
         verify(exactly = 0) {
-            mockTaskRepositoryUtvidet.save(any())
+            mockTaskService.save(any())
         }
 
         verify(exactly = 1) {

@@ -18,7 +18,7 @@ class JournalhendelseService(
     val søknadRepository: SøknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
     val journalføringsoppgaveService: JournalføringsoppgaveService,
-    val taskRepository: TaskRepositoryUtvidet
+    val taskService: TaskRepositoryUtvidet
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)

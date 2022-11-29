@@ -8,24 +8,24 @@ import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class TaskProsesseringServiceTest {
 
-    private val taskRepository: TaskRepository = mockk(relaxed = true)
+    private val taskService: TaskService = mockk(relaxed = true)
     private val søknadRepository: SøknadRepository = mockk(relaxed = true)
     private val ettersendingRepository: EttersendingRepository = mockk(relaxed = true)
 
-    private val scheduledEventService = TaskProsesseringService(taskRepository, søknadRepository, ettersendingRepository)
+    private val scheduledEventService = TaskProsesseringService(taskService, søknadRepository, ettersendingRepository)
 
     @Test
     fun `startTaskProsessering oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
         val soknad = søknad()
         val taskSlot = slot<Task>()
         val soknadSlot = slot<Søknad>()
-        every { taskRepository.save(capture(taskSlot)) }
+        every { taskService.save(capture(taskSlot)) }
             .answers { taskSlot.captured }
         every { søknadRepository.update(capture(soknadSlot)) }
             .answers { soknadSlot.captured }
