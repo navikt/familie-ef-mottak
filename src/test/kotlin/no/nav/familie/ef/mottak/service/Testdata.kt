@@ -17,6 +17,7 @@ import no.nav.familie.kontrakter.ef.søknad.GjeldendeUtdanning
 import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.Medlemskapsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
+import no.nav.familie.kontrakter.ef.søknad.OpplysningerOmAdresse
 import no.nav.familie.kontrakter.ef.søknad.PersonMinimum
 import no.nav.familie.kontrakter.ef.søknad.Personalia
 import no.nav.familie.kontrakter.ef.søknad.PersonaliaArbeidssøker
@@ -86,8 +87,9 @@ internal object Testdata {
     }
 
     val søknadOvergangsstønad = SøknadOvergangsstønad(
-        Søknadsfelt("Søker", personalia()),
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("Søker", personalia()),
+        Søknadsfelt("Opplysninger om adresse", opplysningerOmAdresse()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -99,8 +101,9 @@ internal object Testdata {
     )
 
     val søknadBarnetilsyn = SøknadBarnetilsyn(
-        Søknadsfelt("Søker", personalia()),
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("Søker", personalia()),
+        Søknadsfelt("Opplysninger om adresse", opplysningerOmAdresse()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -597,6 +600,12 @@ internal object Testdata {
             )
         )
     }
+
+    private fun opplysningerOmAdresse() = OpplysningerOmAdresse(
+        søkerBorPåRegistrertAdresse = Søknadsfelt("Bor du på denne adressen?", false),
+        harMeldtFlytteendring = Søknadsfelt("Har du meldt flytteendring til folkeregisteret", true),
+        dokumentasjonFlytteendring = dokumentfelt("DokumentasjonForFlytteendring")
+    )
 
     private fun dokumentfelt(tittel: String) =
         Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(vedleggId, tittel))))

@@ -2,6 +2,15 @@
   "label": "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
   "verdiliste": [
     {
+      "label": "detaljer",
+      "verdiliste": [
+        {
+          "label": "mottat",
+          "verdi": "01.01.2020 00:00:00"
+        }
+      ]
+    },
+    {
       "label": "Søker",
       "verdiliste": [
         {
@@ -27,11 +36,24 @@
       ]
     },
     {
-      "label": "detaljer",
+      "label": "Opplysninger om adresse",
       "verdiliste": [
         {
-          "label": "mottat",
-          "verdi": "01.01.2020 00:00:00"
+          "label": "Bor du på denne adressen?",
+          "verdi": "Nei"
+        },
+        {
+          "label": "Har du meldt flytteendring til folkeregisteret",
+          "verdi": "Ja"
+        },
+        {
+          "label": "DokumentasjonForFlytteendring",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
         }
       ]
     },
@@ -343,8 +365,8 @@
                   "verdi": "Fra januar 2020 til juli 2020"
                 },
                 {
-                  "label" : "Periode",
-                  "verdi" : "Fra 12.01.2020 til 15.02.2020"
+                  "label": "Periode",
+                  "verdi": "Fra 12.01.2020 til 15.02.2020"
                 },
                 {
                   "label": "Beløp",
@@ -476,7 +498,7 @@
                 },
                 {
                   "label": "Når skal du være elev/student?",
-                  "verdi" : "Fra 01.01.1999 til 01.10.2004"
+                  "verdi": "Fra 01.01.1999 til 01.10.2004"
                 }
               ]
             },

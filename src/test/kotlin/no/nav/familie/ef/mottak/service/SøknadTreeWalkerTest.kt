@@ -20,7 +20,7 @@ class SøknadTreeWalkerTest {
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<*>
-        assertThat(verdiliste).hasSize(11)
+        assertThat(verdiliste).hasSize(12)
     }
 
     @Test
@@ -32,7 +32,7 @@ class SøknadTreeWalkerTest {
 
         assertThat(mapSøknadsfelter).isNotEmpty
         assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(11)
+        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(12)
     }
 
     @Test
