@@ -19,14 +19,14 @@
         <revision>1.0</revision>
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>1.7.10</kotlin.version>
-        <springdoc.version>1.6.11</springdoc.version>
+        <kotlin.version>1.7.21</kotlin.version>
+        <springdoc.version>1.6.13</springdoc.version>
         <mockk.version>1.12.5</mockk.version>
-        <felles.version>1.20221006150009_46021ed</felles.version>
+        <felles.version>1.20221101085322_cc4d556</felles.version>
         <prosessering.version>1.20221110194901_e9e0d90</prosessering.version>
         <confluent.version>7.2.2</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>2.0_20221012140422_b9336ff</kontrakter.version>
+        <kontrakter.version>2.0_20221118154109_cefc994</kontrakter.version>
         <token-validation.version>2.1.6</token-validation.version>
         <!-- okhttp3 overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <okhttp3.version>4.9.1</okhttp3.version>
@@ -229,13 +229,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.17.3</version>
+            <version>1.17.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8</artifactId>
-            <version>2.34.0</version>
+            <version>2.35.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
