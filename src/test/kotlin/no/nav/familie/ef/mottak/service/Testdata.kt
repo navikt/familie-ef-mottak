@@ -603,8 +603,8 @@ internal object Testdata {
 
     private fun adresseopplysninger() = Adresseopplysninger(
         søkerBorPåRegistrertAdresse = Søknadsfelt("Bor du på denne adressen?", false),
-        harMeldtFlytteendring = Søknadsfelt("Har du meldt flytteendring til folkeregisteret", true),
-        dokumentasjonFlytteendring = dokumentfelt("DokumentasjonForFlytteendring")
+        harMeldtAdresseendring = Søknadsfelt("Har du meldt adresseendring til folkeregisteret", true),
+        dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring")
     )
 
     private fun dokumentfelt(tittel: String) =

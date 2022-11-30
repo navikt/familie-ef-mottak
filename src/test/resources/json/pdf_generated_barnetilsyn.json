@@ -43,11 +43,11 @@
           "verdi": "Nei"
         },
         {
-          "label": "Har du meldt flytteendring til folkeregisteret",
+          "label": "Har du meldt adresseendring til folkeregisteret",
           "verdi": "Ja"
         },
         {
-          "label": "DokumentasjonForFlytteendring",
+          "label": "DokumentasjonForAdresseendring",
           "verdiliste": [
             {
               "label": "harSendtInn",
