@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Adresseopplysninger
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.AnnenForelder
 import no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver
@@ -17,7 +18,6 @@ import no.nav.familie.kontrakter.ef.søknad.GjeldendeUtdanning
 import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.Medlemskapsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
-import no.nav.familie.kontrakter.ef.søknad.OpplysningerOmAdresse
 import no.nav.familie.kontrakter.ef.søknad.PersonMinimum
 import no.nav.familie.kontrakter.ef.søknad.Personalia
 import no.nav.familie.kontrakter.ef.søknad.PersonaliaArbeidssøker
@@ -89,7 +89,7 @@ internal object Testdata {
     val søknadOvergangsstønad = SøknadOvergangsstønad(
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
         Søknadsfelt("Søker", personalia()),
-        Søknadsfelt("Opplysninger om adresse", opplysningerOmAdresse()),
+        Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -103,7 +103,7 @@ internal object Testdata {
     val søknadBarnetilsyn = SøknadBarnetilsyn(
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
         Søknadsfelt("Søker", personalia()),
-        Søknadsfelt("Opplysninger om adresse", opplysningerOmAdresse()),
+        Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -601,7 +601,7 @@ internal object Testdata {
         )
     }
 
-    private fun opplysningerOmAdresse() = OpplysningerOmAdresse(
+    private fun adresseopplysninger() = Adresseopplysninger(
         søkerBorPåRegistrertAdresse = Søknadsfelt("Bor du på denne adressen?", false),
         harMeldtFlytteendring = Søknadsfelt("Har du meldt flytteendring til folkeregisteret", true),
         dokumentasjonFlytteendring = dokumentfelt("DokumentasjonForFlytteendring")
