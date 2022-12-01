@@ -2,6 +2,15 @@
   "label": "Søknad om overgangsstønad (NAV 15-00.01)",
   "verdiliste": [
     {
+      "label": "detaljer",
+      "verdiliste": [
+        {
+          "label": "mottat",
+          "verdi": "01.01.2020 00:00:00"
+        }
+      ]
+    },
+    {
       "label": "Søker",
       "verdiliste": [
         {
@@ -27,11 +36,24 @@
       ]
     },
     {
-      "label": "detaljer",
+      "label": "Opplysninger om adresse",
       "verdiliste": [
         {
-          "label": "mottat",
-          "verdi": "01.01.2020 00:00:00"
+          "label": "Bor du på denne adressen?",
+          "verdi": "Nei"
+        },
+        {
+          "label": "Har du meldt adresseendring til folkeregisteret",
+          "verdi": "Ja"
+        },
+        {
+          "label": "DokumentasjonForAdresseendring",
+          "verdiliste": [
+            {
+              "label": "harSendtInn",
+              "verdi": "Nei"
+            }
+          ]
         }
       ]
     },

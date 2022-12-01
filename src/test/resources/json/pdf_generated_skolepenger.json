@@ -2,6 +2,15 @@
   "label": "Søknad om stønad til skolepenger (NAV 15-00.04)",
   "verdiliste": [
     {
+      "label": "detaljer",
+      "verdiliste": [
+        {
+          "label": "mottat",
+          "verdi": "01.01.2020 00:00:00"
+        }
+      ]
+    },
+    {
       "label": "Søker",
       "verdiliste": [
         {
@@ -23,15 +32,6 @@
         {
           "label": "Sivilstand",
           "verdi": "Ugift"
-        }
-      ]
-    },
-    {
-      "label": "detaljer",
-      "verdiliste": [
-        {
-          "label": "mottat",
-          "verdi": "01.01.2020 00:00:00"
         }
       ]
     },

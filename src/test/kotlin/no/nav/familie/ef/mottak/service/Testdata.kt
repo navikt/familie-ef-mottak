@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Adresseopplysninger
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.AnnenForelder
 import no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver
@@ -86,8 +87,9 @@ internal object Testdata {
     }
 
     val søknadOvergangsstønad = SøknadOvergangsstønad(
-        Søknadsfelt("Søker", personalia()),
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("Søker", personalia()),
+        Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -99,8 +101,9 @@ internal object Testdata {
     )
 
     val søknadBarnetilsyn = SøknadBarnetilsyn(
-        Søknadsfelt("Søker", personalia()),
         Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("Søker", personalia()),
+        Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
         Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         Søknadsfelt("Bosituasjonen din", bosituasjon()),
@@ -597,6 +600,12 @@ internal object Testdata {
             )
         )
     }
+
+    private fun adresseopplysninger() = Adresseopplysninger(
+        søkerBorPåRegistrertAdresse = Søknadsfelt("Bor du på denne adressen?", false),
+        harMeldtAdresseendring = Søknadsfelt("Har du meldt adresseendring til folkeregisteret", true),
+        dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring")
+    )
 
     private fun dokumentfelt(tittel: String) =
         Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(vedleggId, tittel))))
