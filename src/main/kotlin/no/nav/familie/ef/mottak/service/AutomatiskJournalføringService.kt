@@ -50,8 +50,7 @@ class AutomatiskJournalføringService(
         logger.info(
             "Automatisk journalført:$journalpostId: " +
                 "behandlingId: ${automatiskJournalføringResponse.behandlingId}, " +
-                "fagsakId: ${automatiskJournalføringResponse.fagsakId}, " +
-                "behandleSakOppgaveId: ${automatiskJournalføringResponse.behandleSakOppgaveId}"
+                "fagsakId: ${automatiskJournalføringResponse.fagsakId} "
         )
     }
 }
