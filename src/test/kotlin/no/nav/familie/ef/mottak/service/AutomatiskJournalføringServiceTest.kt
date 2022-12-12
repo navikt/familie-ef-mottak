@@ -22,8 +22,7 @@ internal class AutomatiskJournalføringServiceTest {
 
     private val automatiskJournalføringResponse = AutomatiskJournalføringResponse(
         fagsakId = UUID.randomUUID(),
-        behandlingId = UUID.randomUUID(),
-        behandleSakOppgaveId = 0
+        behandlingId = UUID.randomUUID()
     )
 
     private val mappeId = 1L
