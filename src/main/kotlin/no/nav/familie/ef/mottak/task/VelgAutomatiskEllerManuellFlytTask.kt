@@ -24,7 +24,6 @@ class VelgAutomatiskEllerManuellFlytTask(
     val taskService: TaskService,
     val søknadService: SøknadService,
     val saksbehandlingClient: SaksbehandlingClient,
-    val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -32,9 +31,7 @@ class VelgAutomatiskEllerManuellFlytTask(
         val stønadstype: StønadType? = dokumenttypeTilStønadType(søknad.dokumenttype)
 
         val neste =
-            if (featureToggleService.isEnabled("familie.ef.mottak.automatisk.journalforing.ef-sak") &&
-                skalAutomatiskJournalføre(stønadstype, søknad)
-            ) {
+            if (skalAutomatiskJournalføre(stønadstype, søknad)) {
                 automatiskJournalføringFlyt().first()
             } else {
                 manuellJournalføringFlyt().first()
