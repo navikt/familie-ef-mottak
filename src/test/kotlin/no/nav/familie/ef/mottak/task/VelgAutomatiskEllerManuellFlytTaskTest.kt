@@ -22,9 +22,8 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     private val taskService: TaskService = mockk()
     private val saksbehandlingClient: SaksbehandlingClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val featureToggleService: FeatureToggleService = mockk()
     private val velgAutomatiskEllerManuellFlytTask =
-        VelgAutomatiskEllerManuellFlytTask(taskService, søknadService, saksbehandlingClient, featureToggleService)
+        VelgAutomatiskEllerManuellFlytTask(taskService, søknadService, saksbehandlingClient)
 
     private val arbeidssøkerSkjemaId = "999L"
     private val overgangsstønadSøknadId = "123L"
@@ -51,7 +50,6 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
 
     @Test
     internal fun `skal velge automatisk flyt hvis det kan opprettes førstegangsbehandling`() {
-        every { featureToggleService.isEnabled(any()) } returns true
         every { saksbehandlingClient.kanOppretteFørstegangsbehandling(any(), any()) } returns true
         val taskSlot = slot<Task>()
         every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
@@ -62,7 +60,6 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
 
     @Test
     internal fun `skal velge manuell flyt hvis det ikke kan opprettes førstegangsbehandling`() {
-        every { featureToggleService.isEnabled(any()) } returns true
         every { saksbehandlingClient.kanOppretteFørstegangsbehandling(any(), any()) } returns false
         val taskSlot = slot<Task>()
         every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
@@ -71,19 +68,9 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
     }
 
-    @Test
-    internal fun `skal velge manuell flyt hvis featuretoggle er slått av`() {
-        every { featureToggleService.isEnabled(any()) } returns false
-        val taskSlot = slot<Task>()
-        every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
-
-        velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
-        Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
-    }
 
     @Test
     internal fun `skal velge manuell flyt for arbeidssøknadsskjema`() {
-        every { featureToggleService.isEnabled(any()) } returns true
         val taskSlot = slot<Task>()
         every { taskService.save(capture(taskSlot)) } answers { taskSlot.captured }
 

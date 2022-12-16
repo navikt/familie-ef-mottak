@@ -27,7 +27,7 @@ class SaksbehandlingClient(
 
     fun kanOppretteFørstegangsbehandling(personIdent: String, stønadType: StønadType): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("/api/ekstern/automatisk-journalforing/kan-opprette-forstegangsbehandling")
+            .pathSegment("/api/ekstern/automatisk-journalforing/kan-opprette-behandling")
             .queryParam("type", stønadType.name)
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
