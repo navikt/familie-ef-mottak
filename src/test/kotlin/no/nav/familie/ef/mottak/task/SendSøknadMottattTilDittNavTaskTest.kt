@@ -33,7 +33,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         task = Task(
             payload = SØKNAD_ID,
             type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-            properties = properties
+            properties = properties,
         )
     }
 
@@ -73,7 +73,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                 forventetTekst,
                 task.payload,
                 EVENT_ID,
-                null
+                null,
             )
         }
     }
@@ -84,7 +84,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                 id = SØKNAD_ID,
                 søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
-                fnr = FNR
+                fnr = FNR,
             )
     }
 

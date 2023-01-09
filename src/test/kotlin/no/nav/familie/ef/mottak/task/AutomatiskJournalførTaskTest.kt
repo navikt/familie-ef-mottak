@@ -34,7 +34,7 @@ internal class AutomatiskJournalførTaskTest {
         automatiskJournalføringService = automatiskJournalføringService,
         søknadService = søknadService,
         integrasjonerClient = integrasjonerClient,
-        mappeService = mappeService
+        mappeService = mappeService,
     )
 
     private val journalpostId = "123"
@@ -60,7 +60,7 @@ internal class AutomatiskJournalførTaskTest {
             søknadJson = EncryptedString(""),
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = "1234",
-            fnr = personIdent
+            fnr = personIdent,
         )
     }
 
@@ -96,6 +96,6 @@ internal class AutomatiskJournalførTaskTest {
             any(),
             any(),
             any(),
-            any()
+            any(),
         )
 }

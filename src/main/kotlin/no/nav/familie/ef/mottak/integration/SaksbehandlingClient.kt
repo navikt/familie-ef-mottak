@@ -19,7 +19,7 @@ class SaksbehandlingClient(
     @Value("\${EF_SAK_URL}")
     private val uri: URI,
     @Qualifier("restTemplateAzure")
-    restOperations: RestOperations
+    restOperations: RestOperations,
 ) :
     AbstractPingableRestClient(restOperations, "saksbehandling") {
 
@@ -34,7 +34,7 @@ class SaksbehandlingClient(
     }
 
     fun journalførAutomatisk(
-        automatiskJournalføringRequest: AutomatiskJournalføringRequest
+        automatiskJournalføringRequest: AutomatiskJournalføringRequest,
     ): AutomatiskJournalføringResponse {
         val sendInnUri = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/automatisk-journalforing/journalfor")

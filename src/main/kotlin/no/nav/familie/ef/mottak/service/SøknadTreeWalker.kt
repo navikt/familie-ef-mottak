@@ -38,12 +38,12 @@ object SøknadTreeWalker {
             LocalDate::class,
             LocalDateTime::class,
             Month::class,
-            Long::class
+            Long::class,
         )
 
     fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønad,
-        vedleggTitler: List<String>
+        vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
@@ -52,7 +52,7 @@ object SøknadTreeWalker {
 
     fun mapBarnetilsyn(
         søknad: SøknadBarnetilsyn,
-        vedleggTitler: List<String>
+        vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
@@ -61,7 +61,7 @@ object SøknadTreeWalker {
 
     fun mapSkolepenger(
         søknad: SøknadSkolepenger,
-        vedleggTitler: List<String>
+        vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
         val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
@@ -81,9 +81,9 @@ object SøknadTreeWalker {
                 Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
                 Feltformaterer.feltMap(
                     "Dato mottatt",
-                    ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-                )
-            )
+                    ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                ),
+            ),
         )
         val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))

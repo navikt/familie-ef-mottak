@@ -12,7 +12,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 @Service
 class PdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
-    private val pdfgeneratorConfig: PdfgeneratorConfig
+    private val pdfgeneratorConfig: PdfgeneratorConfig,
 ) :
     AbstractRestClient(operations, "pdf") {
 

@@ -39,14 +39,14 @@ class JournalhendelseKafkaHåndtererTest {
     fun `Ikke gyldige hendelsetyper skal ignoreres`() {
         val ugyldigHendelsetypeRecord = journalføringHendelseRecord(
             JOURNALPOST_PAPIRSØKNAD,
-            hendelseType = "UgyldigType"
+            hendelseType = "UgyldigType",
         )
         val consumerRecord = ConsumerRecord(
             "topic",
             1,
             OFFSET,
             "42",
-            ugyldigHendelsetypeRecord
+            ugyldigHendelsetypeRecord,
         )
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
@@ -65,7 +65,7 @@ class JournalhendelseKafkaHåndtererTest {
             1,
             OFFSET,
             "42",
-            ukjentTemaRecord
+            ukjentTemaRecord,
         )
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
@@ -82,7 +82,7 @@ class JournalhendelseKafkaHåndtererTest {
             1,
             OFFSET,
             "42",
-            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
         )
         every {
             journalhendelseServiceMock.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
@@ -104,7 +104,7 @@ class JournalhendelseKafkaHåndtererTest {
             1,
             OFFSET,
             "42",
-            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD)
+            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
         )
 
         every {

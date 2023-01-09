@@ -18,7 +18,7 @@ import java.util.UUID
 class TaskProsesseringService(
     private val taskService: TaskService,
     private val søknadRepository: SøknadRepository,
-    private val ettersendingRepository: EttersendingRepository
+    private val ettersendingRepository: EttersendingRepository,
 ) {
 
     @Transactional
@@ -30,8 +30,8 @@ class TaskProsesseringService(
             Task(
                 LagPdfTask.TYPE,
                 søknad.id,
-                properties
-            )
+                properties,
+            ),
         )
 
         properties["eventId"] = UUID.randomUUID().toString()
@@ -39,8 +39,8 @@ class TaskProsesseringService(
             Task(
                 SendSøknadMottattTilDittNavTask.TYPE,
                 søknad.id,
-                properties
-            )
+                properties,
+            ),
         )
         søknadRepository.update(søknad.copy(taskOpprettet = true))
     }

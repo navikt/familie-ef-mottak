@@ -24,7 +24,7 @@ class AutomatiskJournalførTask(
     val taskService: TaskService,
     val automatiskJournalføringService: AutomatiskJournalføringService,
     val integrasjonerClient: IntegrasjonerClient,
-    val mappeService: MappeService
+    val mappeService: MappeService,
 ) :
     AsyncTaskStep {
 
@@ -44,7 +44,7 @@ class AutomatiskJournalførTask(
                 personIdent = søknad.fnr,
                 journalpostId = journalpostId,
                 stønadstype = stønadstype,
-                mappeId = mappeId
+                mappeId = mappeId,
             )
 
         when (automatiskJournalføringFullført) {

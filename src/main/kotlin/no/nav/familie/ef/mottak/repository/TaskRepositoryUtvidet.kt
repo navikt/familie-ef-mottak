@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Repository
 
 @Repository

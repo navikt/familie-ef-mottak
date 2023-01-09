@@ -27,7 +27,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     internal fun `overgangsstønad ok request`() {
         verifySøknadMedVedleggRequest(
             SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg())),
-            "/api/soknad/overgangsstonad"
+            "/api/soknad/overgangsstonad",
         )
     }
 
@@ -58,7 +58,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
             restTemplate.exchange(
                 localhost("/api/soknad/overgangsstonad"),
                 HttpMethod.POST,
-                HttpEntity(request, headers)
+                HttpEntity(request, headers),
             )
         assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
     }
@@ -66,13 +66,13 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     private fun <T> verifySøknadMedVedleggRequest(
         søknad: SøknadMedVedlegg<T>,
         url: String,
-        forventetHttpStatus: HttpStatus = HttpStatus.OK
+        forventetHttpStatus: HttpStatus = HttpStatus.OK,
     ) {
         val response: ResponseEntity<Any> =
             restTemplate.exchange(
                 localhost(url),
                 HttpMethod.POST,
-                HttpEntity(søknad, headers)
+                HttpEntity(søknad, headers),
             )
 
         assertThat(response.statusCode).isEqualTo(forventetHttpStatus)

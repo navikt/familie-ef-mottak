@@ -36,15 +36,15 @@ class SøknadServiceTest {
             SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
             SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
             SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
-            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker)
+            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
         )
         val forventetDokumentasjonsbehov = listOf(
             DokumentasjonsbehovKontrakter(
                 "test",
                 UUID.randomUUID()
                     .toString(),
-                false
-            )
+                false,
+            ),
         )
 
         every { søknadRepository.finnSisteSøknadenPerStønadtype(fnr) } returns søknader

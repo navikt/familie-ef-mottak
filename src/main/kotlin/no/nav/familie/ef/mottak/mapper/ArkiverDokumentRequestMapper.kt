@@ -19,7 +19,7 @@ object ArkiverDokumentRequestMapper {
 
     fun toDto(
         søknad: Søknad,
-        vedlegg: List<Vedlegg>
+        vedlegg: List<Vedlegg>,
     ): ArkiverDokumentRequest {
         val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
@@ -31,13 +31,13 @@ object ArkiverDokumentRequestMapper {
             søknad.fnr,
             false,
             hoveddokumentvarianter,
-            mapVedlegg(vedlegg, søknad.dokumenttype)
+            mapVedlegg(vedlegg, søknad.dokumenttype),
         )
     }
 
     fun fromEttersending(
         ettersending: Ettersending,
-        vedlegg: List<EttersendingVedlegg>
+        vedlegg: List<EttersendingVedlegg>,
     ): ArkiverDokumentRequest {
         val stønadType = StønadType.valueOf(ettersending.stønadType)
 
@@ -49,14 +49,14 @@ object ArkiverDokumentRequestMapper {
             hovedDokumentVarianter,
             mapEttersendingVedlegg(
                 vedlegg,
-                stønadType
-            )
+                stønadType,
+            ),
         )
     }
 
     private fun lagHoveddokumentvarianterForEttersending(
         stønadType: StønadType,
-        ettersending: Ettersending
+        ettersending: Ettersending,
     ): List<Dokument> {
         val tittel = "Ettersending til søknad om $stønadType"
         val dokumenttype = utledDokumenttypeForEttersending(stønadType)
@@ -88,7 +88,7 @@ object ArkiverDokumentRequestMapper {
             filtype = Filtype.PDFA,
             tittel = vedlegg.tittel,
             filnavn = vedlegg.id.toString(),
-            dokumenttype = dokumenttypeVedlegg
+            dokumenttype = dokumenttypeVedlegg,
         )
     }
 
@@ -98,7 +98,7 @@ object ArkiverDokumentRequestMapper {
             filtype = Filtype.PDFA,
             tittel = vedlegg.tittel,
             filnavn = vedlegg.id.toString(),
-            dokumenttype = dokumenttypeVedlegg
+            dokumenttype = dokumenttypeVedlegg,
         )
     }
 

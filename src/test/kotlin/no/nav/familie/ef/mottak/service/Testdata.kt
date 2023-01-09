@@ -57,32 +57,32 @@ internal object Testdata {
                 Arbeidssøker(
                     Søknadsfelt(
                         "Er du registrert som arbeidssøker hos Nav?",
-                        true
+                        true,
                     ),
                     Søknadsfelt(
                         "Er du villig til å ta imot tilbud om arbeid?",
-                        true
+                        true,
                     ),
                     Søknadsfelt("Kan du begynne innen en uke?", true),
                     Søknadsfelt(
                         "Kan du skaffe barnepass innen en uke?",
-                        true
+                        true,
                     ),
                     Søknadsfelt("Hvor ønsker du arbeid?", "Mordor"),
 
                     Søknadsfelt(
                         "Ønsker du minst 50 prosent stilling?",
-                        true
-                    )
-                )
+                        true,
+                    ),
+                ),
             ),
-            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat)))
+            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
         )
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
         return PersonaliaArbeidssøker(
             Søknadsfelt("fnr", Fødselsnummer("03125462714")), // random fnr anno 1854
-            Søknadsfelt("Navn", "Navnesen")
+            Søknadsfelt("Navn", "Navnesen"),
         )
     }
 
@@ -97,7 +97,7 @@ internal object Testdata {
         Søknadsfelt("Barn", listOf(barn())),
         Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
         Søknadsfelt("Mer om situasjonen din", situasjon()),
-        Søknadsfelt("Når søker du stønad fra?", stønadsstart())
+        Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
     )
 
     val søknadBarnetilsyn = SøknadBarnetilsyn(
@@ -115,8 +115,8 @@ internal object Testdata {
             barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
             avtaleBarnepasser = dokumentfelt("Avtale barnepasser"),
             arbeidstid = dokumentfelt("Arbeidstid"),
-            spesielleBehov = dokumentfelt("Spesielle behov")
-        )
+            spesielleBehov = dokumentfelt("Spesielle behov"),
+        ),
     )
 
     val søknadSkolepenger = SøknadSkolepenger(
@@ -126,20 +126,20 @@ internal object Testdata {
             Innsendingsdetaljer(
                 Søknadsfelt(
                     "mottat",
-                    mottat
-                )
-            )
+                    mottat,
+                ),
+            ),
         ),
         sivilstandsdetaljer = Søknadsfelt(
             "Detaljer om sivilstand",
-            sivilstandsdetaljer()
+            sivilstandsdetaljer(),
         ),
         medlemskapsdetaljer = Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
         bosituasjon = Søknadsfelt("Bosituasjonen din", bosituasjon()),
         sivilstandsplaner = Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
         barn = Søknadsfelt("Barn", listOf(barn())),
         utdanning = Søknadsfelt("Arbeid, utdanning og andre aktiviteter", utdanning()),
-        dokumentasjon = SkolepengerDokumentasjon()
+        dokumentasjon = SkolepengerDokumentasjon(),
     )
 
     private fun utdanning(): UnderUtdanning {
@@ -150,7 +150,7 @@ internal object Testdata {
                 TidligereUtdanning(
                     Søknadsfelt(
                         "Linje/kurs/grad",
-                        "Profesjonsstudium Informatikk"
+                        "Profesjonsstudium Informatikk",
                     ),
                     Søknadsfelt(
                         "Når skal du være elev/student?",
@@ -158,36 +158,36 @@ internal object Testdata {
                             Month.JANUARY,
                             1999,
                             Month.OCTOBER,
-                            2004
-                        )
-                    )
-                )
+                            2004,
+                        ),
+                    ),
+                ),
             ),
             Søknadsfelt(
                 "Utdanning",
                 GjeldendeUtdanning(
                     Søknadsfelt(
                         "Linje/kurs/grad",
-                        "Profesjonsstudium Informatikk"
+                        "Profesjonsstudium Informatikk",
                     ),
                     Søknadsfelt(
                         "Når skal du være elev/student?",
                         Datoperiode(
                             LocalDate.of(1999, 1, 1),
-                            LocalDate.of(2004, 10, 1)
-                        )
-                    )
-                )
+                            LocalDate.of(2004, 10, 1),
+                        ),
+                    ),
+                ),
             ),
             Søknadsfelt(
                 "Er utdanningen offentlig eller privat?",
-                "Offentlig"
+                "Offentlig",
             ),
             Søknadsfelt("Heltid, eller deltid", "Deltid"),
             Søknadsfelt("Hvor mye skal du studere?", 300),
             Søknadsfelt(
                 "Hva er målet med utdanningen?",
-                "Økonomisk selvstendighet"
+                "Økonomisk selvstendighet",
             ),
             Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
             Søknadsfelt(
@@ -196,7 +196,7 @@ internal object Testdata {
                     TidligereUtdanning(
                         Søknadsfelt(
                             "Linje/kurs/grad",
-                            "Master Fysikk"
+                            "Master Fysikk",
                         ),
                         Søknadsfelt(
                             "Når var du elev/student?",
@@ -204,12 +204,12 @@ internal object Testdata {
                                 Month.JANUARY,
                                 1999,
                                 Month.OCTOBER,
-                                2004
-                            )
-                        )
-                    )
-                )
-            )
+                                2004,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -220,7 +220,7 @@ internal object Testdata {
     private fun stønadsstart() = Stønadsstart(
         Søknadsfelt("Fra måned", Month.AUGUST),
         Søknadsfelt("Fra år", 2018),
-        Søknadsfelt("Søke fra bestemt mnd", true)
+        Søknadsfelt("Søke fra bestemt mnd", true),
     )
 
     @Suppress("LongLine")
@@ -231,9 +231,9 @@ internal object Testdata {
                 listOf(
                     "Barnet mitt er sykt",
                     "Jeg har søkt om barnepass, men ikke fått plass enda",
-                    "Jeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer"
+                    "Jeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
                 ),
-                listOf("123", "234", "345")
+                listOf("123", "234", "345"),
             ),
             dokumentfelt("Legeerklæring"),
             dokumentfelt("Legeattest for egen sykdom eller sykt barn"),
@@ -246,11 +246,11 @@ internal object Testdata {
             Søknadsfelt("Når skal du starte utdanningen?", LocalDate.of(2025, 7, 28)),
             Søknadsfelt(
                 "Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?",
-                "Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)"
+                "Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)",
             ),
             Søknadsfelt("Hvorfor sa du opp?", "Sjefen var dum"),
             Søknadsfelt("Når sa du opp?", LocalDate.of(2014, 1, 12)),
-            dokumentfelt("Dokumentasjon av arbeidsforhold")
+            dokumentfelt("Dokumentasjon av arbeidsforhold"),
         )
     }
 
@@ -262,8 +262,8 @@ internal object Testdata {
                 listOf(
                     "Jeg er hjemme med barn under 1 år",
                     "Jeg er i arbeid",
-                    "Jeg er selvstendig næringsdrivende eller frilanser"
-                )
+                    "Jeg er selvstendig næringsdrivende eller frilanser",
+                ),
             ),
             Søknadsfelt(
                 "Om arbeidsforholdet ditt",
@@ -273,15 +273,15 @@ internal object Testdata {
                         Søknadsfelt("Hvor mye jobber du?", 15),
                         Søknadsfelt(
                             "Er stillingen fast eller midlertidig?",
-                            "Fast"
+                            "Fast",
                         ),
                         Søknadsfelt("Har du en sluttdato?", true),
                         Søknadsfelt(
                             "Når skal du slutte?",
-                            LocalDate.of(2020, 11, 18)
-                        )
-                    )
-                )
+                            LocalDate.of(2020, 11, 18),
+                        ),
+                    ),
+                ),
             ),
             null,
             Søknadsfelt(
@@ -292,56 +292,56 @@ internal object Testdata {
                         Søknadsfelt("Organisasjonsnummer", "987654321"),
                         Søknadsfelt(
                             "Når etablerte du firmaet?",
-                            LocalDate.of(2018, 4, 5)
+                            LocalDate.of(2018, 4, 5),
                         ),
                         Søknadsfelt("Hvor mye jobber du?", 150),
                         Søknadsfelt(
                             "Hvordan ser arbeidsuken din ut?",
-                            "Veldig tung"
-                        )
-                    )
-                )
+                            "Veldig tung",
+                        ),
+                    ),
+                ),
             ),
             Søknadsfelt(
                 "Om virksomheten du etablerer",
                 Virksomhet(
                     Søknadsfelt(
                         "Beskriv virksomheten",
-                        "Den kommer til å revolusjonere verden"
-                    )
-                )
+                        "Den kommer til å revolusjonere verden",
+                    ),
+                ),
             ),
             Søknadsfelt(
                 "Når du er arbeidssøker",
                 Arbeidssøker(
                     registrertSomArbeidssøkerNav = Søknadsfelt(
                         "Er du registrert som arbeidssøker hos NAV?",
-                        true
+                        true,
                     ),
                     villigTilÅTaImotTilbudOmArbeid = Søknadsfelt(
                         "Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-                        true
+                        true,
                     ),
                     kanDuBegynneInnenEnUke = Søknadsfelt(
                         "Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-                        true
+                        true,
                     ),
                     kanDuSkaffeBarnepassInnenEnUke = Søknadsfelt(
                         "Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-                        false
+                        false,
                     ),
                     hvorØnskerDuArbeid = Søknadsfelt(
                         "Hvor ønsker du å søke arbeid?",
-                        "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"
+                        "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei",
                     ),
                     ønskerDuMinst50ProsentStilling = Søknadsfelt(
                         "Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-                        true
+                        true,
                     ),
-                    ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon = dokumentfelt("Dokumentasjon - ikke villig til å ta import tilbud om arbeid")
-                )
+                    ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon = dokumentfelt("Dokumentasjon - ikke villig til å ta import tilbud om arbeid"),
+                ),
 
-            ),
+                ),
             Søknadsfelt(
                 "Utdanningen du skal ta",
                 UnderUtdanning(
@@ -352,7 +352,7 @@ internal object Testdata {
                         GjeldendeUtdanning(
                             Søknadsfelt(
                                 "Linje/kurs/grad",
-                                "Profesjonsstudium Informatikk"
+                                "Profesjonsstudium Informatikk",
                             ),
                             Søknadsfelt(
                                 "Når skal du være elev/student?",
@@ -360,26 +360,26 @@ internal object Testdata {
                                     LocalDate.of(
                                         1999,
                                         1,
-                                        1
+                                        1,
                                     ),
                                     LocalDate.of(
                                         2004,
                                         10,
-                                        1
-                                    )
-                                )
-                            )
-                        )
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                     Søknadsfelt(
                         "Er utdanningen offentlig eller privat?",
-                        "Offentlig"
+                        "Offentlig",
                     ),
                     Søknadsfelt("Heltid, eller deltid", "Deltid"),
                     Søknadsfelt("Hvor mye skal du studere?", 300),
                     Søknadsfelt(
                         "Hva er målet med utdanningen?",
-                        "Økonomisk selvstendighet"
+                        "Økonomisk selvstendighet",
                     ),
                     Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
                     Søknadsfelt(
@@ -388,7 +388,7 @@ internal object Testdata {
                             TidligereUtdanning(
                                 Søknadsfelt(
                                     "Linje/kurs/grad",
-                                    "Master Fysikk"
+                                    "Master Fysikk",
                                 ),
                                 Søknadsfelt(
                                     "Når var du elev/student?",
@@ -396,14 +396,14 @@ internal object Testdata {
                                         Month.JANUARY,
                                         1999,
                                         Month.OCTOBER,
-                                        2004
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                        2004,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -419,9 +419,9 @@ internal object Testdata {
                 AnnenForelder(
                     Søknadsfelt(
                         "Hvorfor kan du ikke oppgi den andre forelderen?",
-                        "Fordi jeg ikke liker hen."
-                    )
-                )
+                        "Fordi jeg ikke liker hen.",
+                    ),
+                ),
             ),
             fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer("03125462714")), // random fnr anno 1854,
             harSkalHaSammeAdresse = Søknadsfelt("Skal ha samme adresse", true),
@@ -431,52 +431,52 @@ internal object Testdata {
                 Samvær(
                     Søknadsfelt(
                         "Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
-                        true
+                        true,
                     ),
                     dokumentfelt("Avtale om delt bosted for barna"),
                     Søknadsfelt(
                         "Har den andre forelderen samvær med barnet",
-                        "Ja, men ikke mer enn vanlig samværsrett"
+                        "Ja, men ikke mer enn vanlig samværsrett",
                     ),
                     Søknadsfelt(
                         "Har dere skriftlig samværsavtale for barnet?",
-                        "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene"
+                        "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene",
                     ),
                     dokumentfelt("Avtale om samvær"),
                     dokumentfelt("Skal barnet bo hos deg"),
                     Søknadsfelt(
                         "Hvordan praktiserer dere samværet?",
-                        "Litt hver for oss"
+                        "Litt hver for oss",
                     ),
                     Søknadsfelt(
                         "Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
-                        "ja"
+                        "ja",
                     ),
                     Søknadsfelt(
                         "Bor du og den andre forelderen til  i samme hus/blokk beskrivelse",
-                        "Ekstra info?"
+                        "Ekstra info?",
                     ),
                     Søknadsfelt(
                         "Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
-                        true
+                        true,
                     ),
                     Søknadsfelt(
                         "Når flyttet dere fra hverandre?",
-                        LocalDate.of(2018, 7, 21)
+                        LocalDate.of(2018, 7, 21),
                     ),
                     dokumentfelt("Erklæring om samlivsbrudd"),
                     Søknadsfelt(
                         "Hvor mye er du sammen med den andre forelderen til barnet?",
-                        "Vi møtes også uten at barnet er til stede"
+                        "Vi møtes også uten at barnet er til stede",
                     ),
                     Søknadsfelt(
                         "Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
-                        "Vi sees stadig vekk"
-                    )
-                )
+                        "Vi sees stadig vekk",
+                    ),
+                ),
             ),
             skalHaBarnepass = if (barnetilsyn) Søknadsfelt("Skal ha barnepass", true) else null,
-            barnepass = if (barnetilsyn) barnepass() else null
+            barnepass = if (barnetilsyn) barnepass() else null,
         )
     }
 
@@ -492,12 +492,15 @@ internal object Testdata {
                             hvaSlagsBarnepassOrdning = Søknadsfelt("Hva slags barnepassordning?", "En"),
                             navn = Søknadsfelt("Navn", "navn"),
                             periode = Søknadsfelt("Periode", MånedÅrPeriode(Month.JANUARY, 2020, Month.JULY, 2020)),
-                            datoperiode = Søknadsfelt("Periode", Datoperiode(LocalDate.of(2020, 1, 12), LocalDate.of(2020, 2, 15))),
-                            belop = Søknadsfelt("Beløp", 1000.213)
-                        )
-                    )
-                )
-            )
+                            datoperiode = Søknadsfelt(
+                                "Periode",
+                                Datoperiode(LocalDate.of(2020, 1, 12), LocalDate.of(2020, 2, 15))
+                            ),
+                            belop = Søknadsfelt("Beløp", 1000.213),
+                        ),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -505,7 +508,7 @@ internal object Testdata {
         return Sivilstandsplaner(
             Søknadsfelt("Har du konkrete planer om å gifte deg eller bli samboer", true),
             Søknadsfelt("Når skal dette skje?", LocalDate.of(2021, 4, 15)),
-            Søknadsfelt("Hvem skal du gifte deg eller bli samboer med?", personMinimum())
+            Søknadsfelt("Hvem skal du gifte deg eller bli samboer med?", personMinimum()),
         )
     }
 
@@ -513,10 +516,10 @@ internal object Testdata {
         return Bosituasjon(
             Søknadsfelt(
                 "Deler du bolig med andre voksne?",
-                "Ja, jeg har samboer og lever i et ekteskapslignende forhold"
+                "Ja, jeg har samboer og lever i et ekteskapslignende forhold",
             ),
             Søknadsfelt("Om samboeren din", personMinimum()),
-            Søknadsfelt("Når flyttet dere sammen?", LocalDate.of(2018, 8, 12))
+            Søknadsfelt("Når flyttet dere sammen?", LocalDate.of(2018, 8, 12)),
         )
     }
 
@@ -530,19 +533,19 @@ internal object Testdata {
                     Utenlandsopphold(
                         Søknadsfelt(
                             "Fra",
-                            LocalDate.of(2012, 12, 4)
+                            LocalDate.of(2012, 12, 4),
                         ),
                         Søknadsfelt(
                             "Til",
-                            LocalDate.of(2012, 12, 18)
+                            LocalDate.of(2012, 12, 18),
                         ),
                         Søknadsfelt(
                             "Hvorfor bodde du i utlandet?",
-                            "Granca, Granca, Granca"
-                        )
-                    )
-                )
-            )
+                            "Granca, Granca, Granca",
+                        ),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -551,31 +554,31 @@ internal object Testdata {
         return Sivilstandsdetaljer(
             Søknadsfelt(
                 "Er du gift uten at dette er formelt registrert eller godkjent i Norge?",
-                true
+                true,
             ),
             dokumentfelt("giftIUtlandetDokumentasjon"),
             Søknadsfelt(
                 "Er du separert eller skilt uten at dette er formelt registrert eller godkjent i Norge?",
-                true
+                true,
             ),
             dokumentfelt("separertEllerSkiltIUtlandetDokumentasjon"),
             Søknadsfelt(
                 "Har dere søkt om separasjon, søkt om skilsmisse eller reist sak for domstolen?",
-                true
+                true,
             ),
             Søknadsfelt("Når søkte dere eller reiste sak?", LocalDate.of(2015, 12, 23)),
             dokumentfelt("Skilsmisse- eller separasjonsbevilling"),
             Søknadsfelt(
                 "Hva er grunnen til at du er alene med barn?",
-                "Endring i samværsordning"
+                "Endring i samværsordning",
             ),
             dokumentfelt("Erklæring om samlivsbrudd"),
             Søknadsfelt("Dato for samlivsbrudd", LocalDate.of(2014, 10, 3)),
             Søknadsfelt("Når flyttet dere fra hverandre?", LocalDate.of(2014, 10, 4)),
             Søknadsfelt(
                 "Når skjedde endringen / når skal endringen skje?",
-                LocalDate.of(2013, 4, 17)
-            )
+                LocalDate.of(2013, 4, 17),
+            ),
         )
     }
 
@@ -585,7 +588,7 @@ internal object Testdata {
             Søknadsfelt("Navn", "Kari Nordmann"),
             Søknadsfelt("Statsborgerskap", "Norsk"),
             adresseSøknadsfelt(),
-            Søknadsfelt("Sivilstand", "Ugift")
+            Søknadsfelt("Sivilstand", "Ugift"),
         )
     }
 
@@ -596,15 +599,15 @@ internal object Testdata {
                 "Jerpefaret 5C",
                 "1440",
                 "Drøbak",
-                "Norge"
-            )
+                "Norge",
+            ),
         )
     }
 
     private fun adresseopplysninger() = Adresseopplysninger(
         søkerBorPåRegistrertAdresse = Søknadsfelt("Bor du på denne adressen?", false),
         harMeldtAdresseendring = Søknadsfelt("Har du meldt adresseendring til folkeregisteret", true),
-        dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring")
+        dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring"),
     )
 
     private fun dokumentfelt(tittel: String) =
@@ -614,7 +617,7 @@ internal object Testdata {
         return PersonMinimum(
             Søknadsfelt("Navn", "Bob Burger"),
             null,
-            Søknadsfelt("Fødselsdato", LocalDate.of(1992, 2, 18))
+            Søknadsfelt("Fødselsdato", LocalDate.of(1992, 2, 18)),
         )
     }
 }

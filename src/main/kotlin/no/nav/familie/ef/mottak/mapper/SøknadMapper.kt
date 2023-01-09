@@ -24,7 +24,7 @@ object SøknadMapper {
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            behandleINySaksbehandling = behandleINySaksbehandling
+            behandleINySaksbehandling = behandleINySaksbehandling,
         )
     }
 
@@ -33,7 +33,7 @@ object SøknadMapper {
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-            behandleINySaksbehandling = behandleINySaksbehandling
+            behandleINySaksbehandling = behandleINySaksbehandling,
         )
     }
 
@@ -42,7 +42,7 @@ object SøknadMapper {
             søknadJson = EncryptedString(objectMapper.writeValueAsString(skjemaForArbeidssøker)),
             fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-            behandleINySaksbehandling = false
+            behandleINySaksbehandling = false,
         )
     }
 
@@ -51,7 +51,7 @@ object SøknadMapper {
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknadSkolepenger)),
             fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-            behandleINySaksbehandling = behandleINySaksbehandling
+            behandleINySaksbehandling = behandleINySaksbehandling,
         )
     }
 }

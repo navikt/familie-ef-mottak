@@ -21,5 +21,5 @@ data class Søknad(
     val fnr: String,
     val taskOpprettet: Boolean = false,
     val opprettetTid: LocalDateTime = LocalDateTime.now(),
-    val behandleINySaksbehandling: Boolean = false
+    val behandleINySaksbehandling: Boolean = false,
 )

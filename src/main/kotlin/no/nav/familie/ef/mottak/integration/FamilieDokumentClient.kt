@@ -13,7 +13,7 @@ import java.net.URI
 class FamilieDokumentClient(
     @Value("\${familie.dokument.url}")
     private val dokumentApiURI: URI,
-    @Qualifier("tokenExchange") restTemplate: RestOperations
+    @Qualifier("tokenExchange") restTemplate: RestOperations,
 ) :
     AbstractPingableRestClient(restTemplate, "familie.dokument") {
 

@@ -11,5 +11,5 @@ data class Vedlegg(
     val søknadId: String,
     val navn: String,
     val tittel: String,
-    val innhold: EncryptedFile
+    val innhold: EncryptedFile,
 )

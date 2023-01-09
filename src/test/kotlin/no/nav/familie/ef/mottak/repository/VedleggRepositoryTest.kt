@@ -48,8 +48,8 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
                 søknadMedVedleggSomSkalSlettes,
                 "navn",
                 "slettet1",
-                EncryptedFile(byteArrayOf(12))
-            )
+                EncryptedFile(byteArrayOf(12)),
+            ),
         )
         vedleggRepository.insert(
             Vedlegg(
@@ -57,8 +57,8 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
                 søknadMedVedleggSomSkalSlettes,
                 "navn",
                 "slettet2",
-                EncryptedFile(byteArrayOf(12))
-            )
+                EncryptedFile(byteArrayOf(12)),
+            ),
         )
         vedleggRepository.insert(
             Vedlegg(
@@ -66,8 +66,8 @@ internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
                 søknadMedVedleggSomIkkeSkalRøres,
                 "navn",
                 "urørt",
-                EncryptedFile(byteArrayOf(12))
-            )
+                EncryptedFile(byteArrayOf(12)),
+            ),
         )
 
         vedleggRepository.deleteBySøknadId(søknadMedVedleggSomSkalSlettes)

@@ -39,7 +39,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
                 søknadService,
-                mockk(relaxed = true)
+                mockk(relaxed = true),
             )
     }
 
@@ -74,7 +74,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - har allerede sendt inn`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
-            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp."
+            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp.",
         )
     }
 
@@ -83,7 +83,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", false, emptyList())),
             "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
-                "Se hva som mangler og last opp vedlegg."
+                "Se hva som mangler og last opp vedlegg.",
         )
     }
 
@@ -91,7 +91,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - har sendt inn vedlegg`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
-            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp."
+            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp.",
         )
     }
 
@@ -113,7 +113,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private fun testOgVerifiserMelding(
         dokumentasjonsbehov: List<Dokumentasjonsbehov>,
         forventetMelding: String,
-        link: URL? = null
+        link: URL? = null,
     ) {
         mockSøknad()
         mockDokumentasjonsbehov(dokumentasjonsbehov, SøknadType.OVERGANGSSTØNAD)
@@ -127,7 +127,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
 
     private fun mockDokumentasjonsbehov(
         dokumentasjonsbehov: List<Dokumentasjonsbehov> = emptyList(),
-        søknadType: SøknadType
+        søknadType: SøknadType,
     ) {
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
@@ -143,7 +143,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 id = SØKNAD_ID,
                 søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
-                fnr = FNR
+                fnr = FNR,
             )
     }
 

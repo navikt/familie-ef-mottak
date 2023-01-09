@@ -42,7 +42,8 @@ fun Journalpost.incrementMetric() {
     when (this.getJournalpostState()) {
         JournalpostState.IKKE_MOTTATT -> Metrics.counter("alene.med.barn.journalhendelse.ignorerte").increment()
         JournalpostState.UGYLDIG_KANAL, JournalpostState.UGYLDIG,
-        JournalpostState.GYLDIG -> Metrics.counter(this.kanalMetricName()).increment()
+        JournalpostState.GYLDIG,
+        -> Metrics.counter(this.kanalMetricName()).increment()
     }
 }
 
@@ -73,5 +74,5 @@ enum class JournalpostState {
     UGYLDIG,
     IKKE_MOTTATT,
     UGYLDIG_KANAL,
-    GYLDIG;
+    GYLDIG,
 }

@@ -87,7 +87,7 @@ class JournalhendelseServiceTest {
             behandlingstema = null,
             dokumenter = null,
             journalforendeEnhet = null,
-            sak = null
+            sak = null,
         )
 
         // Inngående digital, Mottatt
@@ -99,7 +99,7 @@ class JournalhendelseServiceTest {
             journalstatus = Journalstatus.MOTTATT,
             bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
             tema = "ENF",
-            kanal = "NAV_NO"
+            kanal = "NAV_NO",
         )
 
         // Utgående digital, Mottatt
@@ -111,7 +111,7 @@ class JournalhendelseServiceTest {
             journalstatus = Journalstatus.MOTTATT,
             bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
             tema = "ENF",
-            kanal = "SKAN_NETS"
+            kanal = "SKAN_NETS",
         )
 
         // Ikke barnetrygd
@@ -123,7 +123,7 @@ class JournalhendelseServiceTest {
             journalstatus = Journalstatus.MOTTATT,
             bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
             tema = "FOR",
-            kanal = "NAV_NO"
+            kanal = "NAV_NO",
         )
 
         // ferdigstilt journalpost
@@ -135,7 +135,7 @@ class JournalhendelseServiceTest {
             journalstatus = Journalstatus.FERDIGSTILT,
             bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
             tema = "FOR",
-            kanal = "NAV_NO"
+            kanal = "NAV_NO",
         )
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
@@ -148,7 +148,7 @@ class JournalhendelseServiceTest {
             mockSøknadRepository,
             mockJournalfoeringHendelseDbUtil,
             mockJournalføringsoppgaveService,
-            mockTaskRepositoryUtvidet
+            mockTaskRepositoryUtvidet,
         )
     }
 

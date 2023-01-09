@@ -23,7 +23,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
     fun toJournalføringsoppgave(
         journalpost: Journalpost,
         behandlesAvApplikasjon: BehandlesAvApplikasjon,
-        enhetsnummer: String?
+        enhetsnummer: String?,
     ) = OpprettOppgaveRequest(
         ident = tilOppgaveIdent(journalpost),
         saksId = null,
@@ -36,7 +36,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         behandlingstema = journalpost.behandlingstema,
         enhetsnummer = utledEnhetsnummer(journalpost.journalforendeEnhet, enhetsnummer),
         behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
-        tilordnetRessurs = null
+        tilordnetRessurs = null,
     )
 
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
@@ -101,7 +101,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
 
     private fun utledEnhetsnummer(
         journalforendeEnhet: String?,
-        enhetsnummer: String?
+        enhetsnummer: String?,
     ) = when {
         harGyldigJournalførendeEnhet(journalforendeEnhet) -> journalforendeEnhet
         else -> enhetsnummer

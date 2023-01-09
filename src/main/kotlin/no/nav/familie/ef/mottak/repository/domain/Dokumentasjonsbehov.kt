@@ -7,5 +7,5 @@ data class Dokumentasjonsbehov(
     @Id
     @Column("soknad_id")
     val søknadId: String,
-    val data: String
+    val data: String,
 )

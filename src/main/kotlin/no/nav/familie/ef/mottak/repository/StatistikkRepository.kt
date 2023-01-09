@@ -18,7 +18,7 @@ class StatistikkRepository(private val jdbcTemplate: NamedParameterJdbcTemplate)
             SøknaderPerDokumenttype(
                 YearMonth.parse(rs.getString("dato")),
                 rs.getString("dokumenttype"),
-                rs.getInt("antall")
+                rs.getInt("antall"),
             )
         }
     }

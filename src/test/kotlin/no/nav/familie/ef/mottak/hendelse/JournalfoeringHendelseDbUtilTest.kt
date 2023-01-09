@@ -38,8 +38,8 @@ internal class JournalfoeringHendelseDbUtilTest {
                 journalposttype = Journalposttype.I,
                 journalstatus = Journalstatus.MOTTATT,
                 tema = "ENF",
-                behandlingstema = "abcdef"
-            )
+                behandlingstema = "abcdef",
+            ),
         )
         verify(exactly = 1) { taskService.save(any()) }
         Assertions.assertThat(slot.captured.type).isEqualTo(LagEksternJournalføringsoppgaveTask.TYPE)

@@ -11,7 +11,7 @@ import java.util.UUID
 @Service
 @TaskStepBeskrivelse(
     taskStepType = EttersendingsslettingTask.TYPE,
-    beskrivelse = "Sletter en ettersending fra mottak"
+    beskrivelse = "Sletter en ettersending fra mottak",
 )
 class EttersendingsslettingTask(private val ettersendingService: EttersendingService) : AsyncTaskStep {
 

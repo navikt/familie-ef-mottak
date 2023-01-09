@@ -13,7 +13,7 @@ class CipherInitializer {
     internal fun initCipher(
         cipher: Cipher,
         encryptionMode: Int,
-        iv: ByteArray
+        iv: ByteArray,
     ) {
         val secretKey = SecretKeySpec(KeyProperty.DATABASE_ENCRYPTION_KEY, SECRET_KEY_ALGORITHM)
         val algorithmParameters = IvParameterSpec(iv)

@@ -16,5 +16,5 @@ data class Ettersending(
     val journalpostId: String? = null,
     val fnr: String,
     val taskOpprettet: Boolean = false,
-    val opprettetTid: LocalDateTime = LocalDateTime.now()
+    val opprettetTid: LocalDateTime = LocalDateTime.now(),
 )

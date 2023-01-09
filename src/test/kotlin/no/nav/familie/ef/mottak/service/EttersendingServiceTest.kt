@@ -31,7 +31,7 @@ internal class EttersendingServiceTest {
     private val ettersendingService = EttersendingService(
         ettersendingRepository = ettersendingRepository,
         ettersendingVedleggRepository = ettersendingVedleggRepository,
-        dokumentClient = dokumentClient
+        dokumentClient = dokumentClient,
     )
 
     private val dokument1 = "1234".toByteArray()
@@ -58,7 +58,7 @@ internal class EttersendingServiceTest {
             beskrivelse = "Lærlingekontrakt",
             stønadType = StønadType.OVERGANGSSTØNAD,
             innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg1)
+            vedlegg = listOf(vedlegg1),
         )
         val dokumentasjonsbehov2 = Dokumentasjonsbehov(
             id = UUID.randomUUID().toString(),
@@ -67,7 +67,7 @@ internal class EttersendingServiceTest {
             beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
             stønadType = StønadType.OVERGANGSSTØNAD,
             innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg2)
+            vedlegg = listOf(vedlegg2),
         )
         val personIdent = "123456789010"
         val ettersendingSlot = slot<Ettersending>()
@@ -87,11 +87,11 @@ internal class EttersendingServiceTest {
                 StønadType.OVERGANGSSTØNAD to EttersendelseDto(
                     listOf(
                         dokumentasjonsbehov1,
-                        dokumentasjonsbehov2
+                        dokumentasjonsbehov2,
                     ),
-                    personIdent = personIdent
-                )
-            )
+                    personIdent = personIdent,
+                ),
+            ),
         )
 
         assertThat(ettersendingSlot.captured.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD.toString())

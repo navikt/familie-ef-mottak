@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = LagJournalføringsoppgaveForEttersendingTask.TYPE,
-    beskrivelse = "Lager oppgave i GoSys"
+    beskrivelse = "Lager oppgave i GoSys",
 )
 class LagJournalføringsoppgaveForEttersendingTask(
-    private val oppgaveService: OppgaveService
+    private val oppgaveService: OppgaveService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {

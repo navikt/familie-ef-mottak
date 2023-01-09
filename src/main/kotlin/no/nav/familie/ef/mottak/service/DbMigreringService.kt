@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class DbMigreringService(
     @Suppress("unused")
-    private val dbMigreringRepository: DbMigreringRepository
+    private val dbMigreringRepository: DbMigreringRepository,
 ) {
 
     @Suppress("unused")
