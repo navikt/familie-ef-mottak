@@ -36,7 +36,7 @@ internal class FerdigstillJournalføringTaskTest {
             søknadJson = EncryptedString(""),
             dokumenttype = "noe",
             journalpostId = journalpostId,
-            fnr = FnrGenerator.generer()
+            fnr = FnrGenerator.generer(),
         )
 
         every {

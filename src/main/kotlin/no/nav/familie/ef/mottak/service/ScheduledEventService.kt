@@ -16,7 +16,7 @@ class ScheduledEventService(
     private val taskProsesseringService: TaskProsesseringService,
     private val ryddeTaskService: RyddeTaskService,
     @Value("\${prosessering.enabled:true}")
-    private val prosesserongEnabled: Boolean
+    private val prosesserongEnabled: Boolean,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

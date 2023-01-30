@@ -18,7 +18,7 @@ class JournalhendelseService(
     val søknadRepository: SøknadRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
     val journalføringsoppgaveService: JournalføringsoppgaveService,
-    val taskService: TaskRepositoryUtvidet
+    val taskService: TaskRepositoryUtvidet,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
@@ -37,7 +37,7 @@ class JournalhendelseService(
                 alleredeBehandletJournalpostCounter.increment()
                 logger.warn(
                     "Skipper opprettelse av LagEksternJournalføringsoppgaveTask for " +
-                        "journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere"
+                        "journalpostId=${hendelseRecord.journalpostId} fordi den er utført tidligere",
                 )
             }
             journalfoeringHendelseDbUtil.lagreHendelseslogg(hendelseRecord, offset)

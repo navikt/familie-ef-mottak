@@ -20,7 +20,7 @@ class StatistikkController(private val statistikkRepository: StatistikkRepositor
         DOKUMENTTYPE_OVERGANGSSTØNAD,
         DOKUMENTTYPE_BARNETILSYN,
         DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-        DOKUMENTTYPE_SKOLEPENGER
+        DOKUMENTTYPE_SKOLEPENGER,
     ).maxOf { it.length }
 
     @GetMapping("soknader", produces = [MediaType.TEXT_PLAIN_VALUE])

@@ -75,8 +75,8 @@ internal class ArkiverSøknadTaskTest {
             Task(
                 type = "",
                 payload = soknad.id,
-                properties = Properties().apply { this["eventId"] = uuid }
-            )
+                properties = Properties().apply { this["eventId"] = uuid },
+            ),
         )
 
         assertNotEquals(uuid, slot.captured[1].metadata["eventID"])

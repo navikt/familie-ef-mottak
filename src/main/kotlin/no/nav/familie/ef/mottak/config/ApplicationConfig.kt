@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit
 @ComponentScan(
     "no.nav.familie.prosessering",
     "no.nav.familie.sikkerhet",
-    "no.nav.familie.ef.mottak"
+    "no.nav.familie.ef.mottak",
 )
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
@@ -42,7 +42,7 @@ import java.time.temporal.ChronoUnit
     RestTemplateBuilderBean::class,
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
-    KafkaErrorHandler::class
+    KafkaErrorHandler::class,
 )
 class ApplicationConfig {
 
@@ -52,7 +52,7 @@ class ApplicationConfig {
     fun restTemplate(
         bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
         mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
-        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations {
         return RestTemplateBuilder()
             .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
@@ -60,7 +60,7 @@ class ApplicationConfig {
             .interceptors(
                 bearerTokenExchangeClientInterceptor,
                 mdcValuesPropagatingClientInterceptor,
-                consumerIdClientInterceptor
+                consumerIdClientInterceptor,
             )
             .build()
     }
@@ -69,7 +69,7 @@ class ApplicationConfig {
     fun restTemplateAzure(
         mdcInterceptor: MdcValuesPropagatingClientInterceptor,
         bearerTokenClientInterceptor: BearerTokenClientInterceptor,
-        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations {
         return RestTemplateBuilder()
             .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
@@ -77,7 +77,7 @@ class ApplicationConfig {
             .interceptors(
                 mdcInterceptor,
                 bearerTokenClientInterceptor,
-                consumerIdClientInterceptor
+                consumerIdClientInterceptor,
             )
             .build()
     }
@@ -85,7 +85,7 @@ class ApplicationConfig {
     @Bean("restTemplateUnsecured")
     fun restTemplate(
         mdcInterceptor: MdcValuesPropagatingClientInterceptor,
-        consumerIdClientInterceptor: ConsumerIdClientInterceptor
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations {
         return RestTemplateBuilder()
             .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
@@ -99,7 +99,7 @@ class ApplicationConfig {
         return RetryOAuth2HttpClient(
             RestTemplateBuilder()
                 .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)),
         )
     }
 

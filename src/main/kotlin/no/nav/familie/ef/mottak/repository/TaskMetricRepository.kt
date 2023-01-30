@@ -11,7 +11,7 @@ interface TaskMetricRepository : org.springframework.data.repository.Repository<
     @Query(
         """SELECT t.type, count(t.id) as count FROM Task t
                     WHERE t.status = 'FEILET'
-                    GROUP by t.type"""
+                    GROUP by t.type""",
     )
     fun finnFeiledeTasks(): List<FeiletTaskMetric>
 }

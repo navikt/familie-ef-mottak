@@ -11,7 +11,7 @@ import java.util.UUID
 fun journalføringHendelseRecord(
     journalpostId: String,
     hendelseType: String = "JournalpostMottatt",
-    temaNytt: String = "ENF"
+    temaNytt: String = "ENF",
 ) =
     JournalfoeringHendelseRecord(
         "hendelseId",
@@ -23,7 +23,7 @@ fun journalføringHendelseRecord(
         temaNytt,
         "SKAN_NETS",
         "kanalReferanseId",
-        "ENF"
+        "ENF",
     )
 
 object JournalføringHendelseRecordVars {
@@ -45,7 +45,7 @@ fun søknad(
     søknadPdf: EncryptedFile? = null,
     fnr: String = "11111122222",
     saksnummer: String? = null,
-    behandleINySaksbehandling: Boolean = false
+    behandleINySaksbehandling: Boolean = false,
 ) =
     Søknad(
         id = id,
@@ -57,5 +57,5 @@ fun søknad(
         taskOpprettet = taskOpprettet,
         journalpostId = journalpostId,
         saksnummer = saksnummer,
-        behandleINySaksbehandling = behandleINySaksbehandling
+        behandleINySaksbehandling = behandleINySaksbehandling,
     )

@@ -71,7 +71,7 @@ internal class OppgaveServiceTest {
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
-            mappeService = MappeService(integrasjonerClient, søknadService, cacheManager)
+            mappeService = MappeService(integrasjonerClient, søknadService, cacheManager),
         )
 
     @BeforeEach
@@ -81,8 +81,8 @@ internal class OppgaveServiceTest {
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(
             Enhet(
                 enhetId = "4489",
-                enhetNavn = "NAY"
-            )
+                enhetNavn = "NAY",
+            ),
         )
         every { integrasjonerClient.lagOppgave(any()) } returns OppgaveResponse(oppgaveId = 1)
         every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
@@ -91,14 +91,14 @@ internal class OppgaveServiceTest {
                 MappeDto(
                     id = 123,
                     navn = "Uplassert",
-                    enhetsnr = ""
+                    enhetsnr = "",
                 ),
                 MappeDto(
                     id = 456,
                     navn = "65 Opplæring",
-                    enhetsnr = ""
-                )
-            )
+                    enhetsnr = "",
+                ),
+            ),
         )
         every { integrasjonerClient.oppdaterOppgave(any(), any()) } returns 123
         every { featureToggleService.isEnabled(any()) } returns true
@@ -121,8 +121,8 @@ internal class OppgaveServiceTest {
                     null,
                     null,
                     listOf(DokumentInfo("1", "", "", null, null, null)),
-                    null
-                )
+                    null,
+                ),
             )
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
@@ -131,7 +131,7 @@ internal class OppgaveServiceTest {
             søknadJson = EncryptedString("{}"),
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
             journalpostId = "999",
-            fnr = Testdata.randomFnr()
+            fnr = Testdata.randomFnr(),
         )
 
         oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
@@ -147,7 +147,7 @@ internal class OppgaveServiceTest {
             opprettOppgaveMapper.toJournalføringsoppgave(
                 journalpostOvergangsstøand,
                 BehandlesAvApplikasjon.EF_SAK,
-                "4489"
+                "4489",
             )
 
         every {
@@ -168,7 +168,7 @@ internal class OppgaveServiceTest {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Server error",
             IOTestUtil.readFile("opprett_oppgave_feilet.json").toByteArray(),
-            Charset.defaultCharset()
+            Charset.defaultCharset(),
         )
         return lesRessurs(httpServerErrorException)?.let { RessursException(it, httpServerErrorException) }!!
     }
@@ -197,7 +197,7 @@ internal class OppgaveServiceTest {
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 journalpostId = journalpostId,
                 fnr = Testdata.randomFnr(),
-                behandleINySaksbehandling = true
+                behandleINySaksbehandling = true,
             )
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
@@ -217,13 +217,13 @@ internal class OppgaveServiceTest {
             val journalpost =
                 journalpostOvergangsstøand.copy(
                     bruker = Bruker("1", type = BrukerIdType.FNR),
-                    journalpostId = journalpostId
+                    journalpostId = journalpostId,
                 )
 
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpost
             every { integrasjonerClient.finnOppgaver(journalpostId, any()) } returns FinnOppgaveResponseDto(
                 0,
-                emptyList()
+                emptyList(),
             )
 
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
@@ -255,7 +255,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
 
             every { søknadService.get(any()) } returns søknadBarnetilsyn()
@@ -273,12 +273,12 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(gammelMappeIdSelvstendig = gammelMappeIdSelvstendig)
+                mapper = lagMapper(gammelMappeIdSelvstendig = gammelMappeIdSelvstendig),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get("123") } returns søknadOvergangsstønad(erSelvstendig = true)
@@ -296,18 +296,18 @@ internal class OppgaveServiceTest {
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende
-                )
+                    gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende,
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get("123") } returns søknadOvergangsstønad(
                 erSelvstendig = true,
-                harTilsynskrevendeBarn = true
+                harTilsynskrevendeBarn = true,
             )
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
@@ -323,18 +323,18 @@ internal class OppgaveServiceTest {
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende
-                )
+                    gammelMappeIdTilsynskrevende = gammelMappeIdTilsynskrevende,
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get("123") } returns søknadBarnetilsyn(
                 erSelvstendig = true,
-                harTilsynskrevendeBarn = true
+                harTilsynskrevendeBarn = true,
             )
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
@@ -350,18 +350,18 @@ internal class OppgaveServiceTest {
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
                 mapper = lagMapper(
-                    gammelMappeIdSelvstendig = gammelMappeIdSelvstendig
-                )
+                    gammelMappeIdSelvstendig = gammelMappeIdSelvstendig,
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get("123") } returns søknadBarnetilsyn(
                 erSelvstendig = true,
-                harTilsynskrevendeBarn = false
+                harTilsynskrevendeBarn = false,
             )
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
@@ -376,12 +376,12 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(gammelMappeIdTilsynskrevende = 654)
+                mapper = lagMapper(gammelMappeIdTilsynskrevende = 654),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             val søknadBarnetilsyn =
@@ -401,12 +401,12 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
                 antallTreffTotalt = 1,
-                mapper = lagMapper(gammelMappeIdUplassert = gammelMappeIdUplassert)
+                mapper = lagMapper(gammelMappeIdUplassert = gammelMappeIdUplassert),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get("123") } returns søknadOvergangsstønad(false)
@@ -426,14 +426,14 @@ internal class OppgaveServiceTest {
                     MappeDto(
                         id = gammelMappeIdOpplæring,
                         navn = "65 Opplæring",
-                        enhetsnr = ""
-                    )
-                )
+                        enhetsnr = "",
+                    ),
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Skolepenger,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { søknadService.get(any()) } returns søknadSkolepenger()
 
@@ -448,7 +448,7 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = null,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
@@ -468,14 +468,14 @@ internal class OppgaveServiceTest {
                     MappeDto(
                         id = gammelMappeIdUplassert,
                         navn = "Uplassert",
-                        enhetsnr = ""
-                    )
-                )
+                        enhetsnr = "",
+                    ),
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Barnetilsyn,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get(any()) } returns søknadBarnetilsyn()
@@ -497,14 +497,14 @@ internal class OppgaveServiceTest {
                     MappeDto(
                         id = gammelMappeIdUplassert,
                         navn = "Uplassert",
-                        enhetsnr = ""
-                    )
-                )
+                        enhetsnr = "",
+                    ),
+                ),
             )
 
             every { integrasjonerClient.hentOppgave(oppgaveId) } returns lagOppgaveForFordeling(
                 behandlingstema = Behandlingstema.Overgangsstønad,
-                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK
+                behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
             )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             every { søknadService.get(any()) } returns søknadOvergangsstønad()
@@ -516,7 +516,7 @@ internal class OppgaveServiceTest {
 
         private fun søknadOvergangsstønad(
             erSelvstendig: Boolean = false,
-            harTilsynskrevendeBarn: Boolean = false
+            harTilsynskrevendeBarn: Boolean = false,
         ): Søknad {
             val startSøknadMedAlt = Testdata.søknadOvergangsstønad
 
@@ -533,14 +533,14 @@ internal class OppgaveServiceTest {
             val søknadOvergangsstønad =
                 startSøknadMedAlt.copy(
                     aktivitet = aktivitet,
-                    situasjon = Søknadsfelt("s", situasjon)
+                    situasjon = Søknadsfelt("s", situasjon),
                 )
 
             val søknad = SøknadMedVedlegg(
                 søknad = søknadOvergangsstønad,
                 vedlegg = listOf(),
                 dokumentasjonsbehov = listOf(),
-                behandleINySaksbehandling = true
+                behandleINySaksbehandling = true,
             )
             return SøknadMapper.fromDto(søknad.søknad, true)
         }
@@ -554,8 +554,8 @@ internal class OppgaveServiceTest {
                 årsakBarnepass = Søknadsfelt(
                     "årsak",
                     "årsak",
-                    svarId = "trengerMerPassEnnJevnaldrede"
-                )
+                    svarId = "trengerMerPassEnnJevnaldrede",
+                ),
             )!!
 
         val barn = when (harTilsynskrevendeBarn) {
@@ -572,7 +572,7 @@ internal class OppgaveServiceTest {
         val søknadBarnetilsyn =
             startSøknadMedAlt.copy(
                 aktivitet = aktivitet,
-                barn = Søknadsfelt("Barn", listOf(barn))
+                barn = Søknadsfelt("Barn", listOf(barn)),
             )
 
         return SøknadMapper.fromDto(søknadBarnetilsyn, true)
@@ -588,8 +588,8 @@ internal class OppgaveServiceTest {
             listOf(
                 "Jeg er hjemme med barn under 1 år",
                 "Jeg er i arbeid",
-                "Jeg er selvstendig næringsdrivende eller frilanser"
-            )
+                "Jeg er selvstendig næringsdrivende eller frilanser",
+            ),
         ),
         arbeidsforhold = null,
         selvstendig = null,
@@ -599,7 +599,7 @@ internal class OppgaveServiceTest {
         underUtdanning = null,
         aksjeselskap = null,
         erIArbeid = null,
-        erIArbeidDokumentasjon = null
+        erIArbeidDokumentasjon = null,
     )
 
     private fun lagMapper(
@@ -608,48 +608,48 @@ internal class OppgaveServiceTest {
         mappeIdTilsynskrevende: Int = 765,
         gammelMappeIdSelvstendig: Int = 100,
         gammelMappeIdUplassert: Int = 102,
-        gammelMappeIdTilsynskrevende: Int = 103
+        gammelMappeIdTilsynskrevende: Int = 103,
     ) = listOf(
         MappeDto(
             id = 987,
             navn = "EF Sak - 65 Opplæring",
-            enhetsnr = ""
+            enhetsnr = "",
         ),
         MappeDto(
             id = mappeIdTilsynskrevende,
             navn = "EF Sak - 60 Særlig tilsynskrevende",
-            enhetsnr = "4489"
+            enhetsnr = "4489",
         ),
         MappeDto(
             id = mappeIdSelvstendig,
             navn = "EF Sak - 61 Selvstendig næringsdrivende",
-            enhetsnr = "4489"
+            enhetsnr = "4489",
         ),
         MappeDto(
             id = mappeIdUplassert,
             navn = "EF Sak 01 Uplassert",
-            enhetsnr = ""
+            enhetsnr = "",
         ),
         MappeDto(
             id = 99,
             navn = "65 Opplæring",
-            enhetsnr = ""
+            enhetsnr = "",
         ),
         MappeDto(
             id = gammelMappeIdTilsynskrevende,
             navn = "60 Særlig tilsynskrevende",
-            enhetsnr = "4489"
+            enhetsnr = "4489",
         ),
         MappeDto(
             id = gammelMappeIdSelvstendig,
             navn = "61 Selvstendig næringsdrivende",
-            enhetsnr = "4489"
+            enhetsnr = "4489",
         ),
         MappeDto(
             id = gammelMappeIdUplassert,
             navn = "Uplassert",
-            enhetsnr = ""
-        )
+            enhetsnr = "",
+        ),
     )
 
     private val ettersendingId = UUID.randomUUID().toString()
@@ -671,9 +671,9 @@ internal class OppgaveServiceTest {
                     dokumentInfoId = "12345",
                     tittel = "Tittel",
                     brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV))
-                )
-            )
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
+                ),
+            ),
         )
 
     private val ettersending = Ettersending(
@@ -684,19 +684,19 @@ internal class OppgaveServiceTest {
         journalpostId = "123Abc",
         fnr = "12345678901",
         taskOpprettet = true,
-        opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2)
+        opprettetTid = LocalDateTime.of(2021, 5, 1, 13, 2),
 
     )
 
     private fun lagOppgaveForFordeling(
         behandlingstema: Behandlingstema?,
-        behandlesAvApplikasjon: BehandlesAvApplikasjon
+        behandlesAvApplikasjon: BehandlesAvApplikasjon,
     ) =
         Oppgave(
             id = 123L,
             behandlingstema = behandlingstema?.value,
             status = StatusEnum.OPPRETTET,
             tildeltEnhetsnr = "4489",
-            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon
+            behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
         )
 }

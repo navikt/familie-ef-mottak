@@ -39,7 +39,7 @@ internal class PdfServiceTest {
         fnr = "654",
         dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
         journalpostId = null,
-        saksnummer = null
+        saksnummer = null,
     )
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
@@ -50,7 +50,7 @@ internal class PdfServiceTest {
         fnr = "654",
         dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
         journalpostId = null,
-        saksnummer = null
+        saksnummer = null,
     )
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
@@ -61,7 +61,7 @@ internal class PdfServiceTest {
         fnr = "654",
         dokumenttype = DOKUMENTTYPE_BARNETILSYN,
         journalpostId = null,
-        saksnummer = null
+        saksnummer = null,
     )
 
     @BeforeEach

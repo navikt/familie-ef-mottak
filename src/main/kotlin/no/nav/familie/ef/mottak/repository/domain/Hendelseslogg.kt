@@ -25,7 +25,7 @@ data class Hendelseslogg(
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
 
     @Column("ident")
-    val ident: String? = null
+    val ident: String? = null,
 ) {
 
     @Transient

@@ -24,7 +24,7 @@ class PdfService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
     private val vedleggRepository: VedleggRepository,
-    private val pdfClient: PdfClient
+    private val pdfClient: PdfClient,
 ) {
 
     fun lagPdf(id: String) {

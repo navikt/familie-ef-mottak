@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = LagEksternJournalføringsoppgaveTask.TYPE,
-    beskrivelse = "Lager oppgave i GoSys"
+    beskrivelse = "Lager oppgave i GoSys",
 )
 class LagEksternJournalføringsoppgaveTask(
     private val ettersendingRepository: EttersendingRepository,
     private val oppgaveService: OppgaveService,
-    private val søknadRepository: SøknadRepository
+    private val søknadRepository: SøknadRepository,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {

@@ -24,7 +24,7 @@ class OppgaveService(
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
-    private val mappeService: MappeService
+    private val mappeService: MappeService,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -75,7 +75,7 @@ class OppgaveService(
                         opprettOppgaveMapper.toJournalføringsoppgave(
                             journalpost,
                             BehandlesAvApplikasjon.EF_SAK,
-                            finnBehandlendeEnhet(journalpost)
+                            finnBehandlendeEnhet(journalpost),
                         )
                     return opprettOppgave(opprettOppgave, journalpost)
                 }
@@ -83,7 +83,7 @@ class OppgaveService(
         } else {
             val error = IllegalStateException(
                 "Journalpost ${journalpost.journalpostId} har endret status " +
-                    "fra MOTTATT til ${journalpost.journalstatus.name}"
+                    "fra MOTTATT til ${journalpost.journalstatus.name}",
             )
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
@@ -108,13 +108,13 @@ class OppgaveService(
 
     private fun opprettOppgave(
         opprettOppgave: OpprettOppgaveRequest,
-        journalpost: Journalpost
+        journalpost: Journalpost,
     ): Long {
         return try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info(
                 "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                    "journalpost journalpostId=${journalpost.journalpostId}"
+                    "journalpost journalpostId=${journalpost.journalpostId}",
             )
             nyOppgave.oppgaveId
         } catch (ressursException: RessursException) {
@@ -128,12 +128,12 @@ class OppgaveService(
 
     private fun opprettOppgaveMedEnhetNAY(
         opprettOppgave: OpprettOppgaveRequest,
-        journalpost: Journalpost
+        journalpost: Journalpost,
     ): Long {
         val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave.copy(enhetsnummer = ENHETSNUMMER_NAY))
         log.info(
             "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
-                "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY"
+                "journalpost journalpostId=${journalpost.journalpostId} med enhetsnummer=$ENHETSNUMMER_NAY",
         )
         return nyOppgave.oppgaveId
     }
@@ -147,7 +147,7 @@ class OppgaveService(
         log.info(
             "Skipper oppretting av journalførings-oppgave. " +
                 "Fant åpen oppgave av type $oppgavetype for " +
-                "journalpostId=$journalpostId"
+                "journalpostId=$journalpostId",
         )
     }
 

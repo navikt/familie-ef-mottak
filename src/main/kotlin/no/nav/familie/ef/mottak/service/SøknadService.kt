@@ -36,7 +36,7 @@ class SøknadService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
-    private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
+    private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -65,14 +65,14 @@ class SøknadService(
     private fun motta(
         søknadDb: Søknad,
         vedlegg: List<Vedlegg>,
-        dokumentasjonsbehov: List<Dokumentasjonsbehov>
+        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
 
         val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(
             søknadId = lagretSkjema.id,
-            data = objectMapper.writeValueAsString(dokumentasjonsbehov)
+            data = objectMapper.writeValueAsString(dokumentasjonsbehov),
         )
         dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
@@ -81,7 +81,7 @@ class SøknadService(
 
     private fun mapVedlegg(
         søknadDbId: String,
-        vedleggMetadata: List<VedleggKontrakt>
+        vedleggMetadata: List<VedleggKontrakt>,
     ): List<Vedlegg> =
         vedleggMetadata.map {
             Vedlegg(
@@ -89,7 +89,7 @@ class SøknadService(
                 søknadId = søknadDbId,
                 navn = it.navn,
                 tittel = it.tittel,
-                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id))
+                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)),
             )
         }
 
@@ -119,10 +119,10 @@ class SøknadService(
                     stønadType = StønadType
                         .valueOf(
                             SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
-                                .toString()
+                                .toString(),
                         ),
                     søknadDato = it.opprettetTid.toLocalDate(),
-                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it)
+                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it),
                 )
             }
     }
@@ -138,7 +138,7 @@ class SøknadService(
             dokumentasjonsbehov = dokumentasjonsbehov,
             innsendingstidspunkt = søknad.opprettetTid,
             personIdent = søknad.fnr,
-            søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
+            søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype),
         )
     }
 

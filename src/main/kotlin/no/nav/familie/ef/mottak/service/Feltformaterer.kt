@@ -74,7 +74,7 @@ object Feltformaterer {
         return listOf(
             adresse.adresse,
             listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
-            adresse.land
+            adresse.land,
         ).joinToString("\n\n")
     }
 

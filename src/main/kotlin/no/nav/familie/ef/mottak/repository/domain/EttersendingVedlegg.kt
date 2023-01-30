@@ -9,7 +9,7 @@ data class EttersendingVedlegg(
     val ettersendingId: UUID,
     val navn: String,
     val tittel: String,
-    val innhold: EncryptedFile
+    val innhold: EncryptedFile,
 ) {
 
     companion object {

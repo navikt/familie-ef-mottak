@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = PlasserOppgaveIMappeOppgaveTask.TYPE,
-    beskrivelse = "Oppdater oppgave med riktig mappeId"
+    beskrivelse = "Oppdater oppgave med riktig mappeId",
 )
 class PlasserOppgaveIMappeOppgaveTask(private val oppgaveService: OppgaveService) : AsyncTaskStep {
 

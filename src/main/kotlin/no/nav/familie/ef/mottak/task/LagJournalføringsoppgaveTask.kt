@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = LagJournalføringsoppgaveTask.TYPE,
-    beskrivelse = "Lager oppgave i GoSys"
+    beskrivelse = "Lager oppgave i GoSys",
 )
 class LagJournalføringsoppgaveTask(
     private val taskService: TaskService,
-    private val oppgaveService: OppgaveService
+    private val oppgaveService: OppgaveService,
 ) : AsyncTaskStep {
 
     val antallTilManuellJournalføring: Counter = Metrics.counter("alene.med.barn.manueltjournalfort")
@@ -36,8 +36,8 @@ class LagJournalføringsoppgaveTask(
                 Task(
                     TaskType(TYPE).nesteManuellflytTask(),
                     task.payload,
-                    task.metadata
-                )
+                    task.metadata,
+                ),
             )
         }
     }

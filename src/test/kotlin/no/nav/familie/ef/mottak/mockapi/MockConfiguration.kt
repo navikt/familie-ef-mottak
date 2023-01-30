@@ -35,7 +35,7 @@ class MockConfiguration {
     @Profile("mock-integrasjon")
     fun integrasjonerClient(): IntegrasjonerClient = object : IntegrasjonerClient(
         mockk(),
-        IntegrasjonerConfig(URI.create("http://bac"))
+        IntegrasjonerConfig(URI.create("http://bac")),
     ) {
 
         override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {

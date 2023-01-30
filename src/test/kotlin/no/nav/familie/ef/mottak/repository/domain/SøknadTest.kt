@@ -29,7 +29,7 @@ internal class SøknadTest {
 
     private fun opprettSøknad(
         uuid: String,
-        opprettet: LocalDateTime
+        opprettet: LocalDateTime,
     ) =
         Søknad(
             id = uuid,
@@ -40,6 +40,6 @@ internal class SøknadTest {
             saksnummer = "789",
             fnr = "123",
             taskOpprettet = true,
-            opprettetTid = opprettet
+            opprettetTid = opprettet,
         )
 }

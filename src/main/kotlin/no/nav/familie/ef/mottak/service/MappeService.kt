@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service
 class MappeService(
     private val integrasjonerClient: IntegrasjonerClient,
     private val søknadService: SøknadService,
-    private val cacheManager: CacheManager
+    private val cacheManager: CacheManager,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -46,7 +46,7 @@ class MappeService(
                 tema = listOf(),
                 enhetsnr = enhetsnummer,
                 opprettetFom = null,
-                limit = 1000
+                limit = 1000,
             )
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
@@ -110,5 +110,5 @@ class MappeService(
 enum class MappeSøkestreng(val verdi: String) {
     SÆRLIG_TILSYNSKREVENDE("60 Særlig tilsynskrevende"),
     SELVSTENDIG("61 Selvstendig næringsdrivende"),
-    UPLASSERT("Uplassert")
+    UPLASSERT("Uplassert"),
 }

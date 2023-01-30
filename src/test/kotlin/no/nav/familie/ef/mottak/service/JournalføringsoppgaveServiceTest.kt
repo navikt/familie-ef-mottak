@@ -63,7 +63,7 @@ class JournalføringsoppgaveServiceTest {
         service = JournalføringsoppgaveService(
             mockSøknadRepository,
             mockEttersendingRepository,
-            mockJournalfoeringHendelseDbUtil
+            mockJournalfoeringHendelseDbUtil,
         )
     }
 
@@ -110,7 +110,7 @@ class JournalføringsoppgaveServiceTest {
             Ettersending(
                 ettersendingJson = EncryptedString(""),
                 stønadType = "OVERGANGSSTØNAD",
-                fnr = ""
+                fnr = "",
             )
 
         service.lagEksternJournalføringTask(journalpost)
@@ -129,7 +129,7 @@ class JournalføringsoppgaveServiceTest {
             tema = "ENF",
             behandlingstema = "abc123",
             bruker = Bruker("213", BrukerIdType.FNR),
-            kanal = "NAV_NO"
+            kanal = "NAV_NO",
         )
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns null
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null

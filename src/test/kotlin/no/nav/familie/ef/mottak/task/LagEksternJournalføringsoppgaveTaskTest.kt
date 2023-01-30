@@ -21,7 +21,7 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
     private val lagEksternJournalføringsoppgaveTask = LagEksternJournalføringsoppgaveTask(
         ettersendingRepository,
         oppgaveServie,
-        søknadRepository
+        søknadRepository,
     )
 
     @Test
@@ -34,8 +34,8 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
             Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
                 payload = "123",
-                properties = Properties()
-            )
+                properties = Properties(),
+            ),
         )
 
         verify { oppgaveServie.lagJournalføringsoppgaveForJournalpostId("123") }
@@ -51,8 +51,8 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
             Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
                 payload = "123",
-                properties = Properties()
-            )
+                properties = Properties(),
+            ),
         )
 
         verify(inverse = true) { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) }
@@ -66,7 +66,7 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
                 stønadType = "OVERGANGSSTØNAD",
                 journalpostId = "1",
                 fnr = "",
-                taskOpprettet = false
+                taskOpprettet = false,
             )
         every { søknadRepository.findByJournalpostId(any()) } returns null
         every { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) } returns 1
@@ -75,8 +75,8 @@ internal class LagEksternJournalføringsoppgaveTaskTest {
             Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
                 payload = "123",
-                properties = Properties()
-            )
+                properties = Properties(),
+            ),
         )
 
         verify(inverse = true) { oppgaveServie.lagJournalføringsoppgaveForJournalpostId(any()) }

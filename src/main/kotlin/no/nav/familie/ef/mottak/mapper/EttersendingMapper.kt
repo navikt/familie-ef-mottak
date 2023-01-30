@@ -17,7 +17,7 @@ object EttersendingMapper {
         return Ettersending(
             ettersendingJson = EncryptedString(objectMapper.writeValueAsString(ettersending)),
             fnr = ettersending.personIdent,
-            stønadType = stønadType.toString()
+            stønadType = stønadType.toString(),
         )
     }
 }

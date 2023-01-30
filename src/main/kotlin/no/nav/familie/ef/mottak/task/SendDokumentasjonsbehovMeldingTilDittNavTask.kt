@@ -16,12 +16,12 @@ import java.net.URL
 @Service
 @TaskStepBeskrivelse(
     taskStepType = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-    beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav"
+    beskrivelse = "Send dokumentasjonsbehovmelding til ditt nav",
 )
 class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
-    private val ettersendingConfig: EttersendingConfig
+    private val ettersendingConfig: EttersendingConfig,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +43,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
                 linkMelding.melding,
                 task.payload,
                 task.metadata["eventId"].toString(),
-                linkMelding.link
+                linkMelding.link,
             )
             logger.info("Send melding til ditt nav søknadId=${task.payload}")
         }
@@ -58,12 +58,12 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
                 LinkMelding(
                     ettersendingConfig.ettersendingUrl,
                     "Det ser ut til at det mangler noen vedlegg til søknaden din om $søknadstekst." +
-                        " Se hva som mangler og last opp vedlegg."
+                        " Se hva som mangler og last opp vedlegg.",
                 )
             }
             else -> LinkMelding(
                 ettersendingConfig.ettersendingUrl,
-                "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp."
+                "Vi har mottatt søknaden din om $søknadstekst. Se vedleggene du lastet opp.",
             )
         }
     }
