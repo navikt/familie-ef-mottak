@@ -26,8 +26,8 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
             Søknad(
                 søknadJson = EncryptedString("bob"),
                 fnr = "ded",
-                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD
-            )
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            ),
         )
 
         dokumentasjonsbehovRepository.insert(Dokumentasjonsbehov(søknad.id, "data"))

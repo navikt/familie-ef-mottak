@@ -17,7 +17,7 @@ class LagEttersendingPdfTask(
     private val pdfService: PdfService,
     private val taskService: TaskService,
     private val ettersendingRepository: EttersendingRepository,
-    private val ettersendingVedleggRepository: EttersendingVedleggRepository
+    private val ettersendingVedleggRepository: EttersendingVedleggRepository,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -34,8 +34,8 @@ class LagEttersendingPdfTask(
             Task(
                 TaskType(TYPE).nesteEttersendingsflytTask(),
                 task.payload,
-                task.metadata
-            )
+                task.metadata,
+            ),
         )
     }
 

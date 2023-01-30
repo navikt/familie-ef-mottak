@@ -31,7 +31,7 @@ import java.net.URI
 @Service
 class IntegrasjonerClient(
     @Qualifier("restTemplateAzure") operations: RestOperations,
-    private val integrasjonerConfig: IntegrasjonerConfig
+    private val integrasjonerConfig: IntegrasjonerConfig,
 ) :
     AbstractPingableRestClient(operations, "Arkiv") {
 
@@ -100,7 +100,7 @@ class IntegrasjonerClient(
     fun hentJournalposterForBruker(journalpostForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
         return postForEntity<Ressurs<List<Journalpost>>>(
             journalpostForBrukerUri(),
-            journalpostForBrukerRequest
+            journalpostForBrukerRequest,
         ).getDataOrThrow()
     }
 
@@ -119,7 +119,7 @@ class IntegrasjonerClient(
         val finnOppgaveRequest = FinnOppgaveRequest(
             tema = Tema.ENF,
             journalpostId = journalpostId,
-            oppgavetype = oppgavetype
+            oppgavetype = oppgavetype,
         )
         return postForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri, finnOppgaveRequest).getDataOrThrow()
     }
@@ -134,7 +134,7 @@ class IntegrasjonerClient(
         val response =
             putForEntity<Ressurs<HashMap<String, String>>>(
                 ferdigstillJournalpostUri(journalpostId, journalførendeEnhet),
-                "ENF"
+                "ENF",
             )
         return response.getDataOrThrow()
     }

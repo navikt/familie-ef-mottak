@@ -41,8 +41,8 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
                 FileCryptoReadingConverter(),
                 FileCryptoWritingConverter(),
                 StringValCryptoReadingConverter(),
-                StringValCryptoWritingConverter()
-            )
+                StringValCryptoWritingConverter(),
+            ),
         )
     }
 }

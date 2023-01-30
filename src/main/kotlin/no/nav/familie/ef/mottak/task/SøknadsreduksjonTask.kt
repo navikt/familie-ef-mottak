@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @TaskStepBeskrivelse(
     taskStepType = SøknadsreduksjonTask.TYPE,
-    beskrivelse = "Resuserer datasomfanget for en søknad."
+    beskrivelse = "Resuserer datasomfanget for en søknad.",
 )
 class SøknadsreduksjonTask(private val søknadService: SøknadService) : AsyncTaskStep {
 

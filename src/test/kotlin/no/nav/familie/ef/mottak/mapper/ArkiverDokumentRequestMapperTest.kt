@@ -60,7 +60,7 @@ internal class ArkiverDokumentRequestMapperTest {
         assertThat(
             catchThrowable {
                 toDto(lagSøknad(Testdata.skjemaForArbeidssøker, DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER), listOf(lagVedlegg()))
-            }
+            },
         ).withFailMessage("Skjema arbeidssøker kan ikke ha vedlegg")
     }
 
@@ -68,7 +68,7 @@ internal class ArkiverDokumentRequestMapperTest {
         søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
         fnr = "123",
         søknadPdf = EncryptedFile(byteArrayOf(12)),
-        dokumenttype = dokumenttype
+        dokumenttype = dokumenttype,
     )
 
     private fun lagVedlegg() = Vedlegg(UUID.randomUUID(), "id", "navn", "tittel", EncryptedFile(byteArrayOf(12)))

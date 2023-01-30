@@ -6,7 +6,6 @@ import io.mockk.slot
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -36,7 +35,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
             søknadJson = EncryptedString(""),
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = "1234",
-            fnr = FnrGenerator.generer()
+            fnr = FnrGenerator.generer(),
         )
         every {
             søknadService.get(arbeidssøkerSkjemaId)
@@ -44,7 +43,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
             søknadJson = EncryptedString(""),
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
             journalpostId = "1234",
-            fnr = FnrGenerator.generer()
+            fnr = FnrGenerator.generer(),
         )
     }
 
@@ -67,7 +66,6 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
         velgAutomatiskEllerManuellFlytTask.doTask(Task(type = "", payload = overgangsstønadSøknadId, properties = Properties()))
         Assertions.assertThat(taskSlot.captured.type).isEqualTo(manuellJournalføringFlyt().first().type)
     }
-
 
     @Test
     internal fun `skal velge manuell flyt for arbeidssøknadsskjema`() {

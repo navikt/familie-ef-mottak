@@ -61,13 +61,13 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
             fnr = ident,
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             taskOpprettet = true,
-            opprettetTid = LocalDateTime.now().minusDays(1)
+            opprettetTid = LocalDateTime.now().minusDays(1),
         )
         val søknad2 = Søknad(
             søknadJson = EncryptedString("kåre"),
             fnr = ident,
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            taskOpprettet = true
+            taskOpprettet = true,
         )
         søknadRepository.insert(søknad)
         val søknadOvergangsstønad = søknadRepository.insert(søknad2)
@@ -77,8 +77,8 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
                 søknadJson = EncryptedString("kåre"),
                 fnr = ident,
                 dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-                taskOpprettet = true
-            )
+                taskOpprettet = true,
+            ),
         )
 
         val søknader = søknadRepository.finnSisteSøknadenPerStønadtype(ident)
@@ -96,24 +96,24 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(4),
-                    journalpostId = "321321"
-                )
+                    journalpostId = "321321",
+                ),
             )
         val journalFørtEldreEnn3MånederMedPdf =
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(4),
                     journalpostId = "321321",
-                    søknadPdf = EncryptedFile(ByteArray(5))
-                )
+                    søknadPdf = EncryptedFile(ByteArray(5)),
+                ),
             )
         val journalFørtYngreEnn3MånederMedPdf =
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(2),
                     journalpostId = "321321",
-                    søknadPdf = EncryptedFile(ByteArray(5))
-                )
+                    søknadPdf = EncryptedFile(ByteArray(5)),
+                ),
             )
 
         val søknader = søknadRepository.finnSøknaderKlarTilReduksjon(LocalDateTime.now().minusMonths(3))
@@ -123,7 +123,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         assertThat(søknader).doesNotContain(
             ikkeJournalFørtEldreEnn3måneder.id,
             journalFørtEldreEnn3MånederUtenPdf.id,
-            journalFørtYngreEnn3MånederMedPdf.id
+            journalFørtYngreEnn3MånederMedPdf.id,
         )
     }
 
@@ -134,24 +134,24 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(4),
-                    journalpostId = "321321"
-                )
+                    journalpostId = "321321",
+                ),
             )
         val journalFørtEldreEnn3MånederMedPdf =
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(4),
                     journalpostId = "321321",
-                    søknadPdf = EncryptedFile(ByteArray(5))
-                )
+                    søknadPdf = EncryptedFile(ByteArray(5)),
+                ),
             )
         val journalFørtYngreEnn3MånederMedPdf =
             søknadRepository.insert(
                 søknad(
                     opprettetTid = LocalDateTime.now().minusMonths(2),
                     journalpostId = "321321",
-                    søknadPdf = EncryptedFile(ByteArray(5))
-                )
+                    søknadPdf = EncryptedFile(ByteArray(5)),
+                ),
             )
 
         val søknader = søknadRepository.finnSøknaderKlarTilSletting(LocalDateTime.now().minusMonths(3))
@@ -161,7 +161,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         assertThat(søknader).doesNotContain(
             ikkeJournalFørtEldreEnn3måneder.id,
             journalFørtEldreEnn3MånederMedPdf.id,
-            journalFørtYngreEnn3MånederMedPdf.id
+            journalFørtYngreEnn3MånederMedPdf.id,
         )
     }
 }

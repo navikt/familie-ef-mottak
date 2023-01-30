@@ -23,7 +23,7 @@ import java.util.UUID
 class EttersendingService(
     private val ettersendingRepository: EttersendingRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
-    private val dokumentClient: FamilieDokumentClient
+    private val dokumentClient: FamilieDokumentClient,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -46,7 +46,7 @@ class EttersendingService(
 
     private fun mapVedlegg(
         ettersendingDbId: UUID,
-        ettersending: EttersendelseDto
+        ettersending: EttersendelseDto,
     ): List<EttersendingVedlegg> =
         ettersending.dokumentasjonsbehov.flatMap { dokumentasjonsbehov ->
             dokumentasjonsbehov.vedlegg.map { vedlegg ->
@@ -55,14 +55,14 @@ class EttersendingService(
                     ettersendingId = ettersendingDbId,
                     navn = vedlegg.navn,
                     tittel = vedlegg.tittel,
-                    innhold = EncryptedFile(dokumentClient.hentVedlegg(vedlegg.id))
+                    innhold = EncryptedFile(dokumentClient.hentVedlegg(vedlegg.id)),
                 )
             }
         }
 
     private fun motta(
         ettersendingDb: Ettersending,
-        vedlegg: List<EttersendingVedlegg>
+        vedlegg: List<EttersendingVedlegg>,
     ) {
         val lagretSkjema = ettersendingRepository.insert(ettersendingDb)
         ettersendingVedleggRepository.insertAll(vedlegg)

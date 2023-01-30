@@ -64,7 +64,7 @@ internal class IntegrasjonerClientTest {
         val feilmelding = "Fant ingen gyldig arbeidsfordeling for oppgaven"
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_OPPRETT_OPPGAVE}"))
-                .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json")))
+                .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))),
         )
 
         val exception = assertThrows<RessursException> {
@@ -78,8 +78,8 @@ internal class IntegrasjonerClientTest {
                     fristFerdigstillelse = LocalDate.now(),
                     beskrivelse = "",
                     behandlingstema = "sad",
-                    enhetsnummer = null
-                )
+                    enhetsnummer = null,
+                ),
             )
         }
 
@@ -93,12 +93,12 @@ internal class IntegrasjonerClientTest {
         val json = objectMapper.writeValueAsString(
             success(
                 mapOf("journalpostId" to journalpostId),
-                "Ferdigstilt journalpost $journalpostId"
-            )
+                "Ferdigstilt journalpost $journalpostId",
+            ),
         )
         wireMockServer.stubFor(
             put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
-                .willReturn(okJson(json))
+                .willReturn(okJson(json)),
         )
 
         val testresultat = integrasjonerClient.ferdigstillJournalpost(journalpostId, journalførendeEnhet)
@@ -110,7 +110,7 @@ internal class IntegrasjonerClientTest {
     fun `hentSaksnummer parser payload og returnerer saksnummer`() {
         wireMockServer.stubFor(
             get(urlEqualTo("/${IntegrasjonerClient.PATH_HENT_SAKSNUMMER}?journalpostId=123"))
-                .willReturn(okJson(readFile("saksnummer.json")))
+                .willReturn(okJson(readFile("saksnummer.json"))),
         )
 
         assertThat(integrasjonerClient.hentSaksnummer("123")).isEqualTo("140258871")
@@ -121,7 +121,7 @@ internal class IntegrasjonerClientTest {
         // Gitt
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
-                .willReturn(okJson(success(arkiverDokumentResponse).toJson()))
+                .willReturn(okJson(success(arkiverDokumentResponse).toJson())),
         )
         // Vil gi resultat
         assertNotNull(integrasjonerClient.arkiver(arkiverSøknadRequest))
@@ -131,7 +131,7 @@ internal class IntegrasjonerClientTest {
     fun `Skal ikke arkivere søknad`() {
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_SEND_INN}"))
-                .willReturn(okJson(failure<Any>("error").toJson()))
+                .willReturn(okJson(failure<Any>("error").toJson())),
         )
 
         assertFailsWith(IllegalStateException::class) {
@@ -144,7 +144,7 @@ internal class IntegrasjonerClientTest {
         val mockResponse = objectMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
-                .willReturn(okJson(mockResponse))
+                .willReturn(okJson(mockResponse)),
         )
 
         val personIdent = integrasjonerClient.hentIdentForAktørId("321")

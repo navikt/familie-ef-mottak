@@ -65,7 +65,7 @@ class SøknadTreeWalkerTest {
         val vedlegg = listOf(
             "Dokumentasjon på at du er syk",
             "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at kan arbeide"
+            "Dokumentasjon på at kan arbeide",
         )
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
         generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad.json")
@@ -87,7 +87,7 @@ class SøknadTreeWalkerTest {
         val vedlegg = listOf(
             "Dokumentasjon på at du er syk",
             "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at kan arbeide"
+            "Dokumentasjon på at kan arbeide",
         )
         val mapSøknadsfelter = SøknadTreeWalker.mapBarnetilsyn(søknad, vedlegg)
         generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn.json")
@@ -100,9 +100,9 @@ class SøknadTreeWalkerTest {
                 stønadType = "OVERGANGSSTØNAD",
                 fnr = "23118612345",
                 ettersendingJson = EncryptedString(""),
-                opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0)
+                opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0),
             ),
-            listOf("Lærlingkontrakt", "Utgifter til pass av barn")
+            listOf("Lærlingkontrakt", "Utgifter til pass av barn"),
         )
 
         generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending.json")

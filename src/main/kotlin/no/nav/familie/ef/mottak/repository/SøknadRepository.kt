@@ -21,7 +21,7 @@ interface SøknadRepository :
         SELECT * FROM (
         SELECT s.*, ROW_NUMBER() OVER (PARTITION BY dokumenttype ORDER BY opprettet_tid DESC) rn FROM soknad s WHERE fnr=:fnr) q
         WHERE rn = 1
-    """
+    """,
     )
     fun finnSisteSøknadenPerStønadtype(fnr: String): List<Søknad>
 

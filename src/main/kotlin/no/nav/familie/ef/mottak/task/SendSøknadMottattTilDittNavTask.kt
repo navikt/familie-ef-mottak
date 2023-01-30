@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = TYPE,
-    beskrivelse = "Send 'søknad mottatt' til ditt nav"
+    beskrivelse = "Send 'søknad mottatt' til ditt nav",
 )
 class SendSøknadMottattTilDittNavTask(
     private val producer: DittNavKafkaProducer,
-    private val søknadService: SøknadService
+    private val søknadService: SøknadService,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -29,7 +29,7 @@ class SendSøknadMottattTilDittNavTask(
             lagLinkMelding(søknad.dokumenttype),
             task.payload,
             task.metadata["eventId"].toString(),
-            null
+            null,
         )
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }

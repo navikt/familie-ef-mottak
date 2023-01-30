@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class AutomatiskJournalføringService(
     val saksbehandlingClient: SaksbehandlingClient,
     val søknadService: SøknadService,
-    val taskService: TaskService
+    val taskService: TaskService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -23,13 +23,13 @@ class AutomatiskJournalføringService(
         personIdent: String,
         journalpostId: String,
         stønadstype: StønadType,
-        mappeId: Long?
+        mappeId: Long?,
     ): Boolean {
         val arkiverDokumentRequest = AutomatiskJournalføringRequest(
             personIdent = personIdent,
             journalpostId = journalpostId,
             stønadstype = stønadstype,
-            mappeId = mappeId
+            mappeId = mappeId,
         )
         try {
             val respons =
@@ -45,12 +45,12 @@ class AutomatiskJournalføringService(
 
     private fun infoLog(
         journalpostId: String,
-        automatiskJournalføringResponse: AutomatiskJournalføringResponse
+        automatiskJournalføringResponse: AutomatiskJournalføringResponse,
     ) {
         logger.info(
             "Automatisk journalført:$journalpostId: " +
                 "behandlingId: ${automatiskJournalføringResponse.behandlingId}, " +
-                "fagsakId: ${automatiskJournalføringResponse.fagsakId} "
+                "fagsakId: ${automatiskJournalføringResponse.fagsakId} ",
         )
     }
 }

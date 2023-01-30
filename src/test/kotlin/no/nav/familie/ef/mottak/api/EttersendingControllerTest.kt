@@ -27,7 +27,7 @@ internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
         val response: ResponseEntity<Any> = restTemplate.exchange(
             localhost("/api/ettersending"),
             HttpMethod.POST,
-            HttpEntity(request(), headers)
+            HttpEntity(request(), headers),
         )
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
@@ -46,11 +46,11 @@ internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
                             beskrivelse = "Lærlingekontrakt",
                             stønadType = StønadType.OVERGANGSSTØNAD,
                             innsendingstidspunkt = null,
-                            vedlegg = listOf(vedlegg1)
-                        )
+                            vedlegg = listOf(vedlegg1),
+                        ),
                     ),
-                    personIdent = personIdent
-                )
+                    personIdent = personIdent,
+                ),
         )
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = LagPdfTask.TYPE, beskrivelse = "Lag pdf")
 class LagPdfTask(
     private val pdfService: PdfService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -23,8 +23,8 @@ class LagPdfTask(
             Task(
                 TaskType(TYPE).nesteHovedflytTask(),
                 task.payload,
-                task.metadata
-            )
+                task.metadata,
+            ),
         )
     }
 

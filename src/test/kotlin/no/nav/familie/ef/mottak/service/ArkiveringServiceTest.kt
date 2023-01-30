@@ -37,7 +37,7 @@ internal class ArkiveringServiceTest {
         søknadService,
         ettersendingService,
         vedleggRepository,
-        ettersendingVedleggRepository
+        ettersendingVedleggRepository,
     )
 
     private val ettersending = Ettersending(
@@ -47,7 +47,7 @@ internal class ArkiveringServiceTest {
         fnr = "",
         taskOpprettet = false,
         opprettetTid = LocalDateTime.now(),
-        ettersendingPdf = EncryptedFile("pdf".toByteArray())
+        ettersendingPdf = EncryptedFile("pdf".toByteArray()),
     )
 
     private val conflictException =
@@ -80,7 +80,7 @@ internal class ArkiveringServiceTest {
         return RessursException(
             cause = restClientResponseException,
             ressurs = Ressurs.failure("feil"),
-            httpStatus = HttpStatus.valueOf(restClientResponseException.rawStatusCode)
+            httpStatus = HttpStatus.valueOf(restClientResponseException.rawStatusCode),
         )
     }
 
@@ -90,6 +90,6 @@ internal class ArkiveringServiceTest {
         journalstatus = Journalstatus.MOTTATT,
         dokumenter = listOf(),
         relevanteDatoer = listOf(),
-        eksternReferanseId = eksternReferanseId
+        eksternReferanseId = eksternReferanseId,
     )
 }

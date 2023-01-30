@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
             "mock-integrasjon",
             "mock-dokument",
             "mock-ef-sak",
-            "mock-pdf"
+            "mock-pdf",
         )
         .run(*args)
 }

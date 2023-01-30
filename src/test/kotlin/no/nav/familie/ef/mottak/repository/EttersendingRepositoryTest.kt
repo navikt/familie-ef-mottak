@@ -31,13 +31,13 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
             beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
             stønadType = StønadType.OVERGANGSSTØNAD,
             innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg)
+            vedlegg = listOf(vedlegg),
         )
         val personIdent = "123456789010"
 
         val ettersendelseDto = EttersendelseDto(
             listOf(dokumentasjonsbehov),
-            personIdent = personIdent
+            personIdent = personIdent,
         )
         val ettersending = ettersendingRepository.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
@@ -56,8 +56,8 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                     ettersendingJson = EncryptedString(""),
                     opprettetTid = LocalDateTime.now().minusMonths(4),
                     journalpostId = "321321",
-                    stønadType = "OS"
-                )
+                    stønadType = "OS",
+                ),
             )
         val ikkeJournalFørtEldreEnn3Måneder =
             ettersendingRepository.insert(
@@ -65,8 +65,8 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                     fnr = "321321321",
                     ettersendingJson = EncryptedString(""),
                     opprettetTid = LocalDateTime.now().minusMonths(4),
-                    stønadType = "OS"
-                )
+                    stønadType = "OS",
+                ),
             )
         val journalFørtYngreEnn3Måneder =
             ettersendingRepository.insert(
@@ -75,8 +75,8 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                     ettersendingJson = EncryptedString(""),
                     opprettetTid = LocalDateTime.now().minusMonths(2),
                     journalpostId = "321321",
-                    stønadType = "OS"
-                )
+                    stønadType = "OS",
+                ),
             )
 
         val søknader = ettersendingRepository.finnEttersendingerKlarTilSletting(LocalDateTime.now().minusMonths(3))

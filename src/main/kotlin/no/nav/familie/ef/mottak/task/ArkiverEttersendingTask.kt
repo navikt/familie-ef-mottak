@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 @TaskStepBeskrivelse(taskStepType = ArkiverEttersendingTask.TYPE, beskrivelse = "Arkiver ettersending")
 class ArkiverEttersendingTask(
     private val arkiveringService: ArkiveringService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) : AsyncTaskStep {
 
     val logger: Logger = LoggerFactory.getLogger(javaClass)

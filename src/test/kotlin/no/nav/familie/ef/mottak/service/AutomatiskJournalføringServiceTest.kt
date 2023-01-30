@@ -17,12 +17,12 @@ internal class AutomatiskJournalføringServiceTest {
         AutomatiskJournalføringService(
             taskService = mockk(),
             søknadService = mockk(),
-            saksbehandlingClient = saksbehandlingClient
+            saksbehandlingClient = saksbehandlingClient,
         )
 
     private val automatiskJournalføringResponse = AutomatiskJournalføringResponse(
         fagsakId = UUID.randomUUID(),
-        behandlingId = UUID.randomUUID()
+        behandlingId = UUID.randomUUID(),
     )
 
     private val mappeId = 1L
@@ -38,7 +38,7 @@ internal class AutomatiskJournalføringServiceTest {
                 personIdent = "",
                 journalpostId = "",
                 stønadstype = StønadType.OVERGANGSSTØNAD,
-                mappeId = mappeId
+                mappeId = mappeId,
             )
         }
     }
@@ -54,7 +54,7 @@ internal class AutomatiskJournalføringServiceTest {
                 personIdent = "",
                 journalpostId = "",
                 stønadstype = StønadType.OVERGANGSSTØNAD,
-                mappeId = mappeId
+                mappeId = mappeId,
             )
         }
     }

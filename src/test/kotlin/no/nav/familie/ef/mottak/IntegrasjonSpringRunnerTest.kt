@@ -34,7 +34,7 @@ import org.springframework.web.util.UriComponentsBuilder
     "mock-integrasjon",
     "mock-dokument",
     "mock-ef-sak",
-    "mock-pdf"
+    "mock-pdf",
 )
 @EnableMockOAuth2Server
 abstract class IntegrasjonSpringRunnerTest {
@@ -109,7 +109,7 @@ abstract class IntegrasjonSpringRunnerTest {
             uri,
             HttpMethod.GET,
             HttpEntity.EMPTY,
-            String::class.java
+            String::class.java,
         )
         return tokenFraRespons(cookie)
     }

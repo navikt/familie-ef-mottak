@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
 class JournalføringsoppgaveService(
     val søknadRepository: SøknadRepository,
     val ettersendingRepository: EttersendingRepository,
-    val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil
+    val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)

@@ -23,8 +23,8 @@ internal class TaskRepositoryUtvidetTest : IntegrasjonSpringRunnerTest() {
         taskService.save(
             Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
-                payload = "tullball"
-            )
+                payload = "tullball",
+            ),
         )
 
         assertThat(taskRepositoryUtvidet.existsByPayloadAndType(journalpostId, LagEksternJournalføringsoppgaveTask.TYPE)).isFalse
@@ -36,8 +36,8 @@ internal class TaskRepositoryUtvidetTest : IntegrasjonSpringRunnerTest() {
         taskService.save(
             Task(
                 type = LagEksternJournalføringsoppgaveTask.TYPE,
-                payload = journalpostId
-            )
+                payload = journalpostId,
+            ),
         )
 
         assertThat(taskRepositoryUtvidet.existsByPayloadAndType(journalpostId, LagEksternJournalføringsoppgaveTask.TYPE)).isTrue

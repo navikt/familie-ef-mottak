@@ -43,7 +43,7 @@ internal class OpprettOppgaveMapperTest {
             Pair(søndag.morgen(), tirsdagFrist),
             Pair(søndag.kveld(), tirsdagFrist),
             Pair(mandag.morgen(), tirsdagFrist),
-            Pair(mandag.kveld(), onsdagFrist)
+            Pair(mandag.kveld(), onsdagFrist),
         )
 
         frister.forEach {

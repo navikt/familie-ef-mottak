@@ -14,7 +14,7 @@ import java.util.UUID
 @TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
 class ArkiverSøknadTask(
     private val arkiveringService: ArkiveringService,
-    private val taskService: TaskService
+    private val taskService: TaskService,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -37,7 +37,7 @@ class ArkiverSøknadTask(
                 task.payload,
                 Properties(task.metadata).apply {
                     this["eventId"] = UUID.randomUUID().toString()
-                }
+                },
             )
 
         taskService.saveAll(listOf(nesteTask, sendMeldingTilDittNavTask))

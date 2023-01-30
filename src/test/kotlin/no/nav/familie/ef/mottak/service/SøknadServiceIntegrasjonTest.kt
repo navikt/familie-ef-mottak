@@ -72,11 +72,11 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     internal fun `skal kunne behandle sak med barn under 6 mnd i ny løsning`() {
         val barnFødtIDag = listOf(
             søknadOvergangsstønad.barn.verdi.first().copy(
-                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
-            )
+                fødselTermindato = Søknadsfelt("Termindato", LocalDate.now()),
+            ),
         )
         val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
-            barn = Søknadsfelt("Barn", barnFødtIDag)
+            barn = Søknadsfelt("Barn", barnFødtIDag),
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
@@ -88,14 +88,14 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `skal kunne behandle sak med et barn under 6 mnd og et over i ny løsning`() {
         val barnFødtIDag = søknadOvergangsstønad.barn.verdi.first().copy(
-            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now())
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now()),
         )
 
         val barnFødtforLengeSiden = søknadOvergangsstønad.barn.verdi.first().copy(
-            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusYears(3))
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().minusYears(3)),
         )
         val søknadMedBarnFødtIDag = søknadOvergangsstønad.copy(
-            barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag))
+            barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag)),
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
@@ -111,11 +111,11 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         val barn1mnd = listOf(
             søknadOvergangsstønad.barn.verdi.first().copy(
-                fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer(ident))
-            )
+                fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer(ident)),
+            ),
         )
         val søknadMedBarn1mnd = søknadOvergangsstønad.copy(
-            barn = Søknadsfelt("Barn", barn1mnd)
+            barn = Søknadsfelt("Barn", barn1mnd),
         )
         val kvittering = søknadService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg))
         val søknad = søknadService.get(kvittering.id)

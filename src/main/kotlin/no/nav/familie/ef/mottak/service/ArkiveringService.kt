@@ -25,7 +25,7 @@ class ArkiveringService(
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val vedleggRepository: VedleggRepository,
-    private val ettersendingVedleggRepository: EttersendingVedleggRepository
+    private val ettersendingVedleggRepository: EttersendingVedleggRepository,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -53,7 +53,7 @@ class ArkiveringService(
                 logger.warn("409 conflict for eksternReferanseId ved journalføring av ettersending: $ettersendingId.")
                 hentJournalpostIdForBrukerOgEksternReferanseId(
                     callId,
-                    ettersending.fnr
+                    ettersending.fnr,
                 )?.journalpostId
                     ?: error("Fant ikke journalpost for callId (eksternReferanseId) for ettersending $ettersendingId")
             } else {
@@ -87,7 +87,7 @@ class ArkiveringService(
 
     private fun sendEttersending(
         ettersending: Ettersending,
-        vedlegg: List<EttersendingVedlegg>
+        vedlegg: List<EttersendingVedlegg>,
     ): String {
         val arkiverDokumentRequest = ArkiverDokumentRequestMapper.fromEttersending(ettersending, vedlegg)
         val dokumentResponse = integrasjonerClient.arkiver(arkiverDokumentRequest)
@@ -99,7 +99,7 @@ class ArkiveringService(
             brukerId = Bruker(id = fnr, type = BrukerIdType.FNR),
             antall = 1000,
             tema = listOf(Tema.ENF),
-            journalposttype = listOf(Journalposttype.I)
+            journalposttype = listOf(Journalposttype.I),
         )
         val journalposterForBruker =
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)

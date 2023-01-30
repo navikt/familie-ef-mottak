@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(
     taskStepType = VelgAutomatiskEllerManuellFlytTask.TYPE,
-    beskrivelse = "Velg automatisk eller manuell flyt"
+    beskrivelse = "Velg automatisk eller manuell flyt",
 )
 class VelgAutomatiskEllerManuellFlytTask(
     val taskService: TaskService,
@@ -43,12 +42,12 @@ class VelgAutomatiskEllerManuellFlytTask(
 
     private fun skalAutomatiskJournalføre(
         stønadstype: StønadType?,
-        søknad: Søknad
+        søknad: Søknad,
     ): Boolean {
         return when (stønadstype) {
             OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER -> saksbehandlingClient.kanOppretteFørstegangsbehandling(
                 søknad.fnr,
-                stønadstype
+                stønadstype,
             )
             else -> false
         }
