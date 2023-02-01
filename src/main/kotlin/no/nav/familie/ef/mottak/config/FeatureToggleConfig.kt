@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.config
 
-import no.finn.unleash.DefaultUnleash
-import no.finn.unleash.UnleashContext
-import no.finn.unleash.UnleashContextProvider
-import no.finn.unleash.util.UnleashConfig
+import io.getunleash.DefaultUnleash
+import io.getunleash.UnleashContext
+import io.getunleash.UnleashContextProvider
+import io.getunleash.util.UnleashConfig
 import no.nav.familie.ef.mottak.featuretoggle.ByEnvironmentStrategy
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import org.slf4j.Logger
