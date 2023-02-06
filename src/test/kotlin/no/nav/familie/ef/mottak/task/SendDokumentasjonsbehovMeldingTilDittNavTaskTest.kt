@@ -4,6 +4,7 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -27,6 +28,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
     private lateinit var featureToggleService: FeatureToggleService
+    private lateinit var ettersendingConfig: EttersendingConfig
 
     private val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
 
@@ -35,16 +37,22 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
         featureToggleService = mockk()
+        ettersendingConfig = mockk()
         sendDokumentasjonsbehovMeldingTilDittNavTask =
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
                 søknadService,
                 mockk(relaxed = true),
+                ettersendingConfig,
+                featureToggleService,
             )
+
+        every { featureToggleService.isEnabled(any()) } returns true
+        every { ettersendingConfig.ettersendingUrl } returns URL("https://familie-ef-mottak.dev.intern.nav.no")
     }
 
     @Test
-    internal fun `overgangsstønad riktige intergasjoner`() {
+    internal fun `overgangsstønad riktige integrasjoner`() {
         mockSøknad()
 
         val dokumentasjonsBehov =
@@ -74,7 +82,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - har allerede sendt inn`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
-            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp.",
+            "Vi har mottatt søknaden din om overgangsstønad.",
         )
     }
 
@@ -91,7 +99,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun `overgangsstønad - har sendt inn vedlegg`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
-            "Vi har mottatt søknaden din om overgangsstønad. Se vedleggene du lastet opp.",
+            "Vi har mottatt søknaden din om overgangsstønad.",
         )
     }
 

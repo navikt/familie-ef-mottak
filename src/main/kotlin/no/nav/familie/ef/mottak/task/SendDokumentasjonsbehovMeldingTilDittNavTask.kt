@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.config.EttersendingConfig
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -31,6 +32,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val søknadService: SøknadService,
     private val taskService: TaskService,
     private val ettersendingConfig: EttersendingConfig,
+    private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -45,7 +47,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
         if (dokumentasjonsbehov.isNotEmpty()) {
             val manglerVedleggPåSøknad = manglerVedlegg(dokumentasjonsbehov)
 
-            if (manglerVedleggPåSøknad) {
+            if (manglerVedleggPåSøknad && featureToggleService.isEnabled("familie.ef.mottak.send-paminnelse-ditt-nav")) {
                 opprettSendPåminnelseTask(task)
             }
 
@@ -69,8 +71,8 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
                 task.payload,
                 Properties(task.metadata).apply {
                     this["eventId"] = UUID.randomUUID().toString()
-                }
-            ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0))
+                },
+            ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0)),
         )
     }
 

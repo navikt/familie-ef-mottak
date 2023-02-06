@@ -27,7 +27,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
-    private val ettersendingConfig: EttersendingConfig
+    private val ettersendingConfig: EttersendingConfig,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
