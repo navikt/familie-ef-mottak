@@ -27,6 +27,8 @@ interface SøknadRepository :
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
+    fun findAllByFnr(personIdent: String): List<Søknad>
+
     @Query("""SELECT id FROM soknad WHERE journalpost_id IS NOT NULL AND soknad_pdf IS NOT NULL AND opprettet_tid < :tidspunkt""")
     fun finnSøknaderKlarTilReduksjon(tidspunkt: LocalDateTime): List<String>
 

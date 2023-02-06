@@ -44,6 +44,9 @@ class EttersendingService(
         }
     }
 
+    fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> =
+        ettersendingRepository.findAllByFnr(personIdent.ident)
+
     private fun mapVedlegg(
         ettersendingDbId: UUID,
         ettersending: EttersendelseDto,

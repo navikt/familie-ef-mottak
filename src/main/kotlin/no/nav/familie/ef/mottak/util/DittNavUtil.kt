@@ -1,7 +1,5 @@
 package no.nav.familie.ef.mottak.util
 
-import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import java.net.URL
 
@@ -12,7 +10,7 @@ fun lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingURL: URL, dittNa
         link = ettersendingURL,
         melding = "Det ser ut til at det mangler noen vedlegg til søknaden din om ${dittNavTekst}." +
                 " Se hva som mangler og last opp vedlegg. Dersom du allerede har sendt inn den manglende" +
-                " dokumentasjonen så kan du se bort fra denne meldingen."
+                " dokumentasjonen, så kan du se bort fra denne meldingen."
     )
 
 fun lagMeldingManglerDokumentasjonsbehov(ettersendingURL: URL, dittNavTekst: String) =
@@ -25,7 +23,7 @@ fun lagMeldingManglerDokumentasjonsbehov(ettersendingURL: URL, dittNavTekst: Str
 fun lagMeldingSøknadMottattBekreftelse(ettersendingURL: URL, dittNavTekst: String) =
     LinkMelding(
         link = ettersendingURL,
-        melding = "Vi har mottatt søknaden din om ${dittNavTekst}. Se vedleggene du lastet opp."
+        melding = "Vi har mottatt søknaden din om ${dittNavTekst}."
     )
 
 fun tilDittNavTekst(søknadType: SøknadType): String {

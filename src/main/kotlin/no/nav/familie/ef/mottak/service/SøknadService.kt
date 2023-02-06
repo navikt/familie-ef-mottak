@@ -20,6 +20,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -96,6 +97,9 @@ class SøknadService(
     fun get(id: String): Søknad {
         return søknadRepository.findByIdOrThrow(id)
     }
+
+    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
+        søknadRepository.findAllByFnr(personIdent.ident)
 
     fun getOrNull(id: String): Søknad? {
         return søknadRepository.findByIdOrNull(id)

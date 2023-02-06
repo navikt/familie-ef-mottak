@@ -13,8 +13,13 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
+import no.nav.familie.util.VirkedagerProvider
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.util.Properties
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -24,6 +29,7 @@ import org.springframework.stereotype.Service
 class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
+    private val taskService: TaskService,
     private val ettersendingConfig: EttersendingConfig,
 ) : AsyncTaskStep {
 
@@ -38,6 +44,11 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
         val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknad).dokumentasjonsbehov
         if (dokumentasjonsbehov.isNotEmpty()) {
             val manglerVedleggPåSøknad = manglerVedlegg(dokumentasjonsbehov)
+
+            if (manglerVedleggPåSøknad) {
+                opprettSendPåminnelseTask(task)
+            }
+
             val linkMelding = lagLinkMelding(søknad, manglerVedleggPåSøknad)
 
             producer.sendToKafka(
@@ -51,13 +62,24 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
         }
     }
 
+    private fun opprettSendPåminnelseTask(task: Task) {
+        taskService.save(
+            Task(
+                SendPåminnelseOmDokumentasjonsbehovTilDittNavTask.TYPE,
+                task.payload,
+                Properties(task.metadata).apply {
+                    this["eventId"] = UUID.randomUUID().toString()
+                }
+            ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0))
+        )
+    }
+
     private fun lagLinkMelding(søknad: Søknad, manglerVedleggPåSøknad: Boolean): LinkMelding {
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = tilDittNavTekst(søknadType)
 
         return when {
             manglerVedleggPåSøknad -> {
-                // TODO: Lagre SendPåminnelseOmDokumentasjonsbehovTilDittNavTask
                 lagMeldingManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, søknadstekst)
             }
 
