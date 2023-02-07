@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.URL
@@ -27,6 +28,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
+    private lateinit var taskService: TaskService
     private lateinit var featureToggleService: FeatureToggleService
     private lateinit var ettersendingConfig: EttersendingConfig
 
@@ -36,13 +38,14 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadService = mockk()
+        taskService = mockk(relaxed = true)
         featureToggleService = mockk()
         ettersendingConfig = mockk()
         sendDokumentasjonsbehovMeldingTilDittNavTask =
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
                 søknadService,
-                mockk(relaxed = true),
+                taskService,
                 ettersendingConfig,
                 featureToggleService,
             )
@@ -64,6 +67,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
             søknadService.hentDokumentasjonsbehovForSøknad(any())
+            taskService.save(any())
             dittNavKafkaProducer.sendToKafka(FNR, any(), any(), EVENT_ID, isNull(true))
         }
     }
@@ -75,6 +79,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
         verify {
             dittNavKafkaProducer wasNot called
+            taskService.save(any()) wasNot called
         }
     }
 
@@ -84,6 +89,9 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
+        verify {
+            taskService.save(any()) wasNot called
+        }
     }
 
     @Test
@@ -93,6 +101,9 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
                 "Se hva som mangler og last opp vedlegg.",
         )
+        verify (exactly = 1) {
+            taskService.save(any())
+        }
     }
 
     @Test
@@ -101,6 +112,9 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
+        verify {
+            taskService.save(any()) wasNot called
+        }
     }
 
     @Test
@@ -115,6 +129,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         verify {
             søknadService.hentDokumentasjonsbehovForSøknad(any()) wasNot called
             dittNavKafkaProducer wasNot called
+            taskService.save(any()) wasNot called
         }
     }
 
