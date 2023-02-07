@@ -48,11 +48,11 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             )
 
         every { featureToggleService.isEnabled(any()) } returns true
-        every { ettersendingConfig.ettersendingUrl } returns URL("https://familie-ef-mottak.dev.intern.nav.no")
+        every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 
     @Test
-    internal fun `overgangsstønad riktige integrasjoner`() {
+    internal fun `overgangsstønad riktige integrasjoner - skal sende melding`() {
         mockSøknad()
 
         val dokumentasjonsBehov =
@@ -69,7 +69,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `overgangsstønad - uten dokumentasjonsbehov skal ikke kalle sendToKafka`() {
+    internal fun `overgangsstønad uten dokumentasjonsbehov - skal ikke kalle sendToKafka`() {
         mockSøknad()
         mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
@@ -79,7 +79,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `overgangsstønad - har allerede sendt inn`() {
+    internal fun `overgangsstønad har allerede sendt inn - skal sende mottatt melding`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
             "Vi har mottatt søknaden din om overgangsstønad.",
@@ -87,7 +87,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `overgangsstønad - mangler vedlegg`() {
+    internal fun `overgangsstønad mangler vedlegg - skal sende mangel melding`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", false, emptyList())),
             "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
@@ -96,7 +96,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `overgangsstønad - har sendt inn vedlegg`() {
+    internal fun `overgangsstønad har sendt inn vedlegg - skal sende mottatt melding`() {
         testOgVerifiserMelding(
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
             "Vi har mottatt søknaden din om overgangsstønad.",
@@ -104,7 +104,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     @Test
-    internal fun `arbeidssøker skal ikke sende melding til ditt nav`() {
+    internal fun `arbeidssøker - skal ikke sende melding`() {
         mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
 
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))

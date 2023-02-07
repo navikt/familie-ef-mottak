@@ -15,8 +15,12 @@ import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.util.VirkedagerProvider
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.util.Properties
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -72,5 +76,13 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     companion object {
 
         const val TYPE = "SendPåminnelseOmDokumentasjonTilDittNav"
+
+        fun opprettTask(task: Task) = Task(
+            TYPE,
+            task.payload,
+            Properties(task.metadata).apply {
+                this["eventId"] = UUID.randomUUID().toString()
+            },
+        ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0))
     }
 }
