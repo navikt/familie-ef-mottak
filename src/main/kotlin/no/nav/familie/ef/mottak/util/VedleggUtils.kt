@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.util
 
 import no.nav.familie.ef.mottak.api.ApiFeil
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 
@@ -16,3 +17,6 @@ fun okEllerKastException(producer: () -> Kvittering): Kvittering {
         }
     }
 }
+
+fun manglerVedlegg(dokumentasjonsbehov: List<Dokumentasjonsbehov>) =
+    dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
