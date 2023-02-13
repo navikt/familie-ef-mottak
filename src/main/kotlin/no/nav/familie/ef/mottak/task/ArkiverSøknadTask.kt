@@ -21,7 +21,7 @@ class ArkiverSøknadTask(
 
     override fun doTask(task: Task) {
         logger.info("Starter prosessering av task=${task.id}")
-        val journalpostId = arkiveringService.journalførSøknad(task.payload)
+        val journalpostId = arkiveringService.journalførSøknad(task.payload, task.callId)
         logger.info("Oppdaterer metadata til task=${task.id}")
         task.metadata.apply {
             this["journalpostId"] = journalpostId

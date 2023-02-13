@@ -14,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class JournalfoeringHendelseDbUtil(
@@ -56,7 +57,7 @@ class JournalfoeringHendelseDbUtil(
             type = eksternJournalføringFlyt().first().type,
             payload = journalpost.journalpostId,
             properties = journalpost.metadata(),
-        )
+        ).medTriggerTid(LocalDateTime.now().plusMinutes(15))
         taskService.save(journalføringsTask)
     }
 }

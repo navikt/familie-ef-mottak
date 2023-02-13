@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.service.OppgaveService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,13 +20,18 @@ class LagEksternJournalføringsoppgaveTask(
     private val søknadRepository: SøknadRepository,
 ) : AsyncTaskStep {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun doTask(task: Task) {
         val journalpostId = task.payload
 
         // Ved helt spesielle race conditions kan man tenke seg at vi fikk opprettet
-        // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId
+        // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId. Gjelder særlig dersom
+        // arkiveringService timer ut, men kallet går igjennom.
         if (finnesIkkeSøknadMedJournalpostId(journalpostId) && finnesIkkeEttersendingMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
+        } else {
+            logger.info("Lager ikke oppgave for journalpostId=$journalpostId da denne allerede håndteres av normal journalføringsløype i mottak")
         }
     }
 
