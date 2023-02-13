@@ -30,13 +30,16 @@ class ArkiveringService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun journalførSøknad(søknadId: String): String {
+    fun journalførSøknad(søknadId: String, callId: String): String {
         logger.info("Henter ut søknad")
         val søknad: Søknad = søknadService.get(søknadId)
         logger.info("Henter ut vedlegg")
         val vedlegg = vedleggRepository.findBySøknadId(søknad.id)
         logger.info("Journalfører søknad med vedlegg")
-        val journalpostId: String = send(søknad, vedlegg)
+        val journalpostId: String = håndterJournalpostAlleredeOpprettet(søknad.fnr, callId) {
+            send(søknad, vedlegg)
+        }
+
         val søknadMedJournalpostId = søknad.copy(journalpostId = journalpostId)
         logger.info("Oppdaterer søknad med journalpostId")
         søknadService.oppdaterSøknad(søknadMedJournalpostId)
@@ -46,19 +49,8 @@ class ArkiveringService(
     fun journalførEttersending(ettersendingId: String, callId: String): String {
         val ettersending: Ettersending = ettersendingService.hentEttersending(ettersendingId)
         val vedlegg = ettersendingVedleggRepository.findByEttersendingId(ettersending.id)
-        val journalpostId: String = try {
+        val journalpostId: String = håndterJournalpostAlleredeOpprettet(ettersending.fnr, callId) {
             sendEttersending(ettersending, vedlegg)
-        } catch (e: RessursException) {
-            if (e.cause is HttpClientErrorException.Conflict) {
-                logger.warn("409 conflict for eksternReferanseId ved journalføring av ettersending: $ettersendingId.")
-                hentJournalpostIdForBrukerOgEksternReferanseId(
-                    callId,
-                    ettersending.fnr,
-                )?.journalpostId
-                    ?: error("Fant ikke journalpost for callId (eksternReferanseId) for ettersending $ettersendingId")
-            } else {
-                throw e
-            }
         }
         val ettersendingMedJournalpostId = ettersending.copy(journalpostId = journalpostId)
         ettersendingService.oppdaterEttersending(ettersendingMedJournalpostId)
@@ -105,5 +97,22 @@ class ArkiveringService(
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
 
         return journalposterForBruker.find { it.eksternReferanseId == eksternReferanseId }
+    }
+
+    private fun håndterJournalpostAlleredeOpprettet(fnr: String, callId: String, journalfør: () -> String): String {
+        return try {
+            journalfør()
+        } catch (e: RessursException) {
+            if (e.cause is HttpClientErrorException.Conflict) {
+                logger.warn("409 conflict for eksternReferanseId ved journalføring med callId: $callId.")
+                hentJournalpostIdForBrukerOgEksternReferanseId(
+                    callId,
+                    fnr,
+                )?.journalpostId
+                    ?: error("Fant ikke journalpost for callId (eksternReferanseId) $callId")
+            } else {
+                throw e
+            }
+        }
     }
 }
