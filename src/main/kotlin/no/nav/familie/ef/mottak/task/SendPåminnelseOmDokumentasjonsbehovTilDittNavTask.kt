@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -54,6 +55,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
             task.payload,
             task.metadata["eventId"].toString(),
             linkMelding.link,
+            PreferertKanal.SMS
         )
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")
     }

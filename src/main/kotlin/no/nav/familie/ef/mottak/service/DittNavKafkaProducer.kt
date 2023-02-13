@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.brukernotifikasjon.schemas.input.BeskjedInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -19,9 +20,16 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
     @Value("\${KAFKA_TOPIC_DITTNAV}")
     private lateinit var topic: String
 
-    fun sendToKafka(fnr: String, melding: String, grupperingsnummer: String, eventId: String, link: URL?) {
+    fun sendToKafka(
+        fnr: String,
+        melding: String,
+        grupperingsnummer: String,
+        eventId: String,
+        link: URL? = null,
+        kanal: PreferertKanal? = null
+    ) {
         val nokkel = lagNøkkel(fnr, grupperingsnummer, eventId)
-        val beskjed = lagBeskjed(melding, link)
+        val beskjed = lagBeskjed(melding, link, kanal)
 
         secureLogger.debug("Sending to Kafka topic: {}: {}", topic, beskjed)
         runCatching {
@@ -44,15 +52,16 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
             .withEventId(eventId)
             .build()
 
-    private fun lagBeskjed(melding: String, link: URL?): BeskjedInput {
+    private fun lagBeskjed(melding: String, link: URL?, kanal: PreferertKanal?): BeskjedInput {
         val builder = BeskjedInputBuilder()
-            .withEksternVarsling(false)
             .withSikkerhetsnivaa(4)
             .withSynligFremTil(null)
             .withTekst(melding)
             .withTidspunkt(LocalDateTime.now(UTC))
 
         if (link != null) builder.withLink(link)
+        if (kanal != null) builder.withEksternVarsling(true).withPrefererteKanaler(kanal)
+
         return builder.build()
     }
 
