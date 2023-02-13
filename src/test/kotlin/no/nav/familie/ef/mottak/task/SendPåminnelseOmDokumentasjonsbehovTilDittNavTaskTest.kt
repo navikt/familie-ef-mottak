@@ -4,6 +4,7 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
@@ -69,7 +70,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
         }
     }
 
@@ -128,7 +129,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
 
         }
     }
@@ -151,7 +152,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
         }
     }
 
