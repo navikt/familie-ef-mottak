@@ -84,7 +84,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
     private fun settBehandlingstype(journalpost: Journalpost): String? {
         if (
             journalpost.tittel?.lowercase().equals("klage") ||
-            journalpost.dokumenter?.any { it.brevkode == "NAV 90-00.08" } == true
+            journalpost.dokumenter?.any { it.brevkode == "NAV 90-00.08 K" } == true
         ) {
             return KODEVERK_KLAGE
         }
