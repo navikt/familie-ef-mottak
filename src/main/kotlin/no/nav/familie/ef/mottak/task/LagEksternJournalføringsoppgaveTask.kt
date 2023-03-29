@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
+import no.nav.familie.ef.mottak.hendelse.skalBehandles
+import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.OppgaveService
@@ -18,6 +20,7 @@ class LagEksternJournalføringsoppgaveTask(
     private val ettersendingRepository: EttersendingRepository,
     private val oppgaveService: OppgaveService,
     private val søknadRepository: SøknadRepository,
+    private val journalpostClient: IntegrasjonerClient,
 ) : AsyncTaskStep {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -25,10 +28,14 @@ class LagEksternJournalføringsoppgaveTask(
     override fun doTask(task: Task) {
         val journalpostId = task.payload
 
+        val journalpost = journalpostClient.hentJournalpost(journalpostId)
+
         // Ved helt spesielle race conditions kan man tenke seg at vi fikk opprettet
         // denne (LagEksternJournalføringsoppgaveTask) før søknaden fikk en journalpostId. Gjelder særlig dersom
         // arkiveringService timer ut, men kallet går igjennom.
-        if (finnesIkkeSøknadMedJournalpostId(journalpostId) && finnesIkkeEttersendingMedJournalpostId(journalpostId)) {
+        if (!journalpost.skalBehandles()) {
+            logger.info("Journalposten er endret etter melding på kø. Lager ikke task for journalpost med id=$journalpostId")
+        } else if (finnesIkkeSøknadMedJournalpostId(journalpostId) && finnesIkkeEttersendingMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
         } else {
             logger.info("Lager ikke oppgave for journalpostId=$journalpostId da denne allerede håndteres av normal journalføringsløype i mottak")
