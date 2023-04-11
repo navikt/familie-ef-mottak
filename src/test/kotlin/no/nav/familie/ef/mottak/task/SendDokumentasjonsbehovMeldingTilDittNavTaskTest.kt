@@ -101,7 +101,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
                 "Se hva som mangler og last opp vedlegg.",
         )
-        verify (exactly = 1) {
+        verify(exactly = 1) {
             taskService.save(any())
         }
     }

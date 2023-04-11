@@ -78,7 +78,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     internal fun `har etterfølgende søknad, ingen innsendte ettersendinger - skal ikke sende påminnelse`() {
         val søknadData = listOf(
             SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1))
+            SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1)),
         )
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
@@ -115,7 +115,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     internal fun `har etterfølgende søknad for arbeidssøker - skal sende påminnelse`() {
         val søknadData = listOf(
             SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now())
+            SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now()),
         )
         val forventetMelding =
             lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
@@ -130,7 +130,6 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
-
         }
     }
 
@@ -138,7 +137,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     internal fun `har tidligere søknader, har tidligere ettersendinger - skal sende påminnelse`() {
         val søknadData = listOf(
             SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1))
+            SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1)),
         )
         val forventetMelding =
             lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
@@ -162,21 +161,21 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadJson = EncryptedString(""),
             dokumenttype = dokumenttype,
             fnr = FNR,
-            opprettetTid = opprettetTid
+            opprettetTid = opprettetTid,
         )
 
     private fun mockHentSøknad(søknadData: SøknadData) {
         every { søknadService.get(søknadIds.first()) } returns søknad(
             søknadData.id,
             søknadData.dokumentType,
-            søknadData.opprettetTid
+            søknadData.opprettetTid,
         )
     }
 
     private fun mockHentSøknaderForPerson(søknadData: List<SøknadData>) {
         every { søknadService.hentSøknaderForPerson(PersonIdent(FNR)) } returns
-                listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
-                søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
+            listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
+            søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
     }
 
     private fun ettersending(opprettetTid: LocalDateTime) =
@@ -184,7 +183,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     private fun mockHentEttersendingerForPerson(opprettetTid: LocalDateTime? = null) {
         every { ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR)) } returns
-                if (opprettetTid != null) listOf(ettersending(opprettetTid)) else emptyList()
+            if (opprettetTid != null) listOf(ettersending(opprettetTid)) else emptyList()
     }
 
     data class SøknadData(val id: String, val dokumentType: String, val opprettetTid: LocalDateTime)
