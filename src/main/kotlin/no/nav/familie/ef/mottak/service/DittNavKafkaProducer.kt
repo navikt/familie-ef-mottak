@@ -26,7 +26,7 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
         grupperingsnummer: String,
         eventId: String,
         link: URL? = null,
-        kanal: PreferertKanal? = null
+        kanal: PreferertKanal? = null,
     ) {
         val nokkel = lagNøkkel(fnr, grupperingsnummer, eventId)
         val beskjed = lagBeskjed(melding, link, kanal)

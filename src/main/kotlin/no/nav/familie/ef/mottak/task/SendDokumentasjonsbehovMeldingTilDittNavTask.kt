@@ -62,7 +62,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
 
     private fun opprettSendPåminnelseTask(task: Task) {
         taskService.save(
-            SendPåminnelseOmDokumentasjonsbehovTilDittNavTask.opprettTask(task)
+            SendPåminnelseOmDokumentasjonsbehovTilDittNavTask.opprettTask(task),
         )
     }
 

@@ -55,7 +55,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
             task.payload,
             task.metadata["eventId"].toString(),
             linkMelding.link,
-            PreferertKanal.SMS
+            PreferertKanal.SMS,
         )
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")
     }
