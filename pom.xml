@@ -23,7 +23,7 @@
         <springdoc.version>1.7.0</springdoc.version>
         <mockk.version>1.13.4</mockk.version>
         <felles.version>1.20221101085322_cc4d556</felles.version>
-        <prosessering.version>1.20221110194901_e9e0d90</prosessering.version>
+        <prosessering.version>2.20230322091650_fb0187e-SPRING_BOOT_3</prosessering.version>
         <confluent.version>7.3.3</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
         <kontrakter.version>2.0_20221209150504_693483d</kontrakter.version>
