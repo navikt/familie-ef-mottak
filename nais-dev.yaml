@@ -31,7 +31,7 @@ spec:
       memory: 1Gi
       cpu: 500m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://familie-ef-mottak.dev.intern.nav.no
+    - https://familie-ef-mottak.intern.dev.nav.no
   secureLogs:
     enabled: true
   azure:
