@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.mockapi
 
+import jakarta.validation.Valid
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
-import jakarta.validation.Valid
 
 @RestController
 @RequestMapping(path = ["/mockintegrasjoner/"], produces = [MediaType.APPLICATION_JSON_VALUE])
