@@ -31,7 +31,7 @@ class FamilieDokumentClient(
 
     companion object {
 
-        private const val HENT = "/api/mapper/familievedlegg/"
-        private const val PING = "/api/mapper/ping"
+        private const val HENT = "api/mapper/familievedlegg/"
+        private const val PING = "api/mapper/ping"
     }
 }
