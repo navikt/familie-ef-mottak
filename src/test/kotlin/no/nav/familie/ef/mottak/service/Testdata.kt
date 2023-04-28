@@ -542,7 +542,7 @@ internal object Testdata {
                         land = Søknadsfelt(
                             label = "I hvilket land oppholdt du deg?",
                             verdi = "Spania",
-                            svarId = "ESP"
+                            svarId = "ESP",
                         ),
                         årsakUtenlandsopphold = Søknadsfelt(
                             "Hvorfor bodde du i utlandet?",
