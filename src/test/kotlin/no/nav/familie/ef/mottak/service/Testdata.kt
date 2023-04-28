@@ -539,6 +539,11 @@ internal object Testdata {
                             "Til",
                             LocalDate.of(2012, 12, 18),
                         ),
+                        land = Søknadsfelt(
+                            label = "I hvilket land oppholdt du deg?",
+                            verdi = "Spania",
+                            svarId = "ESP"
+                        ),
                         årsakUtenlandsopphold = Søknadsfelt(
                             "Hvorfor bodde du i utlandet?",
                             "Granca, Granca, Granca",
