@@ -52,6 +52,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
             producer.sendToKafka(
                 søknad.fnr,
                 linkMelding.melding,
+                task.payload,
                 task.metadata["eventId"].toString(),
                 linkMelding.link,
             )
