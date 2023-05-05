@@ -68,7 +68,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentDokumentasjonsbehovForSøknad(any())
             taskService.save(any())
-            dittNavKafkaProducer.sendToKafka(FNR, any(), any(), EVENT_ID, isNull(true))
+            dittNavKafkaProducer.sendToKafka(FNR, any(), EVENT_ID, isNull(true))
         }
     }
 
@@ -144,7 +144,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), eq(EVENT_ID), link ?: any())
+            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), eq(EVENT_ID), link ?: any())
         }
     }
 

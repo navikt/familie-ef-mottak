@@ -71,7 +71,6 @@ internal class SendSøknadMottattTilDittNavTaskTest {
             dittNavKafkaProducer.sendToKafka(
                 FNR,
                 forventetTekst,
-                task.payload,
                 EVENT_ID,
                 null,
             )

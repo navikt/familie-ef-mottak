@@ -23,12 +23,11 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
     fun sendToKafka(
         fnr: String,
         melding: String,
-        grupperingsnummer: String,
         eventId: String,
         link: URL? = null,
         kanal: PreferertKanal? = null,
     ) {
-        val nokkel = lagNøkkel(fnr, grupperingsnummer, eventId)
+        val nokkel = lagNøkkel(fnr, eventId)
         val beskjed = lagBeskjed(melding, link, kanal)
 
         secureLogger.debug("Sending to Kafka topic: {}: {}", topic, beskjed)
@@ -43,12 +42,11 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
         }
     }
 
-    private fun lagNøkkel(fnr: String, grupperingsId: String, eventId: String): NokkelInput =
+    private fun lagNøkkel(fnr: String, eventId: String): NokkelInput =
         NokkelInputBuilder()
             .withAppnavn("familie-ef-mottak")
             .withNamespace("teamfamilie")
             .withFodselsnummer(fnr)
-            .withGrupperingsId(grupperingsId)
             .withEventId(eventId)
             .build()
 
