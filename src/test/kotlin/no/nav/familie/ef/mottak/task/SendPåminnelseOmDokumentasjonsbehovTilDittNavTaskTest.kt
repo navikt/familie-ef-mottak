@@ -70,7 +70,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
         }
     }
 
@@ -129,7 +129,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
         }
     }
 
@@ -151,7 +151,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.get(any())
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
         }
     }
 
