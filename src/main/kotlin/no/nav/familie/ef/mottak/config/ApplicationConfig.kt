@@ -49,7 +49,7 @@ class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
     @Bean("tokenExchange")
-    fun restTemplate(
+    fun restTemplateTokenExchange(
         bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
         mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
@@ -83,7 +83,7 @@ class ApplicationConfig {
     }
 
     @Bean("restTemplateUnsecured")
-    fun restTemplate(
+    fun restTemplateUnsecured(
         mdcInterceptor: MdcValuesPropagatingClientInterceptor,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations {

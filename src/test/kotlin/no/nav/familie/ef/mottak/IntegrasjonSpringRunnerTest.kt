@@ -100,7 +100,7 @@ abstract class IntegrasjonSpringRunnerTest {
     fun getTestToken(fnr: String = "12345678910"): String {
         val uri = UriComponentsBuilder.fromUriString(LOCALHOST)
             .port(getPort())
-            .pathSegment("/local/cookie")
+            .pathSegment("local/cookie")
             .queryParam("subject", fnr)
             .queryParam("audience", "aud-localhost")
             .queryParam("issuerId", "tokenx").build().toUri().toString()
