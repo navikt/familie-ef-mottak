@@ -156,7 +156,10 @@ class IntegrasjonerClient(
     private fun finnMappeUri(finnMappeRequest: FinnMappeRequest): URI {
         return UriComponentsBuilder.fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_FINN_MAPPE)
-            .queryParams(finnMappeRequest.toQueryParams())
+            .queryParam("tema", finnMappeRequest.tema)
+            .queryParam("enhetsnr", finnMappeRequest.enhetsnr)
+            .queryParam("limit", finnMappeRequest.limit)
+            .queryParam("opprettetFom", finnMappeRequest.opprettetFom)
             .build()
             .toUri()
     }

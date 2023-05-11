@@ -525,21 +525,26 @@ internal object Testdata {
 
     private fun medlemskapsdetaljer(): Medlemskapsdetaljer {
         return Medlemskapsdetaljer(
-            Søknadsfelt("Oppholder du deg i Norge?", true),
-            Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
-            Søknadsfelt(
+            oppholderDuDegINorge = Søknadsfelt("Oppholder du deg i Norge?", true),
+            bosattNorgeSisteÅrene = Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
+            utenlandsopphold = Søknadsfelt(
                 "Utenlandsopphold",
                 listOf(
                     Utenlandsopphold(
-                        Søknadsfelt(
+                        fradato = Søknadsfelt(
                             "Fra",
                             LocalDate.of(2012, 12, 4),
                         ),
-                        Søknadsfelt(
+                        tildato = Søknadsfelt(
                             "Til",
                             LocalDate.of(2012, 12, 18),
                         ),
-                        Søknadsfelt(
+                        land = Søknadsfelt(
+                            label = "I hvilket land oppholdt du deg?",
+                            verdi = "Spania",
+                            svarId = "ESP",
+                        ),
+                        årsakUtenlandsopphold = Søknadsfelt(
                             "Hvorfor bodde du i utlandet?",
                             "Granca, Granca, Granca",
                         ),

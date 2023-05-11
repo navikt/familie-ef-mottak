@@ -26,10 +26,17 @@ class SaksbehandlingClient(
     override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
 
     fun kanOppretteFørstegangsbehandling(personIdent: String, stønadType: StønadType): Boolean {
-        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("/api/ekstern/automatisk-journalforing/kan-opprette-behandling")
+        val kapOppretteUri = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api")
+            .pathSegment("ekstern")
+            .pathSegment("automatisk-journalforing")
+            .pathSegment("kan-opprette-behandling")
             .queryParam("type", stønadType.name)
-        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))
+            .encode()
+            .build()
+            .toUri()
+
+        val response = postForEntity<Ressurs<Boolean>>(kapOppretteUri, PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 

@@ -65,7 +65,7 @@ internal class PdfServiceTest {
     )
 
     @BeforeEach
-    private fun init() {
+    fun setUp() {
         søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn, søknadSkolepenger)
         every {
             vedleggRepository.finnTitlerForSøknadId(any())

@@ -43,9 +43,9 @@ spring:
   flyway:
     enabled: true
     baseline-version: 6
-    ignore-missing-migrations: true
     placeholders:
       ignoreIfLocal:
+    ignore-migration-patterns: "*:missing"
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
     username: ${DB_USERNAME}
@@ -71,7 +71,7 @@ management:
     base-path: "/internal"
     path-mapping:
       health: "status/isAlive"
-  metrics.export.prometheus.enabled: true
+  prometheus.metrics.export.enabled: true
   health:
     db:
       enabled: true

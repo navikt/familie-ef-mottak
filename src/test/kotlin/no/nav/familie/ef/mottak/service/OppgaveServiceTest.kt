@@ -75,7 +75,7 @@ internal class OppgaveServiceTest {
         )
 
     @BeforeEach
-    private fun init() {
+    fun setUp() {
         every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
         every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns listOf(
