@@ -1,20 +1,17 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.UtledPrioritetForSøknadUtil
 import no.nav.familie.http.client.RessursException
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
@@ -23,7 +20,6 @@ import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class OppgaveService(
@@ -42,7 +38,11 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        val prioritet = utledPrioritet(søknad)
+        val prioritet = if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid")) {
+            UtledPrioritetForSøknadUtil.utledPrioritet(søknad)
+        } else {
+            OppgavePrioritet.NORM
+        }
         return lagJournalføringsoppgave(journalpost, prioritet)
     }
 
@@ -98,30 +98,6 @@ class OppgaveService(
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
-    }
-
-    fun utledPrioritet(søknad: Søknad): OppgavePrioritet {
-        if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid") && skalSetteHøyPriorietSommertid(søknad)) {
-            return OppgavePrioritet.HOY
-        }
-        return OppgavePrioritet.NORM
-    }
-
-    private fun skalSetteHøyPriorietSommertid(søknad: Søknad): Boolean {
-        if (søknad.dokumenttype != DOKUMENTTYPE_OVERGANGSSTØNAD) {
-            return false
-        }
-        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJson.data)
-        return (søknadsdata.aktivitet.verdi.underUtdanning != null) && erSommerPeriode(søknad.opprettetTid.toLocalDate())
-    }
-
-    private fun erSommerPeriode(opprettetTid: LocalDate): Boolean {
-        /**
-         * TODO : Sett til start måned til juni før dette merges
-         */
-        val start = LocalDate.now().withMonth(5).withDayOfMonth(26)
-        val end = LocalDate.now().withMonth(9).withDayOfMonth(16)
-        return opprettetTid in start..end
     }
 
     private fun finnBehandlendeEnhet(journalpost: Journalpost): String? {
