@@ -18,6 +18,7 @@ import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.service.Testdata.utdanning
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
@@ -41,7 +42,9 @@ import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -52,7 +55,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClientResponseException
 import java.nio.charset.Charset
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -72,6 +77,7 @@ internal class OppgaveServiceTest {
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
             mappeService = MappeService(integrasjonerClient, søknadService, cacheManager),
+            featureToggleService = featureToggleService,
         )
 
     @BeforeEach
@@ -148,6 +154,7 @@ internal class OppgaveServiceTest {
                 journalpostOvergangsstøand,
                 BehandlesAvApplikasjon.EF_SAK,
                 "4489",
+                OppgavePrioritet.NORM,
             )
 
         every {
@@ -199,12 +206,29 @@ internal class OppgaveServiceTest {
                 fnr = Testdata.randomFnr(),
                 behandleINySaksbehandling = true,
             )
+            every {
+                søknadService.get(any())
+            } returns Søknad(
+                søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                journalpostId = "1234",
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true,
+            )
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
 
             oppgaveService.lagJournalføringsoppgaveForSøknadId(søknadId)
 
-            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
+            verify {
+                opprettOppgaveMapper.toJournalføringsoppgave(
+                    any(),
+                    BehandlesAvApplikasjon.EF_SAK,
+                    "4489",
+                    OppgavePrioritet.NORM,
+                )
+            }
         }
     }
 
@@ -228,7 +252,14 @@ internal class OppgaveServiceTest {
 
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
 
-            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
+            verify {
+                opprettOppgaveMapper.toJournalføringsoppgave(
+                    any(),
+                    BehandlesAvApplikasjon.EF_SAK,
+                    "4489",
+                    OppgavePrioritet.NORM,
+                )
+            }
         }
     }
 
@@ -242,8 +273,131 @@ internal class OppgaveServiceTest {
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
-            verify { opprettOppgaveMapper.toJournalføringsoppgave(any(), BehandlesAvApplikasjon.EF_SAK, "4489") }
+            verify {
+                opprettOppgaveMapper.toJournalføringsoppgave(
+                    any(),
+                    BehandlesAvApplikasjon.EF_SAK,
+                    "4489",
+                    OppgavePrioritet.NORM,
+                )
+            }
         }
+    }
+
+    @Nested
+    inner class Prioritet {
+
+        @Test
+        fun `sett høy prioritet pga sommertid`() {
+            val soknadId = "123"
+            val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
+            val sommertid = LocalDate.of(2023, 7, 20)
+
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+            every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
+                Testdata.søknadOvergangsstønad.copy(
+                    aktivitet = Søknadsfelt(
+                        "aktivitet",
+                        tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
+                    ),
+                ),
+                true,
+            ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(soknadId)
+
+            assertThat(opprettOppgaveSlot.captured.prioritet).isEqualTo(OppgavePrioritet.HOY)
+        }
+
+        @Test
+        fun `ikke sett høy prioritet utenfor sommertid`() {
+            val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
+            val soknadId = "123"
+            val utenforSommertid = LocalDate.of(2023, 5, 20)
+
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+            every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
+                Testdata.søknadOvergangsstønad.copy(
+                    aktivitet = Søknadsfelt(
+                        "aktivitet",
+                        tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
+                    ),
+                ),
+                true,
+            ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(soknadId)
+
+            assertThat(opprettOppgaveSlot.captured.prioritet).isEqualTo(OppgavePrioritet.NORM)
+        }
+
+        @Test
+        fun `ikke sett høy prioritet i sommertid hvis aktivitet ikke er under utdanning`() {
+            val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
+            val soknadId = "123"
+            val utenforSommertid = LocalDate.of(2023, 7, 20)
+
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+            every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
+                Testdata.søknadOvergangsstønad.copy(
+                    aktivitet = Søknadsfelt(
+                        "aktivitet",
+                        tomAktivitet,
+                    ),
+                ),
+                true,
+            ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(soknadId)
+
+            assertThat(opprettOppgaveSlot.captured.prioritet).isEqualTo(OppgavePrioritet.NORM)
+        }
+
+        @Test
+        fun `ikke sett høy prioritet i sommertid hvis søknad ikke er overgangsstønad`() {
+            val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
+            val soknadId = "123"
+            val utenforSommertid = LocalDate.of(2023, 7, 20)
+
+            every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
+            every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
+                Testdata.søknadBarnetilsyn.copy(
+                    aktivitet = Søknadsfelt(
+                        "aktivitet",
+                        tomAktivitet,
+                    ),
+                ),
+                true,
+            ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+            every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
+
+            oppgaveService.lagJournalføringsoppgaveForSøknadId(soknadId)
+
+            assertThat(opprettOppgaveSlot.captured.prioritet).isEqualTo(OppgavePrioritet.NORM)
+        }
+
+        private val journalpost = Journalpost(
+            "999",
+            Journalposttype.I,
+            Journalstatus.MOTTATT,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            listOf(DokumentInfo("1", "", "", null, null, null)),
+            null,
+        )
     }
 
     @Nested
@@ -561,6 +715,7 @@ internal class OppgaveServiceTest {
         val barn = when (harTilsynskrevendeBarn) {
             true -> startSøknadMedAlt.barn.verdi.first()
                 .copy(barnepass = Søknadsfelt("barnepass", særligTilsynskrevende, svarId = særligTilsynskrevende))
+
             false -> startSøknadMedAlt.barn.verdi.first()
         }
 

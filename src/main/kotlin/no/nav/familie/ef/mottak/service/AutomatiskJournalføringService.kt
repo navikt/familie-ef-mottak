@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringRequest
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringResponse
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -14,6 +15,7 @@ class AutomatiskJournalføringService(
     val saksbehandlingClient: SaksbehandlingClient,
     val søknadService: SøknadService,
     val taskService: TaskService,
+    val oppgaveService: OppgaveService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -24,12 +26,14 @@ class AutomatiskJournalføringService(
         journalpostId: String,
         stønadstype: StønadType,
         mappeId: Long?,
+        søknad: Søknad,
     ): Boolean {
         val arkiverDokumentRequest = AutomatiskJournalføringRequest(
             personIdent = personIdent,
             journalpostId = journalpostId,
             stønadstype = stønadstype,
             mappeId = mappeId,
+            prioritet = oppgaveService.settPrioritet(søknad),
         )
         try {
             val respons =

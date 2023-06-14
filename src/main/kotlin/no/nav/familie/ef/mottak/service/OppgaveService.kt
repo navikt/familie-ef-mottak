@@ -1,22 +1,29 @@
 package no.nav.familie.ef.mottak.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.http.client.RessursException
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class OppgaveService(
@@ -25,6 +32,7 @@ class OppgaveService(
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
     private val mappeService: MappeService,
+    private val featureToggleService: FeatureToggleService,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -34,7 +42,8 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        val prioritet = settPrioritet(søknad)
+        return lagJournalføringsoppgave(journalpost, prioritet)
     }
 
     fun lagJournalføringsoppgaveForEttersendingId(ettersendingId: String): Long? {
@@ -55,7 +64,7 @@ class OppgaveService(
         }
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost, prioritet: OppgavePrioritet = OppgavePrioritet.NORM): Long? {
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
@@ -76,6 +85,7 @@ class OppgaveService(
                             journalpost,
                             BehandlesAvApplikasjon.EF_SAK,
                             finnBehandlendeEnhet(journalpost),
+                            prioritet,
                         )
                     return opprettOppgave(opprettOppgave, journalpost)
                 }
@@ -88,6 +98,27 @@ class OppgaveService(
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
+    }
+
+    fun settPrioritet(søknad: Søknad): OppgavePrioritet {
+        if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid") && skalSetteHøyPriorietSommertid(søknad)) {
+            return OppgavePrioritet.HOY
+        }
+        return OppgavePrioritet.NORM
+    }
+
+    private fun skalSetteHøyPriorietSommertid(søknad: Søknad): Boolean {
+        if (søknad.dokumenttype != DOKUMENTTYPE_OVERGANGSSTØNAD) {
+            return false
+        }
+        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJson.data)
+        return (søknadsdata.aktivitet.verdi.underUtdanning != null) && erSommerPeriode(søknad.opprettetTid.toLocalDate())
+    }
+
+    private fun erSommerPeriode(opprettetTid: LocalDate): Boolean {
+        val start = LocalDate.now().withMonth(6).withDayOfMonth(26)
+        val end = LocalDate.now().withMonth(9).withDayOfMonth(16)
+        return opprettetTid in start..end
     }
 
     private fun finnBehandlendeEnhet(journalpost: Journalpost): String? {
