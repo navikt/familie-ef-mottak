@@ -33,7 +33,7 @@ class AutomatiskJournalføringService(
             journalpostId = journalpostId,
             stønadstype = stønadstype,
             mappeId = mappeId,
-            prioritet = oppgaveService.settPrioritet(søknad),
+            prioritet = oppgaveService.utledPrioritet(søknad),
         )
         try {
             val respons =

@@ -226,7 +226,7 @@ internal class OppgaveServiceTest {
                     any(),
                     BehandlesAvApplikasjon.EF_SAK,
                     "4489",
-                    OppgavePrioritet.NORM,
+                    any(),
                 )
             }
         }

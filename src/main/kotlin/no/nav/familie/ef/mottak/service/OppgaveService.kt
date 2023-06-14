@@ -22,7 +22,6 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.cglib.core.Local
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -43,7 +42,7 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        val prioritet = settPrioritet(søknad)
+        val prioritet = utledPrioritet(søknad)
         return lagJournalføringsoppgave(journalpost, prioritet)
     }
 
@@ -101,7 +100,7 @@ class OppgaveService(
         }
     }
 
-    fun settPrioritet(søknad: Søknad): OppgavePrioritet {
+    fun utledPrioritet(søknad: Søknad): OppgavePrioritet {
         if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid") && skalSetteHøyPriorietSommertid(søknad)) {
             return OppgavePrioritet.HOY
         }
