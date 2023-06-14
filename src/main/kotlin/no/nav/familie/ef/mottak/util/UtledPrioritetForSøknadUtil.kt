@@ -26,10 +26,7 @@ object UtledPrioritetForSøknadUtil {
     }
 
     private fun erSommerPeriode(opprettetTid: LocalDate): Boolean {
-        /**
-         * TODO : Sett til start måned til juni før dette merges
-         */
-        val start = LocalDate.now().withMonth(5).withDayOfMonth(26)
+        val start = LocalDate.now().withMonth(6).withDayOfMonth(26)
         val end = LocalDate.now().withMonth(9).withDayOfMonth(16)
         return opprettetTid in start..end
     }
