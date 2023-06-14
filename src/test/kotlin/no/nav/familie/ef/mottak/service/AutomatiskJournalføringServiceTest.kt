@@ -44,7 +44,6 @@ internal class AutomatiskJournalføringServiceTest {
             taskService = mockk(),
             søknadService = mockk(),
             saksbehandlingClient = saksbehandlingClient,
-            oppgaveService = oppgaveService,
         )
 
     private val automatiskJournalføringResponse = AutomatiskJournalføringResponse(
