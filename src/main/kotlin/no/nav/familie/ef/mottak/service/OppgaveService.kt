@@ -22,6 +22,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cglib.core.Local
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -116,7 +117,10 @@ class OppgaveService(
     }
 
     private fun erSommerPeriode(opprettetTid: LocalDate): Boolean {
-        val start = LocalDate.now().withMonth(6).withDayOfMonth(26)
+        /**
+         * TODO : Sett til start måned til juni før dette merges
+         */
+        val start = LocalDate.now().withMonth(5).withDayOfMonth(26)
         val end = LocalDate.now().withMonth(9).withDayOfMonth(16)
         return opprettetTid in start..end
     }
