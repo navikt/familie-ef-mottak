@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
+        <version>3.1.0</version>
     </parent>
 
     <properties>
@@ -19,7 +19,7 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.version>1.8.22</kotlin.version>
         <springdoc.version>2.1.0</springdoc.version>
         <mockk.version>1.13.5</mockk.version>
         <felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
@@ -27,7 +27,7 @@
         <confluent.version>7.4.0</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20230615142948_f6dc470</kontrakter.version>
-        <token-validation.version>3.0.10</token-validation.version>
+        <token-validation.version>3.1.0</token-validation.version>
         <!-- okhttp3 overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <okhttp3.version>4.9.1</okhttp3.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
@@ -147,14 +147,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>io.getunleash</groupId>
             <artifactId>unleash-client-java</artifactId>
-            <version>8.0.0</version>
+            <version>8.1.0</version>
         </dependency>
 
         <!-- Nav-internt  -->
@@ -233,7 +228,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.18.0</version>
+            <version>1.18.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
