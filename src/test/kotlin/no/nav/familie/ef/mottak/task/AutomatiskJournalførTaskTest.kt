@@ -88,11 +88,12 @@ internal class AutomatiskJournalførTaskTest {
         every { mappeService.finnMappeIdForSøknadOgEnhet(any(), any()) } returns mappeId
         every { automatiskJournalføring() } returns true
         automatiskJournalførTask.doTask(task)
-        verify { automatiskJournalføringService.journalførAutomatisk(personIdent, journalpostId, any(), mappeId) }
+        verify { automatiskJournalføringService.journalførAutomatisk(personIdent, journalpostId, any(), mappeId, any()) }
     }
 
     private fun MockKMatcherScope.automatiskJournalføring() =
         automatiskJournalføringService.journalførAutomatisk(
+            any(),
             any(),
             any(),
             any(),

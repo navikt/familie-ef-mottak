@@ -45,6 +45,7 @@ class AutomatiskJournalførTask(
                 journalpostId = journalpostId,
                 stønadstype = stønadstype,
                 mappeId = mappeId,
+                søknad = søknad,
             )
 
         when (automatiskJournalføringFullført) {
