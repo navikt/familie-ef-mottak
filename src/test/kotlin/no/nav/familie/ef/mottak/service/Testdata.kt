@@ -142,7 +142,7 @@ internal object Testdata {
         dokumentasjon = SkolepengerDokumentasjon(),
     )
 
-    private fun utdanning(): UnderUtdanning {
+    fun utdanning(): UnderUtdanning {
         return UnderUtdanning(
             Søknadsfelt("Skole/utdanningssted", "UiO"),
             Søknadsfelt(

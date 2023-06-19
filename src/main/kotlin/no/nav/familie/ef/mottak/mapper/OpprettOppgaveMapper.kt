@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
@@ -24,6 +25,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         journalpost: Journalpost,
         behandlesAvApplikasjon: BehandlesAvApplikasjon,
         enhetsnummer: String?,
+        prioritet: OppgavePrioritet,
     ) = OpprettOppgaveRequest(
         ident = tilOppgaveIdent(journalpost),
         saksId = null,
@@ -37,6 +39,7 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         enhetsnummer = utledEnhetsnummer(journalpost.journalforendeEnhet, enhetsnummer),
         behandlesAvApplikasjon = behandlesAvApplikasjon.applikasjon,
         tilordnetRessurs = null,
+        prioritet = prioritet,
     )
 
     private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
