@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
+import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.UtledPrioritetForSøknadUtil
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringRequest
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringResponse
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -24,12 +26,14 @@ class AutomatiskJournalføringService(
         journalpostId: String,
         stønadstype: StønadType,
         mappeId: Long?,
+        søknad: Søknad,
     ): Boolean {
         val arkiverDokumentRequest = AutomatiskJournalføringRequest(
             personIdent = personIdent,
             journalpostId = journalpostId,
             stønadstype = stønadstype,
             mappeId = mappeId,
+            prioritet = UtledPrioritetForSøknadUtil.utledPrioritet(søknad),
         )
         try {
             val respons =
