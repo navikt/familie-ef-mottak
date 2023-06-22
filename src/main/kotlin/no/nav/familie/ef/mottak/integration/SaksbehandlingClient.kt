@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.integration
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringRequest
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringResponse
+import no.nav.familie.kontrakter.ef.søknad.KanSendePåminnelseRequest
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -51,5 +52,19 @@ class SaksbehandlingClient(
         val response =
             postForEntity<Ressurs<AutomatiskJournalføringResponse>>(sendInnUri, automatiskJournalføringRequest)
         return response.getDataOrThrow()
+    }
+
+    fun kanSendePåminnelseTilBruker(kanSendePåminnelseRequest: KanSendePåminnelseRequest): Boolean {
+        val uri = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api")
+            .pathSegment("ekstern")
+            .pathSegment("behandling")
+            .pathSegment("kan-sende-påminnelse-til-bruker")
+            .encode()
+            .build()
+            .toUri()
+
+        val response = postForEntity<Ressurs<Boolean>>(uri, kanSendePåminnelseRequest)
+        return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 }

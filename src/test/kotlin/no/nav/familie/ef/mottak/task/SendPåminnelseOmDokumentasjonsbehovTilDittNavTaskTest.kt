@@ -8,6 +8,7 @@ import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
+import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
@@ -33,6 +34,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     private lateinit var ettersendingService: EttersendingService
     private lateinit var featureToggleService: FeatureToggleService
     private lateinit var ettersendingConfig: EttersendingConfig
+    private lateinit var saksbehandlingClient: SaksbehandlingClient
 
     private val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
 
@@ -43,12 +45,14 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         ettersendingService = mockk()
         featureToggleService = mockk()
         ettersendingConfig = mockk()
+        saksbehandlingClient = mockk()
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask =
             SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
                 dittNavKafkaProducer,
                 søknadService,
                 ettersendingService,
                 ettersendingConfig,
+                saksbehandlingClient,
             )
 
         every { featureToggleService.isEnabled(any()) } returns true
@@ -63,6 +67,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson()
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
@@ -83,6 +88,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson()
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
 
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
@@ -100,6 +106,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson(LocalDateTime.now().plusHours(1))
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
 
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
@@ -122,6 +129,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson()
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
@@ -144,6 +152,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson(LocalDateTime.now().minusHours(1))
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
@@ -152,6 +161,42 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+        }
+    }
+
+    @Test
+    internal fun `søknad har resultert i en påbegynt behandleSak oppgave - skal ikke sende påminnelse`() {
+        val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
+        mockHentSøknad(søknadData.first())
+        mockHentSøknaderForPerson(søknadData)
+        mockHentEttersendingerForPerson()
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
+
+        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+
+        verify(exactly = 1) {
+            søknadService.get(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
+            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+            dittNavKafkaProducer wasNot called
+        }
+    }
+
+    @Test
+    internal fun `stønadType er null - skal ikke sende påminnelse`() {
+        val søknadData = listOf(SøknadData(søknadIds.first(), "", LocalDateTime.now()))
+        mockHentSøknad(søknadData.first())
+        mockHentSøknaderForPerson(søknadData)
+        mockHentEttersendingerForPerson()
+        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
+
+        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+
+        verify(exactly = 1) {
+            søknadService.get(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
+            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+            dittNavKafkaProducer wasNot called
         }
     }
 
@@ -183,7 +228,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     private fun mockHentEttersendingerForPerson(opprettetTid: LocalDateTime? = null) {
         every { ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR)) } returns
-            if (opprettetTid != null) listOf(ettersending(opprettetTid)) else emptyList()
+            if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
     }
 
     data class SøknadData(val id: String, val dokumentType: String, val opprettetTid: LocalDateTime)
