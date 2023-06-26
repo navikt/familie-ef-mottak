@@ -31,6 +31,6 @@ fun tilDittNavTekst(søknadType: SøknadType): String {
         SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
         SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
         SøknadType.SKOLEPENGER -> "stønad til skolepenger"
-        else -> error("Kan mappe dokumenttype $søknadType til dittnav tekst")
+        else -> error("Kan ikke mappe dokumenttype $søknadType til dittnav tekst")
     }
 }
