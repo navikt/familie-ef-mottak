@@ -1,16 +1,19 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
+import no.nav.familie.ef.mottak.util.UtledPrioritetForSøknadUtil
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -25,6 +28,7 @@ class OppgaveService(
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
     private val mappeService: MappeService,
+    private val featureToggleService: FeatureToggleService,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -34,7 +38,12 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        return lagJournalføringsoppgave(journalpost)
+        val prioritet = if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid")) {
+            UtledPrioritetForSøknadUtil.utledPrioritet(søknad)
+        } else {
+            OppgavePrioritet.NORM
+        }
+        return lagJournalføringsoppgave(journalpost, prioritet)
     }
 
     fun lagJournalføringsoppgaveForEttersendingId(ettersendingId: String): Long? {
@@ -55,7 +64,7 @@ class OppgaveService(
         }
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost): Long? {
+    fun lagJournalføringsoppgave(journalpost: Journalpost, prioritet: OppgavePrioritet = OppgavePrioritet.NORM): Long? {
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
@@ -76,6 +85,7 @@ class OppgaveService(
                             journalpost,
                             BehandlesAvApplikasjon.EF_SAK,
                             finnBehandlendeEnhet(journalpost),
+                            prioritet,
                         )
                     return opprettOppgave(opprettOppgave, journalpost)
                 }
