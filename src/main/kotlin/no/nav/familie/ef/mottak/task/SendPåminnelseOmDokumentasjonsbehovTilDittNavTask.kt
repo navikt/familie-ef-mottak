@@ -43,12 +43,12 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val dokumentasjonsbehovvarslinger = counter("alene.med.barn.dokumentasjonsbehovvarsling.sendt")
-    val dokumentasjonsbehovvarslingerBrukerSendtInn =
+    val dokumentasjonsbehovVarslingerSendt = counter("alene.med.barn.dokumentasjonsbehovvarsling.sendt")
+    val varslingerAvbruttGrunnetEttersending =
         counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.bruker")
-    val dokumentasjonsbehovvarslingerSaksbehandlerStartet =
+    val varslingerAvbruttGrunnetPåbegyntBehandleSakOppgave =
         counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.saksbehandler")
-    val dokumentasjonsbehovvarslingerSaksbehandlerOgBruker =
+    val varslingerAvbruttGrunnetEttersendingOgPåbegyntBehandleSakOppgave =
         counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.saksbehandlerogbruker")
 
     override fun doTask(task: Task) {
