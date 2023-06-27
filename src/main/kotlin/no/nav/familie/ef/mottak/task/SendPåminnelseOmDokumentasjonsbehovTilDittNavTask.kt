@@ -100,16 +100,12 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         brukerHarSendtInnNoe: Boolean,
         saksbehandlerHarStartet: Boolean,
     ) {
-        if (brukerHarSendtInnNoe and !saksbehandlerHarStartet) {
-            dokumentasjonsbehovvarslingerBrukerSendtInn.increment()
-        }
-
-        if (saksbehandlerHarStartet and !brukerHarSendtInnNoe) {
-            dokumentasjonsbehovvarslingerSaksbehandlerStartet.increment()
-        }
-
-        if (brukerHarSendtInnNoe and saksbehandlerHarStartet) {
+        if (brukerHarSendtInnNoe && saksbehandlerHarStartet) {
             dokumentasjonsbehovvarslingerSaksbehandlerOgBruker.increment()
+        } else if (brukerHarSendtInnNoe) {
+            dokumentasjonsbehovvarslingerBrukerSendtInn.increment()
+        } else if (saksbehandlerHarStartet) {
+            dokumentasjonsbehovvarslingerSaksbehandlerStartet.increment()
         }
     }
 
