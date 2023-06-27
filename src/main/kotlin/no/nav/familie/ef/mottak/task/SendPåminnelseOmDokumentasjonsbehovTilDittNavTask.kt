@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
+import io.micrometer.core.instrument.Metrics.counter
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
@@ -42,6 +43,14 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    val dokumentasjonsbehovVarslingerSendt = counter("alene.med.barn.dokumentasjonsbehovvarsling.sendt")
+    val varslingerAvbruttGrunnetEttersending =
+        counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.bruker")
+    val varslingerAvbruttGrunnetPåbegyntBehandleSakOppgave =
+        counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.saksbehandler")
+    val varslingerAvbruttGrunnetEttersendingOgPåbegyntBehandleSakOppgave =
+        counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.saksbehandlerogbruker")
+
     override fun doTask(task: Task) {
         val søknad = søknadService.get(task.payload)
         val personIdent = PersonIdent(søknad.fnr)
@@ -63,6 +72,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
             linkMelding.link,
             PreferertKanal.SMS,
         )
+        dokumentasjonsbehovVarslingerSendt.increment()
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")
     }
 
@@ -71,11 +81,33 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         søknader: List<Søknad>,
         ettersendinger: List<Ettersending>,
         stønadType: StønadType?,
-    ) =
-        harSendtInnNySøknad(søknad, søknader) ||
-            harSendtInnEttersendingIEttertid(søknad, ettersendinger) ||
-            stønadType == null ||
-            tilhørendeBehandleSakOppgaveErPåbegynt(søknad, stønadType)
+    ): Boolean {
+        if (stønadType == null) {
+            return true
+        }
+
+        val brukerHarSendtInnNoe =
+            harSendtInnNySøknad(søknad, søknader) || harSendtInnEttersendingIEttertid(søknad, ettersendinger)
+        val tilhørendeBehandleSakOppgaveErPåbegynt = tilhørendeBehandleSakOppgaveErPåbegynt(søknad, stønadType)
+
+        loggMicrometer(brukerHarSendtInnNoe, tilhørendeBehandleSakOppgaveErPåbegynt)
+
+        return brukerHarSendtInnNoe ||
+            tilhørendeBehandleSakOppgaveErPåbegynt
+    }
+
+    private fun loggMicrometer(
+        brukerHarSendtInnNoe: Boolean,
+        saksbehandlerHarStartet: Boolean,
+    ) {
+        if (brukerHarSendtInnNoe && saksbehandlerHarStartet) {
+            varslingerAvbruttGrunnetEttersendingOgPåbegyntBehandleSakOppgave.increment()
+        } else if (brukerHarSendtInnNoe) {
+            varslingerAvbruttGrunnetEttersending.increment()
+        } else if (saksbehandlerHarStartet) {
+            varslingerAvbruttGrunnetPåbegyntBehandleSakOppgave.increment()
+        }
+    }
 
     private fun harSendtInnNySøknad(søknad: Søknad, søknader: List<Søknad>): Boolean =
         søknader.filter { it.id != søknad.id }
@@ -85,7 +117,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     private fun harSendtInnEttersendingIEttertid(søknad: Søknad, ettersendinger: List<Ettersending>): Boolean =
         ettersendinger.any { it.opprettetTid > søknad.opprettetTid }
 
-    private fun tilhørendeBehandleSakOppgaveErPåbegynt(søknad: Søknad, stønadType: StønadType) =
+    private fun tilhørendeBehandleSakOppgaveErPåbegynt(søknad: Søknad, stønadType: StønadType): Boolean =
         saksbehandlingClient.kanSendePåminnelseTilBruker(
             KanSendePåminnelseRequest(
                 personIdent = søknad.fnr,
