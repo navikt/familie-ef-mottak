@@ -72,7 +72,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
             linkMelding.link,
             PreferertKanal.SMS,
         )
-        dokumentasjonsbehovvarslinger.increment()
+        dokumentasjonsbehovVarslingerSendt.increment()
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")
     }
 
@@ -101,11 +101,11 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         saksbehandlerHarStartet: Boolean,
     ) {
         if (brukerHarSendtInnNoe && saksbehandlerHarStartet) {
-            dokumentasjonsbehovvarslingerSaksbehandlerOgBruker.increment()
+            varslingerAvbruttGrunnetEttersendingOgPåbegyntBehandleSakOppgave.increment()
         } else if (brukerHarSendtInnNoe) {
-            dokumentasjonsbehovvarslingerBrukerSendtInn.increment()
+            varslingerAvbruttGrunnetEttersending.increment()
         } else if (saksbehandlerHarStartet) {
-            dokumentasjonsbehovvarslingerSaksbehandlerStartet.increment()
+            varslingerAvbruttGrunnetPåbegyntBehandleSakOppgave.increment()
         }
     }
 
