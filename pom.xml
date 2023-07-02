@@ -26,7 +26,7 @@
         <prosessering.version>2.20230621155918_9c5de0f</prosessering.version>
         <confluent.version>7.4.0</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20230626094108_d7e5e6d</kontrakter.version>
+        <kontrakter.version>3.0_20230627152200_afdca38</kontrakter.version>
         <token-validation.version>3.1.0</token-validation.version>
         <!-- okhttp3 overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <okhttp3.version>4.9.1</okhttp3.version>
