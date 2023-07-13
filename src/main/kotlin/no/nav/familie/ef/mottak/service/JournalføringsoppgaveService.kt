@@ -29,8 +29,8 @@ class JournalføringsoppgaveService(
         Metrics.counter("alene.med.barn.journalhendelse.NyJournalpostHendelse")
 
     fun lagEksternJournalføringTask(journalpost: Journalpost) {
+        nyJournalhendelseCounter.increment()
         if (journalpost.skalBehandles()) {
-            nyJournalhendelseCounter.increment()
             opprettTaskDersomDetIkkeAlleredeFinnes(journalpost)
         } else {
             logJournalpost(journalpost)
