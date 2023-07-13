@@ -1,5 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ef.mottak.hendelse.JournalfoeringHendelseDbUtil
 import no.nav.familie.ef.mottak.hendelse.JournalpostState
 import no.nav.familie.ef.mottak.hendelse.getJournalpostState
@@ -23,8 +25,11 @@ class JournalføringsoppgaveService(
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)
+    val nyJournalhendelseCounter: Counter =
+        Metrics.counter("alene.med.barn.journalhendelse.NyJournalpostHendelse")
 
     fun lagEksternJournalføringTask(journalpost: Journalpost) {
+        nyJournalhendelseCounter.increment()
         if (journalpost.skalBehandles()) {
             opprettTaskDersomDetIkkeAlleredeFinnes(journalpost)
         } else {
