@@ -826,7 +826,7 @@ internal class OppgaveServiceTest {
                     dokumentInfoId = "12345",
                     tittel = "Tittel",
                     brevkode = DokumentBrevkode.OVERGANGSSTØNAD.verdi,
-                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV)),
+                    dokumentvarianter = listOf(Dokumentvariant(variantformat = Dokumentvariantformat.ARKIV, saksbehandlerHarTilgang = true)),
                 ),
             ),
         )
