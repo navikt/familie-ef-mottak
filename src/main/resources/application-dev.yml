@@ -66,6 +66,6 @@ no.nav.security.jwt:
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
 
-ettersending.ettersendingUrl: https://familie.dev.nav.no/familie/alene-med-barn/ettersending
+ettersending.ettersendingUrl: https://familie.ekstern.dev.nav.no/familie/alene-med-barn/ettersending
 
 DB_RYDDING_CRON_EXPRESSION: 0 0 * * * ?
