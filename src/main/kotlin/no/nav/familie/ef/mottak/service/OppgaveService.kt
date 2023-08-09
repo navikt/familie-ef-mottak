@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
@@ -28,7 +27,6 @@ class OppgaveService(
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
     private val mappeService: MappeService,
-    private val featureToggleService: FeatureToggleService,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -38,11 +36,7 @@ class OppgaveService(
         val søknad: Søknad = søknadService.get(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
-        val prioritet = if (featureToggleService.isEnabled("familie.ef.mottak.prioritet-sommertid")) {
-            UtledPrioritetForSøknadUtil.utledPrioritet(søknad)
-        } else {
-            OppgavePrioritet.NORM
-        }
+        val prioritet = UtledPrioritetForSøknadUtil.utledPrioritet(søknad)
         return lagJournalføringsoppgave(journalpost, prioritet)
     }
 
