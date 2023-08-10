@@ -77,7 +77,6 @@ internal class OppgaveServiceTest {
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
             mappeService = MappeService(integrasjonerClient, søknadService, cacheManager),
-            featureToggleService = featureToggleService,
         )
 
     @BeforeEach

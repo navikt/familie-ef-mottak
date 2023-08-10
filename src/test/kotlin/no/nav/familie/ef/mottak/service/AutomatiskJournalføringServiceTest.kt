@@ -29,16 +29,6 @@ internal class AutomatiskJournalføringServiceTest {
     private val featureToggleService = mockk<FeatureToggleService>()
     private val søknad = SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, true)
 
-    private val oppgaveService =
-        OppgaveService(
-            integrasjonerClient = mockk(),
-            søknadService = mockk(),
-            opprettOppgaveMapper = mockk(),
-            ettersendingService = mockk(),
-            mappeService = mockk(),
-            featureToggleService = featureToggleService,
-        )
-
     private val automatiskJournalføringService =
         AutomatiskJournalføringService(
             taskService = mockk(),
