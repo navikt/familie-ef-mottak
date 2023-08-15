@@ -43,7 +43,7 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
         if (dokumentasjonsbehov.isNotEmpty()) {
             val manglerVedleggPåSøknad = manglerVedlegg(dokumentasjonsbehov)
 
-            if (manglerVedleggPåSøknad && featureToggleService.isEnabled("familie.ef.mottak.send-paminnelse-ditt-nav")) {
+            if (manglerVedleggPåSøknad) {
                 opprettSendPåminnelseTask(task)
             }
 
