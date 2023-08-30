@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
+import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -87,5 +88,34 @@ class EttersendingService(
         }
         ettersendingVedleggRepository.deleteAllByEttersendingId(ettersendingId)
         ettersendingRepository.deleteById(ettersendingId)
+    }
+
+    /**
+     * Denne trengs i spesialtilfeller når vi får ettersendinger med flere store filer som gjør at
+     * journalføring feiler med OutOfMemory (OOM).
+     *
+     * Denne funksjonen kan splitte ut en stor fil til en egen ettersending og således lettere få igjennom
+     * journalføringer på generelt grunnlag.
+     *
+     * Det vil bli opprettet en egen Task for denne ettersendingen automatisk ca 10-60 sekunder
+     * etter at ettersendingen er opprettet.
+     */
+    @Transactional
+    fun trekkUtEttersendingTilEgenTaskForVedlegg(ettersendingVedleggId: UUID): UUID {
+        val ettersendingId = ettersendingVedleggRepository.findEttersendingIdById(ettersendingVedleggId)
+        val ettersending = ettersendingRepository.findByIdOrThrow(ettersendingId)
+        val nyEttersending = ettersending.copy(
+            id = UUID.randomUUID(),
+            taskOpprettet = false,
+        )
+        ettersendingRepository.insert(nyEttersending)
+        val antallOppdatert = ettersendingVedleggRepository.oppdaterEttersendingIdForVedlegg(
+            id = ettersendingVedleggId,
+            ettersendingId = nyEttersending.id,
+        )
+        if (antallOppdatert != 1) {
+            error("Fikk enten oppdatert for mange eller for få rader i ettersendingVedlegg. Antall oppdatert: $antallOppdatert")
+        }
+        return nyEttersending.id
     }
 }
