@@ -38,7 +38,7 @@ class SøknadService(
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
-    private val taskProsesseringService: TaskProsesseringService
+    private val taskProsesseringService: TaskProsesseringService,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

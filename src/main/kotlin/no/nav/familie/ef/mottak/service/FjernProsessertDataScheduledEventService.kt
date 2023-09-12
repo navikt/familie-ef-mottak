@@ -20,16 +20,15 @@ class FjernProsessertDataScheduledEventService(
 
     @Scheduled(cron = "\${DB_RYDDING_CRON_EXPRESSION}")
     fun ryddGamleForekomster() {
-        if (LeaderClient.isLeader() == true) {
-            logger.info("Starter opprydding i database")
-            reduserSøknadsinnholdOgSlettArkiverteEttersendinger()
-        }else {
-            logger.info("Er ikke leder - starter ikke ryddejobb")
+        when (LeaderClient.isLeader()) {
+            true -> reduserSøknadsinnholdOgSlettArkiverteEttersendinger()
+            false -> logger.info("Er ikke leder - starter ikke ryddejobb")
+            null -> logger.error("Klarer ikke finne leder? Starter ikke ryddejobb.")
         }
-
     }
 
     private fun reduserSøknadsinnholdOgSlettArkiverteEttersendinger() {
+        logger.info("Starter opprydding i database")
         val tidspunktFor3MånederSiden = LocalDateTime.now().minusMonths(3)
         val søknaderTilReduksjon = søknadRepository.finnSøknaderKlarTilReduksjon(tidspunktFor3MånederSiden)
         søknaderTilReduksjon.forEach {
