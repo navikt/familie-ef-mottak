@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.leader.LeaderClient
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.scheduling.annotation.Scheduled
@@ -19,6 +20,16 @@ class FjernProsessertDataScheduledEventService(
 
     @Scheduled(cron = "\${DB_RYDDING_CRON_EXPRESSION}")
     fun ryddGamleForekomster() {
+        if (LeaderClient.isLeader() == true) {
+            logger.info("Starter opprydding i database")
+            reduserSøknadsinnholdOgSlettArkiverteEttersendinger()
+        }else {
+            logger.info("Er ikke leder - starter ikke ryddejobb")
+        }
+
+    }
+
+    private fun reduserSøknadsinnholdOgSlettArkiverteEttersendinger() {
         val tidspunktFor3MånederSiden = LocalDateTime.now().minusMonths(3)
         val søknaderTilReduksjon = søknadRepository.finnSøknaderKlarTilReduksjon(tidspunktFor3MånederSiden)
         søknaderTilReduksjon.forEach {
@@ -31,7 +42,8 @@ class FjernProsessertDataScheduledEventService(
         }
         logger.info("Opprettet ${søknaderTilReduksjon.size} tasker for reduksjon av søknader.")
 
-        val ettersendingerTilSletting = ettersendingRepository.finnEttersendingerKlarTilSletting(tidspunktFor3MånederSiden)
+        val ettersendingerTilSletting =
+            ettersendingRepository.finnEttersendingerKlarTilSletting(tidspunktFor3MånederSiden)
         ettersendingerTilSletting.forEach {
             try {
                 ryddeTaskService.opprettEttersendingsslettingTask(it)
@@ -41,19 +53,5 @@ class FjernProsessertDataScheduledEventService(
             }
         }
         logger.info("Opprettet ${ettersendingerTilSletting.size} tasker for sletting av ettersendinger.")
-
-        // val tidspunktFor6MånederSiden = LocalDateTime.now().minusMonths(6)
-        // val søknaderTilSletting = søknadRepository.finnSøknaderKlarTilSletting(tidspunktFor6MånederSiden)
-        // TODO Kommenter inn linjer over og slett linje under. Hvis sletting av søknader blir aktuelt.
-        val søknaderTilSletting = emptyList<String>()
-        søknaderTilSletting.forEach {
-            try {
-                ryddeTaskService.opprettSøknadsslettingTask(it)
-                logger.info("Task opprettet for sletting av søknad med id $it")
-            } catch (e: DataIntegrityViolationException) {
-                logger.info("ConstraintViolation ved forsøk på å opprette task for ettersendingssletting med id $it")
-            }
-        }
-        logger.info("Opprettet ${søknaderTilSletting.size} tasker for sletting av søknader.")
     }
 }
