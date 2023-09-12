@@ -68,4 +68,4 @@ JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoe
 
 ettersending.ettersendingUrl: https://familie.ekstern.dev.nav.no/familie/alene-med-barn/ettersending
 
-DB_RYDDING_CRON_EXPRESSION: "* */5 * * * *"
+DB_RYDDING_CRON_EXPRESSION: 0 */5 * ? * *
