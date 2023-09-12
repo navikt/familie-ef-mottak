@@ -38,6 +38,7 @@ class SøknadService(
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
+    private val taskProsesseringService: TaskProsesseringService
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -70,7 +71,7 @@ class SøknadService(
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-
+        taskProsesseringService.startTaskProsessering(lagretSkjema)
         val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(
             søknadId = lagretSkjema.id,
             data = objectMapper.writeValueAsString(dokumentasjonsbehov),
@@ -101,14 +102,11 @@ class SøknadService(
     fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
         søknadRepository.findAllByFnr(personIdent.ident)
 
-    fun getOrNull(id: String): Søknad? {
-        return søknadRepository.findByIdOrNull(id)
-    }
-
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
         val lagretSkjema = søknadRepository.insert(søknadDb)
+        taskProsesseringService.startTaskProsessering(lagretSkjema)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
 
         return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
