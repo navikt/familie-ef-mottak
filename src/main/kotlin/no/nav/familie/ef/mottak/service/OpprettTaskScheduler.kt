@@ -25,7 +25,7 @@ class OpprettTaskScheduler(
                 opprettManglendeTasksForEttersending()
             }
             false -> logger.info("Er ikke leder - leter ikke etter manglende tasks for søknad ")
-            null -> logger.info("Leader election returnerer null. Leter ikke etter manglende tasks")
+            null -> logger.warn("Leader election returnerer null. Leter ikke etter manglende tasks")
         }
     }
 
