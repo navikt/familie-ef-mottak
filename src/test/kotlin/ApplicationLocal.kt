@@ -14,7 +14,6 @@ fun main(args: Array<String>) {
             "mock-dokument",
             "mock-ef-sak",
             "mock-pdf",
-            "no.nav.familie.unleash",
         )
         .run(*args)
 }
