@@ -24,6 +24,7 @@ import java.util.UUID
 
 internal class EttersendingServiceTest {
 
+    private val taskProsesseringService = mockk<TaskProsesseringService>(relaxed = true)
     private val ettersendingRepository = mockk<EttersendingRepository>(relaxed = true)
     private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>(relaxed = true)
     private val dokumentClient = mockFamilieDokumentClient()
@@ -32,6 +33,7 @@ internal class EttersendingServiceTest {
         ettersendingRepository = ettersendingRepository,
         ettersendingVedleggRepository = ettersendingVedleggRepository,
         dokumentClient = dokumentClient,
+        taskProsesseringService = taskProsesseringService,
     )
 
     private val dokument1 = "1234".toByteArray()

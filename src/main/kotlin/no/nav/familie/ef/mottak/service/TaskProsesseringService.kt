@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.task.LagPdfTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
@@ -20,6 +21,8 @@ class TaskProsesseringService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
 ) {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
     fun startTaskProsessering(søknad: Søknad) {
@@ -43,6 +46,7 @@ class TaskProsesseringService(
             ),
         )
         søknadRepository.update(søknad.copy(taskOpprettet = true))
+        logger.info("Task opprettet for søknad med id ${søknad.id}")
     }
 
     @Transactional

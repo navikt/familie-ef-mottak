@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.TaskProsesseringService
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -26,8 +27,10 @@ class SøknadServiceTest {
     private val søknadRepository = mockk<SøknadRepository>(relaxed = true)
     private val vedleggRepository = mockk<VedleggRepository>(relaxed = true)
     private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>(relaxed = true)
+    private val taskProsesseringService = mockk<TaskProsesseringService>(relaxed = true)
+
     private val søknadService =
-        SøknadService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository)
+        SøknadService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository, taskProsesseringService)
 
     @Test
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
