@@ -18,7 +18,6 @@ class TaskMetricService(
 
     @Scheduled(initialDelay = 5_000, fixedDelay = 5 * 60_000)
     fun oppdaterMetrikker() {
-
         when (LeaderClient.isLeader()) {
             true -> oppdaterMetrikkerForOpprettingAvTask()
             false -> logger.info("Er ikke leder - oppdaterer ikke metrikker")

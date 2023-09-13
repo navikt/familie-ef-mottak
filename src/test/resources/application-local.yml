@@ -36,12 +36,8 @@ familie:
   dokument:
     url: http://localhost:8092/mockdokument/
 
-funksjonsbrytere:
-  enabled: false
-  unleash:
-    uri: http://localhost:4242/api
-    environment: local
-    applicationName: familie-ef-mottak
+unleash:
+  enabled: true
 
 logging:
   config: "classpath:logback-test.xml"
@@ -107,3 +103,7 @@ TOKEN_X_PRIVATE_JWK: '{
     "kid" : "mock-oauth2-server-key",
     "n" : ""
   }'
+
+UNLEASH_SERVER_API_URL: http://localhost:4242/api
+UNLEASH_SERVER_API_TOKEN: token
+NAIS_APP_NAME: familie-ef-mottak

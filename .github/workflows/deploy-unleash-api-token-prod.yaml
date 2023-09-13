@@ -15,4 +15,3 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .deploy/unleash-apitoken-prod.yaml
-          PRINT_PAYLOAD: true
