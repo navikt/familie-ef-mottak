@@ -17,7 +17,7 @@ class OpprettTaskScheduler(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(initialDelay = 10000, fixedDelay = 1000 * 60 * 15)
+    @Scheduled(initialDelay = 10000, fixedDelay = 1000 * 60)
     fun opprettTaskForSøknad() {
         when (LeaderClient.isLeader()) {
             true -> {
