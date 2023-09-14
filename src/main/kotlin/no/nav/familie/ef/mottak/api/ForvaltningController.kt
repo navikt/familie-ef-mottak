@@ -28,9 +28,10 @@ class ForvaltningController(private val ettersendingService: EttersendingService
 
     @PostMapping("/ettersending/nycallid")
     fun nyCallIdPåEttersendingTask(@RequestBody taskId: TaskId): ResponseEntity<String> {
+
         val task = taskService.findById(taskId.id)
         require(task.type == ArkiverEttersendingTask.TYPE)
-        require(task.status == Status.FEILET)
+        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING)
         val generateId = IdUtils.generateId()
         task.metadata.apply {
             this["callId"] = generateId
