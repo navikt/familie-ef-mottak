@@ -63,12 +63,14 @@ spec:
       external:
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: kafka-schema-registry.nais-q.adeo.no
+        - host: teamfamilie-unleash-api.nav.cloud.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
   envFrom:
     - secret: familie
     - secret: familie-ef-mottak
+    - secret: familie-ef-mottak-unleash-api-token
   leaderElection: true
   gcp:
     sqlInstances:
