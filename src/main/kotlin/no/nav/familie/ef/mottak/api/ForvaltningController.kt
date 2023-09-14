@@ -31,7 +31,7 @@ class ForvaltningController(private val ettersendingService: EttersendingService
 
         val task = taskService.findById(taskId.id)
         require(task.type == ArkiverEttersendingTask.TYPE)
-        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING)
+        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING) {"Kan ikke legge på ny callId på task når status er ${task.status}"}
         val generateId = IdUtils.generateId()
         task.metadata.apply {
             this["callId"] = generateId
