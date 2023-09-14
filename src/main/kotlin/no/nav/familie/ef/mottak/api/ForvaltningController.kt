@@ -28,10 +28,9 @@ class ForvaltningController(private val ettersendingService: EttersendingService
 
     @PostMapping("/ettersending/nycallid")
     fun settNyCallIdPåTaskForEttersending(@RequestBody taskId: TaskId): ResponseEntity<String> {
-
         val task = taskService.findById(taskId.id)
         require(task.type == ArkiverEttersendingTask.TYPE)
-        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING) {"Kan ikke legge på ny callId på task når status er ${task.status}"}
+        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING) { "Kan ikke legge på ny callId på task når status er ${task.status}" }
         val generateId = IdUtils.generateId()
         task.metadata.apply {
             this["callId"] = generateId
@@ -40,9 +39,7 @@ class ForvaltningController(private val ettersendingService: EttersendingService
         taskService.save(task)
         return ResponseEntity.ok("Endret callId på task til: $generateId")
     }
-
 }
-
 
 data class TaskId(
     val id: Long,

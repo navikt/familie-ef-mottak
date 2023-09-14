@@ -25,6 +25,7 @@ class EttersendingService(
     private val ettersendingRepository: EttersendingRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
+    private val taskProsesseringService: TaskProsesseringService,
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -68,10 +69,10 @@ class EttersendingService(
         ettersendingDb: Ettersending,
         vedlegg: List<EttersendingVedlegg>,
     ) {
-        val lagretSkjema = ettersendingRepository.insert(ettersendingDb)
+        val lagretEttersending = ettersendingRepository.insert(ettersendingDb)
         ettersendingVedleggRepository.insertAll(vedlegg)
-        // taskProsesseringService.startTaskProsessering(lagretSkjema)
-        logger.info("Mottatt ettersending med id ${lagretSkjema.id}")
+        taskProsesseringService.startTaskProsessering(lagretEttersending)
+        logger.info("Mottatt ettersending med id ${lagretEttersending.id}")
     }
 
     fun hentEttersending(id: String): Ettersending {
