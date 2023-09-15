@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.task.ArkiverEttersendingTask
-import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveForEttersendingTask
 import no.nav.familie.log.IdUtils
 import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.internal.TaskService
@@ -41,7 +41,7 @@ class ForvaltningController(private val ettersendingService: EttersendingService
     @PostMapping("/ettersending/journalforingoppgave/endrecallid")
     fun endreCallIdPåTaskForJournalføringoppgave(@RequestBody taskId: TaskId): ResponseEntity<String> {
         val task = taskService.findById(taskId.id)
-        require(task.type == LagJournalføringsoppgaveTask.TYPE) { "Kan ikke endre på ny callId på task når type er ${task.type}" }
+        require(task.type == LagJournalføringsoppgaveForEttersendingTask.TYPE) { "Kan ikke endre på ny callId på task når type er ${task.type}" }
         require(task.status == Status.FEILET) { "Kan ikke endre på ny callId på task når status er ${task.status}" }
         val callId = task.callId.replace("Ø", "O")
         task.metadata.apply {
