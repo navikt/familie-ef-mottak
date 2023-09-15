@@ -31,7 +31,7 @@ import java.time.temporal.ChronoUnit
     "no.nav.familie.prosessering",
     "no.nav.familie.sikkerhet",
     "no.nav.familie.ef.mottak",
-    "no.nav.familie.unleash"
+    "no.nav.familie.unleash",
 )
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)

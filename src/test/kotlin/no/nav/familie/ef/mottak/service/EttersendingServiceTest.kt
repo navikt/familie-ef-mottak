@@ -32,6 +32,7 @@ internal class EttersendingServiceTest {
         ettersendingRepository = ettersendingRepository,
         ettersendingVedleggRepository = ettersendingVedleggRepository,
         dokumentClient = dokumentClient,
+        taskProsesseringService = mockk(relaxed = true),
     )
 
     private val dokument1 = "1234".toByteArray()
