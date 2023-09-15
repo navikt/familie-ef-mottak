@@ -2,12 +2,11 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.task.ArkiverEttersendingTask
+import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveTask
 import no.nav.familie.log.IdUtils
-import no.nav.familie.log.mdc.MDCConstants
 import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.slf4j.MDC
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,7 +17,7 @@ import java.util.UUID
 @RestController
 @RequestMapping(path = ["/api/forvaltning"])
 @ProtectedWithClaims(issuer = "azuread")
-class ForvaltningController(private val ettersendingService: EttersendingService, private val taskService: TaskService,) {
+class ForvaltningController(private val ettersendingService: EttersendingService, private val taskService: TaskService) {
 
     @PostMapping("/ettersending/splitt")
     fun trekkUtVedleggFraEttersending(@RequestBody ettersendingVedleggId: EttersendingVedleggId): ResponseEntity<String> {
@@ -35,9 +34,21 @@ class ForvaltningController(private val ettersendingService: EttersendingService
         task.metadata.apply {
             this["callId"] = generateId
         }
-        MDC.put(MDCConstants.MDC_CALL_ID, generateId)
         taskService.save(task)
         return ResponseEntity.ok("Endret callId på task til: $generateId")
+    }
+
+    @PostMapping("/ettersending/journalforingoppgave/endrecallid")
+    fun endreCallIdPåTaskForJournalføringoppgave(@RequestBody taskId: TaskId): ResponseEntity<String> {
+        val task = taskService.findById(taskId.id)
+        require(task.type == LagJournalføringsoppgaveTask.TYPE) { "Kan ikke endre på ny callId på task når type er ${task.type}" }
+        require(task.status == Status.FEILET) { "Kan ikke endre på ny callId på task når status er ${task.status}" }
+        val callId = task.callId.replace("Ø", "O")
+        task.metadata.apply {
+            this["callId"] = callId
+        }
+        taskService.save(task)
+        return ResponseEntity.ok("Endret callId på task til: $callId")
     }
 }
 

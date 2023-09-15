@@ -61,12 +61,18 @@ class TaskProsesseringService(
             }
 
         val task = Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties)
+
         task.metadata.apply {
-            this["callId"] = hentEllerOpprettCallId() + "_" + ettersending.stønadType
+            this["callId"] = hentEllerOpprettCallId() + "_" + ettersending.stønadType.fjernØ()
         }
+
         taskService.save(task)
         ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
     }
 
     private fun hentEllerOpprettCallId(): String = MDC.get(MDCConstants.MDC_CALL_ID) as? String ?: IdUtils.generateId()
+}
+
+private fun String.fjernØ(): String {
+    return this.replace("Ø", "O")
 }

@@ -51,7 +51,7 @@ internal class TaskProsesseringServiceTest {
         assertThat(taskSlot.captured.callId).isEqualTo(callIdPre + "_" + StønadType.BARNETILSYN.toString())
 
         taskProsesseringService.startTaskProsessering(ettersending = ettersending.copy(stønadType = StønadType.OVERGANGSSTØNAD.toString()))
-        assertThat(taskSlot.captured.callId).isEqualTo(callIdPre + "_" + StønadType.OVERGANGSSTØNAD.toString())
+        assertThat(taskSlot.captured.callId).isEqualTo(callIdPre + "_" + "OVERGANGSSTONAD")
     }
 
     @Test
