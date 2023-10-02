@@ -37,7 +37,7 @@ familie:
     url: http://localhost:8092/mockdokument/
 
 unleash:
-  enabled: true
+  enabled: false
 
 logging:
   config: "classpath:logback-test.xml"
