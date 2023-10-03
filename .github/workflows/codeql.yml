@@ -2,10 +2,7 @@ name: CodeQL
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - throndi-patch-1
   schedule:
     - cron: '0 0 * * 3'
 
