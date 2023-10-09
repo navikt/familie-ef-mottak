@@ -15,6 +15,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
@@ -95,7 +96,8 @@ class ArkiveringService(
         )
         val journalposterForBruker =
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
-
+        logger.info("Antall journalposter for bruker: ${journalposterForBruker.size}")
+        journalposterForBruker.forEach { logger.info("journalpostId: ${it.journalpostId} eksternCallId: ${it.eksternReferanseId}") }
         return journalposterForBruker.find { it.eksternReferanseId == eksternReferanseId }
     }
 
