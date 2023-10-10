@@ -29,7 +29,6 @@ class ArkiveringService(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun journalførSøknad(søknadId: String, callId: String): String {
         logger.info("Henter ut søknad")
@@ -97,23 +96,15 @@ class ArkiveringService(
         val journalposterForBruker =
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
 
-        // tmp debugging - skal fjernes etter en kjøring av feil et task
-        val hentJournalpost = integrasjonerClient.hentJournalpost("629027418")
-        secureLogger.info(
-            "Hentet jornalpost: " +
-                "${hentJournalpost.eksternReferanseId}" +
-                "${hentJournalpost.datoMottatt}" +
-                "${hentJournalpost.bruker}" +
-                "${hentJournalpost.journalposttype}" +
-                "${hentJournalpost.journalforendeEnhet}" +
-                "${hentJournalpost.kanal}" +
-                "${hentJournalpost.tema}" +
-                "${hentJournalpost.behandlingstema}" +
-                "${hentJournalpost.journalstatus}",
-        )
-
         logger.info("Antall journalposter for bruker: ${journalposterForBruker.size}")
-        journalposterForBruker.forEach { logger.info("journalpostId: ${it.journalpostId} eksternCallId: ${it.eksternReferanseId}") }
+        journalposterForBruker.forEach {
+            logger.info(
+                "journalpostId: ${it.journalpostId}" +
+                    " eksternReferanseId: ${it.eksternReferanseId} " +
+                    " mottatt: ${it.datoMottatt}" +
+                    " status: ${it.journalstatus} ",
+            )
+        }
         return journalposterForBruker.find { it.eksternReferanseId == eksternReferanseId }
     }
 
