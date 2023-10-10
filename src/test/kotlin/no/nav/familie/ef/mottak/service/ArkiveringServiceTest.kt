@@ -75,7 +75,6 @@ internal class ArkiveringServiceTest {
         every { ettersendingService.hentEttersending(any()) } returns ettersending
         every { integrasjonerClient.arkiver(any()) } throws forventetFeil
         every { integrasjonerClient.hentJournalposterForBruker(any()) } returns journalposter
-        every { integrasjonerClient.hentJournalpost(any()) } returns journalposter.first()
         val journalførEttersending = arkiveringService.journalførEttersending("456", "callId")
         Assertions.assertThat(journalførEttersending).isEqualTo(forventetJounalføringsId)
     }
@@ -90,7 +89,6 @@ internal class ArkiveringServiceTest {
         every { integrasjonerClient.arkiver(any()) } throws forventetFeil
         every { integrasjonerClient.hentJournalposterForBruker(any()) } returns journalposter
         every { vedleggRepository.findBySøknadId(any()) } returns emptyList()
-        every { integrasjonerClient.hentJournalpost(any()) } returns journalposter.first()
         val journalførSøknad = arkiveringService.journalførSøknad("456", "callId")
         Assertions.assertThat(journalførSøknad).isEqualTo(forventetJounalføringsId)
     }
