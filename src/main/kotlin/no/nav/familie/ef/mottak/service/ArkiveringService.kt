@@ -97,9 +97,10 @@ class ArkiveringService(
         val journalposterForBruker =
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
 
-        //tmp debugging - skal fjernes etter en kjøring av feil et task
+        // tmp debugging - skal fjernes etter en kjøring av feil et task
         val hentJournalpost = integrasjonerClient.hentJournalpost("629027418")
-        secureLogger.info("Hentet jornalpost: " +
+        secureLogger.info(
+            "Hentet jornalpost: " +
                 "${hentJournalpost.eksternReferanseId}" +
                 "${hentJournalpost.datoMottatt}" +
                 "${hentJournalpost.bruker}" +
@@ -108,7 +109,8 @@ class ArkiveringService(
                 "${hentJournalpost.kanal}" +
                 "${hentJournalpost.tema}" +
                 "${hentJournalpost.behandlingstema}" +
-                "${hentJournalpost.journalstatus}" )
+                "${hentJournalpost.journalstatus}",
+        )
 
         logger.info("Antall journalposter for bruker: ${journalposterForBruker.size}")
         journalposterForBruker.forEach { logger.info("journalpostId: ${it.journalpostId} eksternCallId: ${it.eksternReferanseId}") }
