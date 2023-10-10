@@ -15,7 +15,6 @@ import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException
@@ -30,6 +29,7 @@ class ArkiveringService(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun journalførSøknad(søknadId: String, callId: String): String {
         logger.info("Henter ut søknad")
@@ -96,6 +96,22 @@ class ArkiveringService(
         )
         val journalposterForBruker =
             integrasjonerClient.hentJournalposterForBruker(journalpostForBrukerRequest = request)
+
+        // tmp debugging - skal fjernes etter en kjøring av feil et task
+        val hentJournalpost = integrasjonerClient.hentJournalpost("629027418")
+        secureLogger.info(
+            "Hentet jornalpost: " +
+                "${hentJournalpost.eksternReferanseId}" +
+                "${hentJournalpost.datoMottatt}" +
+                "${hentJournalpost.bruker}" +
+                "${hentJournalpost.journalposttype}" +
+                "${hentJournalpost.journalforendeEnhet}" +
+                "${hentJournalpost.kanal}" +
+                "${hentJournalpost.tema}" +
+                "${hentJournalpost.behandlingstema}" +
+                "${hentJournalpost.journalstatus}",
+        )
+
         logger.info("Antall journalposter for bruker: ${journalposterForBruker.size}")
         journalposterForBruker.forEach { logger.info("journalpostId: ${it.journalpostId} eksternCallId: ${it.eksternReferanseId}") }
         return journalposterForBruker.find { it.eksternReferanseId == eksternReferanseId }
