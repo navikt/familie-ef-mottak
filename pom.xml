@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
     </parent>
 
     <properties>
@@ -22,11 +22,11 @@
         <kotlin.version>1.9.10</kotlin.version>
         <springdoc.version>2.2.0</springdoc.version>
         <mockk.version>1.13.8</mockk.version>
-        <felles.version>2.20230905101454_06fa3d7</felles.version>
+        <felles.version>2.20231019114030_ef92457</felles.version>
         <prosessering.version>2.20231005144526_f184554</prosessering.version>
         <confluent.version>7.5.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20230921075936_3adfc44</kontrakter.version>
+        <kontrakter.version>3.0_20231019125348_8bd6d02</kontrakter.version>
         <token-validation.version>3.1.5</token-validation.version>
         <!-- okhttp3 overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <okhttp3.version>4.9.1</okhttp3.version>
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.10</version>
+                    <version>0.8.11</version>
                 </plugin>
             </plugins>
         </pluginManagement>
