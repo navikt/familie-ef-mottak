@@ -22,11 +22,11 @@
         <kotlin.version>1.9.10</kotlin.version>
         <springdoc.version>2.2.0</springdoc.version>
         <mockk.version>1.13.8</mockk.version>
-        <felles.version>2.20231019114030_ef92457</felles.version>
-        <prosessering.version>2.20231005144526_f184554</prosessering.version>
+        <felles.version>2.20231023162434_fa320ce</felles.version>
+        <prosessering.version>2.20231026103714_2f17845</prosessering.version>
         <confluent.version>7.5.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.5.2</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20231019125348_8bd6d02</kontrakter.version>
+        <kontrakter.version>3.0_20231026154353_1ccdbb1</kontrakter.version>
         <token-validation.version>3.1.5</token-validation.version>
         <!-- okhttp3 overskriver spring sin versjon, blir brukt av mock-oauth2-server -->
         <okhttp3.version>4.9.1</okhttp3.version>
