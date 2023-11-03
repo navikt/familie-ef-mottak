@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -101,6 +102,13 @@ class SøknadService(
 
     fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
         søknadRepository.findAllByFnr(personIdent.ident)
+
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): String {
+        val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
+        val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
+        return søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato.toString()
+    }
+    fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
 
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {

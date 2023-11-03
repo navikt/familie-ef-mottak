@@ -7,6 +7,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
@@ -39,5 +41,11 @@ class SøknadController(val søknadService: SøknadService) {
     @PostMapping("skolepenger")
     fun skolepenger(@RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
+    }
+
+    @PostMapping("barnetilsyn/hent")
+    fun hentBarnetilsynssøknadForPerson(@RequestBody personIdent: PersonIdent): Ressurs<String> {
+        val datoForSamlivsbrudd = søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent.ident)
+        return Ressurs.success(datoForSamlivsbrudd)
     }
 }
