@@ -105,7 +105,9 @@ class SøknadService(
 
     fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): String {
         val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
+        logger.info("Søknad fra db med id: ${søknadFraDb.id}")
         val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
+        logger.info("returnerer samlivsbruddsdato: ${søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato}")
         return søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato.toString()
     }
     fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
