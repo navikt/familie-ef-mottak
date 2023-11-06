@@ -108,7 +108,7 @@ class SøknadService(
         logger.info("Søknad fra db med id: ${søknadFraDb.id}")
         val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
         logger.info("returnerer samlivsbruddsdato: ${søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato}")
-        return søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato.toString()
+        return søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato?.verdi.toString()
     }
     fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
 
