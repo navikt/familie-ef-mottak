@@ -103,12 +103,10 @@ class SøknadService(
     fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
         søknadRepository.findAllByFnr(personIdent.ident)
 
-    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): String {
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn {
         val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
         logger.info("Søknad fra db med id: ${søknadFraDb.id}")
-        val søknadBarnetilsyn = objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
-        logger.info("returnerer samlivsbruddsdato: ${søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato}")
-        return søknadBarnetilsyn.sivilstandsdetaljer.verdi.samlivsbruddsdato?.verdi.toString()
+        return objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
     }
     fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
 

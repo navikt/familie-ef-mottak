@@ -44,8 +44,7 @@ class SøknadController(val søknadService: SøknadService) {
     }
 
     @PostMapping("barnetilsyn/hent")
-    fun hentBarnetilsynssøknadForPerson(@RequestBody personIdent: PersonIdent): String {
-        val datoForSamlivsbrudd = søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent.ident)
-        return datoForSamlivsbrudd
+    fun hentBarnetilsynssøknadForPerson(@RequestBody personIdent: PersonIdent): SøknadBarnetilsyn {
+        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent.ident)
     }
 }
