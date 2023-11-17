@@ -12,6 +12,7 @@ import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,8 +43,9 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
     }
 
-    @PostMapping("barnetilsyn/hent")
-    fun hentBarnetilsynssøknadForPerson(@RequestBody personIdent: PersonIdent): SøknadBarnetilsyn {
-        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent.ident)
+    @GetMapping("barnetilsyn/hent")
+    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 }
