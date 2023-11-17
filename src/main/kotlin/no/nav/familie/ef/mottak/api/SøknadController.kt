@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 class SøknadController(val søknadService: SøknadService) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping("overgangsstonad")
     fun overgangsstønad(@RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
@@ -46,6 +47,7 @@ class SøknadController(val søknadService: SøknadService) {
     @GetMapping("barnetilsyn/hent")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        secureLogger.info("PersonIdent: $personIdent")
         return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 }
