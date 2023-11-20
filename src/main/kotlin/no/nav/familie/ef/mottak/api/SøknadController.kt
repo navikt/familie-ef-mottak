@@ -7,7 +7,6 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.slf4j.LoggerFactory
@@ -45,9 +44,8 @@ class SøknadController(val søknadService: SøknadService) {
     }
 
     @GetMapping("barnetilsyn/hent")
-    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn {
+    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        secureLogger.info("PersonIdent: $personIdent")
         return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 }

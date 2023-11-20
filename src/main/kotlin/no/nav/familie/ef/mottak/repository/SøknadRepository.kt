@@ -30,7 +30,7 @@ interface SøknadRepository :
         SELECT * FROM soknad WHERE fnr=:fnr AND dokumenttype=:stønadstype ORDER BY opprettet_tid DESC LIMIT 1
         """,
     )
-    fun finnSisteSøknadForPersonOgStønadstype(fnr: String, stønadstype: String): Søknad
+    fun finnSisteSøknadForPersonOgStønadstype(fnr: String, stønadstype: String): Søknad?
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 

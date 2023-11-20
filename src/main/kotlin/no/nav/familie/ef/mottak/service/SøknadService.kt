@@ -103,12 +103,16 @@ class SøknadService(
     fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
         søknadRepository.findAllByFnr(personIdent.ident)
 
-    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn {
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
-        logger.info("Søknad fra db med id: ${søknadFraDb.id}")
-        return objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
+        logger.info("Søknad fra db med id: ${søknadFraDb?.id}")
+        if (søknadFraDb?.søknadJson?.data != null) {
+            return objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb?.søknadJson?.data)
+        } else {
+            return null
+        }
     }
-    fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
+    fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad? = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
 
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
