@@ -82,3 +82,7 @@ se [her](https://github.com/navikt/utvikling/blob/master/Vault.md).
 
 ## Swagger 
 f.eks. http://localhost:8092/swagger-ui.html
+
+## Kode generert av GitHub Copilot
+
+Dette repoet bruker GitHub Copilot til å generere kode.
