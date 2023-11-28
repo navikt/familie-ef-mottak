@@ -9,7 +9,6 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,9 +23,6 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class SøknadController(val søknadService: SøknadService) {
-
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @PostMapping("overgangsstonad")
     fun overgangsstønad(@RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
@@ -43,7 +39,7 @@ class SøknadController(val søknadService: SøknadService) {
         return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
     }
 
-    @GetMapping("barnetilsyn/hent")
+    @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
         return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
