@@ -25,6 +25,13 @@ interface SøknadRepository :
     )
     fun finnSisteSøknadenPerStønadtype(fnr: String): List<Søknad>
 
+    @Query(
+        """
+        SELECT * FROM soknad WHERE fnr=:fnr AND dokumenttype=:stønadstype ORDER BY opprettet_tid DESC LIMIT 1
+        """,
+    )
+    fun finnSisteSøknadForPersonOgStønadstype(fnr: String, stønadstype: String): Søknad?
+
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 
     fun findAllByFnr(personIdent: String): List<Søknad>
