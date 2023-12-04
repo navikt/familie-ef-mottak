@@ -47,9 +47,6 @@ spec:
       rules:
         - application: familie-ef-soknad-api
           namespace: teamfamilie
-          cluster: prod-sbs
-        - application: familie-ef-soknad-api
-          namespace: teamfamilie
           cluster: prod-gcp
         - application: familie-prosessering
           namespace: teamfamilie
