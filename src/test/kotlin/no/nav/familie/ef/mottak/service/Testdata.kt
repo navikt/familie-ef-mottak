@@ -87,7 +87,7 @@ internal object Testdata {
     }
 
     val søknadOvergangsstønad = SøknadOvergangsstønad(
-        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
         Søknadsfelt("Søker", personalia()),
         Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
@@ -101,7 +101,7 @@ internal object Testdata {
     )
 
     val søknadBarnetilsyn = SøknadBarnetilsyn(
-        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
+        Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
         Søknadsfelt("Søker", personalia()),
         Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
         Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
