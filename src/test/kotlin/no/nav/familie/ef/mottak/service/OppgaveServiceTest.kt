@@ -290,7 +290,7 @@ internal class OppgaveServiceTest {
         fun `sett høy prioritet pga sommertid`() {
             val soknadId = "123"
             val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
-            val sommertid = LocalDate.of(2023, 7, 20)
+            val sommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
@@ -314,7 +314,7 @@ internal class OppgaveServiceTest {
         fun `ikke sett høy prioritet utenfor sommertid`() {
             val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
             val soknadId = "123"
-            val utenforSommertid = LocalDate.of(2023, 5, 20)
+            val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 5, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
@@ -338,7 +338,7 @@ internal class OppgaveServiceTest {
         fun `ikke sett høy prioritet i sommertid hvis aktivitet ikke er under utdanning`() {
             val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
             val soknadId = "123"
-            val utenforSommertid = LocalDate.of(2023, 7, 20)
+            val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
@@ -362,7 +362,7 @@ internal class OppgaveServiceTest {
         fun `ikke sett høy prioritet i sommertid hvis søknad ikke er overgangsstønad`() {
             val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
             val soknadId = "123"
-            val utenforSommertid = LocalDate.of(2023, 7, 20)
+            val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
