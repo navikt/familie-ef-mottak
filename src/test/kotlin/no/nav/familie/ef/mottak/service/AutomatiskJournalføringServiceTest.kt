@@ -118,7 +118,7 @@ internal class AutomatiskJournalføringServiceTest {
         @Test
         internal fun `skal ikke sette høy prioritet når søknad har aktivitet utenfor sommerperiode`() {
             val automatiskJournalføringRequestSlot = slot<AutomatiskJournalføringRequest>()
-            val sommertid = LocalDate.of(2023, 2, 20)
+            val sommertid = LocalDate.of(LocalDateTime.now().year, 2, 20)
             val soknad = SøknadMapper.fromDto(
                 Testdata.søknadOvergangsstønad.copy(
                     aktivitet = Søknadsfelt(
