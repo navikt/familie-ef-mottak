@@ -290,7 +290,7 @@ internal class OppgaveServiceTest {
         fun `sett høy prioritet pga sommertid`() {
             val soknadId = "123"
             val opprettOppgaveSlot = slot<OpprettOppgaveRequest>()
-            val sommertid = LocalDate.of(2023, 7, 20)
+            val sommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns SøknadMapper.fromDto(
