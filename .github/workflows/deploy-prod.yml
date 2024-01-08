@@ -46,18 +46,18 @@ jobs:
     name: Deploy to GCP dev and prod
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - name: Deploy til dev-gcp
         uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: .deploy/nais-dev.yaml
       - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .deploy/nais-prod.yaml
       - name: Post deploy failures to Slack
