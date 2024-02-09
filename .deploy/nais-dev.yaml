@@ -51,6 +51,8 @@ spec:
         - application: familie-prosessering
           namespace: teamfamilie
           cluster: dev-gcp
+        - application: statuspoll
+          namespace: navdig
     outbound:
       rules:
         - application: familie-ef-maler
