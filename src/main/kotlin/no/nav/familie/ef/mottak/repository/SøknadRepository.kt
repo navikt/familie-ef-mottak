@@ -27,6 +27,13 @@ interface SøknadRepository :
 
     @Query(
         """
+        SELECT * FROM soknad ORDER BY opprettet_tid DESC LIMIT 1
+        """,
+    )
+    fun finnSisteLagredeSøknad(): Søknad
+
+    @Query(
+        """
         SELECT * FROM soknad WHERE fnr=:fnr AND dokumenttype=:stønadstype ORDER BY opprettet_tid DESC LIMIT 1
         """,
     )
