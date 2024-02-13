@@ -2,6 +2,8 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.security.token.support.core.api.Unprotected
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,58 +15,59 @@ import java.time.LocalDateTime
 @RequestMapping(path = ["/api/status"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatusController(val søknadRepository: SøknadRepository) {
 
+    val logger: Logger = LoggerFactory.getLogger(javaClass)
+
     @GetMapping()
     @Unprotected
     fun status(): StatusDto {
         val søknad = søknadRepository.finnSisteLagredeSøknad()
         val tidSidenSisteLagredeSøknad = Duration.between(LocalDateTime.now(), søknad.opprettetTid)
+        loggLiteAktivitet(tidSidenSisteLagredeSøknad)
+        return statusDto(tidSidenSisteLagredeSøknad)
+    }
 
-        when {
-            erNatt() -> {
-                return StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
-            }
-
-            tidSidenSisteLagredeSøknad.toHours() > 24 -> {
-                return StatusDto(
-                    status = Plattformstatus.DOWN,
-                    description = "Det er over 24 timer siden vi mottok en søknad",
-                )
-            }
-
-            tidSidenSisteLagredeSøknad.toHours() > 5 -> {
-                return StatusDto(
-                    status = Plattformstatus.ISSUE,
-                    description = "Det er over 5 timer siden vi mottok en søknad",
-                )
-            }
-
-            tidSidenSisteLagredeSøknad.toHours() > 1 -> {
-                return StatusDto(
-                    status = Plattformstatus.ISSUE,
-                    description = "Det er over 1 time siden vi mottok en søknad",
-                )
-            }
-
-            tidSidenSisteLagredeSøknad.toMinutes() > 20 -> {
-                return StatusDto(
-                    status = Plattformstatus.ISSUE,
-                    description = "Det er over 20 minutter siden siste søknad ble mottatt",
-                )
-            }
-
-            else -> {
-                return StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+    private fun loggLiteAktivitet(tidSidenSisteLagredeSøknad: Duration) {
+        if (erDagtid()) {
+            when {
+                tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Det er over 3 timer siden vi mottok en søknad")
+                tidSidenSisteLagredeSøknad.toMinutes() > 15 -> logger.warn("Det er over 15 minutter siden vi mottok en søknad")
+                else -> logger.info("Vi mottok søknad for {${tidSidenSisteLagredeSøknad.toMinutes()}} minutter siden")
             }
         }
     }
+
+    private fun statusDto(tidSidenSisteLagredeSøknad: Duration) = when {
+        erTidspunktMedForventetAktivitet() -> dagStatus(tidSidenSisteLagredeSøknad)
+        else -> nattStatus(tidSidenSisteLagredeSøknad)
+    }
+
+    private fun nattStatus(tidSidenSisteLagredeSøknad: Duration) =
+        when {
+            tidSidenSisteLagredeSøknad.toHours() > 24 -> StatusDto(
+                status = Plattformstatus.ISSUE,
+                description = "Det er over 24 timer siden vi mottok en søknad",
+            )
+            else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+        }
+
+    private fun dagStatus(tidSidenSisteLagredeSøknad: Duration) =
+        when {
+            tidSidenSisteLagredeSøknad.toHours() > 12 -> StatusDto(
+                status = Plattformstatus.ISSUE,
+                description = "Det er over 12 timer siden vi mottok en søknad",
+            )
+            else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+        }
 }
 
 const val LOG_URL = "https://logs.adeo.no/app/discover#/view/a3e93b80-c1a5-11ee-a029-75a0ed43c092?_g=()"
 
 data class StatusDto(val status: Plattformstatus, val description: String? = null, val logLink: String? = LOG_URL)
 
+// OK, ISSUE, DOWN
 enum class Plattformstatus {
-    OK, ISSUE, DOWN
+    OK, ISSUE
 }
 
-fun erNatt() = LocalDateTime.now().hour !in 8..21
+fun erTidspunktMedForventetAktivitet() = LocalDateTime.now().hour in 12..21
+fun erDagtid() = LocalDateTime.now().hour in 8..22
