@@ -21,7 +21,7 @@ class StatusController(val søknadRepository: SøknadRepository) {
     @Unprotected
     fun status(): StatusDto {
         val søknad = søknadRepository.finnSisteLagredeSøknad()
-        val tidSidenSisteLagredeSøknad = Duration.between(LocalDateTime.now(), søknad.opprettetTid)
+        val tidSidenSisteLagredeSøknad = Duration.between(søknad.opprettetTid, LocalDateTime.now())
         loggLiteAktivitet(tidSidenSisteLagredeSøknad)
         return statusDto(tidSidenSisteLagredeSøknad)
     }
@@ -31,7 +31,7 @@ class StatusController(val søknadRepository: SøknadRepository) {
             when {
                 tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Det er over 3 timer siden vi mottok en søknad")
                 tidSidenSisteLagredeSøknad.toMinutes() > 15 -> logger.warn("Det er over 15 minutter siden vi mottok en søknad")
-                else -> logger.info("Vi mottok søknad for {${tidSidenSisteLagredeSøknad.toMinutes()}} minutter siden")
+                else -> logger.info("Vi mottok søknad for ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden")
             }
         }
     }
