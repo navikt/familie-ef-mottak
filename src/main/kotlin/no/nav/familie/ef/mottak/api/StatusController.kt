@@ -27,14 +27,15 @@ class StatusController(val søknadRepository: SøknadRepository) {
     }
 
     private fun loggLiteAktivitet(tidSidenSisteLagredeSøknad: Duration) {
-        if (erDagtid()) {
+        if (erDagtid() && !erHelg()) {
             when {
-                tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Status ef-mottak: Det er over 3 timer siden vi mottok en søknad")
-                tidSidenSisteLagredeSøknad.toMinutes() > 15 -> logger.warn("Status ef-mottak: Det er over 15 minutter siden vi mottok en søknad")
-                else -> logger.info("Status ef-mottak: Vi mottok søknad for ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden")
+                tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad")
+                tidSidenSisteLagredeSøknad.toMinutes() > 20 -> logger.warn("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} siden vi mottok en søknad")
             }
         }
     }
+
+    private fun erHelg() = LocalDateTime.now().dayOfWeek.value in 6..7
 
     private fun statusDto(tidSidenSisteLagredeSøknad: Duration) = when {
         erTidspunktMedForventetAktivitet() -> dagStatus(tidSidenSisteLagredeSøknad)
