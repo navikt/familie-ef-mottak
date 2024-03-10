@@ -11,6 +11,7 @@ import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
+import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestOperations
 import java.time.Duration
 import java.time.temporal.ChronoUnit
@@ -99,11 +101,13 @@ class ApplicationConfig {
 
     @Primary
     @Bean
-    fun oAuth2HttpClient(): RetryOAuth2HttpClient {
+    fun oAuth2HttpClient(): OAuth2HttpClient {
         return RetryOAuth2HttpClient(
-            RestTemplateBuilder()
-                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)),
+            RestClient.create(
+                RestTemplateBuilder()
+                    .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)).build(),
+            ),
         )
     }
 
@@ -133,7 +137,7 @@ class ApplicationConfig {
         ProsesseringInfoProvider {
 
         override fun hentBrukernavn(): String = try {
-            SpringTokenValidationContextHolder().tokenValidationContext.getClaims("azuread")
+            SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
                 .getStringClaim("preferred_username")
         } catch (e: Exception) {
             throw e
@@ -143,8 +147,7 @@ class ApplicationConfig {
 
         private fun grupper(): List<String> {
             return try {
-                SpringTokenValidationContextHolder().tokenValidationContext.getClaims("azuread")
-                    ?.get("groups") as List<String>? ?: emptyList()
+                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread").get("groups") as List<String>? ?: emptyList()
             } catch (e: Exception) {
                 emptyList()
             }
