@@ -71,4 +71,4 @@ enum class Plattformstatus {
 }
 
 fun erTidspunktMedForventetAktivitet() = LocalDateTime.now().hour in 12..21
-fun erDagtid() = LocalDateTime.now().hour in 8..22
+fun erDagtid() = LocalDateTime.now().hour in 9..22
