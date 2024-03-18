@@ -27,7 +27,7 @@ spec:
       memory: 4Gi
     requests:
       memory: 1Gi
-      cpu: 500m
+      cpu: 100m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ef-mottak.intern.nav.no
   secureLogs:
