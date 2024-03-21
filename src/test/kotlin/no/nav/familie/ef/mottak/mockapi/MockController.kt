@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.Instant
 
 @RestController
 @RequestMapping(path = ["/mockapi/"], produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -27,16 +26,6 @@ class MockController {
     @PostMapping("/token")
     @Unprotected
     fun mockOauthToken(): ResponseEntity<OAuth2AccessTokenResponse> {
-        return ResponseEntity.ok(OAuth2AccessTokenResponse.builder().accessToken(tokenResponse()).build())
+        return ResponseEntity.ok(OAuth2AccessTokenResponse("Mock-token-response", 60, 60, emptyMap()))
     }
-
-    private fun tokenResponse(): String {
-        return token
-            .replace("###expires_at###", "" + Instant.now().plusSeconds(3600).epochSecond)
-    }
-
-    // language=jSon
-    @Suppress("LongLine")
-    val token: String =
-        """{"token_type": "Bearer","scope":"###expires_at###","expires_at":"28021078036","ext_expires_in":"30","expires_in":"30","access_token":"somerandomaccesstoken"}"""
 }

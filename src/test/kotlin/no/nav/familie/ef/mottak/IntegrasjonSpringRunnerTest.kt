@@ -10,6 +10,8 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.util.DbContainerInitializer
 import no.nav.familie.prosessering.internal.TaskService
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,20 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.web.util.UriComponentsBuilder
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(initializers = [DbContainerInitializer::class])
 @SpringBootTest(classes = [ApplicationLocalConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(
-    "local",
+    "integrationtest",
     "mock-integrasjon",
     "mock-dokument",
     "mock-ef-sak",
@@ -65,6 +63,9 @@ abstract class IntegrasjonSpringRunnerTest {
     @Autowired
     private lateinit var hendelsesloggRepository: HendelsesloggRepository
 
+    @Autowired
+    private lateinit var mockOAuth2Server: MockOAuth2Server
+
     @LocalServerPort
     private var port: Int? = 0
 
@@ -92,30 +93,21 @@ abstract class IntegrasjonSpringRunnerTest {
         return baseUrl + uri
     }
 
-    protected val lokalTestToken: String
-        get() {
-            return getTestToken()
-        }
-
-    fun getTestToken(fnr: String = "12345678910"): String {
-        val uri = UriComponentsBuilder.fromUriString(LOCALHOST)
-            .port(getPort())
-            .pathSegment("local/cookie")
-            .queryParam("subject", fnr)
-            .queryParam("audience", "aud-localhost")
-            .queryParam("issuerId", "tokenx").build().toUri().toString()
-
-        val cookie = restTemplate.exchange(
-            uri,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            String::class.java,
-        )
-        return tokenFraRespons(cookie)
-    }
-
-    private fun tokenFraRespons(cookie: ResponseEntity<String>): String {
-        return cookie.body!!.split("value\":\"".toRegex()).toTypedArray()[1].split("\"".toRegex()).toTypedArray()[0]
+    fun søkerBearerToken(
+        personident: String = "12345678910",
+    ): String {
+        val clientId = "lokal:teamfamilie:familie-ef-mottak"
+        return mockOAuth2Server.issueToken(
+            issuerId = "tokenx",
+            clientId,
+            DefaultOAuth2TokenCallback(
+                issuerId = "tokenx",
+                subject = personident,
+                audience = listOf("aud-localhost"),
+                claims = mapOf("acr" to "Level4", "client_id" to clientId),
+                expiry = 3600,
+            ),
+        ).serialize()
     }
 
     companion object {

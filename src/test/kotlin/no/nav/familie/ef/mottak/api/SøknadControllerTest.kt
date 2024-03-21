@@ -20,7 +20,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
 
     @BeforeEach
     fun setUp() {
-        headers.setBearerAuth(lokalTestToken)
+        headers.setBearerAuth(søkerBearerToken())
     }
 
     @Test

@@ -16,7 +16,7 @@ fun mockFamilieDokumentClient(): FamilieDokumentClient {
     return mockk
 }
 
-@Profile("local")
+@Profile("integrationtest", "local")
 @Configuration
 class FamilieDokumentConfiguration {
 
