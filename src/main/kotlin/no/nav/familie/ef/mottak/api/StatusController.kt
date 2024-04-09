@@ -30,7 +30,7 @@ class StatusController(val søknadRepository: SøknadRepository) {
         if (erDagtid() && !erHelg()) {
             when {
                 tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad")
-                tidSidenSisteLagredeSøknad.toMinutes() > 20 -> logger.warn("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} siden vi mottok en søknad")
+                tidSidenSisteLagredeSøknad.toMinutes() > 20 -> logger.warn("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad")
             }
         }
     }
