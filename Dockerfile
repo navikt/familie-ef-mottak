@@ -1,5 +1,6 @@
 FROM gcr.io/distroless/java21-debian12:nonroot
+WORKDIR /app
 ENV TZ="Europe/Oslo"
-COPY target/familie-ef-mottak.jar /app/app.jar
+COPY target/familie-ef-mottak.jar app.jar
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
-CMD ["-jar", "/app/app.jar"]
+CMD ["app.jar"]
