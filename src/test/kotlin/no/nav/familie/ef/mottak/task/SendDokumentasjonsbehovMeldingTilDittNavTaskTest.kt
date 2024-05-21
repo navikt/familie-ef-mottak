@@ -79,7 +79,9 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
         verify {
             dittNavKafkaProducer wasNot called
-            taskService.save(any()) wasNot called
+        }
+        verify (exactly = 0){
+            taskService.save(any())
         }
     }
 
@@ -89,8 +91,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
-        verify {
-            taskService.save(any()) wasNot called
+        verify (exactly = 0){
+            taskService.save(any())
         }
     }
 
@@ -112,8 +114,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
-        verify {
-            taskService.save(any()) wasNot called
+        verify (exactly = 0){
+            taskService.save(any())
         }
     }
 
@@ -126,10 +128,16 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
         }
-        verify {
-            søknadService.hentDokumentasjonsbehovForSøknad(any()) wasNot called
+        verify (exactly = 0){
+            søknadService.hentDokumentasjonsbehovForSøknad(any())
+        }
+
+        verify (exactly = 0){
+            taskService.save(any())
+        }
+
+        verify{
             dittNavKafkaProducer wasNot called
-            taskService.save(any()) wasNot called
         }
     }
 
