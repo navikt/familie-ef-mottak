@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 internal class FerdigstillJournalføringTaskTest {
-
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val arkiveringService: ArkiveringService =
@@ -32,12 +31,13 @@ internal class FerdigstillJournalføringTaskTest {
 
         every {
             søknadService.get("123L")
-        } returns Søknad(
-            søknadJson = EncryptedString(""),
-            dokumenttype = "noe",
-            journalpostId = journalpostId,
-            fnr = FnrGenerator.generer(),
-        )
+        } returns
+            Søknad(
+                søknadJson = EncryptedString(""),
+                dokumenttype = "noe",
+                journalpostId = journalpostId,
+                fnr = FnrGenerator.generer(),
+            )
 
         every {
             integrasjonerClient.finnBehandlendeEnhet(any())

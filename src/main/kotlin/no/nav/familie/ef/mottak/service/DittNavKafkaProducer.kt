@@ -16,7 +16,6 @@ import java.time.ZoneOffset.UTC
 
 @Service
 class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput, BeskjedInput>) {
-
     @Value("\${KAFKA_TOPIC_DITTNAV}")
     private lateinit var topic: String
 
@@ -43,7 +42,11 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
         }
     }
 
-    private fun lagNøkkel(fnr: String, grupperingsId: String, eventId: String): NokkelInput =
+    private fun lagNøkkel(
+        fnr: String,
+        grupperingsId: String,
+        eventId: String,
+    ): NokkelInput =
         NokkelInputBuilder()
             .withAppnavn("familie-ef-mottak")
             .withNamespace("teamfamilie")
@@ -52,12 +55,17 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
             .withEventId(eventId)
             .build()
 
-    private fun lagBeskjed(melding: String, link: URL?, kanal: PreferertKanal?): BeskjedInput {
-        val builder = BeskjedInputBuilder()
-            .withSikkerhetsnivaa(4)
-            .withSynligFremTil(null)
-            .withTekst(melding)
-            .withTidspunkt(LocalDateTime.now(UTC))
+    private fun lagBeskjed(
+        melding: String,
+        link: URL?,
+        kanal: PreferertKanal?,
+    ): BeskjedInput {
+        val builder =
+            BeskjedInputBuilder()
+                .withSikkerhetsnivaa(4)
+                .withSynligFremTil(null)
+                .withTekst(melding)
+                .withTidspunkt(LocalDateTime.now(UTC))
 
         if (link != null) builder.withLink(link)
         if (kanal != null) builder.withEksternVarsling(true).withPrefererteKanaler(kanal)
@@ -66,7 +74,6 @@ class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput,
     }
 
     companion object {
-
         private val logger = LoggerFactory.getLogger(this::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
     }

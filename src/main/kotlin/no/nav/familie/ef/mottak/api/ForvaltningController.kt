@@ -18,18 +18,23 @@ import java.util.UUID
 @RequestMapping(path = ["/api/forvaltning"])
 @ProtectedWithClaims(issuer = "azuread")
 class ForvaltningController(private val ettersendingService: EttersendingService, private val taskService: TaskService) {
-
     @PostMapping("/ettersending/splitt")
-    fun trekkUtVedleggFraEttersending(@RequestBody ettersendingVedleggId: EttersendingVedleggId): ResponseEntity<String> {
+    fun trekkUtVedleggFraEttersending(
+        @RequestBody ettersendingVedleggId: EttersendingVedleggId,
+    ): ResponseEntity<String> {
         val nyEttersendingId = ettersendingService.trekkUtEttersendingTilEgenTaskForVedlegg(ettersendingVedleggId.id)
         return ResponseEntity.ok("Opprettet ny ettersending med id: $nyEttersendingId")
     }
 
     @PostMapping("/ettersending/nycallid")
-    fun settNyCallIdPåTaskForEttersending(@RequestBody taskId: TaskId): ResponseEntity<String> {
+    fun settNyCallIdPåTaskForEttersending(
+        @RequestBody taskId: TaskId,
+    ): ResponseEntity<String> {
         val task = taskService.findById(taskId.id)
         require(task.type == ArkiverEttersendingTask.TYPE)
-        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING) { "Kan ikke legge på ny callId på task når status er ${task.status}" }
+        require(task.status == Status.FEILET || task.status == Status.MANUELL_OPPFØLGING) {
+            "Kan ikke legge på ny callId på task når status er ${task.status}"
+        }
         val generateId = IdUtils.generateId()
         task.metadata.apply {
             this["callId"] = generateId
@@ -39,9 +44,13 @@ class ForvaltningController(private val ettersendingService: EttersendingService
     }
 
     @PostMapping("/ettersending/journalforingoppgave/endrecallid")
-    fun endreCallIdPåTaskForJournalføringoppgave(@RequestBody taskId: TaskId): ResponseEntity<String> {
+    fun endreCallIdPåTaskForJournalføringoppgave(
+        @RequestBody taskId: TaskId,
+    ): ResponseEntity<String> {
         val task = taskService.findById(taskId.id)
-        require(task.type == LagJournalføringsoppgaveForEttersendingTask.TYPE) { "Kan ikke endre på ny callId på task når type er ${task.type}" }
+        require(
+            task.type == LagJournalføringsoppgaveForEttersendingTask.TYPE,
+        ) { "Kan ikke endre på ny callId på task når type er ${task.type}" }
         require(task.status == Status.FEILET) { "Kan ikke endre på ny callId på task når status er ${task.status}" }
         val callId = task.callId.replace("Ø", "O")
         task.metadata.apply {

@@ -17,7 +17,6 @@ import java.util.Properties
 import java.util.UUID
 
 internal class SendSøknadMottattTilDittNavTaskTest {
-
     private lateinit var sendSøknadMottattTilDittNavTask: SendSøknadMottattTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
@@ -30,11 +29,12 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         sendSøknadMottattTilDittNavTask =
             SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
-        task = Task(
-            payload = SØKNAD_ID,
-            type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
-            properties = properties,
-        )
+        task =
+            Task(
+                payload = SØKNAD_ID,
+                type = SendDokumentasjonsbehovMeldingTilDittNavTask.TYPE,
+                properties = properties,
+            )
     }
 
     @Test
@@ -89,7 +89,6 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     }
 
     companion object {
-
         private const val SØKNAD_ID = "e8703be6-eb47-476a-ae52-096df47430d6"
         private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
         private const val FNR = "12345678901"

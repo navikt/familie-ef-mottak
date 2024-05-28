@@ -27,7 +27,6 @@ import java.util.Properties
 import java.util.UUID
 
 internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
-
     private lateinit var sendPåminnelseOmDokumentasjonsbehovTilDittNavTask: SendPåminnelseOmDokumentasjonsbehovTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
@@ -81,10 +80,11 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     @Test
     internal fun `har etterfølgende søknad, ingen innsendte ettersendinger - skal ikke sende påminnelse`() {
-        val søknadData = listOf(
-            SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1)),
-        )
+        val søknadData =
+            listOf(
+                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1)),
+            )
         mockHentSøknad(søknadData.first())
         mockHentSøknaderForPerson(søknadData)
         mockHentEttersendingerForPerson()
@@ -120,10 +120,11 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     @Test
     internal fun `har etterfølgende søknad for arbeidssøker - skal sende påminnelse`() {
-        val søknadData = listOf(
-            SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now()),
-        )
+        val søknadData =
+            listOf(
+                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now()),
+            )
         val forventetMelding =
             lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
         mockHentSøknad(søknadData.first())
@@ -143,10 +144,11 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     @Test
     internal fun `har tidligere søknader, har tidligere ettersendinger - skal sende påminnelse`() {
-        val søknadData = listOf(
-            SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-            SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1)),
-        )
+        val søknadData =
+            listOf(
+                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1)),
+            )
         val forventetMelding =
             lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
         mockHentSøknad(søknadData.first())
@@ -200,21 +202,25 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         }
     }
 
-    private fun søknad(id: String, dokumenttype: String, opprettetTid: LocalDateTime) =
-        Søknad(
-            id = id,
-            søknadJson = EncryptedString(""),
-            dokumenttype = dokumenttype,
-            fnr = FNR,
-            opprettetTid = opprettetTid,
-        )
+    private fun søknad(
+        id: String,
+        dokumenttype: String,
+        opprettetTid: LocalDateTime,
+    ) = Søknad(
+        id = id,
+        søknadJson = EncryptedString(""),
+        dokumenttype = dokumenttype,
+        fnr = FNR,
+        opprettetTid = opprettetTid,
+    )
 
     private fun mockHentSøknad(søknadData: SøknadData) {
-        every { søknadService.get(søknadIds.first()) } returns søknad(
-            søknadData.id,
-            søknadData.dokumentType,
-            søknadData.opprettetTid,
-        )
+        every { søknadService.get(søknadIds.first()) } returns
+            søknad(
+                søknadData.id,
+                søknadData.dokumentType,
+                søknadData.opprettetTid,
+            )
     }
 
     private fun mockHentSøknaderForPerson(søknadData: List<SøknadData>) {
@@ -234,7 +240,6 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     data class SøknadData(val id: String, val dokumentType: String, val opprettetTid: LocalDateTime)
 
     companion object {
-
         private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
         private const val FNR = "12345678901"
 

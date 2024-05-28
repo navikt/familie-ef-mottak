@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
-
     @BeforeEach
     fun setUp() {
         headers.setBearerAuth(søkerBearerToken())

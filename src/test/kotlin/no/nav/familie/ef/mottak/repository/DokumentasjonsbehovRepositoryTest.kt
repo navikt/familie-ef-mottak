@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 
 internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var søknadRepository: SøknadRepository
 
@@ -22,13 +21,14 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
 
     @Test
     internal fun `lagre og hent dokumentasjonsbehov`() {
-        val søknad = søknadRepository.insert(
-            Søknad(
-                søknadJson = EncryptedString("bob"),
-                fnr = "ded",
-                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            ),
-        )
+        val søknad =
+            søknadRepository.insert(
+                Søknad(
+                    søknadJson = EncryptedString("bob"),
+                    fnr = "ded",
+                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                ),
+            )
 
         dokumentasjonsbehovRepository.insert(Dokumentasjonsbehov(søknad.id, "data"))
         val dokumentasjonsbehov = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)

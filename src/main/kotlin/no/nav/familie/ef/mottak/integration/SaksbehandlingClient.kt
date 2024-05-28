@@ -23,31 +23,33 @@ class SaksbehandlingClient(
     restOperations: RestOperations,
 ) :
     AbstractPingableRestClient(restOperations, "saksbehandling") {
-
     override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
 
-    fun kanOppretteFørstegangsbehandling(personIdent: String, stønadType: StønadType): Boolean {
-        val kapOppretteUri = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api")
-            .pathSegment("ekstern")
-            .pathSegment("automatisk-journalforing")
-            .pathSegment("kan-opprette-behandling")
-            .queryParam("type", stønadType.name)
-            .encode()
-            .build()
-            .toUri()
+    fun kanOppretteFørstegangsbehandling(
+        personIdent: String,
+        stønadType: StønadType,
+    ): Boolean {
+        val kapOppretteUri =
+            UriComponentsBuilder.fromUri(uri)
+                .pathSegment("api")
+                .pathSegment("ekstern")
+                .pathSegment("automatisk-journalforing")
+                .pathSegment("kan-opprette-behandling")
+                .queryParam("type", stønadType.name)
+                .encode()
+                .build()
+                .toUri()
 
         val response = postForEntity<Ressurs<Boolean>>(kapOppretteUri, PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")
     }
 
-    fun journalførAutomatisk(
-        automatiskJournalføringRequest: AutomatiskJournalføringRequest,
-    ): AutomatiskJournalføringResponse {
-        val sendInnUri = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api/ekstern/automatisk-journalforing/journalfor")
-            .build()
-            .toUri()
+    fun journalførAutomatisk(automatiskJournalføringRequest: AutomatiskJournalføringRequest): AutomatiskJournalføringResponse {
+        val sendInnUri =
+            UriComponentsBuilder.fromUri(uri)
+                .pathSegment("api/ekstern/automatisk-journalforing/journalfor")
+                .build()
+                .toUri()
 
         val response =
             postForEntity<Ressurs<AutomatiskJournalføringResponse>>(sendInnUri, automatiskJournalføringRequest)
@@ -55,14 +57,15 @@ class SaksbehandlingClient(
     }
 
     fun kanSendePåminnelseTilBruker(kanSendePåminnelseRequest: KanSendePåminnelseRequest): Boolean {
-        val uri = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api")
-            .pathSegment("ekstern")
-            .pathSegment("behandling")
-            .pathSegment("kan-sende-påminnelse-til-bruker")
-            .encode()
-            .build()
-            .toUri()
+        val uri =
+            UriComponentsBuilder.fromUri(uri)
+                .pathSegment("api")
+                .pathSegment("ekstern")
+                .pathSegment("behandling")
+                .pathSegment("kan-sende-påminnelse-til-bruker")
+                .encode()
+                .build()
+                .toUri()
 
         val response = postForEntity<Ressurs<Boolean>>(uri, kanSendePåminnelseRequest)
         return response.data ?: error("Kall mot ef-sak feilet melding=${response.melding}")

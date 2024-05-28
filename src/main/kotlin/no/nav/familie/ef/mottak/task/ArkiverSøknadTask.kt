@@ -16,7 +16,6 @@ class ArkiverSøknadTask(
     private val arkiveringService: ArkiveringService,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -44,7 +43,6 @@ class ArkiverSøknadTask(
     }
 
     companion object {
-
         const val TYPE = "arkiverSøknad"
     }
 }

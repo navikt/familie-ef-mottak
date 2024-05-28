@@ -19,7 +19,6 @@ class LagEttersendingPdfTask(
     private val ettersendingRepository: EttersendingRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val ettersending =
             ettersendingRepository.findByIdOrNull(UUID.fromString(task.payload))
@@ -40,7 +39,6 @@ class LagEttersendingPdfTask(
     }
 
     companion object {
-
         const val TYPE = "lagPdfEttersending"
     }
 }

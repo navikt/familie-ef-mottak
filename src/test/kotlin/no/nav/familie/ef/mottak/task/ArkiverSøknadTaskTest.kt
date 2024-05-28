@@ -17,7 +17,6 @@ import java.util.Properties
 import java.util.UUID
 
 internal class ArkiverSøknadTaskTest {
-
     private val taskService: TaskService = mockk()
     private val arkiverSøknadTaskTest: ArkiverSøknadTask = ArkiverSøknadTask(mockk(), taskService)
 

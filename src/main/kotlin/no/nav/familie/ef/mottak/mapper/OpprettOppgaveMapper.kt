@@ -18,7 +18,6 @@ import java.time.LocalDateTime
 
 @Component
 class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
-
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun toJournalføringsoppgave(
@@ -42,7 +41,10 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         prioritet = prioritet,
     )
 
-    private fun lagOppgavebeskrivelse(behandlesAvApplikasjon: BehandlesAvApplikasjon, journalpost: Journalpost): String {
+    private fun lagOppgavebeskrivelse(
+        behandlesAvApplikasjon: BehandlesAvApplikasjon,
+        journalpost: Journalpost,
+    ): String {
         if (journalpost.dokumenter.isNullOrEmpty()) error("Journalpost ${journalpost.journalpostId} mangler dokumenter")
         val dokumentTittel = journalpost.dokumenter!!.firstOrNull { it.brevkode != null }?.tittel ?: ""
         return "${behandlesAvApplikasjon.beskrivelsePrefix}$dokumentTittel"
@@ -70,12 +72,13 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
      *
      */
     fun lagFristForOppgave(gjeldendeTid: LocalDateTime): LocalDate {
-        val frist = when (gjeldendeTid.dayOfWeek) {
-            DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
-            DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
-            DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))
-            else -> fristBasertPåKlokkeslett(gjeldendeTid)
-        }
+        val frist =
+            when (gjeldendeTid.dayOfWeek) {
+                DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
+                DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
+                DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))
+                else -> fristBasertPåKlokkeslett(gjeldendeTid)
+            }
 
         return when (frist.dayOfWeek) {
             DayOfWeek.SATURDAY -> frist.plusDays(2)
@@ -110,11 +113,9 @@ class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient)
         else -> enhetsnummer
     }
 
-    private fun harGyldigJournalførendeEnhet(journalforendeEnhet: String?) =
-        journalforendeEnhet != null && journalforendeEnhet != "9999"
+    private fun harGyldigJournalførendeEnhet(journalforendeEnhet: String?) = journalforendeEnhet != null && journalforendeEnhet != "9999"
 
     companion object {
-
         /**
          * En liten "hack", kanskje midlertidig.
          * - Kode for "klage", som brukes for å evt sette behandlingstype tilsvarende "klage"

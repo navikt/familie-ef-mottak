@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import java.util.Base64
 
 internal class StringValCryptoConverterTest {
-
     private val stringValCryptoReadingConverter: StringValCryptoReadingConverter
     private val stringValCryptoWritingConverter: StringValCryptoWritingConverter
 

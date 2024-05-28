@@ -7,7 +7,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 internal class OpprettOppgaveMapperTest {
-
     private val mapper = OpprettOppgaveMapper(mockk())
 
     @Test
@@ -33,18 +32,19 @@ internal class OpprettOppgaveMapperTest {
 
     @Test
     fun `Skal sette frist for oppgave`() {
-        val frister = listOf<Pair<LocalDateTime, LocalDate>>(
-            Pair(torsdag.morgen(), fredagFrist),
-            Pair(torsdag.kveld(), mandagFrist),
-            Pair(fredag.morgen(), mandagFrist),
-            Pair(fredag.kveld(), tirsdagFrist),
-            Pair(lørdag.morgen(), tirsdagFrist),
-            Pair(lørdag.kveld(), tirsdagFrist),
-            Pair(søndag.morgen(), tirsdagFrist),
-            Pair(søndag.kveld(), tirsdagFrist),
-            Pair(mandag.morgen(), tirsdagFrist),
-            Pair(mandag.kveld(), onsdagFrist),
-        )
+        val frister =
+            listOf<Pair<LocalDateTime, LocalDate>>(
+                Pair(torsdag.morgen(), fredagFrist),
+                Pair(torsdag.kveld(), mandagFrist),
+                Pair(fredag.morgen(), mandagFrist),
+                Pair(fredag.kveld(), tirsdagFrist),
+                Pair(lørdag.morgen(), tirsdagFrist),
+                Pair(lørdag.kveld(), tirsdagFrist),
+                Pair(søndag.morgen(), tirsdagFrist),
+                Pair(søndag.kveld(), tirsdagFrist),
+                Pair(mandag.morgen(), tirsdagFrist),
+                Pair(mandag.kveld(), onsdagFrist),
+            )
 
         frister.forEach {
             assertThat(mapper.lagFristForOppgave(it.first)).isEqualTo(it.second)

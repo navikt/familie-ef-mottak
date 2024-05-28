@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class PingController {
-
     @GetMapping("/ping")
     @Unprotected
     fun ping(): String {

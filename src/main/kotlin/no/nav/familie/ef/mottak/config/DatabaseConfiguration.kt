@@ -21,7 +21,6 @@ import javax.sql.DataSource
 @EnableJdbcAuditing
 @EnableJdbcRepositories("no.nav.familie")
 class DatabaseConfiguration : AbstractJdbcConfiguration() {
-
     @Bean
     fun namedParameterJdbcOperations(dataSource: DataSource): NamedParameterJdbcTemplate {
         return NamedParameterJdbcTemplate(dataSource)

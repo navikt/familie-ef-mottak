@@ -15,7 +15,6 @@ class FjernProsessertDataScheduledEventService(
     private val ettersendingRepository: EttersendingRepository,
     private val ryddeTaskService: RyddeTaskService,
 ) {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(cron = "\${DB_RYDDING_CRON_EXPRESSION}")

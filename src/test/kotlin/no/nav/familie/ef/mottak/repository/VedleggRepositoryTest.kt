@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 internal class VedleggRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var søknadRepository: SøknadRepository
 

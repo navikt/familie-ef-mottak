@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 class SøknadTreeWalkerTest {
-
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden`() {
         val søknad = Testdata.søknadOvergangsstønad
@@ -62,11 +61,12 @@ class SøknadTreeWalkerTest {
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - overgangsstønad`() {
         val søknad = Testdata.søknadOvergangsstønad
 
-        val vedlegg = listOf(
-            "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at kan arbeide",
-        )
+        val vedlegg =
+            listOf(
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at kan arbeide",
+            )
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
         generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad.json")
     }
@@ -84,31 +84,36 @@ class SøknadTreeWalkerTest {
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - barnetilsyn`() {
         val søknad = Testdata.søknadBarnetilsyn
 
-        val vedlegg = listOf(
-            "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at du er syk",
-            "Dokumentasjon på at kan arbeide",
-        )
+        val vedlegg =
+            listOf(
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at kan arbeide",
+            )
         val mapSøknadsfelter = SøknadTreeWalker.mapBarnetilsyn(søknad, vedlegg)
         generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn.json")
     }
 
     @Test
     fun `map ettersending med vedlegg`() {
-        val mapEttersending = SøknadTreeWalker.mapEttersending(
-            Ettersending(
-                stønadType = "OVERGANGSSTØNAD",
-                fnr = "23118612345",
-                ettersendingJson = EncryptedString(""),
-                opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0),
-            ),
-            listOf("Lærlingkontrakt", "Utgifter til pass av barn"),
-        )
+        val mapEttersending =
+            SøknadTreeWalker.mapEttersending(
+                Ettersending(
+                    stønadType = "OVERGANGSSTØNAD",
+                    fnr = "23118612345",
+                    ettersendingJson = EncryptedString(""),
+                    opprettetTid = LocalDateTime.of(2021, 5, 1, 12, 0),
+                ),
+                listOf("Lærlingkontrakt", "Utgifter til pass av barn"),
+            )
 
         generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending.json")
     }
 
-    private fun generatePdfAndAssert(mapSøknadsfelter: Map<String, Any>, filename: String) {
+    private fun generatePdfAndAssert(
+        mapSøknadsfelter: Map<String, Any>,
+        filename: String,
+    ) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         // kommentere ut for å skrive over fila
         // java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray())

@@ -17,7 +17,6 @@ class AutomatiskJournalføringService(
     val søknadService: SøknadService,
     val taskService: TaskService,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
@@ -28,13 +27,14 @@ class AutomatiskJournalføringService(
         mappeId: Long?,
         søknad: Søknad,
     ): Boolean {
-        val arkiverDokumentRequest = AutomatiskJournalføringRequest(
-            personIdent = personIdent,
-            journalpostId = journalpostId,
-            stønadstype = stønadstype,
-            mappeId = mappeId,
-            prioritet = UtledPrioritetForSøknadUtil.utledPrioritet(søknad),
-        )
+        val arkiverDokumentRequest =
+            AutomatiskJournalføringRequest(
+                personIdent = personIdent,
+                journalpostId = journalpostId,
+                stønadstype = stønadstype,
+                mappeId = mappeId,
+                prioritet = UtledPrioritetForSøknadUtil.utledPrioritet(søknad),
+            )
         try {
             val respons =
                 saksbehandlingClient.journalførAutomatisk(arkiverDokumentRequest)

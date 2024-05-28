@@ -26,7 +26,6 @@ class PdfService(
     private val vedleggRepository: VedleggRepository,
     private val pdfClient: PdfClient,
 ) {
-
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
@@ -36,7 +35,10 @@ class PdfService(
         søknadRepository.update(oppdatertSoknad)
     }
 
-    private fun lagFeltMap(innsending: Søknad, vedleggTitler: List<String>): Map<String, Any> {
+    private fun lagFeltMap(
+        innsending: Søknad,
+        vedleggTitler: List<String>,
+    ): Map<String, Any> {
         return when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
@@ -60,7 +62,10 @@ class PdfService(
         }
     }
 
-    fun lagForsideForEttersending(ettersending: Ettersending, vedleggTitler: List<String>) {
+    fun lagForsideForEttersending(
+        ettersending: Ettersending,
+        vedleggTitler: List<String>,
+    ) {
         val feltMap = SøknadTreeWalker.mapEttersending(ettersending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
         ettersendingRepository.update(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))

@@ -9,7 +9,6 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import java.time.LocalDate
 
 object UtledPrioritetForSøknadUtil {
-
     fun utledPrioritet(søknad: Søknad): OppgavePrioritet {
         if (skalSetteHøyPriorietSommertid(søknad)) {
             return OppgavePrioritet.HOY

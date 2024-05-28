@@ -12,7 +12,6 @@ import java.util.UUID
 interface EttersendingVedleggRepository :
     RepositoryInterface<EttersendingVedlegg, UUID>,
     InsertUpdateRepository<EttersendingVedlegg> {
-
     fun findByEttersendingId(ettersendingId: UUID): List<EttersendingVedlegg>
 
     @Query("SELECT ettersending_id from ettersending_vedlegg where id = :ettersendingVedleggId")
@@ -24,5 +23,8 @@ interface EttersendingVedleggRepository :
 
     @Modifying
     @Query("UPDATE ettersending_vedlegg SET ettersending_id = :ettersendingId WHERE id = :id")
-    fun oppdaterEttersendingIdForVedlegg(id: UUID, ettersendingId: UUID): Int
+    fun oppdaterEttersendingIdForVedlegg(
+        id: UUID,
+        ettersendingId: UUID,
+    ): Int
 }

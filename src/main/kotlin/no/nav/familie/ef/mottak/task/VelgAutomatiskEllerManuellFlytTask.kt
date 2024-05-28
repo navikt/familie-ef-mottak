@@ -24,7 +24,6 @@ class VelgAutomatiskEllerManuellFlytTask(
     val søknadService: SøknadService,
     val saksbehandlingClient: SaksbehandlingClient,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val søknad: Søknad = søknadService.get(task.payload)
         val stønadstype: StønadType? = dokumenttypeTilStønadType(søknad.dokumenttype)
@@ -45,10 +44,11 @@ class VelgAutomatiskEllerManuellFlytTask(
         søknad: Søknad,
     ): Boolean {
         return when (stønadstype) {
-            OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER -> saksbehandlingClient.kanOppretteFørstegangsbehandling(
-                søknad.fnr,
-                stønadstype,
-            )
+            OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER ->
+                saksbehandlingClient.kanOppretteFørstegangsbehandling(
+                    søknad.fnr,
+                    stønadstype,
+                )
             else -> false
         }
     }

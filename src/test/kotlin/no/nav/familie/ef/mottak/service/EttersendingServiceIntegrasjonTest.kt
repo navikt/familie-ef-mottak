@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var ettersendingVedleggRepository: EttersendingVedleggRepository
 
@@ -26,13 +25,14 @@ class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `skal splitte opp ettersendingsvedlegg fra en ettersending`() {
-        val opprinneligEttersending = Ettersending(
-            ettersendingJson = EncryptedString("json"),
-            ettersendingPdf = EncryptedFile("json".toByteArray()),
-            fnr = "12345678901",
-            stønadType = "OVERGANGSSTØNAD",
-            taskOpprettet = true,
-        )
+        val opprinneligEttersending =
+            Ettersending(
+                ettersendingJson = EncryptedString("json"),
+                ettersendingPdf = EncryptedFile("json".toByteArray()),
+                fnr = "12345678901",
+                stønadType = "OVERGANGSSTØNAD",
+                taskOpprettet = true,
+            )
         ettersendingRepository.insert(opprinneligEttersending)
         val vedlegg1 = lagVedlegg(opprinneligEttersending, "Første dokument")
         val vedlegg2 = lagVedlegg(opprinneligEttersending, "Andre dokument")
@@ -53,12 +53,14 @@ class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         assertThat(vedleggPåOpprinneligEttersending.map { it.id }).contains(vedlegg1.id, vedlegg3.id)
     }
 
-    private fun lagVedlegg(opprinneligEttersending: Ettersending, dokumentnavn: String) =
-        EttersendingVedlegg(
-            id = UUID.randomUUID(),
-            ettersendingId = opprinneligEttersending.id,
-            navn = dokumentnavn,
-            tittel = dokumentnavn,
-            innhold = EncryptedFile(bytes = "noe".toByteArray()),
-        )
+    private fun lagVedlegg(
+        opprinneligEttersending: Ettersending,
+        dokumentnavn: String,
+    ) = EttersendingVedlegg(
+        id = UUID.randomUUID(),
+        ettersendingId = opprinneligEttersending.id,
+        navn = dokumentnavn,
+        tittel = dokumentnavn,
+        innhold = EncryptedFile(bytes = "noe".toByteArray()),
+    )
 }

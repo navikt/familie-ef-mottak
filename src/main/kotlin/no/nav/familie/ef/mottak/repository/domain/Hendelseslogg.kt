@@ -11,23 +11,17 @@ import java.util.UUID
 data class Hendelseslogg(
     @Column("kafka_offset")
     val offset: Long,
-
     @Column("hendelse_id")
     val hendelseId: String,
-
     @Column("metadata")
     val metadataWrapper: PropertiesWrapper = PropertiesWrapper(Properties()),
-
     @Id
     val id: UUID = UUID.randomUUID(),
-
     @Column("opprettet_tid")
     val opprettetTidspunkt: LocalDateTime = LocalDateTime.now(),
-
     @Column("ident")
     val ident: String? = null,
 ) {
-
     @Transient
     val metadata: Properties = metadataWrapper.properties
 }

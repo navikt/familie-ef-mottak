@@ -36,7 +36,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 )
 @EnableMockOAuth2Server
 abstract class IntegrasjonSpringRunnerTest {
-
     protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
     protected val restTemplate = TestRestTemplate()
@@ -89,13 +88,14 @@ abstract class IntegrasjonSpringRunnerTest {
         return LOCALHOST + getPort() + uri
     }
 
-    protected fun url(baseUrl: String, uri: String): String {
+    protected fun url(
+        baseUrl: String,
+        uri: String,
+    ): String {
         return baseUrl + uri
     }
 
-    fun søkerBearerToken(
-        personident: String = "12345678910",
-    ): String {
+    fun søkerBearerToken(personident: String = "12345678910"): String {
         val clientId = "lokal:teamfamilie:familie-ef-mottak"
         return mockOAuth2Server.issueToken(
             issuerId = "tokenx",
@@ -111,8 +111,8 @@ abstract class IntegrasjonSpringRunnerTest {
     }
 
     companion object {
-
         private const val LOCALHOST = "http://localhost:"
+
         protected fun initLoggingEventListAppender(): ListAppender<ILoggingEvent> {
             val listAppender = ListAppender<ILoggingEvent>()
             listAppender.start()

@@ -14,18 +14,16 @@ import org.springframework.stereotype.Service
 class LagJournalføringsoppgaveForEttersendingTask(
     private val oppgaveService: OppgaveService,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForEttersendingId(task.payload)
         oppgaveId?.let {
             task.metadata.apply {
-                this[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey] = it.toString()
+                this[LagJournalføringsoppgaveTask.JOURNALFØRING_OPPGAVE_ID_KEY] = it.toString()
             }
         }
     }
 
     companion object {
-
         const val TYPE = "lagJournalføringsoppgaveForEttersending"
     }
 }

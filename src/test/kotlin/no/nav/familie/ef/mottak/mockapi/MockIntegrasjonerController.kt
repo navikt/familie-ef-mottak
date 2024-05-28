@@ -21,7 +21,6 @@ import java.util.UUID
 @RequestMapping(path = ["/mockintegrasjoner/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
 class MockIntegrasjonerController {
-
     @PostMapping(path = ["/arkiv/v4"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun arkiverDokument(
         @RequestBody @Valid
@@ -34,7 +33,9 @@ class MockIntegrasjonerController {
 
     @GetMapping("/journalpost/sak")
     @Unprotected
-    fun hentSakId(@RequestParam(name = "journalpostId") journalpostId: String): ResponseEntity<Ressurs<Map<String, String>>> {
+    fun hentSakId(
+        @RequestParam(name = "journalpostId") journalpostId: String,
+    ): ResponseEntity<Ressurs<Map<String, String>>> {
         val saksnummer = UUID.randomUUID().toString()
         return ResponseEntity.ok(success(mapOf("saksnummer" to saksnummer), "OK"))
     }

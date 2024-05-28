@@ -18,7 +18,6 @@ import java.util.UUID
  * Hvis denne brekker må man vurdere hur de ellers burde oppdateres
  */
 internal class TaskTest : IntegrasjonSpringRunnerTest() {
-
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private lateinit var taskWorker: TaskWorker
@@ -44,7 +43,6 @@ private const val TEST_TASK_TYPE = "TestTask"
 @Service
 @TaskStepBeskrivelse(taskStepType = TEST_TASK_TYPE, beskrivelse = "")
 class TestTask : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {

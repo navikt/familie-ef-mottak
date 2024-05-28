@@ -6,7 +6,6 @@ import java.time.YearMonth
 
 @Repository
 class StatistikkRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) {
-
     fun antallSøknaderPerDokumentType(): List<SøknaderPerDokumenttype> {
         // language=PostgreSQL
         val sql = """

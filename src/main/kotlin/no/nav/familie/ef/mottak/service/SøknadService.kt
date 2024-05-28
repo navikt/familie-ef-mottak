@@ -41,7 +41,6 @@ class SøknadService(
     private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
     private val taskProsesseringService: TaskProsesseringService,
 ) {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
@@ -73,10 +72,11 @@ class SøknadService(
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
         taskProsesseringService.startTaskProsessering(lagretSkjema)
-        val databaseDokumentasjonsbehov = DatabaseDokumentasjonsbehov(
-            søknadId = lagretSkjema.id,
-            data = objectMapper.writeValueAsString(dokumentasjonsbehov),
-        )
+        val databaseDokumentasjonsbehov =
+            DatabaseDokumentasjonsbehov(
+                søknadId = lagretSkjema.id,
+                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
+            )
         dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
@@ -100,8 +100,7 @@ class SøknadService(
         return søknadRepository.findByIdOrThrow(id)
     }
 
-    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> =
-        søknadRepository.findAllByFnr(personIdent.ident)
+    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> = søknadRepository.findAllByFnr(personIdent.ident)
 
     fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
@@ -111,7 +110,11 @@ class SøknadService(
             return null
         }
     }
-    fun hentSøknadForPersonOgStønadstype(personIdent: String, stønadstype: String): Søknad? = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
+
+    fun hentSøknadForPersonOgStønadstype(
+        personIdent: String,
+        stønadstype: String,
+    ): Søknad? = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
 
     @Transactional
     fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
@@ -129,11 +132,12 @@ class SøknadService(
             .map {
                 SøknadMedDokumentasjonsbehovDto(
                     søknadId = it.id,
-                    stønadType = StønadType
-                        .valueOf(
-                            SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
-                                .toString(),
-                        ),
+                    stønadType =
+                        StønadType
+                            .valueOf(
+                                SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                    .toString(),
+                            ),
                     søknadDato = it.opprettetTid.toLocalDate(),
                     dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it),
                 )
@@ -143,9 +147,10 @@ class SøknadService(
     // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
     fun hentDokumentasjonsbehovForSøknad(søknad: Søknad): DokumentasjonsbehovDto {
         val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
-        val dokumentasjonsbehov: List<Dokumentasjonsbehov> = dokumentasjonsbehovJson?.let {
-            objectMapper.readValue(it.data)
-        } ?: emptyList()
+        val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
+            dokumentasjonsbehovJson?.let {
+                objectMapper.readValue(it.data)
+            } ?: emptyList()
 
         return DokumentasjonsbehovDto(
             dokumentasjonsbehov = dokumentasjonsbehov,

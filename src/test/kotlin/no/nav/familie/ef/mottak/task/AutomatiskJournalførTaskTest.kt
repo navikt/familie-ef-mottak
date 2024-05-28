@@ -22,20 +22,20 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 internal class AutomatiskJournalførTaskTest {
-
     val automatiskJournalføringService: AutomatiskJournalføringService = mockk()
     val søknadService: SøknadService = mockk()
     val taskService: TaskService = mockk()
     val integrasjonerClient: IntegrasjonerClient = mockk(relaxed = true)
     val mappeService: MappeService = mockk(relaxed = true)
 
-    val automatiskJournalførTask = AutomatiskJournalførTask(
-        taskService = taskService,
-        automatiskJournalføringService = automatiskJournalføringService,
-        søknadService = søknadService,
-        integrasjonerClient = integrasjonerClient,
-        mappeService = mappeService,
-    )
+    val automatiskJournalførTask =
+        AutomatiskJournalførTask(
+            taskService = taskService,
+            automatiskJournalføringService = automatiskJournalføringService,
+            søknadService = søknadService,
+            integrasjonerClient = integrasjonerClient,
+            mappeService = mappeService,
+        )
 
     private val journalpostId = "123"
     private val task: Task
@@ -56,12 +56,13 @@ internal class AutomatiskJournalførTaskTest {
     internal fun setUp() {
         every {
             søknadService.get(overgangsstønadSøknadId)
-        } returns Søknad(
-            søknadJson = EncryptedString(""),
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            journalpostId = "1234",
-            fnr = personIdent,
-        )
+        } returns
+            Søknad(
+                søknadJson = EncryptedString(""),
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                journalpostId = "1234",
+                fnr = personIdent,
+            )
     }
 
     @Test

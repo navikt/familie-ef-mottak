@@ -31,20 +31,22 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     internal fun setUp() {
         every {
             søknadService.get(overgangsstønadSøknadId)
-        } returns Søknad(
-            søknadJson = EncryptedString(""),
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            journalpostId = "1234",
-            fnr = FnrGenerator.generer(),
-        )
+        } returns
+            Søknad(
+                søknadJson = EncryptedString(""),
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                journalpostId = "1234",
+                fnr = FnrGenerator.generer(),
+            )
         every {
             søknadService.get(arbeidssøkerSkjemaId)
-        } returns Søknad(
-            søknadJson = EncryptedString(""),
-            dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-            journalpostId = "1234",
-            fnr = FnrGenerator.generer(),
-        )
+        } returns
+            Søknad(
+                søknadJson = EncryptedString(""),
+                dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+                journalpostId = "1234",
+                fnr = FnrGenerator.generer(),
+            )
     }
 
     @Test

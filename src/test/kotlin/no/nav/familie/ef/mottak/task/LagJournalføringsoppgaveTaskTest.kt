@@ -11,7 +11,6 @@ import java.util.Properties
 import java.util.UUID
 
 internal class LagJournalføringsoppgaveTaskTest {
-
     private val taskService: TaskService = mockk()
     private val oppgaveService: OppgaveService = mockk(relaxed = true)
     private val lagJournalføringsoppgaveTask: LagJournalføringsoppgaveTask =

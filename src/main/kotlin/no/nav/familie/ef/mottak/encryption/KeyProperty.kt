@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class KeyProperty {
-
     @Suppress("ConvertSecondaryConstructorToPrimary")
-    constructor(@Value("\${database.encryption.key}") databaseEncryptionKey: String) {
-        DATABASE_ENCRYPTION_KEY = databaseEncryptionKey.toByteArray()
+    constructor(
+        @Value("\${database.encryption.key}") dbEncryptionKey: String,
+    ) {
+        databaseEncryptionKey = dbEncryptionKey.toByteArray()
     }
 
     companion object {
-
-        var DATABASE_ENCRYPTION_KEY: ByteArray = ByteArray(0)
+        var databaseEncryptionKey: ByteArray = ByteArray(0)
     }
 }

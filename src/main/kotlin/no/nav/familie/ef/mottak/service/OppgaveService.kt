@@ -28,7 +28,6 @@ class OppgaveService(
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
     private val mappeService: MappeService,
 ) {
-
     val log: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -58,7 +57,10 @@ class OppgaveService(
         }
     }
 
-    fun lagJournalføringsoppgave(journalpost: Journalpost, prioritet: OppgavePrioritet = OppgavePrioritet.NORM): Long? {
+    fun lagJournalføringsoppgave(
+        journalpost: Journalpost,
+        prioritet: OppgavePrioritet = OppgavePrioritet.NORM,
+    ): Long? {
         if (journalpost.journalstatus == Journalstatus.MOTTATT) {
             return when {
                 journalføringsoppgaveFinnes(journalpost) -> {
@@ -85,10 +87,11 @@ class OppgaveService(
                 }
             }
         } else {
-            val error = IllegalStateException(
-                "Journalpost ${journalpost.journalpostId} har endret status " +
-                    "fra MOTTATT til ${journalpost.journalstatus.name}",
-            )
+            val error =
+                IllegalStateException(
+                    "Journalpost ${journalpost.journalpostId} har endret status " +
+                        "fra MOTTATT til ${journalpost.journalstatus.name}",
+                )
             log.info("OpprettJournalføringOppgaveTask feilet.", error)
             throw error
         }
@@ -147,7 +150,10 @@ class OppgaveService(
         return ressursException.ressurs.melding.contains("Fant ingen gyldig arbeidsfordeling for oppgaven")
     }
 
-    private fun loggSkipOpprettOppgave(journalpostId: String, oppgavetype: Oppgavetype) {
+    private fun loggSkipOpprettOppgave(
+        journalpostId: String,
+        oppgavetype: Oppgavetype,
+    ) {
         log.info(
             "Skipper oppretting av journalførings-oppgave. " +
                 "Fant åpen oppgave av type $oppgavetype for " +
@@ -164,7 +170,10 @@ class OppgaveService(
     private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
         integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
-    fun oppdaterOppgaveMedRiktigMappeId(oppgaveId: Long, søknadId: String) {
+    fun oppdaterOppgaveMedRiktigMappeId(
+        oppgaveId: Long,
+        søknadId: String,
+    ) {
         val oppgave = integrasjonerClient.hentOppgave(oppgaveId)
         if (kanFlyttesTilMappe(oppgave)) {
             val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknadId, oppgave.tildeltEnhetsnr)
@@ -174,13 +183,13 @@ class OppgaveService(
         }
     }
 
-    private fun kanFlyttesTilMappe(oppgave: Oppgave): Boolean =
-        kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
+    private fun kanFlyttesTilMappe(oppgave: Oppgave): Boolean = kanOppgaveFlyttesTilMappe(oppgave) && kanBehandlesINyLøsning(oppgave)
 
-    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) = oppgave.status != StatusEnum.FEILREGISTRERT &&
-        oppgave.status != StatusEnum.FERDIGSTILT &&
-        oppgave.mappeId == null &&
-        oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
+    private fun kanOppgaveFlyttesTilMappe(oppgave: Oppgave) =
+        oppgave.status != StatusEnum.FEILREGISTRERT &&
+            oppgave.status != StatusEnum.FERDIGSTILT &&
+            oppgave.mappeId == null &&
+            oppgave.tildeltEnhetsnr == ENHETSNUMMER_NAY
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when (oppgave.behandlingstema) {
@@ -193,7 +202,6 @@ class OppgaveService(
         }
 
     companion object {
-
         const val ENHETSNUMMER_NAY: String = "4489"
     }
 }

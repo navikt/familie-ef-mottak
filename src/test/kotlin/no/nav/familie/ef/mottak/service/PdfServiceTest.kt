@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 
 internal class PdfServiceTest {
-
     private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingRepository: EttersendingRepository = mockk()
@@ -32,37 +31,40 @@ internal class PdfServiceTest {
 
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
-    private val søknadOvergangsstønad = Søknad(
-        id = søknadOvergangsstønadId,
-        søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
-        søknadPdf = null,
-        fnr = "654",
-        dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-        journalpostId = null,
-        saksnummer = null,
-    )
+    private val søknadOvergangsstønad =
+        Søknad(
+            id = søknadOvergangsstønadId,
+            søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
+            søknadPdf = null,
+            fnr = "654",
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            journalpostId = null,
+            saksnummer = null,
+        )
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
-    private val søknadSkolepenger = Søknad(
-        id = søknadSkolepengerId,
-        søknadJson = createValidSøknadJson(Testdata.søknadSkolepenger),
-        søknadPdf = null,
-        fnr = "654",
-        dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
-        journalpostId = null,
-        saksnummer = null,
-    )
+    private val søknadSkolepenger =
+        Søknad(
+            id = søknadSkolepengerId,
+            søknadJson = createValidSøknadJson(Testdata.søknadSkolepenger),
+            søknadPdf = null,
+            fnr = "654",
+            dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+            journalpostId = null,
+            saksnummer = null,
+        )
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
-    private val søknadBarnetilsyn = Søknad(
-        id = søknadBarnetilsynId,
-        søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
-        søknadPdf = null,
-        fnr = "654",
-        dokumenttype = DOKUMENTTYPE_BARNETILSYN,
-        journalpostId = null,
-        saksnummer = null,
-    )
+    private val søknadBarnetilsyn =
+        Søknad(
+            id = søknadBarnetilsynId,
+            søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
+            søknadPdf = null,
+            fnr = "654",
+            dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+            journalpostId = null,
+            saksnummer = null,
+        )
 
     @BeforeEach
     fun setUp() {

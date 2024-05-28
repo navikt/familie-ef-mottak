@@ -14,12 +14,14 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object SøknadMapper {
-
     inline fun <reified T : Any> toDto(søknad: Søknad): T {
         return objectMapper.readValue(søknad.søknadJson.data)
     }
 
-    fun fromDto(søknad: SøknadOvergangsstønad, behandleINySaksbehandling: Boolean): Søknad {
+    fun fromDto(
+        søknad: SøknadOvergangsstønad,
+        behandleINySaksbehandling: Boolean,
+    ): Søknad {
         return Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
@@ -28,7 +30,10 @@ object SøknadMapper {
         )
     }
 
-    fun fromDto(søknad: SøknadBarnetilsyn, behandleINySaksbehandling: Boolean): Søknad {
+    fun fromDto(
+        søknad: SøknadBarnetilsyn,
+        behandleINySaksbehandling: Boolean,
+    ): Søknad {
         return Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
@@ -46,7 +51,10 @@ object SøknadMapper {
         )
     }
 
-    fun fromDto(søknadSkolepenger: SøknadSkolepenger, behandleINySaksbehandling: Boolean): Søknad {
+    fun fromDto(
+        søknadSkolepenger: SøknadSkolepenger,
+        behandleINySaksbehandling: Boolean,
+    ): Søknad {
         return Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknadSkolepenger)),
             fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,

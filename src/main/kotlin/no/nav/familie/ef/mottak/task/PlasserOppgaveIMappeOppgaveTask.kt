@@ -12,17 +12,16 @@ import org.springframework.stereotype.Service
     beskrivelse = "Oppdater oppgave med riktig mappeId",
 )
 class PlasserOppgaveIMappeOppgaveTask(private val oppgaveService: OppgaveService) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
-        val oppgaveId = task.metadata[LagJournalføringsoppgaveTask.journalføringOppgaveIdKey]?.toString()?.toLong()
-            ?: error("Kan ikke finne oppgaveId")
+        val oppgaveId =
+            task.metadata[LagJournalføringsoppgaveTask.JOURNALFØRING_OPPGAVE_ID_KEY]?.toString()?.toLong()
+                ?: error("Kan ikke finne oppgaveId")
 
         val søknadId = task.payload
         oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, søknadId)
     }
 
     companion object {
-
         const val TYPE = "plasserOppgaveIMappe"
     }
 }

@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class PersonController(val søknadService: SøknadService) {
-
     @PostMapping("soknader")
-    fun søknaderForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<SøknadMedDokumentasjonsbehovDto>> {
+    fun søknaderForPerson(
+        @RequestBody personIdent: PersonIdent,
+    ): ResponseEntity<List<SøknadMedDokumentasjonsbehovDto>> {
         if (!EksternBrukerUtils.personIdentErLikInnloggetBruker(personIdent.ident)) {
             throw ApiFeil("Fnr fra token matcher ikke fnr i request", HttpStatus.FORBIDDEN)
         }

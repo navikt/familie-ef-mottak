@@ -24,7 +24,6 @@ import java.util.Properties
 import java.util.UUID
 
 internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
-
     private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadService: SøknadService
@@ -80,7 +79,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         verify {
             dittNavKafkaProducer wasNot called
         }
-        verify (exactly = 0){
+        verify(exactly = 0) {
             taskService.save(any())
         }
     }
@@ -91,7 +90,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", true, emptyList())),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
-        verify (exactly = 0){
+        verify(exactly = 0) {
             taskService.save(any())
         }
     }
@@ -114,7 +113,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
             "Vi har mottatt søknaden din om overgangsstønad.",
         )
-        verify (exactly = 0){
+        verify(exactly = 0) {
             taskService.save(any())
         }
     }
@@ -128,15 +127,15 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadService.get(any())
         }
-        verify (exactly = 0){
+        verify(exactly = 0) {
             søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
 
-        verify (exactly = 0){
+        verify(exactly = 0) {
             taskService.save(any())
         }
 
-        verify{
+        verify {
             dittNavKafkaProducer wasNot called
         }
     }
@@ -179,7 +178,6 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     }
 
     companion object {
-
         private const val SØKNAD_ID = "e8703be6-eb47-476a-ae52-096df47430d6"
         private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
         private const val FNR = "12345678901"

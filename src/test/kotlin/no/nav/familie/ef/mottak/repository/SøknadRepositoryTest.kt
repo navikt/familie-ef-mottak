@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
 
 internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var søknadRepository: SøknadRepository
 
@@ -56,30 +55,33 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     internal fun `findAllByFnr returnerer flere søknader`() {
         val ident = "12345678"
 
-        val søknad = Søknad(
-            søknadJson = EncryptedString("kåre"),
-            fnr = ident,
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            taskOpprettet = true,
-            opprettetTid = LocalDateTime.now().minusDays(1),
-        )
-        val søknad2 = Søknad(
-            søknadJson = EncryptedString("kåre"),
-            fnr = ident,
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            taskOpprettet = true,
-        )
-        søknadRepository.insert(søknad)
-        val søknadOvergangsstønad = søknadRepository.insert(søknad2)
-
-        val søknadBarnetilsyn = søknadRepository.insert(
+        val søknad =
             Søknad(
                 søknadJson = EncryptedString("kåre"),
                 fnr = ident,
-                dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 taskOpprettet = true,
-            ),
-        )
+                opprettetTid = LocalDateTime.now().minusDays(1),
+            )
+        val søknad2 =
+            Søknad(
+                søknadJson = EncryptedString("kåre"),
+                fnr = ident,
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                taskOpprettet = true,
+            )
+        søknadRepository.insert(søknad)
+        val søknadOvergangsstønad = søknadRepository.insert(søknad2)
+
+        val søknadBarnetilsyn =
+            søknadRepository.insert(
+                Søknad(
+                    søknadJson = EncryptedString("kåre"),
+                    fnr = ident,
+                    dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                    taskOpprettet = true,
+                ),
+            )
 
         val søknader = søknadRepository.finnSisteSøknadenPerStønadtype(ident)
 

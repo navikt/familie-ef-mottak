@@ -15,7 +15,6 @@ class PdfClient(
     private val pdfgeneratorConfig: PdfgeneratorConfig,
 ) :
     AbstractRestClient(operations, "pdf") {
-
     fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
         val sendInnUri =
             DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/api/generer-soknad").build()

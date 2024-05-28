@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class ArkiverDokumentRequestMapperTest {
-
     @Test
     internal fun `overgangsstønad toDto - sjekk alle felt`() {
         val vedlegg = lagVedlegg()
@@ -64,12 +63,16 @@ internal class ArkiverDokumentRequestMapperTest {
         ).withFailMessage("Skjema arbeidssøker kan ikke ha vedlegg")
     }
 
-    private fun lagSøknad(søknad: Any, dokumenttype: String): Søknad = Søknad(
-        søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
-        fnr = "123",
-        søknadPdf = EncryptedFile(byteArrayOf(12)),
-        dokumenttype = dokumenttype,
-    )
+    private fun lagSøknad(
+        søknad: Any,
+        dokumenttype: String,
+    ): Søknad =
+        Søknad(
+            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
+            fnr = "123",
+            søknadPdf = EncryptedFile(byteArrayOf(12)),
+            dokumenttype = dokumenttype,
+        )
 
     private fun lagVedlegg() = Vedlegg(UUID.randomUUID(), "id", "navn", "tittel", EncryptedFile(byteArrayOf(12)))
 }

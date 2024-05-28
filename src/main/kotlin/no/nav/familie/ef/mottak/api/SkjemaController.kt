@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class SkjemaController(val søknadService: SøknadService) {
-
     @PostMapping
-    fun sendInn(@RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+    fun sendInn(
+        @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
+    ): Kvittering {
         return søknadService.motta(skjemaForArbeidssøker)
     }
 }

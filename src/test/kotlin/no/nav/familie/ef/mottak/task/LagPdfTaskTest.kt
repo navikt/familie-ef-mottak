@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 internal class LagPdfTaskTest {
-
     private val taskService: TaskService = mockk()
     private val lagPdfTask: LagPdfTask = LagPdfTask(mockk(), taskService)
 

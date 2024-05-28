@@ -22,11 +22,13 @@ class JournalfoeringHendelseDbUtil(
     val taskService: TaskService,
     val taskRepositoryUtvidet: TaskRepositoryUtvidet,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(JournalfoeringHendelseDbUtil::class.java)
 
     @Transactional
-    fun lagreHendelseslogg(hendelseRecord: JournalfoeringHendelseRecord, offset: Long): Hendelseslogg {
+    fun lagreHendelseslogg(
+        hendelseRecord: JournalfoeringHendelseRecord,
+        offset: Long,
+    ): Hendelseslogg {
         return hendelseloggRepository
             .insert(
                 Hendelseslogg(
@@ -42,8 +44,7 @@ class JournalfoeringHendelseDbUtil(
             )
     }
 
-    fun erHendelseRegistrertIHendelseslogg(hendelsesId: String) =
-        hendelseloggRepository.existsByHendelseId(hendelsesId)
+    fun erHendelseRegistrertIHendelseslogg(hendelsesId: String) = hendelseloggRepository.existsByHendelseId(hendelsesId)
 
     fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
         return !taskRepositoryUtvidet.existsByPayloadAndType(
@@ -53,11 +54,12 @@ class JournalfoeringHendelseDbUtil(
     }
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
-        val journalføringsTask = Task(
-            type = eksternJournalføringFlyt().first().type,
-            payload = journalpost.journalpostId,
-            properties = journalpost.metadata(),
-        ).medTriggerTid(LocalDateTime.now().plusMinutes(15))
+        val journalføringsTask =
+            Task(
+                type = eksternJournalføringFlyt().first().type,
+                payload = journalpost.journalpostId,
+                properties = journalpost.metadata(),
+            ).medTriggerTid(LocalDateTime.now().plusMinutes(15))
         taskService.save(journalføringsTask)
     }
 }

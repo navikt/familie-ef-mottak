@@ -27,7 +27,6 @@ class EttersendingService(
     private val dokumentClient: FamilieDokumentClient,
     private val taskProsesseringService: TaskProsesseringService,
 ) {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
@@ -46,8 +45,7 @@ class EttersendingService(
         }
     }
 
-    fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> =
-        ettersendingRepository.findAllByFnr(personIdent.ident)
+    fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> = ettersendingRepository.findAllByFnr(personIdent.ident)
 
     private fun mapVedlegg(
         ettersendingDbId: UUID,
@@ -106,15 +104,17 @@ class EttersendingService(
     fun trekkUtEttersendingTilEgenTaskForVedlegg(ettersendingVedleggId: UUID): UUID {
         val ettersendingId = ettersendingVedleggRepository.findEttersendingIdById(ettersendingVedleggId)
         val ettersending = ettersendingRepository.findByIdOrThrow(ettersendingId)
-        val nyEttersending = ettersending.copy(
-            id = UUID.randomUUID(),
-            taskOpprettet = false,
-        )
+        val nyEttersending =
+            ettersending.copy(
+                id = UUID.randomUUID(),
+                taskOpprettet = false,
+            )
         ettersendingRepository.insert(nyEttersending)
-        val antallOppdatert = ettersendingVedleggRepository.oppdaterEttersendingIdForVedlegg(
-            id = ettersendingVedleggId,
-            ettersendingId = nyEttersending.id,
-        )
+        val antallOppdatert =
+            ettersendingVedleggRepository.oppdaterEttersendingIdForVedlegg(
+                id = ettersendingVedleggId,
+                ettersendingId = nyEttersending.id,
+            )
         if (antallOppdatert != 1) {
             error("Fikk enten oppdatert for mange eller for få rader i ettersendingVedlegg. Antall oppdatert: $antallOppdatert")
         }

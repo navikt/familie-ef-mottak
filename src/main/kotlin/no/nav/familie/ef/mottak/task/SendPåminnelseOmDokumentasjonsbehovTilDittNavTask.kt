@@ -40,7 +40,6 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     private val ettersendingConfig: EttersendingConfig,
     private val saksbehandlingClient: SaksbehandlingClient,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val dokumentasjonsbehovVarslingerSendt = counter("alene.med.barn.dokumentasjonsbehovvarsling.sendt")
@@ -109,15 +108,23 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         }
     }
 
-    private fun harSendtInnNySøknad(søknad: Søknad, søknader: List<Søknad>): Boolean =
+    private fun harSendtInnNySøknad(
+        søknad: Søknad,
+        søknader: List<Søknad>,
+    ): Boolean =
         søknader.filter { it.id != søknad.id }
             .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype) != SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER }
             .any { it.opprettetTid > søknad.opprettetTid }
 
-    private fun harSendtInnEttersendingIEttertid(søknad: Søknad, ettersendinger: List<Ettersending>): Boolean =
-        ettersendinger.any { it.opprettetTid > søknad.opprettetTid }
+    private fun harSendtInnEttersendingIEttertid(
+        søknad: Søknad,
+        ettersendinger: List<Ettersending>,
+    ): Boolean = ettersendinger.any { it.opprettetTid > søknad.opprettetTid }
 
-    private fun tilhørendeBehandleSakOppgaveErPåbegynt(søknad: Søknad, stønadType: StønadType): Boolean =
+    private fun tilhørendeBehandleSakOppgaveErPåbegynt(
+        søknad: Søknad,
+        stønadType: StønadType,
+    ): Boolean =
         saksbehandlingClient.kanSendePåminnelseTilBruker(
             KanSendePåminnelseRequest(
                 personIdent = søknad.fnr,
@@ -134,15 +141,15 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     }
 
     companion object {
-
         const val TYPE = "SendPåminnelseOmDokumentasjonTilDittNav"
 
-        fun opprettTask(task: Task) = Task(
-            TYPE,
-            task.payload,
-            Properties(task.metadata).apply {
-                this["eventId"] = UUID.randomUUID().toString()
-            },
-        ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0))
+        fun opprettTask(task: Task) =
+            Task(
+                TYPE,
+                task.payload,
+                Properties(task.metadata).apply {
+                    this["eventId"] = UUID.randomUUID().toString()
+                },
+            ).medTriggerTid(VirkedagerProvider.nesteVirkedag(LocalDate.now().plusDays(2)).atTime(10, 0))
     }
 }

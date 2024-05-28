@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/api/statistikk"])
 @ProtectedWithClaims(issuer = "azuread")
 class StatistikkController(private val statistikkRepository: StatistikkRepository) {
-
-    val minSize = listOf(
-        DOKUMENTTYPE_OVERGANGSSTØNAD,
-        DOKUMENTTYPE_BARNETILSYN,
-        DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
-        DOKUMENTTYPE_SKOLEPENGER,
-    ).maxOf { it.length }
+    val minSize =
+        listOf(
+            DOKUMENTTYPE_OVERGANGSSTØNAD,
+            DOKUMENTTYPE_BARNETILSYN,
+            DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
+            DOKUMENTTYPE_SKOLEPENGER,
+        ).maxOf { it.length }
 
     @GetMapping("soknader", produces = [MediaType.TEXT_PLAIN_VALUE])
     fun søknader(): String {

@@ -21,27 +21,28 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 internal class LagEksternJournalføringsoppgaveTaskTest {
-
     private val ettersendingRepository = mockk<EttersendingRepository>()
     private val søknadRepository = mockk<SøknadRepository>()
     private val oppgaveServie = mockk<OppgaveService>()
     private val journalpostClient = mockk<IntegrasjonerClient>()
-    private val lagEksternJournalføringsoppgaveTask = LagEksternJournalføringsoppgaveTask(
-        ettersendingRepository,
-        oppgaveServie,
-        søknadRepository,
-        journalpostClient,
-    )
+    private val lagEksternJournalføringsoppgaveTask =
+        LagEksternJournalføringsoppgaveTask(
+            ettersendingRepository,
+            oppgaveServie,
+            søknadRepository,
+            journalpostClient,
+        )
 
-    private val journalpost = Journalpost(
-        "123",
-        Journalposttype.I,
-        Journalstatus.MOTTATT,
-        tema = "ENF",
-        behandlingstema = "abc123",
-        bruker = Bruker("213", BrukerIdType.FNR),
-        kanal = "NAV_NO",
-    )
+    private val journalpost =
+        Journalpost(
+            "123",
+            Journalposttype.I,
+            Journalstatus.MOTTATT,
+            tema = "ENF",
+            behandlingstema = "abc123",
+            bruker = Bruker("213", BrukerIdType.FNR),
+            kanal = "NAV_NO",
+        )
 
     @Test
     internal fun `skal opprette ekstern journalføringstask`() {
