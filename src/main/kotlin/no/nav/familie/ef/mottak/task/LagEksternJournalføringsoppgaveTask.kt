@@ -22,7 +22,6 @@ class LagEksternJournalføringsoppgaveTask(
     private val søknadRepository: SøknadRepository,
     private val journalpostClient: IntegrasjonerClient,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -38,18 +37,18 @@ class LagEksternJournalføringsoppgaveTask(
         } else if (finnesIkkeSøknadMedJournalpostId(journalpostId) && finnesIkkeEttersendingMedJournalpostId(journalpostId)) {
             oppgaveService.lagJournalføringsoppgaveForJournalpostId(journalpostId)
         } else {
-            logger.info("Lager ikke oppgave for journalpostId=$journalpostId da denne allerede håndteres av normal journalføringsløype i mottak")
+            logger.info(
+                "Lager ikke oppgave for journalpostId=$journalpostId da denne allerede håndteres av normal journalføringsløype i mottak",
+            )
         }
     }
 
-    private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) =
-        søknadRepository.findByJournalpostId(journalpostId) == null
+    private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) = søknadRepository.findByJournalpostId(journalpostId) == null
 
     private fun finnesIkkeEttersendingMedJournalpostId(journalpostId: String) =
         ettersendingRepository.findByJournalpostId(journalpostId) == null
 
     companion object {
-
         const val TYPE = "lagEksternJournalføringsoppgave"
     }
 }

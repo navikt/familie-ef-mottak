@@ -13,7 +13,6 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 object Feltformaterer {
-
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
@@ -54,8 +53,11 @@ object Feltformaterer {
     }
 
     private fun tilUtskriftsformat(verdi: Boolean) = if (verdi) "Ja" else "Nei"
+
     private fun tilUtskriftsformat(verdi: Double) = String.format("%.2f", verdi).replace(".", ",")
+
     private fun tilUtskriftsformat(verdi: Month) = verdi.getDisplayName(TextStyle.FULL, Locale("no"))
+
     private fun tilUtskriftsformat(verdi: LocalDateTime) = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
 
     private fun tilUtskriftsformat(verdi: MånedÅrPeriode): String {
@@ -78,7 +80,11 @@ object Feltformaterer {
         ).joinToString("\n\n")
     }
 
-    fun feltMap(label: String, verdi: String, alternativer: List<String>? = null): Map<String, String> {
+    fun feltMap(
+        label: String,
+        verdi: String,
+        alternativer: List<String>? = null,
+    ): Map<String, String> {
         return if (alternativer != null) {
             mapOf("label" to label, "verdi" to verdi, "alternativer" to alternativer.joinToString(" / "))
         } else {

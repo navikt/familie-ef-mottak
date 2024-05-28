@@ -10,6 +10,5 @@ import java.util.UUID
 interface HendelsesloggRepository :
     RepositoryInterface<Hendelseslogg, UUID>,
     InsertUpdateRepository<Hendelseslogg> {
-
     fun existsByHendelseId(hendelseId: String): Boolean
 }

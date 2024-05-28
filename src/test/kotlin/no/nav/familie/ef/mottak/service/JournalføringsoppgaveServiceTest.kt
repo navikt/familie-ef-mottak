@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import java.util.Properties
 
 class JournalføringsoppgaveServiceTest {
-
     lateinit var service: JournalføringsoppgaveService
 
     @MockK
@@ -60,11 +59,12 @@ class JournalføringsoppgaveServiceTest {
         mockJournalfoeringHendelseDbUtil =
             JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskService, mockTaskRepositoryUtvidet)
 
-        service = JournalføringsoppgaveService(
-            mockSøknadRepository,
-            mockEttersendingRepository,
-            mockJournalfoeringHendelseDbUtil,
-        )
+        service =
+            JournalføringsoppgaveService(
+                mockSøknadRepository,
+                mockEttersendingRepository,
+                mockJournalfoeringHendelseDbUtil,
+            )
     }
 
     @Test
@@ -122,15 +122,16 @@ class JournalføringsoppgaveServiceTest {
 
     @Test
     fun `Journalposter som er mottatt uten ettersending eller søknad skal opprettes`() {
-        journalpost = Journalpost(
-            "123",
-            Journalposttype.I,
-            Journalstatus.MOTTATT,
-            tema = "ENF",
-            behandlingstema = "abc123",
-            bruker = Bruker("213", BrukerIdType.FNR),
-            kanal = "NAV_NO",
-        )
+        journalpost =
+            Journalpost(
+                "123",
+                Journalposttype.I,
+                Journalstatus.MOTTATT,
+                tema = "ENF",
+                behandlingstema = "abc123",
+                bruker = Bruker("213", BrukerIdType.FNR),
+                kanal = "NAV_NO",
+            )
         every { mockEttersendingRepository.findByJournalpostId(any()) } returns null
         every { mockSøknadRepository.findByJournalpostId(any()) } returns null
         every { mockTaskService.save(any()) } returns Task("", "", Properties())

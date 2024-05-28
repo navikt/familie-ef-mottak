@@ -24,7 +24,6 @@ class TaskProsesseringService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
 ) {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional

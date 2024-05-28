@@ -20,14 +20,16 @@ class JournalhendelseService(
     val journalføringsoppgaveService: JournalføringsoppgaveService,
     val taskService: TaskRepositoryUtvidet,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseService::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     val alleredeBehandletJournalpostCounter: Counter =
         Metrics.counter("alene.med.barn.journalhendelse.alleredeBehandletJournalpostHendelse")
 
     @Transactional
-    fun prosesserNyHendelse(hendelseRecord: JournalfoeringHendelseRecord, offset: Long) {
+    fun prosesserNyHendelse(
+        hendelseRecord: JournalfoeringHendelseRecord,
+        offset: Long,
+    ) {
         secureLogger.info("Mottatt gyldig hendelse: $hendelseRecord")
         if (!journalfoeringHendelseDbUtil.erHendelseRegistrertIHendelseslogg(hendelseRecord.hendelsesId.toString())) {
             if (journalfoeringHendelseDbUtil.harIkkeOpprettetOppgaveForJournalpost(hendelseRecord)) {

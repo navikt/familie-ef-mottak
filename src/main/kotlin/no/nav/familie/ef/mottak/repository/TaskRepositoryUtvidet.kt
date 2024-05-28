@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TaskRepositoryUtvidet : org.springframework.data.repository.Repository<Task, Long> {
-
-    fun existsByPayloadAndType(payload: String, type: String): Boolean
+    fun existsByPayloadAndType(
+        payload: String,
+        type: String,
+    ): Boolean
 }

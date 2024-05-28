@@ -28,10 +28,12 @@ class MappeService(
     private val søknadService: SøknadService,
     private val cacheManager: CacheManager,
 ) {
-
     val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun finnMappeIdForSøknadOgEnhet(søknadId: String, enhetsnummer: String?): Long? {
+    fun finnMappeIdForSøknadOgEnhet(
+        søknadId: String,
+        enhetsnummer: String?,
+    ): Long? {
         if (enhetsnummer != OppgaveService.ENHETSNUMMER_NAY) {
             return null
         }
@@ -42,12 +44,13 @@ class MappeService(
 
     private fun finnMapperForEnhet(enhetsnummer: String): FinnMappeResponseDto {
         return cacheManager.getValue("oppgave-mappe", enhetsnummer) {
-            val finnMappeRequest = FinnMappeRequest(
-                tema = listOf(),
-                enhetsnr = enhetsnummer,
-                opprettetFom = null,
-                limit = 1000,
-            )
+            val finnMappeRequest =
+                FinnMappeRequest(
+                    tema = listOf(),
+                    enhetsnr = enhetsnummer,
+                    opprettetFom = null,
+                    limit = 1000,
+                )
             val mapperResponse = integrasjonerClient.finnMappe(finnMappeRequest)
             log.info("Mapper funnet: Antall: ${mapperResponse.antallTreffTotalt}, ${mapperResponse.mapper} ")
 
@@ -66,7 +69,10 @@ class MappeService(
         }
     }
 
-    private fun utledMappeForSøkestreng(mapperResponse: FinnMappeResponseDto, søkestreng: MappeSøkestreng): MappeDto? {
+    private fun utledMappeForSøkestreng(
+        mapperResponse: FinnMappeResponseDto,
+        søkestreng: MappeSøkestreng,
+    ): MappeDto? {
         return if (UPLASSERT == søkestreng) {
             null
         } else {
@@ -87,8 +93,7 @@ class MappeService(
         }
     }
 
-    private fun erSærligTilsynskrevende(søknadsdata: SøknadOvergangsstønad) =
-        søknadsdata.situasjon.verdi.barnMedSærligeBehov?.verdi != null
+    private fun erSærligTilsynskrevende(søknadsdata: SøknadOvergangsstønad) = søknadsdata.situasjon.verdi.barnMedSærligeBehov?.verdi != null
 
     private fun mappeFraBarnetilsyn(søknad: Søknad): MappeSøkestreng {
         val søknadsdata = objectMapper.readValue<SøknadBarnetilsyn>(søknad.søknadJson.data)

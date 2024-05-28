@@ -13,7 +13,6 @@ class LagPdfTask(
     private val pdfService: PdfService,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
-
     override fun doTask(task: Task) {
         pdfService.lagPdf(task.payload)
     }
@@ -29,7 +28,6 @@ class LagPdfTask(
     }
 
     companion object {
-
         const val TYPE = "lagPdf"
     }
 }

@@ -24,14 +24,17 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class EttersendingController(val ettersendingService: EttersendingService) {
-
     @PostMapping
-    fun ettersend(@RequestBody ettersending: Map<StønadType, EttersendelseDto>): Kvittering {
+    fun ettersend(
+        @RequestBody ettersending: Map<StønadType, EttersendelseDto>,
+    ): Kvittering {
         return okEllerKastException { ettersendingService.mottaEttersending(ettersending) }
     }
 
     @PostMapping("person")
-    fun hentForPerson(@RequestBody personIdent: PersonIdent): ResponseEntity<List<EttersendelseDto>> {
+    fun hentForPerson(
+        @RequestBody personIdent: PersonIdent,
+    ): ResponseEntity<List<EttersendelseDto>> {
         if (!personIdentErLikInnloggetBruker(personIdent.ident)) {
             throw ApiFeil("Fnr fra token matcher ikke fnr i request", HttpStatus.FORBIDDEN)
         }

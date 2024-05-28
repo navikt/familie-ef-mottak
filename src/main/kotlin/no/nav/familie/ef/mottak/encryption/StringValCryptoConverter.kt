@@ -7,7 +7,6 @@ data class EncryptedString(val data: String)
 
 @WritingConverter
 class StringValCryptoWritingConverter : AbstractCryptoWritingConverter<EncryptedString?>() {
-
     override fun entityAttributeToByteArray(attribute: EncryptedString?): ByteArray? {
         return attribute?.data?.toByteArray()
     }
@@ -15,7 +14,6 @@ class StringValCryptoWritingConverter : AbstractCryptoWritingConverter<Encrypted
 
 @ReadingConverter
 class StringValCryptoReadingConverter : AbstractCryptoReadingConverter<EncryptedString?>() {
-
     override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedString? {
         return dbData?.let { EncryptedString(String(it)) }
     }

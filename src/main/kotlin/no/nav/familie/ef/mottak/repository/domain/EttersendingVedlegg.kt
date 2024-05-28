@@ -11,9 +11,7 @@ data class EttersendingVedlegg(
     val tittel: String,
     val innhold: EncryptedFile,
 ) {
-
     companion object {
-
         const val UPDATE_FEILMELDING: String = "Det går ikke å oppdatere vedlegg"
     }
 }

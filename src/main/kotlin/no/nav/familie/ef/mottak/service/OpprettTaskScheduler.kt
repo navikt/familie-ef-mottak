@@ -14,7 +14,6 @@ class OpprettTaskScheduler(
     private val ettersendingRepository: EttersendingRepository,
     private val taskProsesseringService: TaskProsesseringService,
 ) {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(initialDelay = 10000, fixedDelay = 1000 * 60)

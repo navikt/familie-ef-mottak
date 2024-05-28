@@ -24,7 +24,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class AutomatiskJournalføringServiceTest {
-
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
     private val featureToggleService = mockk<FeatureToggleService>()
     private val søknad = SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, true)
@@ -36,10 +35,11 @@ internal class AutomatiskJournalføringServiceTest {
             saksbehandlingClient = saksbehandlingClient,
         )
 
-    private val automatiskJournalføringResponse = AutomatiskJournalføringResponse(
-        fagsakId = UUID.randomUUID(),
-        behandlingId = UUID.randomUUID(),
-    )
+    private val automatiskJournalføringResponse =
+        AutomatiskJournalføringResponse(
+            fagsakId = UUID.randomUUID(),
+            behandlingId = UUID.randomUUID(),
+        )
 
     private val mappeId = 1L
 
@@ -84,25 +84,27 @@ internal class AutomatiskJournalføringServiceTest {
 
     @Nested
     inner class Prioritet {
-
         @Test
         internal fun `skal sette høy prioritet når søknad har aktivitet under utdanning i sommerperiode`() {
             val automatiskJournalføringRequestSlot = slot<AutomatiskJournalføringRequest>()
             val sommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
-            val soknad = SøknadMapper.fromDto(
-                Testdata.søknadOvergangsstønad.copy(
-                    aktivitet = Søknadsfelt(
-                        "aktivitet",
-                        tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+            val soknad =
+                SøknadMapper.fromDto(
+                    Testdata.søknadOvergangsstønad.copy(
+                        aktivitet =
+                            Søknadsfelt(
+                                "aktivitet",
+                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+                            ),
                     ),
-                ),
-                true,
-            ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+                    true,
+                ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
 
-            every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns AutomatiskJournalføringResponse(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-            )
+            every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns
+                AutomatiskJournalføringResponse(
+                    UUID.randomUUID(),
+                    UUID.randomUUID(),
+                )
 
             automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
@@ -119,20 +121,23 @@ internal class AutomatiskJournalføringServiceTest {
         internal fun `skal ikke sette høy prioritet når søknad har aktivitet utenfor sommerperiode`() {
             val automatiskJournalføringRequestSlot = slot<AutomatiskJournalføringRequest>()
             val sommertid = LocalDate.of(LocalDateTime.now().year, 2, 20)
-            val soknad = SøknadMapper.fromDto(
-                Testdata.søknadOvergangsstønad.copy(
-                    aktivitet = Søknadsfelt(
-                        "aktivitet",
-                        tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+            val soknad =
+                SøknadMapper.fromDto(
+                    Testdata.søknadOvergangsstønad.copy(
+                        aktivitet =
+                            Søknadsfelt(
+                                "aktivitet",
+                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+                            ),
                     ),
-                ),
-                true,
-            ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+                    true,
+                ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
 
-            every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns AutomatiskJournalføringResponse(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-            )
+            every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns
+                AutomatiskJournalføringResponse(
+                    UUID.randomUUID(),
+                    UUID.randomUUID(),
+                )
 
             automatiskJournalføringService.journalførAutomatisk(
                 personIdent = "",
@@ -144,24 +149,26 @@ internal class AutomatiskJournalføringServiceTest {
             Assertions.assertThat(automatiskJournalføringRequestSlot.captured.prioritet).isEqualTo(OppgavePrioritet.NORM)
         }
 
-        val tomAktivitet = Aktivitet(
-            hvordanErArbeidssituasjonen = Søknadsfelt(
-                "Hvordan er arbeidssituasjonen din?",
-                listOf(
-                    "Jeg er hjemme med barn under 1 år",
-                    "Jeg er i arbeid",
-                    "Jeg er selvstendig næringsdrivende eller frilanser",
-                ),
-            ),
-            arbeidsforhold = null,
-            selvstendig = null,
-            firmaer = null,
-            virksomhet = null,
-            arbeidssøker = null,
-            underUtdanning = null,
-            aksjeselskap = null,
-            erIArbeid = null,
-            erIArbeidDokumentasjon = null,
-        )
+        val tomAktivitet =
+            Aktivitet(
+                hvordanErArbeidssituasjonen =
+                    Søknadsfelt(
+                        "Hvordan er arbeidssituasjonen din?",
+                        listOf(
+                            "Jeg er hjemme med barn under 1 år",
+                            "Jeg er i arbeid",
+                            "Jeg er selvstendig næringsdrivende eller frilanser",
+                        ),
+                    ),
+                arbeidsforhold = null,
+                selvstendig = null,
+                firmaer = null,
+                virksomhet = null,
+                arbeidssøker = null,
+                underUtdanning = null,
+                aksjeselskap = null,
+                erIArbeid = null,
+                erIArbeidDokumentasjon = null,
+            )
     }
 }

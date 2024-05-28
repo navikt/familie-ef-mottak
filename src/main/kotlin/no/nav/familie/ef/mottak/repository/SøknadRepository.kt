@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 interface SøknadRepository :
     RepositoryInterface<Søknad, String>,
     InsertUpdateRepository<Søknad> {
-
     fun findFirstByTaskOpprettetIsFalse(): Søknad?
 
     fun findByJournalpostId(jounalpostId: String): Søknad?
@@ -37,7 +36,10 @@ interface SøknadRepository :
         SELECT * FROM soknad WHERE fnr=:fnr AND dokumenttype=:stønadstype ORDER BY opprettet_tid DESC LIMIT 1
         """,
     )
-    fun finnSisteSøknadForPersonOgStønadstype(fnr: String, stønadstype: String): Søknad?
+    fun finnSisteSøknadForPersonOgStønadstype(
+        fnr: String,
+        stønadstype: String,
+    ): Søknad?
 
     fun countByTaskOpprettetFalseAndOpprettetTidBefore(opprettetTid: LocalDateTime = LocalDateTime.now().minusHours(2)): Long
 

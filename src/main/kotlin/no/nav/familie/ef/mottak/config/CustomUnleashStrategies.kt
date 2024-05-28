@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class CustomUnleashStrategies {
-
     @Bean
     fun strategies(): List<Strategy> {
         return listOf(ByEnvironmentStrategy())

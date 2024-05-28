@@ -23,17 +23,17 @@ import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
 internal class EttersendingServiceTest {
-
     private val ettersendingRepository = mockk<EttersendingRepository>(relaxed = true)
     private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>(relaxed = true)
     private val dokumentClient = mockFamilieDokumentClient()
 
-    private val ettersendingService = EttersendingService(
-        ettersendingRepository = ettersendingRepository,
-        ettersendingVedleggRepository = ettersendingVedleggRepository,
-        dokumentClient = dokumentClient,
-        taskProsesseringService = mockk(relaxed = true),
-    )
+    private val ettersendingService =
+        EttersendingService(
+            ettersendingRepository = ettersendingRepository,
+            ettersendingVedleggRepository = ettersendingVedleggRepository,
+            dokumentClient = dokumentClient,
+            taskProsesseringService = mockk(relaxed = true),
+        )
 
     private val dokument1 = "1234".toByteArray()
     private val dokument2 = "999111".toByteArray()
@@ -52,24 +52,26 @@ internal class EttersendingServiceTest {
         val dokument2 = "999111".toByteArray()
         val vedlegg1 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 1", "Vedleggtittel 1")
         val vedlegg2 = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
-        val dokumentasjonsbehov1 = Dokumentasjonsbehov(
-            id = UUID.randomUUID().toString(),
-            søknadsdata = null,
-            dokumenttype = "DOKUMENTASJON_LÆRLING",
-            beskrivelse = "Lærlingekontrakt",
-            stønadType = StønadType.OVERGANGSSTØNAD,
-            innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg1),
-        )
-        val dokumentasjonsbehov2 = Dokumentasjonsbehov(
-            id = UUID.randomUUID().toString(),
-            søknadsdata = null,
-            dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-            beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
-            stønadType = StønadType.OVERGANGSSTØNAD,
-            innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg2),
-        )
+        val dokumentasjonsbehov1 =
+            Dokumentasjonsbehov(
+                id = UUID.randomUUID().toString(),
+                søknadsdata = null,
+                dokumenttype = "DOKUMENTASJON_LÆRLING",
+                beskrivelse = "Lærlingekontrakt",
+                stønadType = StønadType.OVERGANGSSTØNAD,
+                innsendingstidspunkt = null,
+                vedlegg = listOf(vedlegg1),
+            )
+        val dokumentasjonsbehov2 =
+            Dokumentasjonsbehov(
+                id = UUID.randomUUID().toString(),
+                søknadsdata = null,
+                dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
+                beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
+                stønadType = StønadType.OVERGANGSSTØNAD,
+                innsendingstidspunkt = null,
+                vedlegg = listOf(vedlegg2),
+            )
         val personIdent = "123456789010"
         val ettersendingSlot = slot<Ettersending>()
         val ettersendingVedleggSlot = slot<List<EttersendingVedlegg>>()
@@ -85,13 +87,14 @@ internal class EttersendingServiceTest {
 
         ettersendingService.mottaEttersending(
             mapOf(
-                StønadType.OVERGANGSSTØNAD to EttersendelseDto(
-                    listOf(
-                        dokumentasjonsbehov1,
-                        dokumentasjonsbehov2,
+                StønadType.OVERGANGSSTØNAD to
+                    EttersendelseDto(
+                        listOf(
+                            dokumentasjonsbehov1,
+                            dokumentasjonsbehov2,
+                        ),
+                        personIdent = personIdent,
                     ),
-                    personIdent = personIdent,
-                ),
             ),
         )
 
@@ -113,7 +116,6 @@ internal class EttersendingServiceTest {
 
     @Nested
     inner class SlettSøknad {
-
         @Test
         fun `for ettersending som ikke er journalført feiler`() {
             val ettersending = Ettersending(ettersendingJson = EncryptedString(""), fnr = "321321", stønadType = "OS")

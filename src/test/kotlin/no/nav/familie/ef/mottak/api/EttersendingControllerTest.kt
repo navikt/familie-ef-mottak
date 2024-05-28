@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
-
     @BeforeEach
     fun setUp() {
         headers.setBearerAuth(søkerBearerToken())
@@ -24,11 +23,12 @@ internal class EttersendingControllerTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `kall for å sende inn ettersending går fint`() {
-        val response: ResponseEntity<Any> = restTemplate.exchange(
-            localhost("/api/ettersending"),
-            HttpMethod.POST,
-            HttpEntity(request(), headers),
-        )
+        val response: ResponseEntity<Any> =
+            restTemplate.exchange(
+                localhost("/api/ettersending"),
+                HttpMethod.POST,
+                HttpEntity(request(), headers),
+            )
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
     }
 

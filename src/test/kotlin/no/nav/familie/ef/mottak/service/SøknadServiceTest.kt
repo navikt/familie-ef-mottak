@@ -23,7 +23,6 @@ import java.util.UUID
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 
 class SøknadServiceTest {
-
     private val søknadRepository = mockk<SøknadRepository>(relaxed = true)
     private val vedleggRepository = mockk<VedleggRepository>(relaxed = true)
     private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>(relaxed = true)
@@ -35,20 +34,22 @@ class SøknadServiceTest {
     @Test
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
         val fnr = "12345678"
-        val søknader = listOf(
-            SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
-            SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
-            SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
-            SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
-        )
-        val forventetDokumentasjonsbehov = listOf(
-            DokumentasjonsbehovKontrakter(
-                "test",
-                UUID.randomUUID()
-                    .toString(),
-                false,
-            ),
-        )
+        val søknader =
+            listOf(
+                SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false),
+                SøknadMapper.fromDto(Testdata.søknadBarnetilsyn, false),
+                SøknadMapper.fromDto(Testdata.søknadSkolepenger, false),
+                SøknadMapper.fromDto(Testdata.skjemaForArbeidssøker),
+            )
+        val forventetDokumentasjonsbehov =
+            listOf(
+                DokumentasjonsbehovKontrakter(
+                    "test",
+                    UUID.randomUUID()
+                        .toString(),
+                    false,
+                ),
+            )
 
         every { søknadRepository.finnSisteSøknadenPerStønadtype(fnr) } returns søknader
 
@@ -62,7 +63,6 @@ class SøknadServiceTest {
 
     @Nested
     inner class ReduserSøknad {
-
         @Test
         fun `for søknad som ikke er journalført feiler`() {
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()
@@ -86,7 +86,6 @@ class SøknadServiceTest {
 
     @Nested
     inner class SlettSøknad {
-
         @Test
         fun `for søknad som ikke er journalført feiler`() {
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()

@@ -16,7 +16,6 @@ import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
 import no.nav.familie.kontrakter.felles.ef.StønadType
 
 object ArkiverDokumentRequestMapper {
-
     fun toDto(
         søknad: Søknad,
         vedlegg: List<Vedlegg>,
@@ -61,28 +60,38 @@ object ArkiverDokumentRequestMapper {
         val tittel = "Ettersending til søknad om $stønadType"
         val dokumenttype = utledDokumenttypeForEttersending(stønadType)
 
-        val dokumentSomPdf = ettersending.ettersendingPdf?.let {
-            Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
-        } ?: error("Mangler forside for ettersendingen")
+        val dokumentSomPdf =
+            ettersending.ettersendingPdf?.let {
+                Dokument(it.bytes, Filtype.PDFA, null, tittel, dokumenttype)
+            } ?: error("Mangler forside for ettersendingen")
 
         val dokumentSomJson = Dokument(ettersending.ettersendingJson.data.toByteArray(), Filtype.JSON, null, tittel, dokumenttype)
 
         return listOf(dokumentSomPdf, dokumentSomJson)
     }
 
-    private fun mapVedlegg(vedlegg: List<Vedlegg>, dokumenttype: String): List<Dokument> {
+    private fun mapVedlegg(
+        vedlegg: List<Vedlegg>,
+        dokumenttype: String,
+    ): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
         val dokumenttypeVedlegg = mapDokumenttype(dokumenttype)
         return vedlegg.map { tilDokument(it, dokumenttypeVedlegg) }
     }
 
-    private fun mapEttersendingVedlegg(vedlegg: List<EttersendingVedlegg>, stønadType: StønadType): List<Dokument> {
+    private fun mapEttersendingVedlegg(
+        vedlegg: List<EttersendingVedlegg>,
+        stønadType: StønadType,
+    ): List<Dokument> {
         if (vedlegg.isEmpty()) return emptyList()
         val dokumenttypeVedlegg = utledDokumenttypeForVedlegg(stønadType)
         return vedlegg.map { tilEttersendingDokument(it, dokumenttypeVedlegg) }
     }
 
-    private fun tilDokument(vedlegg: Vedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
+    private fun tilDokument(
+        vedlegg: Vedlegg,
+        dokumenttypeVedlegg: Dokumenttype,
+    ): Dokument {
         return Dokument(
             dokument = vedlegg.innhold.bytes,
             filtype = Filtype.PDFA,
@@ -92,7 +101,10 @@ object ArkiverDokumentRequestMapper {
         )
     }
 
-    private fun tilEttersendingDokument(vedlegg: EttersendingVedlegg, dokumenttypeVedlegg: Dokumenttype): Dokument {
+    private fun tilEttersendingDokument(
+        vedlegg: EttersendingVedlegg,
+        dokumenttypeVedlegg: Dokumenttype,
+    ): Dokument {
         return Dokument(
             dokument = vedlegg.innhold.bytes,
             filtype = Filtype.PDFA,

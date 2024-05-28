@@ -13,7 +13,6 @@ import java.time.LocalDateTime
 import java.time.Month
 
 internal class FeltformatererTest {
-
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer Month korrekt`() {
         val testverdi = Søknadsfelt("label", Month.DECEMBER)

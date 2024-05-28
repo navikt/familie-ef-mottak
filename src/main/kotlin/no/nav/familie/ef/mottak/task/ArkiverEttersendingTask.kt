@@ -17,7 +17,6 @@ class ArkiverEttersendingTask(
     private val arkiveringService: ArkiveringService,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
-
     val logger: Logger = LoggerFactory.getLogger(javaClass)
     val antallEttersendinger: Counter = Metrics.counter("alene.med.barn.journalposter.ettersending")
 
@@ -36,7 +35,6 @@ class ArkiverEttersendingTask(
     }
 
     companion object {
-
         const val TYPE = "arkiverEttersending"
     }
 }

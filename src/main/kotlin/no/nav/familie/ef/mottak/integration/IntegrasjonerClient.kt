@@ -34,7 +34,6 @@ class IntegrasjonerClient(
     private val integrasjonerConfig: IntegrasjonerConfig,
 ) :
     AbstractPingableRestClient(operations, "Arkiv") {
-
     override val pingUri: URI = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment("ping").build().toUri()
 
     private val sendInnUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_SEND_INN).build().toUri()
@@ -84,12 +83,14 @@ class IntegrasjonerClient(
             .build()
             .toUri()
 
-    private fun ferdigstillJournalpostUri(journalpostId: String, journalfoerendeEnhet: String) =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
-            .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
-            .queryParam("journalfoerendeEnhet", journalfoerendeEnhet)
-            .build()
-            .toUri()
+    private fun ferdigstillJournalpostUri(
+        journalpostId: String,
+        journalfoerendeEnhet: String,
+    ) = UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
+        .queryParam("journalfoerendeEnhet", journalfoerendeEnhet)
+        .build()
+        .toUri()
 
     @Retryable(value = [RuntimeException::class], maxAttempts = 3, backoff = Backoff(delay = 5000))
     fun hentJournalpost(journalpostId: String): Journalpost {
@@ -115,12 +116,16 @@ class IntegrasjonerClient(
         return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetMedRelasjonerUri, PersonIdent(fnr)).getDataOrThrow()
     }
 
-    fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype?): FinnOppgaveResponseDto {
-        val finnOppgaveRequest = FinnOppgaveRequest(
-            tema = Tema.ENF,
-            journalpostId = journalpostId,
-            oppgavetype = oppgavetype,
-        )
+    fun finnOppgaver(
+        journalpostId: String,
+        oppgavetype: Oppgavetype?,
+    ): FinnOppgaveResponseDto {
+        val finnOppgaveRequest =
+            FinnOppgaveRequest(
+                tema = Tema.ENF,
+                journalpostId = journalpostId,
+                oppgavetype = oppgavetype,
+            )
         return postForEntity<Ressurs<FinnOppgaveResponseDto>>(finnOppgaveUri, finnOppgaveRequest).getDataOrThrow()
     }
 
@@ -130,7 +135,10 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()
     }
 
-    fun ferdigstillJournalpost(journalpostId: String, journalførendeEnhet: String): HashMap<String, String> {
+    fun ferdigstillJournalpost(
+        journalpostId: String,
+        journalførendeEnhet: String,
+    ): HashMap<String, String> {
         val response =
             putForEntity<Ressurs<HashMap<String, String>>>(
                 ferdigstillJournalpostUri(journalpostId, journalførendeEnhet),
@@ -143,7 +151,10 @@ class IntegrasjonerClient(
         return getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
     }
 
-    fun oppdaterOppgave(oppgaveId: Long, oppgave: Oppgave): Long {
+    fun oppdaterOppgave(
+        oppgaveId: Long,
+        oppgave: Oppgave,
+    ): Long {
         val response = patchForEntity<Ressurs<OppgaveResponse>>(patchOppgaveUri(oppgaveId), oppgave).getDataOrThrow()
         return response.oppgaveId
     }
@@ -202,7 +213,6 @@ class IntegrasjonerClient(
     }
 
     companion object {
-
         const val PATH_SEND_INN = "arkiv/v4"
         const val PATH_HENT_SAKSNUMMER = "journalpost/sak"
         const val PATH_OPPRETT_OPPGAVE = "oppgave/opprett"

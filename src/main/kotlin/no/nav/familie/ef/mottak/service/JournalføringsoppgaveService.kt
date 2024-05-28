@@ -23,7 +23,6 @@ class JournalføringsoppgaveService(
     val ettersendingRepository: EttersendingRepository,
     val journalfoeringHendelseDbUtil: JournalfoeringHendelseDbUtil,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(JournalføringsoppgaveService::class.java)
     val nyJournalhendelseCounter: Counter =
         Metrics.counter("alene.med.barn.journalhendelse.NyJournalpostHendelse")

@@ -28,20 +28,23 @@ internal class MappeServiceTest {
     internal fun setUp() {
         every {
             søknadService.get("123")
-        } returns Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            journalpostId = "1234",
-            fnr = Testdata.randomFnr(),
-            behandleINySaksbehandling = true,
-        )
-        every { integrasjonerClient.finnMappe(any()) } returns FinnMappeResponseDto(
-            antallTreffTotalt = 1,
-            mapper = listOf(
-                MappeDto(id = 123, navn = "65 Opplæring", enhetsnr = ""),
-                MappeDto(id = 234, navn = "60 Særlig tilsynskrevende", enhetsnr = ""),
-            ),
-        )
+        } returns
+            Søknad(
+                søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
+                dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                journalpostId = "1234",
+                fnr = Testdata.randomFnr(),
+                behandleINySaksbehandling = true,
+            )
+        every { integrasjonerClient.finnMappe(any()) } returns
+            FinnMappeResponseDto(
+                antallTreffTotalt = 1,
+                mapper =
+                    listOf(
+                        MappeDto(id = 123, navn = "65 Opplæring", enhetsnr = ""),
+                        MappeDto(id = 234, navn = "60 Særlig tilsynskrevende", enhetsnr = ""),
+                    ),
+            )
     }
 
     @Test

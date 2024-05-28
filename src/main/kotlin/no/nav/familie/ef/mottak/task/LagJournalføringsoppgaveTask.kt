@@ -18,20 +18,20 @@ class LagJournalføringsoppgaveTask(
     private val taskService: TaskService,
     private val oppgaveService: OppgaveService,
 ) : AsyncTaskStep {
-
     val antallTilManuellJournalføring: Counter = Metrics.counter("alene.med.barn.manueltjournalfort")
+
     override fun doTask(task: Task) {
         val oppgaveId = oppgaveService.lagJournalføringsoppgaveForSøknadId(task.payload)
         oppgaveId?.let {
             task.metadata.apply {
-                this[journalføringOppgaveIdKey] = oppgaveId.toString()
+                this[JOURNALFØRING_OPPGAVE_ID_KEY] = oppgaveId.toString()
             }
         }
     }
 
     override fun onCompletion(task: Task) {
         antallTilManuellJournalføring.increment()
-        task.metadata[journalføringOppgaveIdKey]?.let {
+        task.metadata[JOURNALFØRING_OPPGAVE_ID_KEY]?.let {
             taskService.save(
                 Task(
                     TaskType(TYPE).nesteManuellflytTask(),
@@ -43,8 +43,7 @@ class LagJournalføringsoppgaveTask(
     }
 
     companion object {
-
-        const val journalføringOppgaveIdKey = "journalføringOppgaveId"
+        const val JOURNALFØRING_OPPGAVE_ID_KEY = "journalføringOppgaveId"
         const val TYPE = "lagJournalføringsoppgave"
     }
 }

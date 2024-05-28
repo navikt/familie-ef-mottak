@@ -14,7 +14,6 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping(path = ["/api/status"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatusController(val søknadRepository: SøknadRepository) {
-
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping()
@@ -29,34 +28,43 @@ class StatusController(val søknadRepository: SøknadRepository) {
     private fun loggLiteAktivitet(tidSidenSisteLagredeSøknad: Duration) {
         if (erDagtid() && !erHelg()) {
             when {
-                tidSidenSisteLagredeSøknad.toHours() > 3 -> logger.error("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad")
-                tidSidenSisteLagredeSøknad.toMinutes() > 20 -> logger.warn("Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad")
+                tidSidenSisteLagredeSøknad.toHours() > 3 ->
+                    logger.error(
+                        "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad",
+                    )
+                tidSidenSisteLagredeSøknad.toMinutes() > 20 ->
+                    logger.warn(
+                        "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad",
+                    )
             }
         }
     }
 
     private fun erHelg() = LocalDateTime.now().dayOfWeek.value in 6..7
 
-    private fun statusDto(tidSidenSisteLagredeSøknad: Duration) = when {
-        erTidspunktMedForventetAktivitet() -> dagStatus(tidSidenSisteLagredeSøknad)
-        else -> nattStatus(tidSidenSisteLagredeSøknad)
-    }
+    private fun statusDto(tidSidenSisteLagredeSøknad: Duration) =
+        when {
+            erTidspunktMedForventetAktivitet() -> dagStatus(tidSidenSisteLagredeSøknad)
+            else -> nattStatus(tidSidenSisteLagredeSøknad)
+        }
 
     private fun nattStatus(tidSidenSisteLagredeSøknad: Duration) =
         when {
-            tidSidenSisteLagredeSøknad.toHours() > 24 -> StatusDto(
-                status = Plattformstatus.ISSUE,
-                description = "Det er over 24 timer siden vi mottok en søknad",
-            )
+            tidSidenSisteLagredeSøknad.toHours() > 24 ->
+                StatusDto(
+                    status = Plattformstatus.ISSUE,
+                    description = "Det er over 24 timer siden vi mottok en søknad",
+                )
             else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
         }
 
     private fun dagStatus(tidSidenSisteLagredeSøknad: Duration) =
         when {
-            tidSidenSisteLagredeSøknad.toHours() > 12 -> StatusDto(
-                status = Plattformstatus.ISSUE,
-                description = "Det er over 12 timer siden vi mottok en søknad",
-            )
+            tidSidenSisteLagredeSøknad.toHours() > 12 ->
+                StatusDto(
+                    status = Plattformstatus.ISSUE,
+                    description = "Det er over 12 timer siden vi mottok en søknad",
+                )
             else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
         }
 }
@@ -67,8 +75,10 @@ data class StatusDto(val status: Plattformstatus, val description: String? = nul
 
 // OK, ISSUE, DOWN
 enum class Plattformstatus {
-    OK, ISSUE
+    OK,
+    ISSUE,
 }
 
 fun erTidspunktMedForventetAktivitet() = LocalDateTime.now().hour in 12..21
+
 fun erDagtid() = LocalDateTime.now().hour in 9..22

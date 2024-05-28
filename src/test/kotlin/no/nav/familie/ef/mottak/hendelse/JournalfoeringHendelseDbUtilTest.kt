@@ -16,7 +16,6 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class JournalfoeringHendelseDbUtilTest {
-
     private val hendelsesloggRepository = mockk<HendelsesloggRepository>()
     private val taskRepositoryUtvidet = mockk<TaskRepositoryUtvidet>()
     private val taskService = mockk<TaskService>()

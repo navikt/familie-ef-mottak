@@ -29,40 +29,42 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class ArkiveringServiceTest {
-
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
     private val ettersendingService: EttersendingService = mockk(relaxed = true)
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingVedleggRepository: EttersendingVedleggRepository = mockk(relaxed = true)
 
-    val arkiveringService = ArkiveringService(
-        integrasjonerClient,
-        søknadService,
-        ettersendingService,
-        vedleggRepository,
-        ettersendingVedleggRepository,
-    )
+    val arkiveringService =
+        ArkiveringService(
+            integrasjonerClient,
+            søknadService,
+            ettersendingService,
+            vedleggRepository,
+            ettersendingVedleggRepository,
+        )
 
-    private val ettersending = Ettersending(
-        id = UUID.randomUUID(),
-        ettersendingJson = EncryptedString(data = ""),
-        stønadType = StønadType.OVERGANGSSTØNAD.name,
-        fnr = "",
-        taskOpprettet = false,
-        opprettetTid = LocalDateTime.now(),
-        ettersendingPdf = EncryptedFile("pdf".toByteArray()),
-    )
+    private val ettersending =
+        Ettersending(
+            id = UUID.randomUUID(),
+            ettersendingJson = EncryptedString(data = ""),
+            stønadType = StønadType.OVERGANGSSTØNAD.name,
+            fnr = "",
+            taskOpprettet = false,
+            opprettetTid = LocalDateTime.now(),
+            ettersendingPdf = EncryptedFile("pdf".toByteArray()),
+        )
 
-    private val søknad = Søknad(
-        id = UUID.randomUUID().toString(),
-        søknadJson = EncryptedString(data = ""),
-        dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-        fnr = "",
-        taskOpprettet = false,
-        opprettetTid = LocalDateTime.now(),
-        søknadPdf = EncryptedFile("pdf".toByteArray()),
-    )
+    private val søknad =
+        Søknad(
+            id = UUID.randomUUID().toString(),
+            søknadJson = EncryptedString(data = ""),
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            fnr = "",
+            taskOpprettet = false,
+            opprettetTid = LocalDateTime.now(),
+            søknadPdf = EncryptedFile("pdf".toByteArray()),
+        )
 
     private val conflictException =
         HttpClientErrorException.Conflict.create(null, HttpStatus.CONFLICT, null, null, null, null)
@@ -125,7 +127,10 @@ internal class ArkiveringServiceTest {
         )
     }
 
-    private fun lagJournalpost(forventetJournalpostId: String, eksternReferanseId: String) = Journalpost(
+    private fun lagJournalpost(
+        forventetJournalpostId: String,
+        eksternReferanseId: String,
+    ) = Journalpost(
         journalpostId = forventetJournalpostId,
         journalposttype = Journalposttype.I,
         journalstatus = Journalstatus.MOTTATT,

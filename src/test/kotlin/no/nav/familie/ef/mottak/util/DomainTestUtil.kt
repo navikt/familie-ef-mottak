@@ -12,22 +12,20 @@ fun journalføringHendelseRecord(
     journalpostId: String,
     hendelseType: String = "JournalpostMottatt",
     temaNytt: String = "ENF",
-) =
-    JournalfoeringHendelseRecord(
-        "hendelseId",
-        1,
-        hendelseType,
-        journalpostId.toLong(),
-        "M",
-        "ENF",
-        temaNytt,
-        "SKAN_NETS",
-        "kanalReferanseId",
-        "ENF",
-    )
+) = JournalfoeringHendelseRecord(
+    "hendelseId",
+    1,
+    hendelseType,
+    journalpostId.toLong(),
+    "M",
+    "ENF",
+    temaNytt,
+    "SKAN_NETS",
+    "kanalReferanseId",
+    "ENF",
+)
 
 object JournalføringHendelseRecordVars {
-
     const val JOURNALPOST_PAPIRSØKNAD = "111"
     const val JOURNALPOST_DIGITALSØKNAD = "222"
     const val JOURNALPOST_UTGÅENDE_DOKUMENT = "333"
@@ -46,16 +44,15 @@ fun søknad(
     fnr: String = "11111122222",
     saksnummer: String? = null,
     behandleINySaksbehandling: Boolean = false,
-) =
-    Søknad(
-        id = id,
-        søknadJson = EncryptedString(""),
-        søknadPdf = søknadPdf,
-        fnr = fnr,
-        dokumenttype = dokumenttype,
-        opprettetTid = opprettetTid,
-        taskOpprettet = taskOpprettet,
-        journalpostId = journalpostId,
-        saksnummer = saksnummer,
-        behandleINySaksbehandling = behandleINySaksbehandling,
-    )
+) = Søknad(
+    id = id,
+    søknadJson = EncryptedString(""),
+    søknadPdf = søknadPdf,
+    fnr = fnr,
+    dokumenttype = dokumenttype,
+    opprettetTid = opprettetTid,
+    taskOpprettet = taskOpprettet,
+    journalpostId = journalpostId,
+    saksnummer = saksnummer,
+    behandleINySaksbehandling = behandleINySaksbehandling,
+)

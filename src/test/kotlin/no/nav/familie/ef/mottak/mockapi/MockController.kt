@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/mockapi/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
 class MockController {
-
     data class OkDto(val status: String = "OK")
 
     @PostMapping("/mottak/dokument")

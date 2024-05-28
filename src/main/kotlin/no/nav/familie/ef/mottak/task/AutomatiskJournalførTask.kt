@@ -27,7 +27,6 @@ class AutomatiskJournalførTask(
     val mappeService: MappeService,
 ) :
     AsyncTaskStep {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalfort")
 
@@ -54,7 +53,10 @@ class AutomatiskJournalførTask(
         }
     }
 
-    private fun brukManuellJournalføring(journalpostId: String, task: Task) {
+    private fun brukManuellJournalføring(
+        journalpostId: String,
+        task: Task,
+    ) {
         logger.warn("Kunne ikke automatisk journalføre $journalpostId - fortsetter derfor på manuell journalføringsflyt")
         val nesteFallbackTaskType = manuellJournalføringFlyt().first().type
         val fallback = Task(nesteFallbackTaskType, task.payload, task.metadata)

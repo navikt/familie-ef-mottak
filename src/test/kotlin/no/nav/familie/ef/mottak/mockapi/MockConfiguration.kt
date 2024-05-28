@@ -17,41 +17,40 @@ import java.net.URI
 
 @Configuration
 class MockConfiguration {
-
     @Bean
     @Primary
     @Profile("mock-pdf")
-    fun pdfClient(): PdfClient = object : PdfClient(mockk(), mockk()) {
-
-        override fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
-            val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
-            log.info("Creating pdf: $pdf")
-            return labelValueJson.toString().toByteArray()
+    fun pdfClient(): PdfClient =
+        object : PdfClient(mockk(), mockk()) {
+            override fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
+                val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
+                log.info("Creating pdf: $pdf")
+                return labelValueJson.toString().toByteArray()
+            }
         }
-    }
 
     @Bean
     @Primary
     @Profile("mock-integrasjon")
-    fun integrasjonerClient(): IntegrasjonerClient = object : IntegrasjonerClient(
-        mockk(),
-        IntegrasjonerConfig(URI.create("http://bac")),
-    ) {
+    fun integrasjonerClient(): IntegrasjonerClient =
+        object : IntegrasjonerClient(
+            mockk(),
+            IntegrasjonerConfig(URI.create("http://bac")),
+        ) {
+            override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
+                return ArkiverDokumentResponse("journalpostId1", true)
+            }
 
-        override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
-            return ArkiverDokumentResponse("journalpostId1", true)
-        }
+            override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
+                return OppgaveResponse(1)
+            }
 
-        override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
-            return OppgaveResponse(1)
-        }
+            override fun hentSaksnummer(journalPostId: String): String {
+                return "sak1"
+            }
 
-        override fun hentSaksnummer(journalPostId: String): String {
-            return "sak1"
+            override fun hentAktørId(personident: String): String {
+                return "aktørId"
+            }
         }
-
-        override fun hentAktørId(personident: String): String {
-            return "aktørId"
-        }
-    }
 }

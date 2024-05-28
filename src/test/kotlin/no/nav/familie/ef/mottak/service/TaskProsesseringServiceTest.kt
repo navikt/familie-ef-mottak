@@ -18,23 +18,21 @@ import org.jboss.logging.MDC
 import org.junit.jupiter.api.Test
 
 internal class TaskProsesseringServiceTest {
-
     private val taskService: TaskService = mockk(relaxed = true)
     private val søknadRepository: SøknadRepository = mockk(relaxed = true)
     private val ettersendingRepository: EttersendingRepository = mockk(relaxed = true)
 
     private val taskProsesseringService = TaskProsesseringService(taskService, søknadRepository, ettersendingRepository)
 
-    private val ettersending = Ettersending(
-
-        ettersendingJson = EncryptedString(data = ""),
-        ettersendingPdf = null,
-        stønadType = StønadType.BARNETILSYN.toString(),
-        journalpostId = null,
-        fnr = "",
-        taskOpprettet = false,
-
-    )
+    private val ettersending =
+        Ettersending(
+            ettersendingJson = EncryptedString(data = ""),
+            ettersendingPdf = null,
+            stønadType = StønadType.BARNETILSYN.toString(),
+            journalpostId = null,
+            fnr = "",
+            taskOpprettet = false,
+        )
 
     @Test
     fun `Skal opprette callId pr stønadstype på ettersendingstasks `() {

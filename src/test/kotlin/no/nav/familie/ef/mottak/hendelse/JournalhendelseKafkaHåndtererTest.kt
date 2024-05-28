@@ -19,7 +19,6 @@ import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JournalhendelseKafkaHåndtererTest {
-
     @MockK
     lateinit var journalhendelseServiceMock: JournalhendelseService
 
@@ -37,17 +36,19 @@ class JournalhendelseKafkaHåndtererTest {
 
     @Test
     fun `Ikke gyldige hendelsetyper skal ignoreres`() {
-        val ugyldigHendelsetypeRecord = journalføringHendelseRecord(
-            JOURNALPOST_PAPIRSØKNAD,
-            hendelseType = "UgyldigType",
-        )
-        val consumerRecord = ConsumerRecord(
-            "topic",
-            1,
-            OFFSET,
-            "42",
-            ugyldigHendelsetypeRecord,
-        )
+        val ugyldigHendelsetypeRecord =
+            journalføringHendelseRecord(
+                JOURNALPOST_PAPIRSØKNAD,
+                hendelseType = "UgyldigType",
+            )
+        val consumerRecord =
+            ConsumerRecord(
+                "topic",
+                1,
+                OFFSET,
+                "42",
+                ugyldigHendelsetypeRecord,
+            )
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
 
@@ -60,13 +61,14 @@ class JournalhendelseKafkaHåndtererTest {
     fun `Hendelser hvor journalpost ikke har tema ENF skal ignoreres`() {
         val ukjentTemaRecord = journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD, temaNytt = "UKJ")
 
-        val consumerRecord = ConsumerRecord(
-            "topic",
-            1,
-            OFFSET,
-            "42",
-            ukjentTemaRecord,
-        )
+        val consumerRecord =
+            ConsumerRecord(
+                "topic",
+                1,
+                OFFSET,
+                "42",
+                ukjentTemaRecord,
+            )
 
         journalhendelseKafkaHåndterer.håndterHendelse(consumerRecord, ack)
 
@@ -77,13 +79,14 @@ class JournalhendelseKafkaHåndtererTest {
 
     @Test
     fun `kast unntak for prosesserhendelse, forvent not acknowledged`() {
-        val consumerRecord = ConsumerRecord(
-            "topic",
-            1,
-            OFFSET,
-            "42",
-            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
-        )
+        val consumerRecord =
+            ConsumerRecord(
+                "topic",
+                1,
+                OFFSET,
+                "42",
+                journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
+            )
         every {
             journalhendelseServiceMock.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())
         } throws Exception("Unntak")
@@ -99,13 +102,14 @@ class JournalhendelseKafkaHåndtererTest {
 
     @Test
     fun `send inn gyldig consumer record, forvent acknowledged`() {
-        val consumerRecord = ConsumerRecord(
-            "topic",
-            1,
-            OFFSET,
-            "42",
-            journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
-        )
+        val consumerRecord =
+            ConsumerRecord(
+                "topic",
+                1,
+                OFFSET,
+                "42",
+                journalføringHendelseRecord(JOURNALPOST_PAPIRSØKNAD),
+            )
 
         every {
             journalhendelseServiceMock.prosesserNyHendelse(consumerRecord.value(), consumerRecord.offset())

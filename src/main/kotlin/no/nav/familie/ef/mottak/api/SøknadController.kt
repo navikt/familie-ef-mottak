@@ -23,19 +23,24 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class SøknadController(val søknadService: SøknadService) {
-
     @PostMapping("overgangsstonad")
-    fun overgangsstønad(@RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+    fun overgangsstønad(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
+    ): Kvittering {
         return okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
     }
 
     @PostMapping("barnetilsyn")
-    fun barnetilsyn(@RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
+    fun barnetilsyn(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
+    ): Kvittering {
         return okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
     }
 
     @PostMapping("skolepenger")
-    fun skolepenger(@RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
+    fun skolepenger(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
+    ): Kvittering {
         return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
     }
 

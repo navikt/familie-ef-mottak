@@ -8,7 +8,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class SøknadTest {
-
     @Test
     fun testHashCode() {
         val uuid = UUID.randomUUID().toString()
@@ -30,16 +29,15 @@ internal class SøknadTest {
     private fun opprettSøknad(
         uuid: String,
         opprettet: LocalDateTime,
-    ) =
-        Søknad(
-            id = uuid,
-            søknadJson = EncryptedString("string"),
-            søknadPdf = EncryptedFile("321".toByteArray()),
-            dokumenttype = "",
-            journalpostId = "654",
-            saksnummer = "789",
-            fnr = "123",
-            taskOpprettet = true,
-            opprettetTid = opprettet,
-        )
+    ) = Søknad(
+        id = uuid,
+        søknadJson = EncryptedString("string"),
+        søknadPdf = EncryptedFile("321".toByteArray()),
+        dokumenttype = "",
+        journalpostId = "654",
+        saksnummer = "789",
+        fnr = "123",
+        taskOpprettet = true,
+        opprettetTid = opprettet,
+    )
 }

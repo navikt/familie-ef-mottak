@@ -14,7 +14,6 @@ import java.time.Duration
 @EnableKafka
 @Configuration
 class KafkaConfig {
-
     @Bean
     fun kafkaJournalføringHendelseListenerContainerFactory(
         properties: KafkaProperties,

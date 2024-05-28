@@ -19,7 +19,6 @@ fun mockFamilieDokumentClient(): FamilieDokumentClient {
 @Profile("integrationtest", "local")
 @Configuration
 class FamilieDokumentConfiguration {
-
     @Bean
     @Primary
     fun familieDokumentClient() = mockFamilieDokumentClient()

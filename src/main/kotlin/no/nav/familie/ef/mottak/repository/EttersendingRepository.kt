@@ -12,7 +12,6 @@ import java.util.UUID
 interface EttersendingRepository :
     RepositoryInterface<Ettersending, UUID>,
     InsertUpdateRepository<Ettersending> {
-
     fun findFirstByTaskOpprettetIsFalse(): Ettersending?
 
     fun findByJournalpostId(journalpostId: String): Ettersending?

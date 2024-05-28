@@ -30,7 +30,6 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val ettersendingConfig: EttersendingConfig,
     private val featureToggleService: FeatureToggleService,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -66,7 +65,10 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
         )
     }
 
-    private fun lagLinkMelding(søknad: Søknad, manglerVedleggPåSøknad: Boolean): LinkMelding {
+    private fun lagLinkMelding(
+        søknad: Søknad,
+        manglerVedleggPåSøknad: Boolean,
+    ): LinkMelding {
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         val søknadstekst = tilDittNavTekst(søknadType)
 
@@ -75,15 +77,15 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
                 lagMeldingManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, søknadstekst)
             }
 
-            else -> lagMeldingSøknadMottattBekreftelse(
-                ettersendingConfig.ettersendingUrl,
-                søknadstekst,
-            )
+            else ->
+                lagMeldingSøknadMottattBekreftelse(
+                    ettersendingConfig.ettersendingUrl,
+                    søknadstekst,
+                )
         }
     }
 
     companion object {
-
         const val TYPE = "sendMeldingTilDittNav"
     }
 }

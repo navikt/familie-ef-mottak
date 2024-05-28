@@ -51,7 +51,6 @@ import java.time.temporal.ChronoUnit
     KafkaErrorHandler::class,
 )
 class ApplicationConfig {
-
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
 
     @Bean("tokenExchange")
@@ -133,21 +132,25 @@ class ApplicationConfig {
     }
 
     @Bean
-    fun prosesseringInfoProvider(@Value("\${prosessering.rolle}") prosesseringRolle: String) = object :
+    fun prosesseringInfoProvider(
+        @Value("\${prosessering.rolle}") prosesseringRolle: String,
+    ) = object :
         ProsesseringInfoProvider {
-
-        override fun hentBrukernavn(): String = try {
-            SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
-                .getStringClaim("preferred_username")
-        } catch (e: Exception) {
-            throw e
-        }
+        override fun hentBrukernavn(): String =
+            try {
+                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread")
+                    .getStringClaim("preferred_username")
+            } catch (e: Exception) {
+                throw e
+            }
 
         override fun harTilgang(): Boolean = grupper().contains(prosesseringRolle)
 
         private fun grupper(): List<String> {
             return try {
-                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims("azuread").get("groups") as List<String>? ?: emptyList()
+                SpringTokenValidationContextHolder().getTokenValidationContext().getClaims(
+                    "azuread",
+                ).get("groups") as List<String>? ?: emptyList()
             } catch (e: Exception) {
                 emptyList()
             }

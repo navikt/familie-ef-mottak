@@ -35,7 +35,6 @@ import org.slf4j.MDC
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JournalhendelseServiceTest {
-
     @MockK
     lateinit var integrasjonerClient: IntegrasjonerClient
 
@@ -77,79 +76,85 @@ class JournalhendelseServiceTest {
         // Inngående papirsøknad, Mottatt
         every {
             integrasjonerClient.hentJournalpost(JOURNALPOST_PAPIRSØKNAD)
-        } returns Journalpost(
-            journalpostId = JOURNALPOST_PAPIRSØKNAD,
-            journalposttype = Journalposttype.I,
-            journalstatus = Journalstatus.MOTTATT,
-            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-            tema = "ENF",
-            kanal = "SKAN_NETS",
-            behandlingstema = null,
-            dokumenter = null,
-            journalforendeEnhet = null,
-            sak = null,
-        )
+        } returns
+            Journalpost(
+                journalpostId = JOURNALPOST_PAPIRSØKNAD,
+                journalposttype = Journalposttype.I,
+                journalstatus = Journalstatus.MOTTATT,
+                bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+                tema = "ENF",
+                kanal = "SKAN_NETS",
+                behandlingstema = null,
+                dokumenter = null,
+                journalforendeEnhet = null,
+                sak = null,
+            )
 
         // Inngående digital, Mottatt
         every {
             integrasjonerClient.hentJournalpost(JOURNALPOST_DIGITALSØKNAD)
-        } returns Journalpost(
-            journalpostId = JOURNALPOST_DIGITALSØKNAD,
-            journalposttype = Journalposttype.I,
-            journalstatus = Journalstatus.MOTTATT,
-            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-            tema = "ENF",
-            kanal = "NAV_NO",
-        )
+        } returns
+            Journalpost(
+                journalpostId = JOURNALPOST_DIGITALSØKNAD,
+                journalposttype = Journalposttype.I,
+                journalstatus = Journalstatus.MOTTATT,
+                bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+                tema = "ENF",
+                kanal = "NAV_NO",
+            )
 
         // Utgående digital, Mottatt
         every {
             integrasjonerClient.hentJournalpost(JOURNALPOST_UTGÅENDE_DOKUMENT)
-        } returns Journalpost(
-            journalpostId = JOURNALPOST_UTGÅENDE_DOKUMENT,
-            journalposttype = Journalposttype.U,
-            journalstatus = Journalstatus.MOTTATT,
-            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-            tema = "ENF",
-            kanal = "SKAN_NETS",
-        )
+        } returns
+            Journalpost(
+                journalpostId = JOURNALPOST_UTGÅENDE_DOKUMENT,
+                journalposttype = Journalposttype.U,
+                journalstatus = Journalstatus.MOTTATT,
+                bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+                tema = "ENF",
+                kanal = "SKAN_NETS",
+            )
 
         // Ikke barnetrygd
         every {
             integrasjonerClient.hentJournalpost(JOURNALPOST_IKKE_ENFNETRYGD)
-        } returns Journalpost(
-            journalpostId = JOURNALPOST_IKKE_ENFNETRYGD,
-            journalposttype = Journalposttype.U,
-            journalstatus = Journalstatus.MOTTATT,
-            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-            tema = "FOR",
-            kanal = "NAV_NO",
-        )
+        } returns
+            Journalpost(
+                journalpostId = JOURNALPOST_IKKE_ENFNETRYGD,
+                journalposttype = Journalposttype.U,
+                journalstatus = Journalstatus.MOTTATT,
+                bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+                tema = "FOR",
+                kanal = "NAV_NO",
+            )
 
         // ferdigstilt journalpost
         every {
             integrasjonerClient.hentJournalpost(JOURNALPOST_FERDIGSTILT)
-        } returns Journalpost(
-            journalpostId = JOURNALPOST_FERDIGSTILT,
-            journalposttype = Journalposttype.U,
-            journalstatus = Journalstatus.FERDIGSTILT,
-            bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
-            tema = "FOR",
-            kanal = "NAV_NO",
-        )
+        } returns
+            Journalpost(
+                journalpostId = JOURNALPOST_FERDIGSTILT,
+                journalposttype = Journalposttype.U,
+                journalstatus = Journalstatus.FERDIGSTILT,
+                bruker = Bruker("123456789012", BrukerIdType.AKTOERID),
+                tema = "FOR",
+                kanal = "NAV_NO",
+            )
 
         every { mockFeatureToggleService.isEnabled(any()) } returns true
 
         mockJournalfoeringHendelseDbUtil =
             JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskService, mockTaskRepositoryUtvidet)
 
-        service = JournalhendelseService(
-            integrasjonerClient,
-            mockSøknadRepository,
-            mockJournalfoeringHendelseDbUtil,
-            mockJournalføringsoppgaveService,
-            mockTaskRepositoryUtvidet,
-        )
+        service =
+            JournalhendelseService(
+                integrasjonerClient,
+                mockSøknadRepository,
+                mockJournalfoeringHendelseDbUtil,
+                mockJournalføringsoppgaveService,
+                mockTaskRepositoryUtvidet,
+            )
     }
 
     @Test

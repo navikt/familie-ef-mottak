@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 internal class HendelsesloggRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var hendelsesloggRepository: HendelsesloggRepository
 

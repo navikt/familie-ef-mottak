@@ -7,11 +7,10 @@ import kotlin.random.Random
 private val cipherInitializer = CipherInitializer()
 
 abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
-
     abstract fun byteArrayToEntityAttribute(dbData: ByteArray?): T
 
     override fun convert(dbData: ByteArray): T? {
-        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && dbData.isNotEmpty()) {
+        if (KeyProperty.databaseEncryptionKey.isNotEmpty() && dbData.isNotEmpty()) {
             return decrypt(dbData)
         }
         return byteArrayToEntityAttribute(dbData)
@@ -28,11 +27,10 @@ abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
 }
 
 abstract class AbstractCryptoWritingConverter<T> : Converter<T, ByteArray> {
-
     abstract fun entityAttributeToByteArray(attribute: T): ByteArray?
 
     override fun convert(attribute: T): ByteArray? {
-        if (KeyProperty.DATABASE_ENCRYPTION_KEY.isNotEmpty() && attribute != null) {
+        if (KeyProperty.databaseEncryptionKey.isNotEmpty() && attribute != null) {
             return encrypt(attribute)
         }
         return entityAttributeToByteArray(attribute)

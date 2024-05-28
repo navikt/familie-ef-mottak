@@ -37,7 +37,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 internal class IntegrasjonerClientTest {
-
     private val wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
     private val restOperations: RestOperations = RestTemplateBuilder().build()
 
@@ -67,21 +66,22 @@ internal class IntegrasjonerClientTest {
                 .willReturn(serverError().withBody(IOTestUtil.readFile("opprett_oppgave_feilet.json"))),
         )
 
-        val exception = assertThrows<RessursException> {
-            integrasjonerClient.lagOppgave(
-                OpprettOppgaveRequest(
-                    ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
-                    saksId = null,
-                    journalpostId = "123",
-                    tema = Tema.ENF,
-                    oppgavetype = Oppgavetype.Journalføring,
-                    fristFerdigstillelse = LocalDate.now(),
-                    beskrivelse = "",
-                    behandlingstema = "sad",
-                    enhetsnummer = null,
-                ),
-            )
-        }
+        val exception =
+            assertThrows<RessursException> {
+                integrasjonerClient.lagOppgave(
+                    OpprettOppgaveRequest(
+                        ident = OppgaveIdentV2("asd", IdentGruppe.AKTOERID),
+                        saksId = null,
+                        journalpostId = "123",
+                        tema = Tema.ENF,
+                        oppgavetype = Oppgavetype.Journalføring,
+                        fristFerdigstillelse = LocalDate.now(),
+                        beskrivelse = "",
+                        behandlingstema = "sad",
+                        enhetsnummer = null,
+                    ),
+                )
+            }
 
         assertThat(exception.message).contains(feilmelding)
     }
@@ -90,12 +90,13 @@ internal class IntegrasjonerClientTest {
     fun `ferdigstillJournalpost sender melding om ferdigstilling parser payload og returnerer saksnummer`() {
         val journalpostId = "321"
         val journalførendeEnhet = "9999"
-        val json = objectMapper.writeValueAsString(
-            success(
-                mapOf("journalpostId" to journalpostId),
-                "Ferdigstilt journalpost $journalpostId",
-            ),
-        )
+        val json =
+            objectMapper.writeValueAsString(
+                success(
+                    mapOf("journalpostId" to journalpostId),
+                    "Ferdigstilt journalpost $journalpostId",
+                ),
+            )
         wireMockServer.stubFor(
             put(urlEqualTo("/arkiv/v2/$journalpostId/ferdigstill?journalfoerendeEnhet=$journalførendeEnhet"))
                 .willReturn(okJson(json)),

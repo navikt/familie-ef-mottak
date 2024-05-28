@@ -19,7 +19,6 @@ class SendSøknadMottattTilDittNavTask(
     private val producer: DittNavKafkaProducer,
     private val søknadService: SøknadService,
 ) : AsyncTaskStep {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
@@ -51,7 +50,6 @@ class SendSøknadMottattTilDittNavTask(
     }
 
     companion object {
-
         const val TYPE = "sendSøknadMottattTilDittNav"
     }
 }

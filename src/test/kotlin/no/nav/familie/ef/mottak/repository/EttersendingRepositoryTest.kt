@@ -17,28 +17,29 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var ettersendingRepository: EttersendingRepository
 
     @Test
     internal fun `lagre og hent ettersending`() {
         val vedlegg = Vedlegg(UUID.randomUUID().toString(), "Vedlegg 2", "Vedleggtittel 2")
-        val dokumentasjonsbehov = Dokumentasjonsbehov(
-            id = UUID.randomUUID().toString(),
-            søknadsdata = null,
-            dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
-            beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
-            stønadType = StønadType.OVERGANGSSTØNAD,
-            innsendingstidspunkt = null,
-            vedlegg = listOf(vedlegg),
-        )
+        val dokumentasjonsbehov =
+            Dokumentasjonsbehov(
+                id = UUID.randomUUID().toString(),
+                søknadsdata = null,
+                dokumenttype = "DOKUMENTASJON_IKKE_VILLIG_TIL_ARBEID",
+                beskrivelse = "Dokumentasjon på at du ikke kan ta arbeid",
+                stønadType = StønadType.OVERGANGSSTØNAD,
+                innsendingstidspunkt = null,
+                vedlegg = listOf(vedlegg),
+            )
         val personIdent = "123456789010"
 
-        val ettersendelseDto = EttersendelseDto(
-            listOf(dokumentasjonsbehov),
-            personIdent = personIdent,
-        )
+        val ettersendelseDto =
+            EttersendelseDto(
+                listOf(dokumentasjonsbehov),
+                personIdent = personIdent,
+            )
         val ettersending = ettersendingRepository.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
         assertThat(ettersendingRepository.count()).isEqualTo(1)
