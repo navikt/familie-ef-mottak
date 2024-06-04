@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
+        <version>3.3.0</version>
     </parent>
 
     <properties>
@@ -19,7 +19,7 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>1.9.24</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <springdoc.version>2.5.0</springdoc.version>
         <mockk.version>1.13.11</mockk.version>
         <felles.version>3.20240515152313_9dd5659</felles.version>
@@ -27,7 +27,7 @@
         <confluent.version>7.6.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20240515103524_00490ae</kontrakter.version>
-        <token-validation.version>4.1.7</token-validation.version>
+        <token-validation.version>4.1.8</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -209,6 +209,12 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.13.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -319,7 +325,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.11.0.3922</version>
+                    <version>4.0.0.4121</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
