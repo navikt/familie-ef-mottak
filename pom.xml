@@ -23,10 +23,10 @@
         <springdoc.version>2.5.0</springdoc.version>
         <mockk.version>1.13.11</mockk.version>
         <felles.version>3.20240515152313_9dd5659</felles.version>
-        <prosessering.version>2.20240426120029_490d299</prosessering.version>
+        <prosessering.version>2.20240603145215_c56e179</prosessering.version>
         <confluent.version>7.6.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20240515103524_00490ae</kontrakter.version>
+        <kontrakter.version>3.0_20240607101709_d35e18c</kontrakter.version>
         <token-validation.version>4.1.8</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -211,7 +211,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>10.13.0</version>
+            <version>10.14.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -447,7 +447,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.3.0</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
