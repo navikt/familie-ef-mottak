@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
     </parent>
 
     <properties>
@@ -27,7 +27,7 @@
         <confluent.version>7.6.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20240607101709_d35e18c</kontrakter.version>
-        <token-validation.version>4.1.8</token-validation.version>
+        <token-validation.version>5.0.1</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
