@@ -32,7 +32,7 @@ class StatusController(val søknadRepository: SøknadRepository) {
                     logger.error(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad",
                     )
-                tidSidenSisteLagredeSøknad.toMinutes() > 20 ->
+                tidSidenSisteLagredeSøknad.toMinutes() > 60 ->
                     logger.warn(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad",
                     )
