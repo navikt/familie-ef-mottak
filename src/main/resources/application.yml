@@ -53,7 +53,7 @@ spring:
     hikari:
       maximum-pool-size: 10
       connection-test-query: "select 1"
-      max-lifetime: 30000
+      max-lifetime: 900000
       minimum-idle: 1
 logging:
   config: "classpath:logback-spring.xml"
