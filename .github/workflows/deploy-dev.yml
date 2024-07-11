@@ -6,7 +6,6 @@ permissions:
   contents: "read"
   id-token: "write"
 
-
 jobs:
   build:
     name: Build, push and deploy to dev
@@ -45,5 +44,5 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: .deploy/preprod.yaml
+          RESOURCE: .deploy/nais-dev.yaml
           IMAGE: ${{ needs.build.outputs.image }}
