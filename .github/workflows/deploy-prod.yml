@@ -5,8 +5,9 @@ on:
     branches:
       - 'main'
 
-env:
-  IMAGE: ghcr.io/navikt/familie-ef-mottak:${{ github.sha }}
+permissions:
+  contents: "read"
+  id-token: "write"
 
 jobs:
   build:
@@ -43,11 +44,9 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   deploy:
-    name: Deploy to GCP dev and prod
+    name: Deploy to dev and prod
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      id-token: "write"
     steps:
       - uses: actions/checkout@v4
       - name: Deploy til dev-gcp
@@ -55,11 +54,13 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: .deploy/nais-dev.yaml
+          IMAGE: ${{ needs.build.outputs.image }}
       - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
           RESOURCE: .deploy/nais-prod.yaml
+          IMAGE: ${{ needs.build.outputs.image }}
       - name: Post deploy failures to Slack
         if: failure()
         run: |
