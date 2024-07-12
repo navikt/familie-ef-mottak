@@ -13,8 +13,6 @@ jobs:
   build:
     name: Build, push and deploy to gcp
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
     steps:
       - uses: actions/checkout@v4
         with:
