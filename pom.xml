@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
     </parent>
 
     <properties>
@@ -21,10 +21,10 @@
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>2.0.0</kotlin.version>
         <springdoc.version>2.6.0</springdoc.version>
-        <mockk.version>1.13.11</mockk.version>
-        <felles.version>3.20240624143824_64bf8f2</felles.version>
+        <mockk.version>1.13.12</mockk.version>
+        <felles.version>3.20240715145751_fc025c1</felles.version>
         <prosessering.version>2.20240603145215_c56e179</prosessering.version>
-        <confluent.version>7.6.1</confluent.version>
+        <confluent.version>7.6.2</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20240607101709_d35e18c</kontrakter.version>
         <token-validation.version>5.0.1</token-validation.version>
@@ -211,7 +211,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>10.15.2</version>
+            <version>10.16.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.8</version>
+            <version>1.20.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
