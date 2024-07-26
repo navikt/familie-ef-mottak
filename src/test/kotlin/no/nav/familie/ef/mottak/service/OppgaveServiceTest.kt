@@ -15,10 +15,13 @@ import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
+import no.nav.familie.ef.mottak.personopplysninger.PdlIdent
+import no.nav.familie.ef.mottak.personopplysninger.PdlIdenter
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.Testdata.utdanning
+import no.nav.familie.ef.sak.opplysninger.personopplysninger.PdlClient
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
@@ -64,7 +67,8 @@ import kotlin.test.assertEquals
 internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
+    private val pdlClient: PdlClient = mockk()
+    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(pdlClient))
     private val ettersendingService = mockk<EttersendingService>()
     private val featureToggleService = mockk<FeatureToggleService>()
     private val cacheManager = ConcurrentMapCacheManager()
@@ -72,6 +76,7 @@ internal class OppgaveServiceTest {
     private val oppgaveService: OppgaveService =
         OppgaveService(
             integrasjonerClient = integrasjonerClient,
+            pdlClient = pdlClient,
             søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
@@ -80,8 +85,8 @@ internal class OppgaveServiceTest {
 
     @BeforeEach
     fun setUp() {
-        every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
-        every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
+        every { pdlClient.hentAktørIder(any()) } returns PdlIdenter(listOf(PdlIdent(ident = Testdata.randomAktørId(), historisk = false)))
+        every { pdlClient.hentPersonidenter(any()) } returns PdlIdenter(listOf(PdlIdent(ident = Testdata.randomFnr(), historisk = false)))
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns
             listOf(
                 Enhet(
@@ -183,8 +188,8 @@ internal class OppgaveServiceTest {
         return lesRessurs(httpServerErrorException)?.let { RessursException(it, httpServerErrorException) }!!
     }
 
-    private fun lesRessurs(e: RestClientResponseException): Ressurs<Any>? {
-        return try {
+    private fun lesRessurs(e: RestClientResponseException): Ressurs<Any>? =
+        try {
             if (e.responseBodyAsString.contains("status")) {
                 objectMapper.readValue<Ressurs<Any>>(e.responseBodyAsString)
             } else {
@@ -193,10 +198,15 @@ internal class OppgaveServiceTest {
         } catch (ex: Exception) {
             null
         }
-    }
 
     @Nested
     inner class LagJournalføringsoppgaveForSøknadId {
+        @BeforeEach
+        fun setUp() {
+            every { pdlClient.hentPersonidenter(any()) } returns PdlIdenter(listOf(PdlIdent("123", false)))
+            every { pdlClient.hentAktørIder(any()) } returns PdlIdenter(listOf(PdlIdent("123", false)))
+        }
+
         @Test
         fun `skal opprette en ny oppgave for søknad`() {
             val søknadId = "enSøknadId"
@@ -274,6 +284,8 @@ internal class OppgaveServiceTest {
             every { ettersendingService.hentEttersending(ettersendingId) } returns ettersending
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
+            every { pdlClient.hentPersonidenter(any()) } returns PdlIdenter(listOf(PdlIdent("123", false)))
+            every { pdlClient.hentAktørIder(any()) } returns PdlIdenter(listOf(PdlIdent("123", false)))
             oppgaveService.lagJournalføringsoppgaveForEttersendingId(ettersendingId)
 
             verify {
@@ -297,16 +309,17 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns
-                SøknadMapper.fromDto(
-                    Testdata.søknadOvergangsstønad.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadOvergangsstønad.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
 
@@ -323,16 +336,17 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns
-                SøknadMapper.fromDto(
-                    Testdata.søknadOvergangsstønad.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadOvergangsstønad.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet.copy(underUtdanning = Søknadsfelt("", utdanning())),
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
 
@@ -349,16 +363,17 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns
-                SøknadMapper.fromDto(
-                    Testdata.søknadOvergangsstønad.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet,
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadOvergangsstønad.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet,
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
 
@@ -375,16 +390,17 @@ internal class OppgaveServiceTest {
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
             every { søknadService.get(soknadId) } returns
-                SøknadMapper.fromDto(
-                    Testdata.søknadBarnetilsyn.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet,
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadBarnetilsyn.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet,
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(utenforSommertid, LocalTime.now()), journalpostId = "11111111111")
             every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0, emptyList())
             every { integrasjonerClient.lagOppgave(capture(opprettOppgaveSlot)) } returns OppgaveResponse(1)
 
@@ -761,7 +777,8 @@ internal class OppgaveServiceTest {
         val barn =
             when (harTilsynskrevendeBarn) {
                 true ->
-                    startSøknadMedAlt.barn.verdi.first()
+                    startSøknadMedAlt.barn.verdi
+                        .first()
                         .copy(barnepass = Søknadsfelt("barnepass", særligTilsynskrevende, svarId = særligTilsynskrevende))
 
                 false -> startSøknadMedAlt.barn.verdi.first()
@@ -782,9 +799,7 @@ internal class OppgaveServiceTest {
         return SøknadMapper.fromDto(søknadBarnetilsyn, true)
     }
 
-    private fun søknadSkolepenger(): Søknad {
-        return SøknadMapper.fromDto(Testdata.søknadSkolepenger, true)
-    }
+    private fun søknadSkolepenger(): Søknad = SøknadMapper.fromDto(Testdata.søknadSkolepenger, true)
 
     val tomAktivitet =
         Aktivitet(

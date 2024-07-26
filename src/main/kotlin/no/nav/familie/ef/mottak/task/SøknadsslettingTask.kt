@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional
     taskStepType = SøknadsslettingTask.TYPE,
     beskrivelse = "Sletter en søknad fra mottak",
 )
-class SøknadsslettingTask(private val søknadService: SøknadService) : AsyncTaskStep {
+class SøknadsslettingTask(
+    private val søknadService: SøknadService,
+) : AsyncTaskStep {
     @Transactional
     override fun doTask(task: Task) {
         søknadService.slettSøknad(task.payload)

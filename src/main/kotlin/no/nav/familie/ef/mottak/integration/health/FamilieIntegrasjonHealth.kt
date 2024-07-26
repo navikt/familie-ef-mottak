@@ -8,4 +8,6 @@ import org.springframework.stereotype.Component
 @Suppress("unused")
 @Component
 @Profile("!local")
-class FamilieIntegrasjonHealth(client: IntegrasjonerClient) : AbstractHealthIndicator(client, "familie.integrasjoner")
+class FamilieIntegrasjonHealth(
+    client: IntegrasjonerClient,
+) : AbstractHealthIndicator(client, "familie.integrasjoner")

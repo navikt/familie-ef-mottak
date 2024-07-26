@@ -6,14 +6,10 @@ import org.springframework.data.convert.WritingConverter
 
 @WritingConverter
 class FileCryptoWritingConverter : AbstractCryptoWritingConverter<EncryptedFile?>() {
-    override fun entityAttributeToByteArray(attribute: EncryptedFile?): ByteArray? {
-        return attribute?.bytes
-    }
+    override fun entityAttributeToByteArray(attribute: EncryptedFile?): ByteArray? = attribute?.bytes
 }
 
 @ReadingConverter
 class FileCryptoReadingConverter : AbstractCryptoReadingConverter<EncryptedFile?>() {
-    override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedFile? {
-        return dbData?.let { EncryptedFile(it) }
-    }
+    override fun byteArrayToEntityAttribute(dbData: ByteArray?): EncryptedFile? = dbData?.let { EncryptedFile(it) }
 }

@@ -13,7 +13,9 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 
 @Service
-class JournalhendelseKafkaHåndterer(val journalhendelseService: JournalhendelseService) {
+class JournalhendelseKafkaHåndterer(
+    val journalhendelseService: JournalhendelseService,
+) {
     val feilCounter: Counter = Metrics.counter("alene.med.barn.journalhendelse.feilet")
     val logger: Logger = LoggerFactory.getLogger(JournalhendelseKafkaListener::class.java)
 
@@ -38,7 +40,5 @@ class JournalhendelseKafkaHåndterer(val journalhendelseService: Journalhendelse
         }
     }
 
-    fun CharSequence.toStringOrNull(): String? {
-        return if (this.isNotBlank()) this.toString() else null
-    }
+    fun CharSequence.toStringOrNull(): String? = if (this.isNotBlank()) this.toString() else null
 }

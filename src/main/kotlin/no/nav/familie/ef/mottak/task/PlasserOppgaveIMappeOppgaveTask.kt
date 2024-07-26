@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service
     taskStepType = PlasserOppgaveIMappeOppgaveTask.TYPE,
     beskrivelse = "Oppdater oppgave med riktig mappeId",
 )
-class PlasserOppgaveIMappeOppgaveTask(private val oppgaveService: OppgaveService) : AsyncTaskStep {
+class PlasserOppgaveIMappeOppgaveTask(
+    private val oppgaveService: OppgaveService,
+) : AsyncTaskStep {
     override fun doTask(task: Task) {
         val oppgaveId =
             task.metadata[LagJournalføringsoppgaveTask.JOURNALFØRING_OPPGAVE_ID_KEY]?.toString()?.toLong()

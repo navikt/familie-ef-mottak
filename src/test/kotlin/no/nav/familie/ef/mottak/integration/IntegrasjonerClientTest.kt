@@ -140,19 +140,5 @@ internal class IntegrasjonerClientTest {
         }
     }
 
-    @Test
-    internal fun `skal hente aktørid med flat json`() {
-        val mockResponse = objectMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
-        wireMockServer.stubFor(
-            post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
-                .willReturn(okJson(mockResponse)),
-        )
-
-        val personIdent = integrasjonerClient.hentIdentForAktørId("321")
-        assertThat(personIdent).isEqualTo("123")
-    }
-
-    private fun readFile(filnavn: String): String {
-        return this::class.java.getResource("/json/$filnavn").readText()
-    }
+    private fun readFile(filnavn: String): String = this::class.java.getResource("/json/$filnavn").readText()
 }

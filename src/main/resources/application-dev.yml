@@ -70,3 +70,6 @@ ettersending.ettersendingUrl: https://familie.ekstern.dev.nav.no/familie/alene-m
 DB_RYDDING_CRON_EXPRESSION: 0 0 * * * ?
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS
+
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+ON_PREM_URL_ENV: dev

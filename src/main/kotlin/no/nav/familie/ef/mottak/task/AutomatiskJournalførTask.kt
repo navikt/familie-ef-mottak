@@ -25,8 +25,7 @@ class AutomatiskJournalførTask(
     val automatiskJournalføringService: AutomatiskJournalføringService,
     val integrasjonerClient: IntegrasjonerClient,
     val mappeService: MappeService,
-) :
-    AsyncTaskStep {
+) : AsyncTaskStep {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalfort")
 

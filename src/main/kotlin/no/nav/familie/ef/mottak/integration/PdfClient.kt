@@ -13,8 +13,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 class PdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
     private val pdfgeneratorConfig: PdfgeneratorConfig,
-) :
-    AbstractRestClient(operations, "pdf") {
+) : AbstractRestClient(operations, "pdf") {
     fun lagPdf(labelValueJson: Map<String, Any>): ByteArray {
         val sendInnUri =
             DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/api/generer-soknad").build()

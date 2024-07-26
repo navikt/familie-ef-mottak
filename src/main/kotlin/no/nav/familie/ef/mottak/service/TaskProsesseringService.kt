@@ -29,7 +29,8 @@ class TaskProsesseringService(
     @Transactional
     fun startTaskProsessering(søknad: Søknad) {
         val properties =
-            Properties().apply { this["søkersFødselsnummer"] = søknad.fnr }
+            Properties()
+                .apply { this["søkersFødselsnummer"] = søknad.fnr }
                 .apply { this["dokumenttype"] = søknad.dokumenttype }
         taskService.save(
             Task(
@@ -72,6 +73,4 @@ class TaskProsesseringService(
     private fun hentEllerOpprettCallId(): String = MDC.get(MDCConstants.MDC_CALL_ID) as? String ?: IdUtils.generateId()
 }
 
-private fun String.fjernØ(): String {
-    return this.replace("Ø", "O")
-}
+private fun String.fjernØ(): String = this.replace("Ø", "O")

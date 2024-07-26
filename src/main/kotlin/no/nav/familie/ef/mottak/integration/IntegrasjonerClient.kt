@@ -19,7 +19,6 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
-import no.nav.familie.kontrakter.felles.personopplysning.Ident
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
@@ -32,53 +31,73 @@ import java.net.URI
 class IntegrasjonerClient(
     @Qualifier("restTemplateAzure") operations: RestOperations,
     private val integrasjonerConfig: IntegrasjonerConfig,
-) :
-    AbstractPingableRestClient(operations, "Arkiv") {
-    override val pingUri: URI = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment("ping").build().toUri()
+) : AbstractPingableRestClient(operations, "Arkiv") {
+    override val pingUri: URI =
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
+            .pathSegment("ping")
+            .build()
+            .toUri()
 
-    private val sendInnUri = UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_SEND_INN).build().toUri()
+    private val sendInnUri =
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_SEND_INN)
+            .build()
+            .toUri()
     private val opprettOppgaveUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_OPPRETT_OPPGAVE).build().toUri()
-
-    private val aktørUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_AKTØR).build().toUri()
-
-    private val identFraAktørUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_IDENT_FRA_AKTØRID).build().toUri()
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_OPPRETT_OPPGAVE)
+            .build()
+            .toUri()
 
     private val behandlendeEnhetUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_BEHANDLENDE_ENHET).build().toUri()
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_BEHANDLENDE_ENHET)
+            .build()
+            .toUri()
 
     private val behandlendeEnhetMedRelasjonerUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_BEHANDLENDE_ENHET_MED_RELASJONER)
             .build()
             .toUri()
 
     private val finnOppgaveUri =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url).pathSegment(PATH_FINN_OPPGAVE).build().toUri()
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
+            .pathSegment(PATH_FINN_OPPGAVE)
+            .build()
+            .toUri()
 
     private fun hentOppgaveUri(oppgaveId: Long) =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString())
             .build()
             .toUri()
 
     private fun patchOppgaveUri(oppgaveId: Long) =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_HENT_OPPGAVE, oppgaveId.toString(), "oppdater")
             .build()
             .toUri()
 
     private fun journalpostUri(journalpostId: String) =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_JOURNALPOST)
             .queryParam("journalpostId", journalpostId)
             .build()
             .toUri()
 
     private fun journalpostForBrukerUri() =
-        UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_JOURNALPOST)
             .build()
             .toUri()
@@ -86,7 +105,8 @@ class IntegrasjonerClient(
     private fun ferdigstillJournalpostUri(
         journalpostId: String,
         journalfoerendeEnhet: String,
-    ) = UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+    ) = UriComponentsBuilder
+        .fromUri(integrasjonerConfig.url)
         .pathSegment("arkiv", "v2", journalpostId, "ferdigstill")
         .queryParam("journalfoerendeEnhet", journalfoerendeEnhet)
         .build()
@@ -98,23 +118,18 @@ class IntegrasjonerClient(
         return getForEntity<Ressurs<Journalpost>>(uri).getDataOrThrow()
     }
 
-    fun hentJournalposterForBruker(journalpostForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> {
-        return postForEntity<Ressurs<List<Journalpost>>>(
+    fun hentJournalposterForBruker(journalpostForBrukerRequest: JournalposterForBrukerRequest): List<Journalpost> =
+        postForEntity<Ressurs<List<Journalpost>>>(
             journalpostForBrukerUri(),
             journalpostForBrukerRequest,
         ).getDataOrThrow()
-    }
 
-    fun finnBehandlendeEnhet(fnr: String): List<Enhet> {
-        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
-    }
+    fun finnBehandlendeEnhet(fnr: String): List<Enhet> = postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetUri, PersonIdent(fnr)).getDataOrThrow()
 
     /**
      * Returnerer en liste med 0 eller 1 element - bruker beste match fra norg2
      */
-    fun finnBehandlendeEnhetForPersonMedRelasjoner(fnr: String): List<Enhet> {
-        return postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetMedRelasjonerUri, PersonIdent(fnr)).getDataOrThrow()
-    }
+    fun finnBehandlendeEnhetForPersonMedRelasjoner(fnr: String): List<Enhet> = postForEntity<Ressurs<List<Enhet>>>(behandlendeEnhetMedRelasjonerUri, PersonIdent(fnr)).getDataOrThrow()
 
     fun finnOppgaver(
         journalpostId: String,
@@ -147,9 +162,7 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()
     }
 
-    fun hentOppgave(oppgaveId: Long): Oppgave {
-        return getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
-    }
+    fun hentOppgave(oppgaveId: Long): Oppgave = getForEntity<Ressurs<Oppgave>>(hentOppgaveUri(oppgaveId)).getDataOrThrow()
 
     fun oppdaterOppgave(
         oppgaveId: Long,
@@ -164,8 +177,9 @@ class IntegrasjonerClient(
         return mapperespons.getDataOrThrow()
     }
 
-    private fun finnMappeUri(finnMappeRequest: FinnMappeRequest): URI {
-        return UriComponentsBuilder.fromUri(integrasjonerConfig.url)
+    private fun finnMappeUri(finnMappeRequest: FinnMappeRequest): URI =
+        UriComponentsBuilder
+            .fromUri(integrasjonerConfig.url)
             .pathSegment(PATH_FINN_MAPPE)
             .queryParam("tema", finnMappeRequest.tema)
             .queryParam("enhetsnr", finnMappeRequest.enhetsnr)
@@ -173,7 +187,6 @@ class IntegrasjonerClient(
             .queryParam("opprettetFom", finnMappeRequest.opprettetFom)
             .build()
             .toUri()
-    }
 
     fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
         val response =
@@ -186,31 +199,19 @@ class IntegrasjonerClient(
         return response.getDataOrThrow()["saksnummer"].toString()
     }
 
-    fun hentAktørId(personident: String): String {
-        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, Ident(personident))
-        return response.getDataOrThrow()["aktørId"].toString()
-    }
-
-    fun hentIdentForAktørId(aktørId: String): String {
-        val response = postForEntity<Ressurs<MutableMap<*, *>>>(identFraAktørUri, aktørId)
-        return response.getDataOrThrow()["personIdent"].toString()
-    }
-
-    private fun lagHentSaksnummerUri(id: String): URI {
-        return UriComponentsBuilder
+    private fun lagHentSaksnummerUri(id: String): URI =
+        UriComponentsBuilder
             .fromUri(integrasjonerConfig.url)
             .path(PATH_HENT_SAKSNUMMER)
             .queryParam("journalpostId", id)
             .build()
             .toUri()
-    }
 
-    fun <T> Ressurs<T>.getDataOrThrow(): T {
-        return when (this.status) {
+    fun <T> Ressurs<T>.getDataOrThrow(): T =
+        when (this.status) {
             Status.SUKSESS -> data ?: error("Data er null i Ressurs")
             else -> error(melding)
         }
-    }
 
     companion object {
         const val PATH_SEND_INN = "arkiv/v4"
@@ -219,8 +220,6 @@ class IntegrasjonerClient(
         const val PATH_FINN_OPPGAVE = "oppgave/v4"
         const val PATH_FINN_MAPPE = "oppgave/mappe/sok"
         const val PATH_HENT_OPPGAVE = "oppgave"
-        const val PATH_AKTØR = "aktoer/v2/ENF"
-        const val PATH_IDENT_FRA_AKTØRID = "aktoer/v2/fraaktorid/ENF"
         const val PATH_JOURNALPOST = "journalpost"
         const val PATH_BEHANDLENDE_ENHET = "arbeidsfordeling/enhet/ENF"
         const val PATH_BEHANDLENDE_ENHET_MED_RELASJONER = "arbeidsfordeling/enhet/ENF/med-relasjoner"

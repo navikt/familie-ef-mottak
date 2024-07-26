@@ -112,7 +112,8 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         søknad: Søknad,
         søknader: List<Søknad>,
     ): Boolean =
-        søknader.filter { it.id != søknad.id }
+        søknader
+            .filter { it.id != søknad.id }
             .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype) != SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER }
             .any { it.opprettetTid > søknad.opprettetTid }
 

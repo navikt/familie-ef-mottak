@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
-class SkjemaController(val søknadService: SøknadService) {
+class SkjemaController(
+    val søknadService: SøknadService,
+) {
     @PostMapping
     fun sendInn(
         @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
-    ): Kvittering {
-        return søknadService.motta(skjemaForArbeidssøker)
-    }
+    ): Kvittering = søknadService.motta(skjemaForArbeidssøker)
 }

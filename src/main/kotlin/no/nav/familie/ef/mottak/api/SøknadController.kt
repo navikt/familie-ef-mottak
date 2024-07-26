@@ -22,27 +22,23 @@ import org.springframework.web.bind.annotation.RestController
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
-class SøknadController(val søknadService: SøknadService) {
+class SøknadController(
+    val søknadService: SøknadService,
+) {
     @PostMapping("overgangsstonad")
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering {
-        return okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
-    }
+    ): Kvittering = okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
 
     @PostMapping("barnetilsyn")
     fun barnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-    ): Kvittering {
-        return okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
-    }
+    ): Kvittering = okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
 
     @PostMapping("skolepenger")
     fun skolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-    ): Kvittering {
-        return okEllerKastException { søknadService.mottaSkolepenger(søknad) }
-    }
+    ): Kvittering = okEllerKastException { søknadService.mottaSkolepenger(søknad) }
 
     @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {

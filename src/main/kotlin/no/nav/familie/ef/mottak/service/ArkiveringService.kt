@@ -127,8 +127,8 @@ class ArkiveringService(
         fnr: String,
         callId: String,
         journalfør: () -> String,
-    ): String {
-        return try {
+    ): String =
+        try {
             journalfør()
         } catch (e: RessursException) {
             if (e.cause is HttpClientErrorException.Conflict) {
@@ -142,5 +142,4 @@ class ArkiveringService(
                 throw e
             }
         }
-    }
 }

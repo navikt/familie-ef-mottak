@@ -5,9 +5,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class CipherInitializer {
-    fun prepareCipher(): Cipher {
-        return Cipher.getInstance(CIPHER_INSTANCE_NAME)
-    }
+    fun prepareCipher(): Cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME)
 
     internal fun initCipher(
         cipher: Cipher,

@@ -11,7 +11,5 @@ import org.springframework.web.bind.annotation.RestController
 class PingController {
     @GetMapping("/ping")
     @Unprotected
-    fun ping(): String {
-        return "Ack - vi har kontakt"
-    }
+    fun ping(): String = "Ack - vi har kontakt"
 }

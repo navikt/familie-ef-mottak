@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.UtledPrioritetForSøknadUtil
+import no.nav.familie.ef.sak.opplysninger.personopplysninger.PdlClient
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service
 @Service
 class OppgaveService(
     private val integrasjonerClient: IntegrasjonerClient,
+    private val pdlClient: PdlClient,
     private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
@@ -97,27 +99,25 @@ class OppgaveService(
         }
     }
 
-    private fun finnBehandlendeEnhet(journalpost: Journalpost): String? {
-        return finnPersonIdent(journalpost)?.let {
+    private fun finnBehandlendeEnhet(journalpost: Journalpost): String? =
+        finnPersonIdent(journalpost)?.let {
             integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(it).firstOrNull()?.enhetId
         }
-    }
 
-    private fun finnPersonIdent(journalpost: Journalpost): String? {
-        return journalpost.bruker?.let {
+    private fun finnPersonIdent(journalpost: Journalpost): String? =
+        journalpost.bruker?.let {
             when (it.type) {
                 BrukerIdType.FNR -> it.id
-                BrukerIdType.AKTOERID -> integrasjonerClient.hentIdentForAktørId(it.id)
+                BrukerIdType.AKTOERID -> pdlClient.hentPersonidenter(it.id).gjeldende().ident
                 BrukerIdType.ORGNR -> error("Kan ikke hente journalpost=${journalpost.journalpostId} for orgnr")
             }
         }
-    }
 
     private fun opprettOppgave(
         opprettOppgave: OpprettOppgaveRequest,
         journalpost: Journalpost,
-    ): Long {
-        return try {
+    ): Long =
+        try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info(
                 "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
@@ -131,7 +131,6 @@ class OppgaveService(
                 throw ressursException
             }
         }
-    }
 
     private fun opprettOppgaveMedEnhetNAY(
         opprettOppgave: OpprettOppgaveRequest,

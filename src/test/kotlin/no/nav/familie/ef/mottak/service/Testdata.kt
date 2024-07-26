@@ -79,12 +79,11 @@ internal object Testdata {
             Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
         )
 
-    private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker {
-        return PersonaliaArbeidssøker(
+    private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker =
+        PersonaliaArbeidssøker(
             Søknadsfelt("fnr", Fødselsnummer("03125462714")), // random fnr anno 1854
             Søknadsfelt("Navn", "Navnesen"),
         )
-    }
 
     val søknadOvergangsstønad =
         SøknadOvergangsstønad(
@@ -148,8 +147,8 @@ internal object Testdata {
             dokumentasjon = SkolepengerDokumentasjon(),
         )
 
-    fun utdanning(): UnderUtdanning {
-        return UnderUtdanning(
+    fun utdanning(): UnderUtdanning =
+        UnderUtdanning(
             Søknadsfelt("Skole/utdanningssted", "UiO"),
             Søknadsfelt(
                 "Utdanning",
@@ -217,7 +216,6 @@ internal object Testdata {
                 ),
             ),
         )
-    }
 
     private const val VEDLEGG_ID = "d5531f89-0079-4715-a337-9fd28f811f2f"
 
@@ -231,8 +229,8 @@ internal object Testdata {
         )
 
     @Suppress("LongLine")
-    private fun situasjon(): Situasjon {
-        return Situasjon(
+    private fun situasjon(): Situasjon =
+        Situasjon(
             Søknadsfelt(
                 "Gjelder noe av dette deg?",
                 listOf(
@@ -259,11 +257,10 @@ internal object Testdata {
             Søknadsfelt("Når sa du opp?", LocalDate.of(2014, 1, 12)),
             dokumentfelt("Dokumentasjon av arbeidsforhold"),
         )
-    }
 
     @Suppress("LongLine")
-    private fun aktivitet(): Aktivitet {
-        return Aktivitet(
+    private fun aktivitet(): Aktivitet =
+        Aktivitet(
             Søknadsfelt(
                 "Hvordan er arbeidssituasjonen din?",
                 listOf(
@@ -420,11 +417,10 @@ internal object Testdata {
                 ),
             ),
         )
-    }
 
     @Suppress("LongLine")
-    private fun barn(barnetilsyn: Boolean = false): Barn {
-        return Barn(
+    private fun barn(barnetilsyn: Boolean = false): Barn =
+        Barn(
             navn = Søknadsfelt("Barnets fulle navn, hvis dette er bestemt", "Sorgløs"),
             erBarnetFødt = Søknadsfelt("Er barnet født?", false),
             fødselTermindato = Søknadsfelt("Termindato", LocalDate.of(2020, 5, 16)),
@@ -495,10 +491,9 @@ internal object Testdata {
             skalHaBarnepass = if (barnetilsyn) Søknadsfelt("Skal ha barnepass", true) else null,
             barnepass = if (barnetilsyn) barnepass() else null,
         )
-    }
 
-    private fun barnepass(): Søknadsfelt<Barnepass> {
-        return Søknadsfelt(
+    private fun barnepass(): Søknadsfelt<Barnepass> =
+        Søknadsfelt(
             "Barnepass",
             Barnepass(
                 årsakBarnepass = Søknadsfelt("Årsak Barnepass", "Årsak"),
@@ -521,18 +516,16 @@ internal object Testdata {
                     ),
             ),
         )
-    }
 
-    private fun sivilstandsplaner(): Sivilstandsplaner {
-        return Sivilstandsplaner(
+    private fun sivilstandsplaner(): Sivilstandsplaner =
+        Sivilstandsplaner(
             Søknadsfelt("Har du konkrete planer om å gifte deg eller bli samboer", true),
             Søknadsfelt("Når skal dette skje?", LocalDate.of(2021, 4, 15)),
             Søknadsfelt("Hvem skal du gifte deg eller bli samboer med?", personMinimum()),
         )
-    }
 
-    private fun bosituasjon(): Bosituasjon {
-        return Bosituasjon(
+    private fun bosituasjon(): Bosituasjon =
+        Bosituasjon(
             Søknadsfelt(
                 "Deler du bolig med andre voksne?",
                 "Ja, jeg har samboer og lever i et ekteskapslignende forhold",
@@ -540,10 +533,9 @@ internal object Testdata {
             Søknadsfelt("Om samboeren din", personMinimum()),
             Søknadsfelt("Når flyttet dere sammen?", LocalDate.of(2018, 8, 12)),
         )
-    }
 
-    private fun medlemskapsdetaljer(): Medlemskapsdetaljer {
-        return Medlemskapsdetaljer(
+    private fun medlemskapsdetaljer(): Medlemskapsdetaljer =
+        Medlemskapsdetaljer(
             oppholderDuDegINorge = Søknadsfelt("Oppholder du deg i Norge?", true),
             bosattNorgeSisteÅrene = Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
             utenlandsopphold =
@@ -576,11 +568,10 @@ internal object Testdata {
                     ),
                 ),
         )
-    }
 
     @Suppress("LongLine")
-    private fun sivilstandsdetaljer(): Sivilstandsdetaljer {
-        return Sivilstandsdetaljer(
+    private fun sivilstandsdetaljer(): Sivilstandsdetaljer =
+        Sivilstandsdetaljer(
             Søknadsfelt(
                 "Er du gift uten at dette er formelt registrert eller godkjent i Norge?",
                 true,
@@ -609,20 +600,18 @@ internal object Testdata {
                 LocalDate.of(2013, 4, 17),
             ),
         )
-    }
 
-    private fun personalia(): Personalia {
-        return Personalia(
+    private fun personalia(): Personalia =
+        Personalia(
             Søknadsfelt("Fødselsnummer", Fødselsnummer("03125462714")), // random fnr anno 1854
             Søknadsfelt("Navn", "Kari Nordmann"),
             Søknadsfelt("Statsborgerskap", "Norsk"),
             adresseSøknadsfelt(),
             Søknadsfelt("Sivilstand", "Ugift"),
         )
-    }
 
-    private fun adresseSøknadsfelt(): Søknadsfelt<Adresse> {
-        return Søknadsfelt(
+    private fun adresseSøknadsfelt(): Søknadsfelt<Adresse> =
+        Søknadsfelt(
             "Adresse",
             Adresse(
                 "Jerpefaret 5C",
@@ -631,7 +620,6 @@ internal object Testdata {
                 "Norge",
             ),
         )
-    }
 
     private fun adresseopplysninger() =
         Adresseopplysninger(
@@ -643,11 +631,10 @@ internal object Testdata {
     private fun dokumentfelt(tittel: String) =
         Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(VEDLEGG_ID, tittel))))
 
-    private fun personMinimum(): PersonMinimum {
-        return PersonMinimum(
+    private fun personMinimum(): PersonMinimum =
+        PersonMinimum(
             Søknadsfelt("Navn", "Bob Burger"),
             null,
             Søknadsfelt("Fødselsdato", LocalDate.of(1992, 2, 18)),
         )
-    }
 }

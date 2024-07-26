@@ -13,18 +13,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/testapi/soknad/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
-class SøknadControllerExtension(val søknadService: SøknadService) {
+class SøknadControllerExtension(
+    val søknadService: SøknadService,
+) {
     @GetMapping("{id}")
     fun get(
         @PathVariable id: String,
-    ): Søknad {
-        return søknadService.get(id)
-    }
+    ): Søknad = søknadService.get(id)
 
     @GetMapping("{id}/pdf")
     fun getPdf(
         @PathVariable id: String,
-    ): EncryptedFile? {
-        return søknadService.get(id).søknadPdf
-    }
+    ): EncryptedFile? = søknadService.get(id).søknadPdf
 }

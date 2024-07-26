@@ -38,8 +38,8 @@ class PdfService(
     private fun lagFeltMap(
         innsending: Søknad,
         vedleggTitler: List<String>,
-    ): Map<String, Any> {
-        return when (innsending.dokumenttype) {
+    ): Map<String, Any> =
+        when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
                 SøknadTreeWalker.mapOvergangsstønad(dto, vedleggTitler)
@@ -60,7 +60,6 @@ class PdfService(
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }
         }
-    }
 
     fun lagForsideForEttersending(
         ettersending: Ettersending,

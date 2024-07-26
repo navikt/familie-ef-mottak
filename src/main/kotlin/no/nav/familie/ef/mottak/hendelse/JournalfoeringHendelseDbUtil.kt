@@ -28,8 +28,8 @@ class JournalfoeringHendelseDbUtil(
     fun lagreHendelseslogg(
         hendelseRecord: JournalfoeringHendelseRecord,
         offset: Long,
-    ): Hendelseslogg {
-        return hendelseloggRepository
+    ): Hendelseslogg =
+        hendelseloggRepository
             .insert(
                 Hendelseslogg(
                     offset,
@@ -42,16 +42,14 @@ class JournalfoeringHendelseDbUtil(
                     ),
                 ),
             )
-    }
 
     fun erHendelseRegistrertIHendelseslogg(hendelsesId: String) = hendelseloggRepository.existsByHendelseId(hendelsesId)
 
-    fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean {
-        return !taskRepositoryUtvidet.existsByPayloadAndType(
+    fun harIkkeOpprettetOppgaveForJournalpost(hendelseRecord: JournalfoeringHendelseRecord): Boolean =
+        !taskRepositoryUtvidet.existsByPayloadAndType(
             hendelseRecord.journalpostId.toString(),
             LagEksternJournalføringsoppgaveTask.TYPE,
         )
-    }
 
     fun lagreEksternJournalføringsTask(journalpost: Journalpost) {
         val journalføringsTask =
