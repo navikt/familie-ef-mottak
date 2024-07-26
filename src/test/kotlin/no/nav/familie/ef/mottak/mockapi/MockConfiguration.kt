@@ -37,20 +37,12 @@ class MockConfiguration {
             mockk(),
             IntegrasjonerConfig(URI.create("http://bac")),
         ) {
-            override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse {
-                return ArkiverDokumentResponse("journalpostId1", true)
-            }
+            override fun arkiver(arkiverDokumentRequest: ArkiverDokumentRequest): ArkiverDokumentResponse = ArkiverDokumentResponse("journalpostId1", true)
 
-            override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse {
-                return OppgaveResponse(1)
-            }
+            override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse = OppgaveResponse(1)
 
-            override fun hentSaksnummer(journalPostId: String): String {
-                return "sak1"
-            }
+            override fun hentSaksnummer(journalPostId: String): String = "sak1"
 
-            override fun hentAktørId(personident: String): String {
-                return "aktørId"
-            }
+            override fun hentAktørId(personident: String): String = "aktørId"
         }
 }

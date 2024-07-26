@@ -17,7 +17,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Component
-class OpprettOppgaveMapper(private val integrasjonerClient: IntegrasjonerClient) {
+class OpprettOppgaveMapper(
+    private val integrasjonerClient: IntegrasjonerClient,
+) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun toJournalføringsoppgave(

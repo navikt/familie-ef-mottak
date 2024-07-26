@@ -42,8 +42,8 @@ class VelgAutomatiskEllerManuellFlytTask(
     private fun skalAutomatiskJournalføre(
         stønadstype: StønadType?,
         søknad: Søknad,
-    ): Boolean {
-        return when (stønadstype) {
+    ): Boolean =
+        when (stønadstype) {
             OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER ->
                 saksbehandlingClient.kanOppretteFørstegangsbehandling(
                     søknad.fnr,
@@ -51,7 +51,6 @@ class VelgAutomatiskEllerManuellFlytTask(
                 )
             else -> false
         }
-    }
 
     companion object {
         const val TYPE = "VelgAutomatiskEllerManuelFlyt"

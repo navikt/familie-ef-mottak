@@ -3,7 +3,10 @@ package no.nav.familie.ef.mottak.util
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import java.net.URL
 
-data class LinkMelding(val link: URL, val melding: String)
+data class LinkMelding(
+    val link: URL,
+    val melding: String,
+)
 
 fun lagMeldingPåminnelseManglerDokumentasjonsbehov(
     ettersendingURL: URL,
@@ -34,11 +37,10 @@ fun lagMeldingSøknadMottattBekreftelse(
     melding = "Vi har mottatt søknaden din om $dittNavTekst.",
 )
 
-fun tilDittNavTekst(søknadType: SøknadType): String {
-    return when (søknadType) {
+fun tilDittNavTekst(søknadType: SøknadType): String =
+    when (søknadType) {
         SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
         SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
         SøknadType.SKOLEPENGER -> "stønad til skolepenger"
         else -> error("Kan ikke mappe dokumenttype $søknadType til dittnav tekst")
     }
-}

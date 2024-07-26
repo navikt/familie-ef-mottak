@@ -152,7 +152,5 @@ internal class IntegrasjonerClientTest {
         assertThat(personIdent).isEqualTo("123")
     }
 
-    private fun readFile(filnavn: String): String {
-        return this::class.java.getResource("/json/$filnavn").readText()
-    }
+    private fun readFile(filnavn: String): String = this::class.java.getResource("/json/$filnavn").readText()
 }

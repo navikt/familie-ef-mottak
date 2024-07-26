@@ -14,52 +14,46 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object SøknadMapper {
-    inline fun <reified T : Any> toDto(søknad: Søknad): T {
-        return objectMapper.readValue(søknad.søknadJson.data)
-    }
+    inline fun <reified T : Any> toDto(søknad: Søknad): T = objectMapper.readValue(søknad.søknadJson.data)
 
     fun fromDto(
         søknad: SøknadOvergangsstønad,
         behandleINySaksbehandling: Boolean,
-    ): Søknad {
-        return Søknad(
+    ): Søknad =
+        Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             behandleINySaksbehandling = behandleINySaksbehandling,
         )
-    }
 
     fun fromDto(
         søknad: SøknadBarnetilsyn,
         behandleINySaksbehandling: Boolean,
-    ): Søknad {
-        return Søknad(
+    ): Søknad =
+        Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
             behandleINySaksbehandling = behandleINySaksbehandling,
         )
-    }
 
-    fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad {
-        return Søknad(
+    fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad =
+        Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(skjemaForArbeidssøker)),
             fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
             behandleINySaksbehandling = false,
         )
-    }
 
     fun fromDto(
         søknadSkolepenger: SøknadSkolepenger,
         behandleINySaksbehandling: Boolean,
-    ): Søknad {
-        return Søknad(
+    ): Søknad =
+        Søknad(
             søknadJson = EncryptedString(objectMapper.writeValueAsString(søknadSkolepenger)),
             fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
             behandleINySaksbehandling = behandleINySaksbehandling,
         )
-    }
 }

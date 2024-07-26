@@ -1,3 +1,5 @@
 package no.nav.familie.ef.mottak.task
 
-data class TaskType(val type: String)
+data class TaskType(
+    val type: String,
+)

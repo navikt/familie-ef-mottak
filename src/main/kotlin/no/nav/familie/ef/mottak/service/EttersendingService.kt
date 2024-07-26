@@ -39,11 +39,10 @@ class EttersendingService(
         return Kvittering(UUID.randomUUID().toString(), "Ettersending er registrert mottatt.")
     }
 
-    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> {
-        return ettersendingRepository.findAllByFnr(personIdent.ident).map {
+    fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> =
+        ettersendingRepository.findAllByFnr(personIdent.ident).map {
             objectMapper.readValue(it.ettersendingJson.data)
         }
-    }
 
     fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> = ettersendingRepository.findAllByFnr(personIdent.ident)
 
@@ -73,9 +72,7 @@ class EttersendingService(
         logger.info("Mottatt ettersending med id ${lagretEttersending.id}")
     }
 
-    fun hentEttersending(id: String): Ettersending {
-        return ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
-    }
+    fun hentEttersending(id: String): Ettersending = ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
 
     fun oppdaterEttersending(ettersending: Ettersending) {
         ettersendingRepository.update(ettersending)

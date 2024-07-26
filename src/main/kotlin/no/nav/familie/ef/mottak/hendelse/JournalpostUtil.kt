@@ -24,8 +24,8 @@ fun Journalpost.ikkeGyldigKanalLogString() =
 fun Journalpost.ikkeGyldigLogString() =
     "Ny journalhendelse ikke gyldig journalpost=${this.journalpostId} tema=${this.tema} journalposttype=${this.journalposttype}"
 
-fun Journalpost.kanalMetricName(): String {
-    return when {
+fun Journalpost.kanalMetricName(): String =
+    when {
         this.kanal?.substring(0, 5) == "SKAN_" -> {
             "alene.med.barn.journalhendelse.kanal.skannets"
         }
@@ -36,7 +36,6 @@ fun Journalpost.kanalMetricName(): String {
             "alene.med.barn.journalhendelse.kanal.annet"
         }
     }
-}
 
 fun Journalpost.incrementMetric() {
     when (this.getJournalpostState()) {
@@ -58,8 +57,8 @@ fun Journalpost.metadata(): Properties {
     }
 }
 
-fun Journalpost.getJournalpostState(): JournalpostState {
-    return if (!this.erTemaEnfOgTypeI()) {
+fun Journalpost.getJournalpostState(): JournalpostState =
+    if (!this.erTemaEnfOgTypeI()) {
         JournalpostState.UGYLDIG
     } else if (this.journalstatus != Journalstatus.MOTTATT) {
         JournalpostState.IKKE_MOTTATT
@@ -68,7 +67,6 @@ fun Journalpost.getJournalpostState(): JournalpostState {
     } else {
         JournalpostState.GYLDIG
     }
-}
 
 enum class JournalpostState {
     UGYLDIG,

@@ -24,7 +24,9 @@ class CacheConfig {
                         .newBuilder()
                         .maximumSize(1000)
                         .expireAfterWrite(60, TimeUnit.MINUTES)
-                        .recordStats().build<Any, Any>().asMap()
+                        .recordStats()
+                        .build<Any, Any>()
+                        .asMap()
                 return ConcurrentMapCache(name, concurrentMap, true)
             }
         }

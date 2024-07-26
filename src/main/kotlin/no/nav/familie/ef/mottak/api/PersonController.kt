@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
-class PersonController(val søknadService: SøknadService) {
+class PersonController(
+    val søknadService: SøknadService,
+) {
     @PostMapping("soknader")
     fun søknaderForPerson(
         @RequestBody personIdent: PersonIdent,

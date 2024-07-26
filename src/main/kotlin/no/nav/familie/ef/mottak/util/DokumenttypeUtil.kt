@@ -6,14 +6,13 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.ef.StønadType
 
-fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? {
-    return when (dokumenttype) {
+fun dokumenttypeTilStønadType(dokumenttype: String): StønadType? =
+    when (dokumenttype) {
         DOKUMENTTYPE_OVERGANGSSTØNAD -> StønadType.OVERGANGSSTØNAD
         DOKUMENTTYPE_BARNETILSYN -> StønadType.BARNETILSYN
         DOKUMENTTYPE_SKOLEPENGER -> StønadType.SKOLEPENGER
         else -> null
     }
-}
 
 fun utledDokumenttypeForEttersending(stønadType: StønadType): Dokumenttype =
     when (stønadType) {

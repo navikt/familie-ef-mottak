@@ -16,17 +16,15 @@ object Feltformaterer {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
-        return feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
-    }
+    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> = feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
 
     fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
         val verdi = vedleggTitler.joinToString("\n\n")
         return feltMap("Vedlegg", verdi)
     }
 
-    private fun mapVerdi(verdi: Any): String {
-        return when (verdi) {
+    private fun mapVerdi(verdi: Any): String =
+        when (verdi) {
             is Month ->
                 tilUtskriftsformat(verdi)
             is Boolean ->
@@ -50,7 +48,6 @@ object Feltformaterer {
             else ->
                 verdi.toString()
         }
-    }
 
     private fun tilUtskriftsformat(verdi: Boolean) = if (verdi) "Ja" else "Nei"
 
@@ -60,35 +57,27 @@ object Feltformaterer {
 
     private fun tilUtskriftsformat(verdi: LocalDateTime) = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
 
-    private fun tilUtskriftsformat(verdi: MånedÅrPeriode): String {
-        return "Fra ${tilUtskriftsformat(verdi.fraMåned)} ${verdi.fraÅr} til ${tilUtskriftsformat(verdi.tilMåned)} ${verdi.tilÅr}"
-    }
+    private fun tilUtskriftsformat(verdi: MånedÅrPeriode): String = "Fra ${tilUtskriftsformat(verdi.fraMåned)} ${verdi.fraÅr} til ${tilUtskriftsformat(verdi.tilMåned)} ${verdi.tilÅr}"
 
-    private fun tilUtskriftsformat(verdi: Datoperiode): String {
-        return "Fra ${tilUtskriftsformat(verdi.fra)} til ${tilUtskriftsformat(verdi.til)}"
-    }
+    private fun tilUtskriftsformat(verdi: Datoperiode): String = "Fra ${tilUtskriftsformat(verdi.fra)} til ${tilUtskriftsformat(verdi.til)}"
 
-    private fun tilUtskriftsformat(verdi: LocalDate): String {
-        return verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-    }
+    private fun tilUtskriftsformat(verdi: LocalDate): String = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
-    private fun tilUtskriftsformat(adresse: Adresse): String {
-        return listOf(
+    private fun tilUtskriftsformat(adresse: Adresse): String =
+        listOf(
             adresse.adresse,
             listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
             adresse.land,
         ).joinToString("\n\n")
-    }
 
     fun feltMap(
         label: String,
         verdi: String,
         alternativer: List<String>? = null,
-    ): Map<String, String> {
-        return if (alternativer != null) {
+    ): Map<String, String> =
+        if (alternativer != null) {
             mapOf("label" to label, "verdi" to verdi, "alternativer" to alternativer.joinToString(" / "))
         } else {
             mapOf("label" to label, "verdi" to verdi)
         }
-    }
 }

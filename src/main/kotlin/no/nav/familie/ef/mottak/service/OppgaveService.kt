@@ -97,27 +97,25 @@ class OppgaveService(
         }
     }
 
-    private fun finnBehandlendeEnhet(journalpost: Journalpost): String? {
-        return finnPersonIdent(journalpost)?.let {
+    private fun finnBehandlendeEnhet(journalpost: Journalpost): String? =
+        finnPersonIdent(journalpost)?.let {
             integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(it).firstOrNull()?.enhetId
         }
-    }
 
-    private fun finnPersonIdent(journalpost: Journalpost): String? {
-        return journalpost.bruker?.let {
+    private fun finnPersonIdent(journalpost: Journalpost): String? =
+        journalpost.bruker?.let {
             when (it.type) {
                 BrukerIdType.FNR -> it.id
                 BrukerIdType.AKTOERID -> integrasjonerClient.hentIdentForAktørId(it.id)
                 BrukerIdType.ORGNR -> error("Kan ikke hente journalpost=${journalpost.journalpostId} for orgnr")
             }
         }
-    }
 
     private fun opprettOppgave(
         opprettOppgave: OpprettOppgaveRequest,
         journalpost: Journalpost,
-    ): Long {
-        return try {
+    ): Long =
+        try {
             val nyOppgave = integrasjonerClient.lagOppgave(opprettOppgave)
             log.info(
                 "Oppretter ny ${opprettOppgave.oppgavetype} med oppgaveId=${nyOppgave.oppgaveId} for " +
@@ -131,7 +129,6 @@ class OppgaveService(
                 throw ressursException
             }
         }
-    }
 
     private fun opprettOppgaveMedEnhetNAY(
         opprettOppgave: OpprettOppgaveRequest,

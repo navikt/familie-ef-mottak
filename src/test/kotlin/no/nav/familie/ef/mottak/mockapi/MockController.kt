@@ -14,17 +14,15 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/mockapi/"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Unprotected
 class MockController {
-    data class OkDto(val status: String = "OK")
+    data class OkDto(
+        val status: String = "OK",
+    )
 
     @PostMapping("/mottak/dokument")
     @Unprotected
-    fun mockMottakDokument(): ResponseEntity<OkDto> {
-        return ResponseEntity.ok(OkDto())
-    }
+    fun mockMottakDokument(): ResponseEntity<OkDto> = ResponseEntity.ok(OkDto())
 
     @PostMapping("/token")
     @Unprotected
-    fun mockOauthToken(): ResponseEntity<OAuth2AccessTokenResponse> {
-        return ResponseEntity.ok(OAuth2AccessTokenResponse("Mock-token-response", 60, 60, emptyMap()))
-    }
+    fun mockOauthToken(): ResponseEntity<OAuth2AccessTokenResponse> = ResponseEntity.ok(OAuth2AccessTokenResponse("Mock-token-response", 60, 60, emptyMap()))
 }
