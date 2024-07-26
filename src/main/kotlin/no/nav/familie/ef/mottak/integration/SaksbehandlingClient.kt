@@ -21,16 +21,21 @@ class SaksbehandlingClient(
     private val uri: URI,
     @Qualifier("restTemplateAzure")
     restOperations: RestOperations,
-) :
-    AbstractPingableRestClient(restOperations, "saksbehandling") {
-    override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
+) : AbstractPingableRestClient(restOperations, "saksbehandling") {
+    override val pingUri: URI =
+        UriComponentsBuilder
+            .fromUri(uri)
+            .pathSegment("api/ping")
+            .build()
+            .toUri()
 
     fun kanOppretteFørstegangsbehandling(
         personIdent: String,
         stønadType: StønadType,
     ): Boolean {
         val kapOppretteUri =
-            UriComponentsBuilder.fromUri(uri)
+            UriComponentsBuilder
+                .fromUri(uri)
                 .pathSegment("api")
                 .pathSegment("ekstern")
                 .pathSegment("automatisk-journalforing")
@@ -46,7 +51,8 @@ class SaksbehandlingClient(
 
     fun journalførAutomatisk(automatiskJournalføringRequest: AutomatiskJournalføringRequest): AutomatiskJournalføringResponse {
         val sendInnUri =
-            UriComponentsBuilder.fromUri(uri)
+            UriComponentsBuilder
+                .fromUri(uri)
                 .pathSegment("api/ekstern/automatisk-journalforing/journalfor")
                 .build()
                 .toUri()
@@ -58,7 +64,8 @@ class SaksbehandlingClient(
 
     fun kanSendePåminnelseTilBruker(kanSendePåminnelseRequest: KanSendePåminnelseRequest): Boolean {
         val uri =
-            UriComponentsBuilder.fromUri(uri)
+            UriComponentsBuilder
+                .fromUri(uri)
                 .pathSegment("api")
                 .pathSegment("ekstern")
                 .pathSegment("behandling")

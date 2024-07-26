@@ -27,7 +27,11 @@ internal class ArkiverDokumentRequestMapperTest {
         assertThat(dto.fnr).isEqualTo(søknad.fnr)
         assertThat(dto.forsøkFerdigstill).isFalse
         assertThat(dto.hoveddokumentvarianter).hasSize(2)
-        assertThat(dto.hoveddokumentvarianter.first().dokumenttype.name).isEqualTo(søknad.dokumenttype)
+        assertThat(
+            dto.hoveddokumentvarianter
+                .first()
+                .dokumenttype.name,
+        ).isEqualTo(søknad.dokumenttype)
         assertThat(dto.hoveddokumentvarianter.first().tittel).isEqualTo(Dokumenttype.valueOf(søknad.dokumenttype).dokumentTittel())
         assertThat(dto.hoveddokumentvarianter.first().filtype).isEqualTo(Filtype.PDFA)
         assertThat(dto.vedleggsdokumenter.first().dokumenttype)

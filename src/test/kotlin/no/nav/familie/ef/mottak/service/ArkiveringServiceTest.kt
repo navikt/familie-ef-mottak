@@ -119,13 +119,12 @@ internal class ArkiveringServiceTest {
         verify(exactly = 0) { integrasjonerClient.hentJournalposterForBruker(any()) }
     }
 
-    private fun lagRessursException(restClientResponseException: RestClientResponseException): RessursException {
-        return RessursException(
+    private fun lagRessursException(restClientResponseException: RestClientResponseException): RessursException =
+        RessursException(
             cause = restClientResponseException,
             ressurs = Ressurs.failure("feil"),
             httpStatus = HttpStatus.valueOf(restClientResponseException.rawStatusCode),
         )
-    }
 
     private fun lagJournalpost(
         forventetJournalpostId: String,

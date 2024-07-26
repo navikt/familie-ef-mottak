@@ -15,7 +15,9 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 
 @Service
-class DittNavKafkaProducer(private val kafkaTemplate: KafkaTemplate<NokkelInput, BeskjedInput>) {
+class DittNavKafkaProducer(
+    private val kafkaTemplate: KafkaTemplate<NokkelInput, BeskjedInput>,
+) {
     @Value("\${KAFKA_TOPIC_DITTNAV}")
     private lateinit var topic: String
 

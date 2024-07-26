@@ -96,9 +96,7 @@ class SøknadService(
             )
         }
 
-    fun get(id: String): Søknad {
-        return søknadRepository.findByIdOrThrow(id)
-    }
+    fun get(id: String): Søknad = søknadRepository.findByIdOrThrow(id)
 
     fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> = søknadRepository.findAllByFnr(personIdent.ident)
 
@@ -126,8 +124,9 @@ class SøknadService(
         return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
     }
 
-    fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> {
-        return søknadRepository.finnSisteSøknadenPerStønadtype(personIdent)
+    fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> =
+        søknadRepository
+            .finnSisteSøknadenPerStønadtype(personIdent)
             .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
             .map {
                 SøknadMedDokumentasjonsbehovDto(
@@ -135,14 +134,14 @@ class SøknadService(
                     stønadType =
                         StønadType
                             .valueOf(
-                                SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                SøknadType
+                                    .hentSøknadTypeForDokumenttype(it.dokumenttype)
                                     .toString(),
                             ),
                     søknadDato = it.opprettetTid.toLocalDate(),
                     dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it),
                 )
             }
-    }
 
     // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
     fun hentDokumentasjonsbehovForSøknad(søknad: Søknad): DokumentasjonsbehovDto {

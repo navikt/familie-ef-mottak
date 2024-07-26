@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository
 import java.time.YearMonth
 
 @Repository
-class StatistikkRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) {
+class StatistikkRepository(
+    private val jdbcTemplate: NamedParameterJdbcTemplate,
+) {
     fun antallSøknaderPerDokumentType(): List<SøknaderPerDokumenttype> {
         // language=PostgreSQL
         val sql = """
@@ -23,4 +25,8 @@ class StatistikkRepository(private val jdbcTemplate: NamedParameterJdbcTemplate)
     }
 }
 
-data class SøknaderPerDokumenttype(val dato: YearMonth, val type: String, val antall: Int)
+data class SøknaderPerDokumenttype(
+    val dato: YearMonth,
+    val type: String,
+    val antall: Int,
+)

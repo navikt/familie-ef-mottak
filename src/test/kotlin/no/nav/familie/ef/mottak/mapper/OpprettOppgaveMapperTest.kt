@@ -51,13 +51,9 @@ internal class OpprettOppgaveMapperTest {
         }
     }
 
-    private fun LocalDateTime.kveld(): LocalDateTime {
-        return this.withHour(20)
-    }
+    private fun LocalDateTime.kveld(): LocalDateTime = this.withHour(20)
 
-    private fun LocalDateTime.morgen(): LocalDateTime {
-        return this.withHour(8)
-    }
+    private fun LocalDateTime.morgen(): LocalDateTime = this.withHour(8)
 
     private val torsdag = LocalDateTime.of(2021, 4, 1, 12, 0)
     private val fredag = LocalDateTime.of(2021, 4, 2, 12, 0)

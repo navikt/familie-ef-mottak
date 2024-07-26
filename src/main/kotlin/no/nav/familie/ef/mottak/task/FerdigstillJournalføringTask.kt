@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 @TaskStepBeskrivelse(taskStepType = FerdigstillJournalføringTask.TYPE, beskrivelse = "FerdigstillerJournalføring")
-class FerdigstillJournalføringTask(private val arkiveringService: ArkiveringService) : AsyncTaskStep {
+class FerdigstillJournalføringTask(
+    private val arkiveringService: ArkiveringService,
+) : AsyncTaskStep {
     override fun doTask(task: Task) {
         arkiveringService.ferdigstillJournalpost(task.payload)
     }

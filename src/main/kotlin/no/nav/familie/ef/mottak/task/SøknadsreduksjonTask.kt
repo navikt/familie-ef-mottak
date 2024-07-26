@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional
     taskStepType = SøknadsreduksjonTask.TYPE,
     beskrivelse = "Resuserer datasomfanget for en søknad.",
 )
-class SøknadsreduksjonTask(private val søknadService: SøknadService) : AsyncTaskStep {
+class SøknadsreduksjonTask(
+    private val søknadService: SøknadService,
+) : AsyncTaskStep {
     @Transactional
     override fun doTask(task: Task) {
         søknadService.reduserSøknad(task.payload)

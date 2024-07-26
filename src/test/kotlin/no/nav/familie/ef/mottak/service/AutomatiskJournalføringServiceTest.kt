@@ -89,16 +89,17 @@ internal class AutomatiskJournalføringServiceTest {
             val automatiskJournalføringRequestSlot = slot<AutomatiskJournalføringRequest>()
             val sommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
             val soknad =
-                SøknadMapper.fromDto(
-                    Testdata.søknadOvergangsstønad.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadOvergangsstønad.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
 
             every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns
                 AutomatiskJournalføringResponse(
@@ -122,16 +123,17 @@ internal class AutomatiskJournalføringServiceTest {
             val automatiskJournalføringRequestSlot = slot<AutomatiskJournalføringRequest>()
             val sommertid = LocalDate.of(LocalDateTime.now().year, 2, 20)
             val soknad =
-                SøknadMapper.fromDto(
-                    Testdata.søknadOvergangsstønad.copy(
-                        aktivitet =
-                            Søknadsfelt(
-                                "aktivitet",
-                                tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
-                            ),
-                    ),
-                    true,
-                ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
+                SøknadMapper
+                    .fromDto(
+                        Testdata.søknadOvergangsstønad.copy(
+                            aktivitet =
+                                Søknadsfelt(
+                                    "aktivitet",
+                                    tomAktivitet.copy(underUtdanning = Søknadsfelt("", Testdata.utdanning())),
+                                ),
+                        ),
+                        true,
+                    ).copy(opprettetTid = LocalDateTime.of(sommertid, LocalTime.now()), journalpostId = "11111111111")
 
             every { saksbehandlingClient.journalførAutomatisk(capture(automatiskJournalføringRequestSlot)) } returns
                 AutomatiskJournalføringResponse(

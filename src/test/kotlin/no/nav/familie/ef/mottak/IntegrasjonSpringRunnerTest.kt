@@ -80,34 +80,29 @@ abstract class IntegrasjonSpringRunnerTest {
         hendelsesloggRepository.deleteAll()
     }
 
-    protected fun getPort(): String {
-        return port.toString()
-    }
+    protected fun getPort(): String = port.toString()
 
-    protected fun localhost(uri: String): String {
-        return LOCALHOST + getPort() + uri
-    }
+    protected fun localhost(uri: String): String = LOCALHOST + getPort() + uri
 
     protected fun url(
         baseUrl: String,
         uri: String,
-    ): String {
-        return baseUrl + uri
-    }
+    ): String = baseUrl + uri
 
     fun søkerBearerToken(personident: String = "12345678910"): String {
         val clientId = "lokal:teamfamilie:familie-ef-mottak"
-        return mockOAuth2Server.issueToken(
-            issuerId = "tokenx",
-            clientId,
-            DefaultOAuth2TokenCallback(
+        return mockOAuth2Server
+            .issueToken(
                 issuerId = "tokenx",
-                subject = personident,
-                audience = listOf("aud-localhost"),
-                claims = mapOf("acr" to "Level4", "client_id" to clientId),
-                expiry = 3600,
-            ),
-        ).serialize()
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = "tokenx",
+                    subject = personident,
+                    audience = listOf("aud-localhost"),
+                    claims = mapOf("acr" to "Level4", "client_id" to clientId),
+                    expiry = 3600,
+                ),
+            ).serialize()
     }
 
     companion object {

@@ -9,7 +9,9 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Service
 
 @Service
-class JournalhendelseKafkaListener(val kafkaHåndterer: JournalhendelseKafkaHåndterer) {
+class JournalhendelseKafkaListener(
+    val kafkaHåndterer: JournalhendelseKafkaHåndterer,
+) {
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(

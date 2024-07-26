@@ -8,18 +8,15 @@ import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object EttersendingMapper {
-    inline fun <reified T : Any> toDto(ettersending: Ettersending): T {
-        return objectMapper.readValue(ettersending.ettersendingJson.data)
-    }
+    inline fun <reified T : Any> toDto(ettersending: Ettersending): T = objectMapper.readValue(ettersending.ettersendingJson.data)
 
     fun fromDto(
         stønadType: StønadType,
         ettersending: EttersendelseDto,
-    ): Ettersending {
-        return Ettersending(
+    ): Ettersending =
+        Ettersending(
             ettersendingJson = EncryptedString(objectMapper.writeValueAsString(ettersending)),
             fnr = ettersending.personIdent,
             stønadType = stønadType.toString(),
         )
-    }
 }

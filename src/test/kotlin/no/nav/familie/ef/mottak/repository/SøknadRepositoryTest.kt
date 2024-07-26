@@ -85,7 +85,8 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val søknader = søknadRepository.finnSisteSøknadenPerStønadtype(ident)
 
-        assertThat(søknader).usingRecursiveComparison()
+        assertThat(søknader)
+            .usingRecursiveComparison()
             .ignoringFields("opprettetTid")
             .ignoringCollectionOrder()
             .isEqualTo(listOf(søknadOvergangsstønad, søknadBarnetilsyn))

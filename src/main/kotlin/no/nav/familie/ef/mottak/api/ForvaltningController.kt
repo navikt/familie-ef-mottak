@@ -17,7 +17,10 @@ import java.util.UUID
 @RestController
 @RequestMapping(path = ["/api/forvaltning"])
 @ProtectedWithClaims(issuer = "azuread")
-class ForvaltningController(private val ettersendingService: EttersendingService, private val taskService: TaskService) {
+class ForvaltningController(
+    private val ettersendingService: EttersendingService,
+    private val taskService: TaskService,
+) {
     @PostMapping("/ettersending/splitt")
     fun trekkUtVedleggFraEttersending(
         @RequestBody ettersendingVedleggId: EttersendingVedleggId,

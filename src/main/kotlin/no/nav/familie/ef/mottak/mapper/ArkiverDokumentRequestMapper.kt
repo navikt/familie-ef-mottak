@@ -91,41 +91,38 @@ object ArkiverDokumentRequestMapper {
     private fun tilDokument(
         vedlegg: Vedlegg,
         dokumenttypeVedlegg: Dokumenttype,
-    ): Dokument {
-        return Dokument(
+    ): Dokument =
+        Dokument(
             dokument = vedlegg.innhold.bytes,
             filtype = Filtype.PDFA,
             tittel = vedlegg.tittel,
             filnavn = vedlegg.id.toString(),
             dokumenttype = dokumenttypeVedlegg,
         )
-    }
 
     private fun tilEttersendingDokument(
         vedlegg: EttersendingVedlegg,
         dokumenttypeVedlegg: Dokumenttype,
-    ): Dokument {
-        return Dokument(
+    ): Dokument =
+        Dokument(
             dokument = vedlegg.innhold.bytes,
             filtype = Filtype.PDFA,
             tittel = vedlegg.tittel,
             filnavn = vedlegg.id.toString(),
             dokumenttype = dokumenttypeVedlegg,
         )
-    }
 
-    private fun mapDokumenttype(dokumenttype: String): Dokumenttype {
-        return when (dokumenttype) {
+    private fun mapDokumenttype(dokumenttype: String): Dokumenttype =
+        when (dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
             DOKUMENTTYPE_BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
             DOKUMENTTYPE_SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
-    }
 }
 
-fun Dokumenttype?.dokumentTittel(): String {
-    return when (this) {
+fun Dokumenttype?.dokumentTittel(): String =
+    when (this) {
         Dokumenttype.OVERGANGSSTØNAD_SØKNAD -> "Søknad om overgangsstønad"
         Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om overgangsstønad"
         Dokumenttype.SKOLEPENGER_SØKNAD -> "Søknad om stønad til skolepenger"
@@ -134,4 +131,3 @@ fun Dokumenttype?.dokumentTittel(): String {
         Dokumenttype.BARNETILSYNSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om barnetilsyn"
         else -> "hoveddokument"
     }
-}

@@ -45,7 +45,8 @@ class SøknadServiceTest {
             listOf(
                 DokumentasjonsbehovKontrakter(
                     "test",
-                    UUID.randomUUID()
+                    UUID
+                        .randomUUID()
                         .toString(),
                     false,
                 ),

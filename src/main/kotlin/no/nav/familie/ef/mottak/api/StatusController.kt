@@ -13,7 +13,9 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping(path = ["/api/status"], produces = [MediaType.APPLICATION_JSON_VALUE])
-class StatusController(val søknadRepository: SøknadRepository) {
+class StatusController(
+    val søknadRepository: SøknadRepository,
+) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping()
@@ -71,7 +73,11 @@ class StatusController(val søknadRepository: SøknadRepository) {
 
 const val LOG_URL = "https://logs.adeo.no/app/discover#/view/a3e93b80-c1a5-11ee-a029-75a0ed43c092?_g=()"
 
-data class StatusDto(val status: Plattformstatus, val description: String? = null, val logLink: String? = LOG_URL)
+data class StatusDto(
+    val status: Plattformstatus,
+    val description: String? = null,
+    val logLink: String? = LOG_URL,
+)
 
 // OK, ISSUE, DOWN
 enum class Plattformstatus {

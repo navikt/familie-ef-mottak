@@ -25,9 +25,8 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(ApiFeil::class)
-    fun handleThrowable(e: ApiFeil): ResponseEntity<Ressurs<String>> {
-        return ResponseEntity
+    fun handleThrowable(e: ApiFeil): ResponseEntity<Ressurs<String>> =
+        ResponseEntity
             .status(e.httpStatus)
             .body(Ressurs.failure(e.feil))
-    }
 }

@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
-class EttersendingController(val ettersendingService: EttersendingService) {
+class EttersendingController(
+    val ettersendingService: EttersendingService,
+) {
     @PostMapping
     fun ettersend(
         @RequestBody ettersending: Map<StønadType, EttersendelseDto>,
-    ): Kvittering {
-        return okEllerKastException { ettersendingService.mottaEttersending(ettersending) }
-    }
+    ): Kvittering = okEllerKastException { ettersendingService.mottaEttersending(ettersending) }
 
     @PostMapping("person")
     fun hentForPerson(

@@ -40,14 +40,13 @@ class SendSøknadMottattTilDittNavTask(
         return "Vi har mottatt søknaden din om ${søknadstypeTekst(søknadType)}."
     }
 
-    private fun søknadstypeTekst(søknadType: SøknadType): String {
-        return when (søknadType) {
+    private fun søknadstypeTekst(søknadType: SøknadType): String =
+        when (søknadType) {
             SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
             SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
             SøknadType.SKOLEPENGER -> "stønad til skolepenger"
             else -> error("Kan mappe dokumenttype $søknadType til dittnav tekst")
         }
-    }
 
     companion object {
         const val TYPE = "sendSøknadMottattTilDittNav"

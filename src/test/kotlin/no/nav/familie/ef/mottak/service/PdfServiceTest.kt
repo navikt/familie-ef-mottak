@@ -125,9 +125,7 @@ internal class PdfServiceTest {
         }
     }
 
-    private fun createValidSøknadJson(søknad: Any): EncryptedString {
-        return EncryptedString(objectMapper.writeValueAsString(søknad))
-    }
+    private fun createValidSøknadJson(søknad: Any): EncryptedString = EncryptedString(objectMapper.writeValueAsString(søknad))
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {
         every {

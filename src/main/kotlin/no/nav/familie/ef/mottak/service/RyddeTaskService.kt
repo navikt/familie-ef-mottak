@@ -12,7 +12,9 @@ import java.util.UUID
 
 @Service
 @Transactional
-class RyddeTaskService(private val taskService: TaskService) {
+class RyddeTaskService(
+    private val taskService: TaskService,
+) {
     fun opprettSøknadsreduksjonTask(søknadId: String) {
         val properties =
             Properties().apply {

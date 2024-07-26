@@ -95,7 +95,8 @@ object SøknadTreeWalker {
     private fun finnFelter(entitet: Any): List<Map<String, *>> {
         // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
         if (entitet is List<Any?>) {
-            return entitet.filterNotNull()
+            return entitet
+                .filterNotNull()
                 .map { finnFelter(it) }
                 .flatten()
         }
@@ -130,9 +131,7 @@ object SøknadTreeWalker {
         return list
     }
 
-    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): Map<String, *> {
-        return feltlisteMap(entitet.label, listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)))
-    }
+    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): Map<String, *> = feltlisteMap(entitet.label, listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)))
 
     private fun feltlisteMap(
         label: String,

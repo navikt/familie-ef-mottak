@@ -237,7 +237,11 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
     }
 
-    data class SøknadData(val id: String, val dokumentType: String, val opprettetTid: LocalDateTime)
+    data class SøknadData(
+        val id: String,
+        val dokumentType: String,
+        val opprettetTid: LocalDateTime,
+    )
 
     companion object {
         private const val EVENT_ID = "e8703be6-eb47-476a-ae52-096df47430d7"
