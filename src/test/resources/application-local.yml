@@ -111,7 +111,5 @@ UNLEASH_SERVER_API_TOKEN: token
 NAIS_APP_NAME: familie-ef-mottak
 API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com
-AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS
