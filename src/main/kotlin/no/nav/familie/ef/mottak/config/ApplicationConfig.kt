@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.config
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.http.client.RetryOAuth2HttpClient
 import no.nav.familie.http.config.RestTemplateBuilderBean
+import no.nav.familie.http.config.RestTemplateAzure
 import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
@@ -49,6 +50,7 @@ import java.time.temporal.ChronoUnit
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
     KafkaErrorHandler::class,
+    RestTemplateAzure::class,
 )
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)

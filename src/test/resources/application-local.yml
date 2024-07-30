@@ -94,7 +94,6 @@ dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
 ettersending.ettersendingUrl: http://localhost:3000/
 
-AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
 ON_PREM_URL_ENV: dev
 
 TOKEN_X_WELL_KNOWN_URL: http://localhost
@@ -109,5 +108,9 @@ TOKEN_X_PRIVATE_JWK: '{
 UNLEASH_SERVER_API_URL: http://localhost:4242/api
 UNLEASH_SERVER_API_TOKEN: token
 NAIS_APP_NAME: familie-ef-mottak
+API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
+AZURE_APP_TENANT_ID: navq.onmicrosoft.com
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS

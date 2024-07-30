@@ -11,7 +11,7 @@ import java.net.URI
 @Service
 class PdlClient(
     val pdlConfig: PdlConfig,
-    @Qualifier("restTemplateAzure") restTemplate: RestOperations,
+    @Qualifier("azureClientCredential") restTemplate: RestOperations,
 ) : AbstractPingableRestClient(restTemplate, "pdl.personinfo") {
     override val pingUri: URI
         get() = pdlConfig.pdlUri
