@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.personopplysninger
 
-import no.nav.familie.ef.sak.opplysninger.personopplysninger.PdlClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

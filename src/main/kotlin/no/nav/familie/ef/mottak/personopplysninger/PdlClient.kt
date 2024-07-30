@@ -1,12 +1,5 @@
-package no.nav.familie.ef.sak.opplysninger.personopplysninger
+package no.nav.familie.ef.mottak.personopplysninger
 
-import no.nav.familie.ef.mottak.personopplysninger.PdlConfig
-import no.nav.familie.ef.mottak.personopplysninger.PdlHentIdenter
-import no.nav.familie.ef.mottak.personopplysninger.PdlIdentRequest
-import no.nav.familie.ef.mottak.personopplysninger.PdlIdentRequestVariables
-import no.nav.familie.ef.mottak.personopplysninger.PdlIdenter
-import no.nav.familie.ef.mottak.personopplysninger.PdlResponse
-import no.nav.familie.ef.mottak.personopplysninger.feilsjekkOgReturnerData
 import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.felles.Tema
 import org.springframework.beans.factory.annotation.Qualifier

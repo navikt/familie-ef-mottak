@@ -8,10 +8,10 @@ import io.mockk.slot
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.integration.PdfClient
+import no.nav.familie.ef.mottak.personopplysninger.PdlClient
 import no.nav.familie.ef.mottak.personopplysninger.PdlIdent
 import no.nav.familie.ef.mottak.personopplysninger.PdlIdenter
 import no.nav.familie.ef.mottak.personopplysninger.PdlNotFoundException
-import no.nav.familie.ef.sak.opplysninger.personopplysninger.PdlClient
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
 import no.nav.familie.kontrakter.felles.objectMapper

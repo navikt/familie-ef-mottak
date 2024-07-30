@@ -5,8 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import no.nav.familie.ef.mottak.personopplysninger.PdlClient
 import no.nav.familie.ef.mottak.personopplysninger.PdlConfig
-import no.nav.familie.ef.sak.opplysninger.personopplysninger.PdlClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -51,7 +51,6 @@ class PdlClientTest {
         val response = pdlClient.hentAktørIder("12345")
         assertThat(response.identer.first().ident).isEqualTo("12345678901")
     }
-
 
     @Test
     fun `pdlClient håndterer response for uthenting av identer`() {
