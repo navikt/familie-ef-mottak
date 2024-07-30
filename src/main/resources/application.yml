@@ -129,10 +129,9 @@ database:
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
 EF_SAK_URL: http://familie-ef-sak
 
-PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
+PDL_SCOPE: api://${ON_PREM_URL_ENV}-fss.pdl.pdl-api/.default
 PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
-
 KAFKA_TOPIC_DITTNAV: min-side.aapen-brukernotifikasjon-beskjed-v1
 #STS_URL: http://security-token-service.default.svc.nais.local
 ettersending.ettersendingUrl: https://www.nav.no/familie/alene-med-barn/ettersending
