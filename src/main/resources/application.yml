@@ -58,28 +58,6 @@ spring:
 logging:
   config: "classpath:logback-spring.xml"
 
-no.nav.security.jwt:
-  client:
-    registration:
-      pdl:
-        resource-url: ${PDL_URL}
-        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-        scope: ${PDL_SCOPE}
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-secret: ${AZURE_APP_CLIENT_SECRET}
-          client-auth-method: client_secret_basic
-      pdl-clientcredentials:
-        resource-url: ${PDL_URL}
-        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-        grant-type: client_credentials
-        scope: ${PDL_SCOPE}
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-secret: ${AZURE_APP_CLIENT_SECRET}
-          client-auth-method: client_secret_basic
-
 springdoc:
   packagesToScan: no.nav.familie.ef.mottak
   pathsToMatch: /v3/api-docs,/api/**
@@ -129,7 +107,10 @@ database:
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering
 EF_SAK_URL: http://familie-ef-sak
 
-PDL_SCOPE: api://${ON_PREM_URL_ENV}-fss.pdl.pdl-api/.default
+DEPLOY_ENV: prod
+ON_PREM_URL_ENV: prod
+
+PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 PDL_URL: https://pdl-api.${ON_PREM_URL_ENV}-fss-pub.nais.io
 AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token

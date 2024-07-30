@@ -36,6 +36,22 @@ no.nav.security.jwt:
           client-id: ${TOKEN_X_CLIENT_ID}
           client-auth-method: private_key_jwt
           client-jwk: ${TOKEN_X_PRIVATE_JWK}
-
+      pdl:
+        resource-url: ${PDL_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${PDL_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      pdl-clientcredentials:
+        resource-url: ${PDL_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${PDL_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
 prosessering.rolle: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Gruppen teamfamilie
-ON_PREM_URL_ENV: prod

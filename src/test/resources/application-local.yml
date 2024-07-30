@@ -94,6 +94,7 @@ dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
 ettersending.ettersendingUrl: http://localhost:3000/
 
+DEPLOY_ENV: dev
 ON_PREM_URL_ENV: dev
 
 TOKEN_X_WELL_KNOWN_URL: http://localhost
