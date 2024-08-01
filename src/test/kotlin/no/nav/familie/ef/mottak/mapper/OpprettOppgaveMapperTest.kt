@@ -1,13 +1,12 @@
 package no.nav.familie.ef.mottak.mapper
 
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 internal class OpprettOppgaveMapperTest {
-    private val mapper = OpprettOppgaveMapper(mockk())
+    private val mapper = OpprettOppgaveMapper()
 
     @Test
     internal fun `skal sette frist til 1 dag for journalføringsoppgave opprettet før kl 12`() {

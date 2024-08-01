@@ -42,7 +42,5 @@ class MockConfiguration {
             override fun lagOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): OppgaveResponse = OppgaveResponse(1)
 
             override fun hentSaksnummer(journalPostId: String): String = "sak1"
-
-            override fun hentAktørId(personident: String): String = "aktørId"
         }
 }

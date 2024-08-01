@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.mapper
 
-import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -17,9 +16,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Component
-class OpprettOppgaveMapper(
-    private val integrasjonerClient: IntegrasjonerClient,
-) {
+class OpprettOppgaveMapper {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun toJournalføringsoppgave(
@@ -58,9 +55,7 @@ class OpprettOppgaveMapper(
         }
 
         return when (journalpost.bruker!!.type) {
-            BrukerIdType.FNR -> {
-                OppgaveIdentV2(ident = integrasjonerClient.hentAktørId(journalpost.bruker!!.id), gruppe = IdentGruppe.AKTOERID)
-            }
+            BrukerIdType.FNR -> OppgaveIdentV2(ident = journalpost.bruker!!.id, gruppe = IdentGruppe.FOLKEREGISTERIDENT)
             BrukerIdType.ORGNR -> OppgaveIdentV2(ident = journalpost.bruker!!.id, gruppe = IdentGruppe.ORGNR)
             BrukerIdType.AKTOERID -> OppgaveIdentV2(ident = journalpost.bruker!!.id, gruppe = IdentGruppe.AKTOERID)
         }

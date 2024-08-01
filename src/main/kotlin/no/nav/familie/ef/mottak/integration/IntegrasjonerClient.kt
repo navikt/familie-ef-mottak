@@ -19,7 +19,6 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
-import no.nav.familie.kontrakter.felles.personopplysning.Ident
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
@@ -212,11 +211,6 @@ class IntegrasjonerClient(
     fun hentSaksnummer(journalPostId: String): String {
         val response = getForEntity<Ressurs<Map<*, *>>>(lagHentSaksnummerUri(journalPostId))
         return response.getDataOrThrow()["saksnummer"].toString()
-    }
-
-    fun hentAktørId(personident: String): String {
-        val response = postForEntity<Ressurs<MutableMap<*, *>>>(aktørUri, Ident(personident))
-        return response.getDataOrThrow()["aktørId"].toString()
     }
 
     fun hentIdentForAktørId(aktørId: String): String {
