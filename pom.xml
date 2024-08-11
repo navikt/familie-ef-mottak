@@ -19,11 +19,11 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>2.0.0</kotlin.version>
+        <kotlin.version>2.0.10</kotlin.version>
         <springdoc.version>2.6.0</springdoc.version>
         <mockk.version>1.13.12</mockk.version>
-        <felles.version>3.20240715145751_fc025c1</felles.version>
-        <prosessering.version>2.20240603145215_c56e179</prosessering.version>
+        <felles.version>3.20240806111424_fff2930</felles.version>
+        <prosessering.version>2.20240809130157_d33fbc4</prosessering.version>
         <confluent.version>7.7.0</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20240801145104_f611578</kontrakter.version>
@@ -121,7 +121,7 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.11.3</version>
+            <version>1.12.0</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
@@ -338,7 +338,7 @@
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
-                <version>1.11.3</version>
+                <version>1.12.0</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
