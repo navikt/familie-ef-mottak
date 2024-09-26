@@ -11,7 +11,7 @@ import java.util.Properties
 import java.util.UUID
 
 @Service
-@TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad")
+@TaskStepBeskrivelse(taskStepType = ArkiverSøknadTask.TYPE, beskrivelse = "Arkiver søknad", settTilManuellOppfølgning = true, maxAntallFeil = 1)
 class ArkiverSøknadTask(
     private val arkiveringService: ArkiveringService,
     private val taskService: TaskService,
