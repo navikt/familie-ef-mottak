@@ -13,8 +13,16 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 class SpirePdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
 ) : AbstractRestClient(operations, "pdf") {
-    fun lagPdf(søknad: Søknad, vedleggTitler: List<String>): ByteArray {
-        val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
-        return postForEntity(sendInnUri, søknad.søknadJson.data, HttpHeaders().medContentTypeJsonUTF8())
+//    fun lagPdf(
+//        søknad: Søknad,
+//        vedleggTitler: List<String>,
+//    ): ByteArray {
+//        val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
+//        return postForEntity(sendInnUri, søknad.søknadJson.data, HttpHeaders().medContentTypeJsonUTF8())
+//    } //Dette er den gamle mappingen vår
+
+    fun lagFeltMapPdf(feltMap: Map<String, Any>): ByteArray {
+        val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-felt-map-pdf").build()
+        return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
