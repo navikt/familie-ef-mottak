@@ -28,4 +28,4 @@ ktlint
 hs_err_pid*
 
 #Spire
-/spireTestPdfer/*
+/spireTestPdfer/*.pdf

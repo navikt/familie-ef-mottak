@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
@@ -13,8 +12,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 class SpirePdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
 ) : AbstractRestClient(operations, "pdf") {
-    fun lagPdf(søknad: Søknad, vedleggTitler: List<String>): ByteArray {
+    fun lagFeltMapPdf(feltMap: Map<String, Any>): ByteArray {
         val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
-        return postForEntity(sendInnUri, søknad.søknadJson.data, HttpHeaders().medContentTypeJsonUTF8())
+        return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }

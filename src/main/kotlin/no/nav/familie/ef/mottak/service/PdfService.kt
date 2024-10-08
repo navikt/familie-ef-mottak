@@ -33,7 +33,8 @@ class PdfService(
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
-        val søknadPdf = spirePdfClient.lagPdf(innsending, vedleggTitler) //Todo håndter vedleggTitler
+        val feltMap = lagFeltMap(innsending, vedleggTitler)
+        val søknadPdf = spirePdfClient.lagFeltMapPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
     }

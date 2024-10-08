@@ -1,0 +1,1 @@
+Denne filen er her for å commite mappen til git
