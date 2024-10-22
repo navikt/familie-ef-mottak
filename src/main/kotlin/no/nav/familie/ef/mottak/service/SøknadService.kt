@@ -14,9 +14,9 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
-import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
@@ -132,12 +132,12 @@ class SøknadService(
                 SøknadMedDokumentasjonsbehovDto(
                     søknadId = it.id,
                     stønadType =
-                        StønadType
-                            .valueOf(
-                                SøknadType
-                                    .hentSøknadTypeForDokumenttype(it.dokumenttype)
-                                    .toString(),
-                            ),
+                    StønadType
+                        .valueOf(
+                            SøknadType
+                                .hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                .toString(),
+                        ),
                     søknadDato = it.opprettetTid.toLocalDate(),
                     dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it),
                 )

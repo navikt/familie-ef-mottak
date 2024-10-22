@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.PdfClient
+import no.nav.familie.ef.mottak.integration.iTextPdfClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
@@ -25,12 +26,22 @@ class PdfService(
     private val ettersendingRepository: EttersendingRepository,
     private val vedleggRepository: VedleggRepository,
     private val pdfClient: PdfClient,
+    private val iTextPdfClient: iTextPdfClient,
 ) {
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
         val søknadPdf = pdfClient.lagPdf(feltMap)
+        val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
+        søknadRepository.update(oppdatertSoknad)
+    }
+
+    fun lagSøknadskvittering(id: String) {
+        val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
+        val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
+        val feltMap = lagFeltMap(innsending, vedleggTitler)
+        val søknadPdf = iTextPdfClient.lagFeltMapPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
     }
