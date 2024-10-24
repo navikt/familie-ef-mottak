@@ -9,10 +9,10 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class iTextPdfClient(
+class ITextPdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
 ) : AbstractRestClient(operations, "pdf") {
-    fun lagFeltMapPdf(feltMap: Map<String, Any>): ByteArray {
+    fun lagITextPdf(feltMap: Map<String, Any>): ByteArray {
         val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
         return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }

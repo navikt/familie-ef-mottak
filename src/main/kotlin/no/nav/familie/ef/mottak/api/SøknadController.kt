@@ -46,5 +46,3 @@ class SøknadController(
         return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 }
-
-
