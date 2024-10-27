@@ -64,7 +64,7 @@ import kotlin.test.assertEquals
 internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
     private val søknadService: SøknadService = mockk()
-    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper(integrasjonerClient))
+    private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper())
     private val ettersendingService = mockk<EttersendingService>()
     private val featureToggleService = mockk<FeatureToggleService>()
     private val cacheManager = ConcurrentMapCacheManager()
@@ -80,7 +80,6 @@ internal class OppgaveServiceTest {
 
     @BeforeEach
     fun setUp() {
-        every { integrasjonerClient.hentAktørId(any()) } returns Testdata.randomAktørId()
         every { integrasjonerClient.hentIdentForAktørId(any()) } returns Testdata.randomFnr()
         every { integrasjonerClient.finnBehandlendeEnhetForPersonMedRelasjoner(any()) } returns
             listOf(
