@@ -35,7 +35,7 @@ class PdfService(
         søknadRepository.update(oppdatertSoknad)
     }
 
-    fun lagFeltMap(
+    private fun lagFeltMap(
         innsending: Søknad,
         vedleggTitler: List<String>,
     ): Map<String, Any> =
