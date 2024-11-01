@@ -21,7 +21,6 @@ internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() 
     internal fun `Skal returnere 200 OK for å hente søknad med id`() {
         val søknad = søknadRepository.insert(søknad())
         val respons = hentSøknad(søknad.id)
-        println(respons.body)
 
         assertThat(respons.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(respons.body?.id).isNotNull()
