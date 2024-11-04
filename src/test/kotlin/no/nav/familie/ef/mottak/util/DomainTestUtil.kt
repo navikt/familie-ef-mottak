@@ -44,9 +44,10 @@ fun søknad(
     fnr: String = "11111122222",
     saksnummer: String? = null,
     behandleINySaksbehandling: Boolean = false,
+    søknadJsonString: EncryptedString = EncryptedString("")
 ) = Søknad(
     id = id,
-    søknadJson = EncryptedString(""),
+    søknadJson = søknadJsonString,
     søknadPdf = søknadPdf,
     fnr = fnr,
     dokumenttype = dokumenttype,
