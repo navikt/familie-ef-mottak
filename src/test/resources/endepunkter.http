@@ -1,0 +1,260 @@
+@søknad-frontend=http://localhost:3000
+@familie-mottak=http://localhost:8092
+
+// Dette endepunktet benytter POST for å opprette en søknad direkte,
+// uten å gå gjennom søknadsflyten i familie-ef-søknad-frontenden. Søknaden lagres dermed i databasen.
+// For å sjekke PDF-en som ble generert, kan du bruke GET-endepunktet.
+// PDF-en blir lagret i mappen spireTestPdfer, som er gitignoret for å unngå at innholdet inkluderes i repoet ved commit.
+
+
+#### Skriv pdf til fil
+GET {{familie-mottak}}/api/spireTest/skrivSistePdfTilFil
+
+#### Create fake request
+POST {{søknad-frontend}}/familie/alene-med-barn/soknad/api/api/soknad
+Content-Type: application/json
+
+{
+    "person": {
+    "søker": {
+    "fnr": "31458931375",
+    "alder": 35,
+    "forkortetNavn": "Fornavn mellomnavn Etternavn",
+    "adresse": {
+    "adresse": "Charlies vei 13 b",
+    "postnummer": "0575",
+    "poststed": "Oslo"
+},
+    "egenansatt": false,
+    "sivilstand": "SKILT",
+    "statsborgerskap": "Norge, Norge",
+    "erStrengtFortrolig": false
+},
+    "barn": [
+    {
+        "id": "ab4f96f1-de64-45e7-9a8b-24ab450b2c90",
+        "født": {
+        "label": "Født",
+        "verdi": true
+    },
+        "navn": {
+        "label": "Navn",
+        "verdi": "Hei På Deg"
+    },
+        "alder": {
+        "label": "Alder",
+        "verdi": 0
+    },
+        "fødselsdato": {
+        "label": "Fødselsdato",
+        "verdi": "2024-03-24"
+    },
+        "harSammeAdresse": {
+        "label": "Har barnet samme adresse som deg?",
+        "verdi": true
+    },
+        "medforelder": {
+        "label": "Annen forelder",
+        "verdi": {
+        "navn": "Bjørn Borg Borgersen",
+        "harAdressesperre": false,
+        "død": false,
+        "ident": "21079940337",
+        "alder": 25
+    }
+    },
+        "harAdressesperre": false,
+        "ident": {
+        "label": "Fødselsnummer eller d-nummer",
+        "verdi": "28021078036"
+    },
+        "forelder": {
+        "navn": {
+        "label": "Navn",
+        "verdi": "Bjørn Borg Borgersen"
+    },
+        "ident": {
+        "label": "Fødselsnummer eller d-nummer",
+        "verdi": "21079940337"
+    },
+        "alder": {
+        "label": "Alder",
+        "verdi": 25
+    },
+        "død": false,
+        "id": "342a6b1f-903d-4e6c-9b20-5bc49dd0de08",
+        "fraFolkeregister": true,
+        "kanIkkeOppgiAnnenForelderFar": {
+        "label": "Jeg kan ikke oppgi den andre forelderen",
+        "verdi": false
+    },
+        "borINorge": {
+        "spørsmålid": "borINorge",
+        "svarid": "JA",
+        "label": "Bor Hei På Degs andre forelder i Norge?",
+        "verdi": true
+    },
+        "avtaleOmDeltBosted": {
+        "spørsmålid": "avtaleOmDeltBosted",
+        "svarid": "NEI",
+        "label": "Har du og den andre forelderen skriftlig avtale om delt fast bosted for Hei På Deg?",
+        "verdi": false
+    },
+        "harAnnenForelderSamværMedBarn": {
+        "spørsmålid": "harAnnenForelderSamværMedBarn",
+        "svarid": "nei",
+        "label": "Har den andre forelderen samvær med Hei På Deg?",
+        "verdi": "Nei, den andre forelderen har ikke samvær med barnet"
+    },
+        "borAnnenForelderISammeHus": {
+        "spørsmålid": "borAnnenForelderISammeHus",
+        "svarid": "vetikke",
+        "label": "Bor du og den andre forelderen til Hei På Deg i samme hus, blokk, gårdstun, kvartal eller vei/gate?",
+        "verdi": "Jeg vet ikke hvor den andre forelderen bor"
+    },
+        "boddSammenFør": {
+        "spørsmålid": "boddSammenFør",
+        "svarid": "JA",
+        "label": "Har du bodd sammen med den andre forelderen til Hei På Deg før?",
+        "verdi": true
+    },
+        "flyttetFra": {
+        "label": "Når flyttet dere fra hverandre?",
+        "verdi": "2024-09-02"
+    },
+        "hvorMyeSammen": {
+        "spørsmålid": "hvorMyeSammen",
+        "svarid": "møtesIkke",
+        "label": "Hvor mye er du sammen med den andre forelderen til Hei På Deg?",
+        "verdi": "Vi møtes ikke"
+    }
+    }
+    }
+    ],
+    "hash": "-1439071744"
+},
+    "sivilstatus": {
+    "erUformeltGift": {
+    "spørsmålid": "erUformeltGift",
+    "svarid": "NEI",
+    "label": "Er du gift uten at det er registrert i folkeregisteret i Norge?",
+    "verdi": false
+},
+    "erUformeltSeparertEllerSkilt": {
+    "spørsmålid": "erUformeltSeparertEllerSkilt",
+    "svarid": "NEI",
+    "label": "Er du separert eller skilt uten at dette er registrert i folkeregisteret i Norge?",
+    "verdi": false
+},
+    "årsakEnslig": {
+    "spørsmålid": "årsakEnslig",
+    "svarid": "samlivsbruddForeldre",
+    "label": "Hvorfor er du alene med barn?",
+    "verdi": "Samlivsbrudd med den andre forelderen"
+},
+    "datoForSamlivsbrudd": {
+    "label": "Dato for samlivsbrudd",
+    "verdi": "2024-09-02"
+}
+},
+    "medlemskap": {
+    "søkerOppholderSegINorge": {
+    "label": "Oppholder du og barnet/barna dere i Norge?",
+    "verdi": true
+},
+    "søkerBosattINorgeSisteTreÅr": {
+    "label": "Har du oppholdt deg i Norge de siste 5 årene?",
+    "verdi": true
+}
+},
+    "bosituasjon": {
+    "delerBoligMedAndreVoksne": {
+    "spørsmålid": "delerBoligMedAndreVoksne",
+    "svarid": "borAleneMedBarnEllerGravid",
+    "label": "Deler du bolig med andre voksne?",
+    "verdi": "Nei, jeg bor alene med barn eller jeg er gravid og bor alene"
+},
+    "skalGifteSegEllerBliSamboer": {
+    "spørsmålid": "skalGifteSegEllerBliSamboer",
+    "svarid": "NEI",
+    "label": "Har du konkrete planer om å gifte deg eller bli samboer?",
+    "verdi": false
+}
+},
+    "aktivitet": {
+    "hvaErDinArbeidssituasjon": {
+    "spørsmålid": "hvaErDinArbeidssituasjon",
+    "svarid": [
+    "erArbeidstakerOgEllerLønnsmottakerFrilanser"
+    ],
+    "label": "Hvordan er situasjonen din?",
+    "verdi": [
+    "Jeg er arbeidstaker (og/eller lønnsmottaker som frilanser)"
+    ]
+},
+    "arbeidsforhold": [
+    {
+        "id": "e0eb55fb-cca8-4401-bef0-c29255081e2e",
+        "navn": {
+        "label": "Navn på arbeidssted",
+        "verdi": "Tull as"
+    },
+        "arbeidsmengde": {
+        "label": "Hvor mye jobber du?",
+        "verdi": "90"
+    },
+        "ansettelsesforhold": {
+        "spørsmålid": "ansettelsesforhold",
+        "svarid": "fast",
+        "label": "Hva slags ansettelsesforhold har du?",
+        "verdi": "Fast stilling"
+    }
+    }
+    ]
+},
+    "merOmDinSituasjon": {
+    "gjelderDetteDeg": {
+    "spørsmålid": "gjelderDetteDeg",
+    "svarid": [
+    "nei"
+    ],
+    "label": "Gjelder noe av dette deg?",
+    "verdi": [
+    "Nei"
+    ],
+    "alternativer": [
+    "Jeg er syk",
+    "Barnet mitt er sykt",
+    "Jeg har søkt om barnepass, men ikke fått plass enda",
+    "Jeg har barn som trenger særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
+    "Nei"
+    ]
+},
+    "søkerFraBestemtMåned": {
+    "spørsmålid": "søkerFraBestemtMåned",
+    "svarid": "neiNavKanVurdere",
+    "label": "Søker du overgangsstønad fra en bestemt måned?",
+    "verdi": false
+}
+},
+    "dokumentasjonsbehov": [
+    {
+        "id": "SAMLIVSBRUDD",
+        "spørsmålid": "årsakEnslig",
+        "svarid": "samlivsbruddForeldre",
+        "label": "Bekreftelse på samlivsbrudd med den andre forelderen",
+        "tittel": "dokumentasjon.begrunnelse.tittel",
+        "beskrivelse": "dokumentasjon.begrunnelse.beskrivelse",
+        "harSendtInn": false
+    }
+    ],
+    "harBekreftet": true,
+    "datoPåbegyntSøknad": "2024-09-24",
+    "søkerBorPåRegistrertAdresse": {
+    "spørsmålid": "søkerBorPåRegistrertAdresse",
+    "svarid": "JA",
+    "label": "Bor du på denne adressen?",
+    "verdi": true
+},
+    "locale": "nb"
+}
