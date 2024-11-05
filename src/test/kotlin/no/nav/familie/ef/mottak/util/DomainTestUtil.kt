@@ -44,7 +44,7 @@ fun søknad(
     fnr: String = "11111122222",
     saksnummer: String? = null,
     behandleINySaksbehandling: Boolean = false,
-    søknadJsonString: EncryptedString = EncryptedString("")
+    søknadJsonString: EncryptedString = EncryptedString(""),
 ) = Søknad(
     id = id,
     søknadJson = søknadJsonString,
