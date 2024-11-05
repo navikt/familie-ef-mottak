@@ -14,21 +14,22 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class SøknadkvitteringServiceTest {
+class SøknadskvitteringServiceTest {
     private val søknadRepository = mockk<SøknadRepository>()
     private val vedleggRepository = mockk<VedleggRepository>()
     private val søknadkvitteringService = SøknadskvitteringService(søknadRepository, vedleggRepository)
 
     @Before
-    fun setup(){
-        every { søknadRepository.findByIdOrThrow("1") } returns søknad(
-            søknadJsonString = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
-        )
+    fun setup() {
+        every { søknadRepository.findByIdOrThrow("1") } returns
+            søknad(
+                søknadJsonString = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
+            )
         every { vedleggRepository.finnTitlerForSøknadId("1") } returns listOf("")
     }
 
     @Test
-    fun `hentSøknadOgMapTilGenereltFormat`(){
+    fun `skal hente søknad fra repository og mappe om til generelt format`() {
         val resultat = søknadkvitteringService.hentSøknadOgMapTilGenereltFormat("1")
         assertTrue(resultat.values.firstOrNull() == "Søknad om overgangsstønad (NAV 15-00.01)")
     }

@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity
 
 internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() {
     @Autowired
-        lateinit var søknadRepository: SøknadRepository
+    lateinit var søknadRepository: SøknadRepository
 
     @Test
     internal fun `Skal returnere 200 OK for å hente søknad med id`() {
