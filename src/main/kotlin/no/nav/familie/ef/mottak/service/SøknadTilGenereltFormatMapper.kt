@@ -121,7 +121,7 @@ object SøknadTilGenereltFormatMapper {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
             }
             if (entitet.label == "Barna dine") {
-                return listOf(feltlisteMap(entitet.label, list, FeltType.TABLE))
+                return listOf(feltlisteMap(entitet.label, list, FeltType.TABLE_BARN))
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
@@ -172,5 +172,5 @@ object SøknadTilGenereltFormatMapper {
 enum class FeltType(
     val typeName: String,
 ) {
-    TABLE("Table"),
+    TABLE_BARN("Table Barn"),
 }
