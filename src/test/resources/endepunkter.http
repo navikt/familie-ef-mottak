@@ -4,12 +4,12 @@
 // Dette endepunktet benytter POST for å opprette en søknad direkte,
 // uten å gå gjennom søknadsflyten i familie-ef-søknad-frontenden. Søknaden lagres dermed i databasen.
 // For å sjekke PDF-en som ble generert, kan du bruke GET-endepunktet.
-// PDF-en blir lagret i mappen spireTestPdfer, som er gitignoret for å unngå at innholdet inkluderes i repoet ved commit.
+// PDF-en blir lagret i mappen søknadsKvitteringTest, lag denne mappen manuelt i repoet (den skal ikke commites til git).
 
 
 #### Skriv pdf til fil
-GET {{familie-mottak}}/api/spireTest/skrivSistePdfTilFil
-
+GET {{familie-mottak}}/api/soknadskvittering/skrivSistePdfTilFil
+<
 #### Create fake request
 POST {{søknad-frontend}}/familie/alene-med-barn/soknad/api/api/soknad
 Content-Type: application/json

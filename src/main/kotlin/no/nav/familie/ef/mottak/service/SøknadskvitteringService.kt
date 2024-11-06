@@ -15,6 +15,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.io.File
+import java.time.LocalDateTime
 
 @Service
 @Transactional
@@ -57,4 +59,11 @@ class SøknadskvitteringService(
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }
         }
+
+    fun skrivSistePdfTilFil(): String {
+        søknadRepository.finnSisteLagredeSøknad().søknadPdf?.bytes?.let {
+            File("søknadsKvitteringTest/søknad${LocalDateTime.now()}.pdf").writeBytes(it)
+        } ?: "Fant ingen pdf å skrive til fil"
+        return "Ok"
+    }
 }

@@ -21,4 +21,8 @@ class SøknadskvitteringController(
     fun hentSøknad(
         @PathVariable søknadId: String,
     ): Map<String, Any> = søknadKvitteringService.hentSøknadOgMapTilGenereltFormat(søknadId)
+
+    @GetMapping("skrivSistePdfTilFil")
+    @Unprotected
+    fun skrivSistePdfTilFil(): String = søknadKvitteringService.skrivSistePdfTilFil()
 }
