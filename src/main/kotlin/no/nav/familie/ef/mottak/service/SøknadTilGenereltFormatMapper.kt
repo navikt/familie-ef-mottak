@@ -123,6 +123,9 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Barna dine") {
                 return listOf(feltlisteMap(entitet.label, list, FeltType.TABLE_BARN))
             }
+            if (entitet.label == "Vedlegg") {
+                return listOf(feltlisteMap(entitet.label, list, FeltType.VEDLEGG))
+            }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
@@ -173,4 +176,5 @@ enum class FeltType(
     val typeName: String,
 ) {
     TABLE_BARN("Table Barn"),
+    VEDLEGG("Vedlegg"),
 }
