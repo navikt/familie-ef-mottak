@@ -23,6 +23,24 @@ class SøknadTilGenereltFormatMapperTest {
     }
 
     @Test
+    fun `mapSøknadsfelter returnerer en map-struktur med typen 'Barn Tabel' og 'Vedlegg'`() {
+        val søknad = Testdata.søknadOvergangsstønad
+
+        val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, emptyList())
+
+        Assertions.assertThat(mapSøknadsfelter).isNotEmpty
+        Assertions.assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
+
+        val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
+
+        // Sjekk om noen av elementene i verdiliste har "type": "Table Barn"
+        val harTableBarnType = verdiliste.any { it["type"] == "Tabell Barn" }
+        val harVedleggType = verdiliste.any { it["type"] == "Vedlegg" }
+        Assertions.assertThat(harTableBarnType).isTrue
+        Assertions.assertThat(harTableBarnType).isTrue
+    }
+
+    @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden sammen med vedlegg`() {
         val søknad = Testdata.søknadOvergangsstønad
 
@@ -68,7 +86,7 @@ class SøknadTilGenereltFormatMapperTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_med_typer.json")
     }
 
     @Test

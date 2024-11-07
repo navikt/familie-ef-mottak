@@ -175,6 +175,6 @@ object SøknadTilGenereltFormatMapper {
 enum class FeltType(
     val typeName: String,
 ) {
-    TABLE_BARN("Table Barn"),
+    TABLE_BARN("Tabell Barn"),
     VEDLEGG("Vedlegg"),
 }
