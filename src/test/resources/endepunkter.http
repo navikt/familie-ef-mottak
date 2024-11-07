@@ -9,9 +9,9 @@
 
 #### Skriv pdf til fil
 GET {{familie-mottak}}/api/soknadskvittering/skrivSistePdfTilFil
-<
+
 #### Create fake request
-POST {{søknad-frontend}}/familie/alene-med-barn/soknad/api/api/soknad
+POST {{søknad-frontend}}/familie/alene-med-barn/soknad/api/api/soknadskvittering/overgangsstonad
 Content-Type: application/json
 
 {

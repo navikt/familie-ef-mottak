@@ -61,9 +61,11 @@ class SøknadskvitteringService(
         }
 
     fun skrivSistePdfTilFil(): String {
-        søknadRepository.finnSisteLagredeSøknad().søknadPdf?.bytes?.let {
-            File("søknadsKvitteringTest/søknad${LocalDateTime.now()}.pdf").writeBytes(it)
-        } ?: "Fant ingen pdf å skrive til fil"
+        val søknad = søknadRepository.finnSisteLagredeSøknad()
+        val søknadPdf = søknad.søknadPdf ?: error("Søknad som skal skrives til fil har ingen søknadspdf på søknad med id=${søknad.id}")
+        søknadPdf.bytes.let {
+            File("soknadsKvitteringTest/søknad${LocalDateTime.now()}.pdf").writeBytes(it)
+        }
         return "Ok"
     }
 }
