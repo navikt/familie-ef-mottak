@@ -39,19 +39,19 @@ class SøknadskvitteringService(
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTreeWalker.mapOvergangsstønad(dto, vedleggTitler)
+                SøknadTilGenereltFormatMapper.mapOvergangsstønad(dto, vedleggTitler)
             }
             DOKUMENTTYPE_BARNETILSYN -> {
                 val dto = SøknadMapper.toDto<SøknadBarnetilsyn>(innsending)
-                SøknadTreeWalker.mapBarnetilsyn(dto, vedleggTitler)
+                SøknadTilGenereltFormatMapper.mapBarnetilsyn(dto, vedleggTitler)
             }
             DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER -> {
                 val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
-                SøknadTreeWalker.mapSkjemafelter(dto)
+                SøknadTilGenereltFormatMapper.mapSkjemafelter(dto)
             }
             DOKUMENTTYPE_SKOLEPENGER -> {
                 val dto = SøknadMapper.toDto<SøknadSkolepenger>(innsending)
-                SøknadTreeWalker.mapSkolepenger(dto, vedleggTitler)
+                SøknadTilGenereltFormatMapper.mapSkolepenger(dto, vedleggTitler)
             }
             else -> {
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")

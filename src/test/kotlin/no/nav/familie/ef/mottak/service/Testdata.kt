@@ -94,7 +94,7 @@ internal object Testdata {
             Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
             Søknadsfelt("Bosituasjonen din", bosituasjon()),
             Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-            Søknadsfelt("Barn", listOf(barn())),
+            Søknadsfelt("Barna dine", listOf(barn())),
             Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
             Søknadsfelt("Mer om situasjonen din", situasjon()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
