@@ -121,10 +121,7 @@ object SøknadTilGenereltFormatMapper {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
             }
             if (entitet.label == "Barna dine") {
-                return listOf(feltlisteMap(entitet.label, list, FeltType.TABELL_BARN))
-            }
-            if (entitet.label == "Vedlegg") {
-                return listOf(feltlisteMap(entitet.label, list, FeltType.VEDLEGG))
+                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
@@ -172,9 +169,8 @@ object SøknadTilGenereltFormatMapper {
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
 }
 
-enum class FeltType(
-    val typeName: String,
+enum class VisningsVariant(
+    val visningsVariantName: String,
 ) {
     TABELL_BARN("Tabell Barn"),
-    VEDLEGG("Vedlegg"),
 }
