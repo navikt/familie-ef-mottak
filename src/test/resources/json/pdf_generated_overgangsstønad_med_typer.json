@@ -627,6 +627,7 @@
     },
     {
       "label":"Vedlegg",
+      "type" : "Vedlegg",
       "verdiliste":[
         {
           "label":"Vedlegg",
