@@ -29,13 +29,6 @@ spring:
           type: PKCS12
           location: ${KAFKA_TRUSTSTORE_PATH}
           password: ${KAFKA_CREDSTORE_PASSWORD}
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvfamilie-ef-mot
-      max-poll-records: 1
-      auto-offset-reset: latest
-      enable-auto-commit: false
     producer:
       acks: all
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
