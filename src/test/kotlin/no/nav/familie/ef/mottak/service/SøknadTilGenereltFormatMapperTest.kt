@@ -30,7 +30,7 @@ class SøknadTilGenereltFormatMapperTest {
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
 
-        val harVisningsVariantBarn = verdiliste.any { it["type"] == "Tabell Barn" }
+        val harVisningsVariantBarn = verdiliste.any { it["visningsVariant"] == "Tabell Barn" }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
 
@@ -49,7 +49,7 @@ class SøknadTilGenereltFormatMapperTest {
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
         println(verdiliste)
 
-        val harVisningsVariantVedlegg = verdiliste.any { it["type"] == "Vedlegg" }
+        val harVisningsVariantVedlegg = verdiliste.any { it["visningsVariant"] == "Vedlegg" }
         Assertions.assertThat(harVisningsVariantVedlegg).isTrue
     }
 

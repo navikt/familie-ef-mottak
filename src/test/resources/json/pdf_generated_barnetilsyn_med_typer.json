@@ -598,7 +598,7 @@
     },
     {
       "label": "Vedlegg",
-      "type" : "Vedlegg",
+      "visningsVariant" : "Vedlegg",
       "verdiliste": [
         {
           "label": "Vedlegg",

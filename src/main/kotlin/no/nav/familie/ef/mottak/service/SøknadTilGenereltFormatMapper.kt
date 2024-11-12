@@ -139,12 +139,12 @@ object SøknadTilGenereltFormatMapper {
     private fun feltlisteMap(
         label: String,
         verdi: List<*>,
-        type: VisningsVariant? = null,
+        visningsVariant: VisningsVariant? = null,
     ): Map<String, Any> =
-        if (type == null) {
+        if (visningsVariant == null) {
             mapOf("label" to label, "verdiliste" to verdi)
         } else {
-            mapOf("label" to label, "type" to type.visningsVariantName, "verdiliste" to verdi)
+            mapOf("label" to label, "visningsVariant" to visningsVariant.visningsVariantName, "verdiliste" to verdi)
         }
 
     /**
