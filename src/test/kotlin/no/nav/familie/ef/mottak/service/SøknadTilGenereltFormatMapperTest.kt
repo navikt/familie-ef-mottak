@@ -30,8 +30,26 @@ class SøknadTilGenereltFormatMapperTest {
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
 
-        val harVisningsVariantBarn = verdiliste.any { it["type"] == "Tabell Barn" }
+        val harVisningsVariantBarn = verdiliste.any { it["visningsVariant"] == "Tabell Barn" }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
+    }
+
+    @Test
+    fun `mapSøknadsfelter returnerer en map-struktur med typen 'Vedlegg'`() {
+        val søknad = Testdata.søknadOvergangsstønad
+
+        val vedlegg =
+            listOf(
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at du er syk",
+                "Dokumentasjon på at kan arbeide",
+            )
+        val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, vedlegg)
+
+        val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
+
+        val harVisningsVariantVedlegg = verdiliste.any { it["visningsVariant"] == "Vedlegg" }
+        Assertions.assertThat(harVisningsVariantVedlegg).isTrue
     }
 
     @Test
@@ -89,7 +107,7 @@ class SøknadTilGenereltFormatMapperTest {
 
         val vedlegg = listOf("Utgifter til utdanning")
         val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapSkolepenger(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger_med_typer.json")
     }
 
     @Test
@@ -103,7 +121,7 @@ class SøknadTilGenereltFormatMapperTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapBarnetilsyn(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn_med_typer.json")
     }
 
     @Test
@@ -119,7 +137,7 @@ class SøknadTilGenereltFormatMapperTest {
                 listOf("Lærlingkontrakt", "Utgifter til pass av barn"),
             )
 
-        generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending.json")
+        generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending_med_typer.json")
     }
 
     private fun generatePdfAndAssert(

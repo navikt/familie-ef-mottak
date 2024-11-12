@@ -45,7 +45,7 @@ object SøknadTilGenereltFormatMapper {
         vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
         return feltlisteMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
@@ -54,7 +54,7 @@ object SøknadTilGenereltFormatMapper {
         vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
         return feltlisteMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
@@ -63,7 +63,7 @@ object SøknadTilGenereltFormatMapper {
         vedleggTitler: List<String>,
     ): Map<String, Any> {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
         return feltlisteMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
     }
 
@@ -88,7 +88,7 @@ object SøknadTilGenereltFormatMapper {
                     ),
                 ),
             )
-        val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
         return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
@@ -139,12 +139,12 @@ object SøknadTilGenereltFormatMapper {
     private fun feltlisteMap(
         label: String,
         verdi: List<*>,
-        type: VisningsVariant? = null,
+        visningsVariant: VisningsVariant? = null,
     ): Map<String, Any> =
-        if (type == null) {
+        if (visningsVariant == null) {
             mapOf("label" to label, "verdiliste" to verdi)
         } else {
-            mapOf("label" to label, "type" to type.visningsVariantName, "verdiliste" to verdi)
+            mapOf("label" to label, "visningsVariant" to visningsVariant.visningsVariantName, "verdiliste" to verdi)
         }
 
     /**
@@ -173,4 +173,5 @@ enum class VisningsVariant(
     val visningsVariantName: String,
 ) {
     TABELL_BARN("Tabell Barn"),
+    VEDLEGG("Vedlegg"),
 }
