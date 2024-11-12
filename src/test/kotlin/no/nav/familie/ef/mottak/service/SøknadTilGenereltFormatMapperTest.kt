@@ -47,7 +47,6 @@ class SøknadTilGenereltFormatMapperTest {
         val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, vedlegg)
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
-        println(verdiliste)
 
         val harVisningsVariantVedlegg = verdiliste.any { it["visningsVariant"] == "Vedlegg" }
         Assertions.assertThat(harVisningsVariantVedlegg).isTrue
