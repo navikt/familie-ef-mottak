@@ -16,4 +16,15 @@ class ITextPdfClient(
         val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
         return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
+
+    fun helsesjekk(): String {
+        val helsesjekkUrl =
+            DefaultUriBuilderFactory().uriString("http://localhost:8099").path("api/pdf/helsesjekk").build()
+        val response: String =
+            getForEntity(
+                helsesjekkUrl,
+                HttpHeaders().medContentTypeJsonUTF8(),
+            )
+        return response
+    }
 }
