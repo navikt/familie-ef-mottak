@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.integration
 
+import no.nav.familie.ef.mottak.config.PdfgeneratorConfig
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
@@ -11,6 +12,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 @Service
 class ITextPdfClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
+    private val pdfgeneratorConfig: PdfgeneratorConfig,
 ) : AbstractRestClient(operations, "pdf") {
     fun lagITextPdf(feltMap: Map<String, Any>): ByteArray {
         val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
@@ -19,7 +21,7 @@ class ITextPdfClient(
 
     fun helsesjekk(): String {
         val helsesjekkUrl =
-            DefaultUriBuilderFactory().uriString("http://localhost:8099").path("api/pdf/helsesjekk").build()
+            DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("api/pdf/helsesjekk").build()
         val response: String =
             getForEntity(
                 helsesjekkUrl,
