@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @Profile("!prod")
 @RestController
-@RequestMapping(path = ["/api/helsesjekk"])
+@RequestMapping(path = ["/api"])
 @Unprotected
-class HelseController (val iTextPdfClient: ITextPdfClient){
-    @GetMapping
-    fun helsesjekk(): String {
-        return iTextPdfClient.helsesjekk()
-    }
+class HelseController(
+    val iTextPdfClient: ITextPdfClient,
+) {
+    @GetMapping("/helsesjekk")
+    fun testerPdfOk(): String = iTextPdfClient.helsesjekk()
+
+    @GetMapping("/mottak/helsesjekk")
+    fun girSvarTilPdf(): String = "OK - mottak"
 }
