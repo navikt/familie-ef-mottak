@@ -22,12 +22,12 @@
         <kotlin.version>2.0.21</kotlin.version>
         <springdoc.version>2.6.0</springdoc.version>
         <mockk.version>1.13.13</mockk.version>
-        <felles.version>3.20240913110742_adb42f8</felles.version>
-        <prosessering.version>2.20241011144712_deb1f2c</prosessering.version>
+        <felles.version>3.20241111113426_be51eee</felles.version>
+        <prosessering.version>2.20241112093526_694e258</prosessering.version>
         <confluent.version>7.7.1</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20241102131210_d65efd1</kontrakter.version>
-        <token-validation.version>5.0.10</token-validation.version>
+        <kontrakter.version>3.0_20241113143804_80bdd40</kontrakter.version>
+        <token-validation.version>5.0.11</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
