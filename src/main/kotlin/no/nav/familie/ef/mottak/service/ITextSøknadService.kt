@@ -22,6 +22,7 @@ class ITextSøknadService(
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val iTextPdfService: ITextPdfService,
+    private val taskProsesseringService: TaskProsesseringService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,6 +54,7 @@ class ITextSøknadService(
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
         iTextPdfService.lagITextPdf(lagretSkjema.id)
+        taskProsesseringService.startPdfKvitteringTaskProsessering(søknadDb)
         logger.info("Mottatt iText-søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "IText-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
