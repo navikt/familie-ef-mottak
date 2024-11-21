@@ -23,6 +23,9 @@ familie:
     integrasjoner:
       url: https://familie-integrasjoner.dev-fss-pub.nais.io/api
       scope: api://dev-fss.teamfamilie.familie-integrasjoner/.default
+  pdf:
+    url: https://familie-pdf.intern.dev.nav.no/api
+
 
 no.nav.security.jwt:
   issuer:

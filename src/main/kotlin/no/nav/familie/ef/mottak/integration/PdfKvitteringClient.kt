@@ -9,11 +9,12 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class ITextPdfClient(
+class PdfKvitteringClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
+    private val pdfKvitteringConfig: PdfKvitteringConfig,
 ) : AbstractRestClient(operations, "pdf") {
-    fun lagITextPdf(feltMap: Map<String, Any>): ByteArray {
-        val sendInnUri = DefaultUriBuilderFactory().uriString("http://localhost:8083").path("api/generate-pdf").build()
+    fun opprettPdf(feltMap: Map<String, Any>): ByteArray {
+        val sendInnUri = DefaultUriBuilderFactory().uriString(pdfKvitteringConfig.url.toString()).path("pdf/opprett-pdf").build()
         return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
