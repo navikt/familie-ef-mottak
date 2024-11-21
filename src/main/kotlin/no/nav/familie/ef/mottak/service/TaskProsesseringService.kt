@@ -94,7 +94,7 @@ class TaskProsesseringService(
             ),
         )
         søknadRepository.update(søknad.copy(taskOpprettet = true))
-        logger.info("Task opprettet for søknad med id ${søknad.id}")
+        logger.info("PdfKvitteringTask opprettet for søknad med id ${søknad.id}")
     }
 
     private fun hentEllerOpprettCallId(): String = MDC.get(MDCConstants.MDC_CALL_ID) as? String ?: IdUtils.generateId()
