@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.service.ITextSøknadService
+import no.nav.familie.ef.mottak.service.PdfSøknadService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @Profile("!prod")
 @RestController
-@RequestMapping(path = ["/api/itext-soknad"], produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/api/pdf-soknad"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
-class ITextSøknadController(
-    val iTextsøknadService: ITextSøknadService,
+class PdfSøknadController(
+    val pdfSøknadService: PdfSøknadService,
 ) {
     @PostMapping("overgangsstonad")
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering = okEllerKastException { iTextsøknadService.mottaOvergangsstønad(søknad) }
+    ): Kvittering = okEllerKastException { pdfSøknadService.mottaOvergangsstønad(søknad) }
 }

@@ -17,11 +17,11 @@ import java.util.UUID
 
 @Service
 @Transactional
-class ITextSøknadService(
+class PdfSøknadService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
-    private val iTextPdfService: ITextPdfService,
+    private val pdfKvitteringService: PdfKvitteringService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -52,8 +52,7 @@ class ITextSøknadService(
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-        iTextPdfService.lagITextPdf(lagretSkjema.id)
-        logger.info("Mottatt iText-søknad med id ${lagretSkjema.id}")
-        return Kvittering(lagretSkjema.id, "IText-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
+        logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
+        return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 }
