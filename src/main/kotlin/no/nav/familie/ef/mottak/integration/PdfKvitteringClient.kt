@@ -11,10 +11,9 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 @Service
 class PdfKvitteringClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
-    private val pdfKvitteringConfig: PdfKvitteringConfig,
 ) : AbstractRestClient(operations, "pdf") {
     fun opprettPdf(feltMap: Map<String, Any>): ByteArray {
-        val sendInnUri = DefaultUriBuilderFactory().uriString(pdfKvitteringConfig.url.toString()).path("pdf/opprett-pdf").build()
+        val sendInnUri = DefaultUriBuilderFactory().uriString("https://familie-pdf.intern.dev.nav.no/api").path("pdf/opprett-pdf").build()
         return postForEntity(sendInnUri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
