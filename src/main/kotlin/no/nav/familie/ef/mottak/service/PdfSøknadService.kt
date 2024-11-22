@@ -52,7 +52,6 @@ class PdfSøknadService(
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-        pdfKvitteringService.lagPdfKvittering(lagretSkjema.id)
         logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
