@@ -53,7 +53,6 @@ class ITextSøknadService(
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-        iTextPdfService.lagITextPdf(lagretSkjema.id)
         taskProsesseringService.startPdfKvitteringTaskProsessering(søknadDb)
         logger.info("Mottatt iText-søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "IText-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
