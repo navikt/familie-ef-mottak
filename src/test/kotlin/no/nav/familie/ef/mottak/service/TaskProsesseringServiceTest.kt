@@ -67,4 +67,20 @@ internal class TaskProsesseringServiceTest {
         assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
         assertThat(soknadSlot.captured.taskOpprettet).isTrue
     }
+
+    @Test
+    fun `startPdfKvitteringTaskProsessering oppretter en task for søknad og setter taskOpprettet på søknaden til true`() {
+        val soknad = søknad()
+        val taskSlot = slot<Task>()
+        val soknadSlot = slot<Søknad>()
+        every { taskService.save(capture(taskSlot)) }
+            .answers { taskSlot.captured }
+        every { søknadRepository.update(capture(soknadSlot)) }
+            .answers { soknadSlot.captured }
+
+        taskProsesseringService.startPdfKvitteringTaskProsessering(soknad)
+
+        assertThat(taskSlot.captured.payload).isEqualTo(soknad.id)
+        assertThat(soknadSlot.captured.taskOpprettet).isTrue
+    }
 }
