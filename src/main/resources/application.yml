@@ -73,6 +73,8 @@ unleash:
   enabled: true
 
 familie:
+  pdf:
+    url: http://familie-pdf
   dokument:
     url: http://familie-dokument
     audience: prod-gcp:teamfamilie:familie-dokument

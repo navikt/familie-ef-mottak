@@ -6,12 +6,12 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.integration.ITextPdfClient
+import no.nav.familie.ef.mottak.integration.PdfKvitteringClient
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.ITextPdfService
+import no.nav.familie.ef.mottak.service.PdfKvitteringService
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
@@ -19,11 +19,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 
-class ITextPdfServiceTest {
+class PdfKvitteringServiceTest {
     private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
-    private val iTextPdfClient: ITextPdfClient = mockk()
-    private val iTextPdfService: ITextPdfService = ITextPdfService(søknadRepository, vedleggRepository, iTextPdfClient)
+    private val pdfKvitteringClient: PdfKvitteringClient = mockk()
+    private val pdfKvitteringService: PdfKvitteringService = PdfKvitteringService(søknadRepository, vedleggRepository, pdfKvitteringClient)
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
     private val søknadOvergangsstønad =
@@ -52,7 +52,7 @@ class ITextPdfServiceTest {
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
         // When
-        iTextPdfService.lagITextPdf(søknadOvergangsstønadId)
+        pdfKvitteringService.lagPdfKvittering(søknadOvergangsstønadId)
         // Then
         Assertions.assertThat(pdf).isEqualTo(slot.captured.søknadPdf)
     }
@@ -69,7 +69,7 @@ class ITextPdfServiceTest {
 
     private fun pdfClientVilReturnere(pdf: EncryptedFile) {
         every {
-            iTextPdfClient.lagITextPdf(any())
+            pdfKvitteringClient.opprettPdf(any())
         } returns pdf.bytes
     }
 

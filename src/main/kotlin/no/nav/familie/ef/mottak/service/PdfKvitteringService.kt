@@ -4,7 +4,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.integration.ITextPdfClient
+import no.nav.familie.ef.mottak.integration.PdfKvitteringClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
@@ -18,16 +18,16 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class ITextPdfService(
+class PdfKvitteringService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
-    private val iTextPdfClient: ITextPdfClient,
+    private val pdfKvitteringClient: PdfKvitteringClient,
 ) {
-    fun lagITextPdf(id: String) {
+    fun lagPdfKvittering(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
-        val søknadPdf = iTextPdfClient.lagITextPdf(feltMap)
+        val søknadPdf = pdfKvitteringClient.opprettPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
     }
