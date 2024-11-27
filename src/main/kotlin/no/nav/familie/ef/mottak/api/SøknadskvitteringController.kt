@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RestController
 class SøknadskvitteringController(
     val søknadKvitteringService: SøknadskvitteringService,
 ) {
-    @Unprotected
     @GetMapping("{søknadId}")
     fun hentSøknad(
         @PathVariable søknadId: String,
-    ): Map<String, Any> = søknadKvitteringService.hentSøknadOgMapTilGenereltFormat(søknadId)
+    ): ByteArray = søknadKvitteringService.hentSøknadPdf(søknadId)
 }
