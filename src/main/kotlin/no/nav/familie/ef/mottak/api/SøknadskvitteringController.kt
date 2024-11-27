@@ -19,8 +19,5 @@ class SøknadskvitteringController(
     @GetMapping("{søknadId}")
     fun hentSøknad(
         @PathVariable søknadId: String,
-    ): ByteArray {
-        val pdfByteArray = søknadKvitteringService.hentSøknadPdf(søknadId)
-        return pdfByteArray
-    }
+    ): ByteArray = søknadKvitteringService.hentSøknadPdf(søknadId)
 }
