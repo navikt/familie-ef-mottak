@@ -29,7 +29,6 @@ class SøknadskvitteringController(
     val søknadKvitteringService: SøknadskvitteringService,
     val pdfSøknadService: PdfSøknadService,
 ) {
-    @Unprotected
     @GetMapping("{søknadId}")
     fun hentSøknad(
         @PathVariable søknadId: String,
