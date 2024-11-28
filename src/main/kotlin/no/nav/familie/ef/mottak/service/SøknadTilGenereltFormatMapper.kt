@@ -172,6 +172,6 @@ object SøknadTilGenereltFormatMapper {
 enum class VisningsVariant(
     val visningsVariantName: String,
 ) {
-    TABELL_BARN("Tabell Barn"),
-    VEDLEGG("Vedlegg"),
+    TABELL_BARN("TABELL_BARN"),
+    VEDLEGG("VEDLEGG"),
 }
