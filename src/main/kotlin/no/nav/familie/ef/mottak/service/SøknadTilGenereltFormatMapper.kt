@@ -123,6 +123,9 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Barna dine") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
             }
+            if (entitet.label == "Vedlegg") {
+                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
+            }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
