@@ -158,14 +158,11 @@ class OppgaveService(
         )
     }
 
-    private fun fordelingsoppgaveFinnes(journalpost: Journalpost) =
-        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L
+    private fun fordelingsoppgaveFinnes(journalpost: Journalpost) = integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Fordeling).antallTreffTotalt > 0L
 
-    private fun journalføringsoppgaveFinnes(journalpost: Journalpost) =
-        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
+    private fun journalføringsoppgaveFinnes(journalpost: Journalpost) = integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.Journalføring).antallTreffTotalt > 0L
 
-    private fun behandlesakOppgaveFinnes(journalpost: Journalpost) =
-        integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
+    private fun behandlesakOppgaveFinnes(journalpost: Journalpost) = integrasjonerClient.finnOppgaver(journalpost.journalpostId, Oppgavetype.BehandleSak).antallTreffTotalt > 0L
 
     fun oppdaterOppgaveMedRiktigMappeId(
         oppgaveId: Long,

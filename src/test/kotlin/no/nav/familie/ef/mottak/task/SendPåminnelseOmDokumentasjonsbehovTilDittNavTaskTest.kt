@@ -229,8 +229,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
     }
 
-    private fun ettersending(opprettetTid: LocalDateTime) =
-        Ettersending(ettersendingJson = EncryptedString(""), stønadType = "OS", fnr = FNR, opprettetTid = opprettetTid)
+    private fun ettersending(opprettetTid: LocalDateTime) = Ettersending(ettersendingJson = EncryptedString(""), stønadType = "OS", fnr = FNR, opprettetTid = opprettetTid)
 
     private fun mockHentEttersendingerForPerson(opprettetTid: LocalDateTime? = null) {
         every { ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR)) } returns

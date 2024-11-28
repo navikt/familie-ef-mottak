@@ -628,8 +628,7 @@ internal object Testdata {
             dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring"),
         )
 
-    private fun dokumentfelt(tittel: String) =
-        Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(VEDLEGG_ID, tittel))))
+    private fun dokumentfelt(tittel: String) = Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(VEDLEGG_ID, tittel))))
 
     private fun personMinimum(): PersonMinimum =
         PersonMinimum(
