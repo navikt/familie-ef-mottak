@@ -31,7 +31,7 @@ class SøknadskvitteringController(
     @GetMapping("{søknadId}")
     fun hentSøknad(
         @PathVariable søknadId: String,
-    ): Map<String, Any> = søknadKvitteringService.hentSøknadOgMapTilGenereltFormat(søknadId)
+    ): ByteArray = søknadKvitteringService.hentSøknadPdf(søknadId)
 
     @PostMapping("overgangsstonad")
     fun overgangsstønad(

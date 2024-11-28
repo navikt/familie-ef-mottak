@@ -1,9 +1,9 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -21,10 +21,11 @@ internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() 
 
     @Test
     internal fun `Skal returnere 200 OK for å hente søknad med id`() {
+        val søknadPdfBytes = objectMapper.writeValueAsBytes(Testdata.søknadOvergangsstønad)
         val søknad =
             søknadRepository.insert(
                 søknad(
-                    søknadJsonString = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
+                    søknadPdf = EncryptedFile(søknadPdfBytes),
                 ),
             )
         val respons = hentSøknad(søknad.id)
@@ -33,10 +34,10 @@ internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() 
         assertThat(respons.body).isNotNull()
     }
 
-    private fun hentSøknad(id: String): ResponseEntity<Map<String, Any>> =
+    private fun hentSøknad(søknadId: String): ResponseEntity<ByteArray> =
         restTemplate.exchange(
-            localhost("/api/soknadskvittering/$id"),
+            localhost("/api/soknadskvittering/$søknadId"),
             HttpMethod.GET,
-            HttpEntity<Map<String, Any>>(headers),
+            HttpEntity<ByteArray>(headers),
         )
 }
