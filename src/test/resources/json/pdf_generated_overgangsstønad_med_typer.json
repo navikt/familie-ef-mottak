@@ -627,7 +627,7 @@
     },
     {
       "label":"Vedlegg",
-      "visningsVariant" : "VEDLEGG",
+      "visningsVariant" : "vedlegg",
       "verdiliste":[
         {
           "label":"Vedlegg",
