@@ -35,7 +35,7 @@ class SøknadTilGenereltFormatMapperTest {
     }
 
     @Test
-    fun `mapSøknadsfelter returnerer en map-struktur med typen vedlegg`() {
+    fun `mapSøknadsfelter returnerer en map-struktur med typen VEDLEGG`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val vedlegg =
