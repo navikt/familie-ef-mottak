@@ -19,7 +19,7 @@
     },
     {
       "label": "Dokumenter vedlagt",
-      "visningsVariant" : "vedlegg",
+      "visningsVariant" : "VEDLEGG",
       "verdiliste": [
         {
           "label": "Vedlegg",

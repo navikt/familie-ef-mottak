@@ -392,7 +392,7 @@
     },
     {
       "label": "Vedlegg",
-      "visningsVariant" : "vedlegg",
+      "visningsVariant" : "VEDLEGG",
       "verdiliste": [
         {
           "label": "Vedlegg",

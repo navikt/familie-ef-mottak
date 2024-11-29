@@ -147,7 +147,7 @@ object SøknadTilGenereltFormatMapper {
         if (visningsVariant == null) {
             mapOf("label" to label, "verdiliste" to verdi)
         } else {
-            mapOf("label" to label, "visningsVariant" to visningsVariant.visningsVariantName, "verdiliste" to verdi)
+            mapOf("label" to label, "visningsVariant" to visningsVariant.toString(), "verdiliste" to verdi)
         }
 
     /**
@@ -172,9 +172,7 @@ object SøknadTilGenereltFormatMapper {
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
 }
 
-enum class VisningsVariant(
-    val visningsVariantName: String,
-) {
-    TABELL_BARN("tabell_barn"),
-    VEDLEGG("vedlegg"),
+enum class VisningsVariant {
+    TABELL_BARN,
+    VEDLEGG,
 }
