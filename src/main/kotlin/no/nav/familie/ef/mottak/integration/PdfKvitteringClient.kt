@@ -25,7 +25,12 @@ class PdfKvitteringClient(
             .toUri()
 
     fun opprettPdf(feltMap: Map<String, Any>): ByteArray {
-        val uri = UriComponentsBuilder.fromUri(uri).pathSegment("api/pdf/opprett-pdf").build().toUri()
+        val uri =
+            UriComponentsBuilder
+                .fromUri(uri)
+                .pathSegment("api/pdf/opprett-pdf")
+                .build()
+                .toUri()
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
