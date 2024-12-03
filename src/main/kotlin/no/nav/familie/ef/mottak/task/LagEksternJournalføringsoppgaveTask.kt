@@ -45,8 +45,7 @@ class LagEksternJournalføringsoppgaveTask(
 
     private fun finnesIkkeSøknadMedJournalpostId(journalpostId: String) = søknadRepository.findByJournalpostId(journalpostId) == null
 
-    private fun finnesIkkeEttersendingMedJournalpostId(journalpostId: String) =
-        ettersendingRepository.findByJournalpostId(journalpostId) == null
+    private fun finnesIkkeEttersendingMedJournalpostId(journalpostId: String) = ettersendingRepository.findByJournalpostId(journalpostId) == null
 
     companion object {
         const val TYPE = "lagEksternJournalføringsoppgave"
