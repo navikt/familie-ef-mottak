@@ -46,8 +46,6 @@ import java.util.UUID
 internal object Testdata {
     fun randomFnr(): String = UUID.randomUUID().toString()
 
-    fun randomAktørId(): String = UUID.randomUUID().toString()
-
     private val mottat = LocalDate.of(2020, 1, 1).atStartOfDay()
 
     val skjemaForArbeidssøker =
@@ -442,50 +440,54 @@ internal object Testdata {
                 Søknadsfelt(
                     "Samvær",
                     Samvær(
-                        Søknadsfelt(
-                            "Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
-                            true,
-                        ),
-                        dokumentfelt("Avtale om delt bosted for barna"),
-                        Søknadsfelt(
-                            "Har den andre forelderen samvær med barnet",
-                            "Ja, men ikke mer enn vanlig samværsrett",
-                        ),
-                        Søknadsfelt(
-                            "Har dere skriftlig samværsavtale for barnet?",
-                            "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene",
-                        ),
-                        dokumentfelt("Avtale om samvær"),
-                        dokumentfelt("Skal barnet bo hos deg"),
-                        Søknadsfelt(
-                            "Hvordan praktiserer dere samværet?",
-                            "Litt hver for oss",
-                        ),
-                        Søknadsfelt(
-                            "Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
-                            "ja",
-                        ),
-                        Søknadsfelt(
-                            "Bor du og den andre forelderen til  i samme hus/blokk beskrivelse",
-                            "Ekstra info?",
-                        ),
-                        Søknadsfelt(
-                            "Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
-                            true,
-                        ),
-                        Søknadsfelt(
-                            "Når flyttet dere fra hverandre?",
-                            LocalDate.of(2018, 7, 21),
-                        ),
-                        dokumentfelt("Erklæring om samlivsbrudd"),
-                        Søknadsfelt(
-                            "Hvor mye er du sammen med den andre forelderen til barnet?",
-                            "Vi møtes også uten at barnet er til stede",
-                        ),
-                        Søknadsfelt(
-                            "Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
-                            "Vi sees stadig vekk",
-                        ),
+                        skalAnnenForelderHaSamvær =
+                            Søknadsfelt(
+                                "Har den andre forelderen samvær med barnet",
+                                "Ja, men ikke mer enn vanlig samværsrett",
+                            ),
+                        harDereSkriftligAvtaleOmSamvær =
+                            Søknadsfelt(
+                                "Har dere skriftlig samværsavtale for barnet?",
+                                "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene",
+                            ),
+                        samværsavtale = dokumentfelt("Avtale om samvær"),
+                        skalBarnetBoHosSøkerMenAnnenForelderSamarbeiderIkke = dokumentfelt("Skal barnet bo hos deg"),
+                        hvordanPraktiseresSamværet =
+                            Søknadsfelt(
+                                "Hvordan praktiserer dere samværet?",
+                                "Litt hver for oss",
+                            ),
+                        borAnnenForelderISammeHus =
+                            Søknadsfelt(
+                                "Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
+                                "ja",
+                            ),
+                        borAnnenForelderISammeHusBeskrivelse =
+                            Søknadsfelt(
+                                "Bor du og den andre forelderen til  i samme hus/blokk beskrivelse",
+                                "Ekstra info?",
+                            ),
+                        harDereTidligereBoddSammen =
+                            Søknadsfelt(
+                                "Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
+                                true,
+                            ),
+                        nårFlyttetDereFraHverandre =
+                            Søknadsfelt(
+                                "Når flyttet dere fra hverandre?",
+                                LocalDate.of(2018, 7, 21),
+                            ),
+                        erklæringOmSamlivsbrudd = dokumentfelt("Erklæring om samlivsbrudd"),
+                        hvorMyeErDuSammenMedAnnenForelder =
+                            Søknadsfelt(
+                                "Hvor mye er du sammen med den andre forelderen til barnet?",
+                                "Vi møtes også uten at barnet er til stede",
+                            ),
+                        beskrivSamværUtenBarn =
+                            Søknadsfelt(
+                                "Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
+                                "Vi sees stadig vekk",
+                            ),
                     ),
                 ),
             skalHaBarnepass = if (barnetilsyn) Søknadsfelt("Skal ha barnepass", true) else null,
@@ -628,8 +630,7 @@ internal object Testdata {
             dokumentasjonAdresseendring = dokumentfelt("DokumentasjonForAdresseendring"),
         )
 
-    private fun dokumentfelt(tittel: String) =
-        Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(VEDLEGG_ID, tittel))))
+    private fun dokumentfelt(tittel: String) = Søknadsfelt(tittel, Dokumentasjon(Søknadsfelt("harSendtInn", false), listOf(Dokument(VEDLEGG_ID, tittel))))
 
     private fun personMinimum(): PersonMinimum =
         PersonMinimum(

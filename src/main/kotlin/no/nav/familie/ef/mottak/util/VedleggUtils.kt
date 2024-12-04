@@ -18,5 +18,4 @@ fun okEllerKastException(producer: () -> Kvittering): Kvittering {
     }
 }
 
-fun manglerVedlegg(dokumentasjonsbehov: List<Dokumentasjonsbehov>) =
-    dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }
+fun manglerVedlegg(dokumentasjonsbehov: List<Dokumentasjonsbehov>) = dokumentasjonsbehov.any { !it.harSendtInn && it.opplastedeVedlegg.isEmpty() }

@@ -23,19 +23,19 @@ class SøknadTilGenereltFormatMapperTest {
     }
 
     @Test
-    fun `mapSøknadsfelter returnerer en map-struktur med typen 'Barn Tabel'`() {
+    fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL_BARN`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, emptyList())
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
 
-        val harVisningsVariantBarn = verdiliste.any { it["visningsVariant"] == "Tabell Barn" }
+        val harVisningsVariantBarn = verdiliste.any { it["visningsVariant"] == VisningsVariant.TABELL_BARN.toString() }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
 
     @Test
-    fun `mapSøknadsfelter returnerer en map-struktur med typen 'Vedlegg'`() {
+    fun `mapSøknadsfelter returnerer en map-struktur med typen VEDLEGG`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val vedlegg =
@@ -48,7 +48,7 @@ class SøknadTilGenereltFormatMapperTest {
 
         val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
 
-        val harVisningsVariantVedlegg = verdiliste.any { it["visningsVariant"] == "Vedlegg" }
+        val harVisningsVariantVedlegg = verdiliste.any { it["visningsVariant"] == VisningsVariant.VEDLEGG.toString() }
         Assertions.assertThat(harVisningsVariantVedlegg).isTrue
     }
 
