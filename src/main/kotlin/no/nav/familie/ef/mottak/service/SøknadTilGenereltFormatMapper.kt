@@ -128,11 +128,24 @@ object SøknadTilGenereltFormatMapper {
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
+                val skalEkskluderes = verdiliste.any { element ->
+                    element is Map<*, *> &&
+                            element["label"]?.toString() == "Jeg har sendt inn denne dokumentasjonen til NAV tidligere" &&
+                            element["verdi"]?.toString() == "Nei"
+                }
+                // Hvis skalEkskluderes, ikke vis noe (inkludert label på nivået over)
+                if (skalEkskluderes) {
+                    return emptyList()
+                }
+
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
             }
-            return listOf(feltlisteMap(entitet.label, list))
+            // Hvis listen ikke ekskluderes, legg til label og dens innhold
+            if (list.isNotEmpty()) {
+                return listOf(feltlisteMap(entitet.label, list))
+            }
         }
         return list
     }
