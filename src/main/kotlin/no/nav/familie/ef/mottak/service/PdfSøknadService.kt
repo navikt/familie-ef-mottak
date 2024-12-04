@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -35,6 +36,13 @@ class PdfSøknadService(
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
+        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
+        return motta(søknadDb, vedlegg)
+    }
+
+    @Transactional
+    fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg)

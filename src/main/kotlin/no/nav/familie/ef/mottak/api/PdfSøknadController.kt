@@ -6,6 +6,7 @@ import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.context.annotation.Profile
@@ -34,4 +35,9 @@ class PdfSøknadController(
     fun barnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
     ): Kvittering = okEllerKastException { pdfSøknadService.mottaBarnetilsyn(søknad) }
+
+    @PostMapping("skolepenger")
+    fun skolepenger(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
+    ): Kvittering = okEllerKastException { pdfSøknadService.mottaSkolepenger(søknad) }
 }
