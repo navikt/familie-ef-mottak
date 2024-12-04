@@ -133,16 +133,13 @@ object SøknadTilGenereltFormatMapper {
                             element["label"]?.toString() == "Jeg har sendt inn denne dokumentasjonen til NAV tidligere" &&
                             element["verdi"]?.toString() == "Nei"
                 }
-                // Hvis skalEkskluderes, ikke vis noe (inkludert label på nivået over)
                 if (skalEkskluderes) {
-                    return emptyList()
+                    return emptyList() // Hvis skalEkskluderes, ikke vis noe (inkludert label på nivået over)
                 }
-
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
             }
-            // Hvis listen ikke ekskluderes, legg til label og dens innhold
             if (list.isNotEmpty()) {
                 return listOf(feltlisteMap(entitet.label, list))
             }
