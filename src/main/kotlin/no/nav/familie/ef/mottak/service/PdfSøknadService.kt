@@ -8,6 +8,7 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import org.slf4j.LoggerFactory
@@ -22,12 +23,18 @@ class PdfSøknadService(
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val taskProsesseringService: TaskProsesseringService,
-    private val pdfKvitteringService: PdfKvitteringService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
+        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
+        return motta(søknadDb, vedlegg)
+    }
+
+    @Transactional
+    fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
         return motta(søknadDb, vedlegg)

@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.PdfSøknadService
 import no.nav.familie.ef.mottak.util.okEllerKastException
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.sikkerhet.EksternBrukerUtils
@@ -28,4 +29,9 @@ class PdfSøknadController(
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { pdfSøknadService.mottaOvergangsstønad(søknad) }
+
+    @PostMapping("barnetilsyn")
+    fun barnetilsyn(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
+    ): Kvittering = okEllerKastException { pdfSøknadService.mottaBarnetilsyn(søknad) }
 }
