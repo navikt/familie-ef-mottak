@@ -7,11 +7,12 @@ fun hovedflyt() =
         TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
     )
 
-fun pdfKvitteringFlyt() = listOf(
-    TaskType(LagPdfKvitteringTask.TYPE),
-    TaskType(ArkiverSøknadTask.TYPE),
-    TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
-)
+fun pdfKvitteringFlyt() =
+    listOf(
+        TaskType(LagPdfKvitteringTask.TYPE),
+        TaskType(ArkiverSøknadTask.TYPE),
+        TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
+    )
 
 fun manuellJournalføringFlyt() =
     listOf(
@@ -56,6 +57,6 @@ fun TaskType.nesteEttersendingsflytTask() =
 
 fun TaskType.nestePdfKvitteringTask() =
     pdfKvitteringFlyt()
-        .zipWithNext().
-        first { this == it.first }
+        .zipWithNext()
+        .first { this == it.first }
         .second.type
