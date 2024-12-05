@@ -39,7 +39,7 @@ class PdfKvitteringService(
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTreeWalker.mapOvergangsstønad(dto, vedleggTitler)
+                SøknadTilGenereltFormatMapper.mapOvergangsstønad(dto, vedleggTitler)
             }
             DOKUMENTTYPE_BARNETILSYN -> {
                 val dto = SøknadMapper.toDto<SøknadBarnetilsyn>(innsending)

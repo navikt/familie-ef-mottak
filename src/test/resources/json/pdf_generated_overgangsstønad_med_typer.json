@@ -218,7 +218,7 @@
     },
     {
       "label":"Barna dine",
-      "visningsVariant":"Tabell Barn",
+      "visningsVariant":"TABELL_BARN",
       "verdiliste":[
         {
           "label":"Barnets fulle navn, hvis dette er bestemt",
@@ -265,19 +265,6 @@
         {
           "label":"Samvær",
           "verdiliste":[
-            {
-              "label":"Har du og den andre forelderen skriftlig avtale om delt bosted for barnet?",
-              "verdi":"Ja"
-            },
-            {
-              "label":"Avtale om delt bosted for barna",
-              "verdiliste":[
-                {
-                  "label":"harSendtInn",
-                  "verdi":"Nei"
-                }
-              ]
-            },
             {
               "label":"Har den andre forelderen samvær med barnet",
               "verdi":"Ja, men ikke mer enn vanlig samværsrett"
@@ -627,7 +614,7 @@
     },
     {
       "label":"Vedlegg",
-      "visningsVariant" : "Vedlegg",
+      "visningsVariant" : "VEDLEGG",
       "verdiliste":[
         {
           "label":"Vedlegg",

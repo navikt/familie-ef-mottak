@@ -123,6 +123,9 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Barna dine") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
             }
+            if (entitet.label == "Vedlegg") {
+                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
+            }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
@@ -144,7 +147,7 @@ object SøknadTilGenereltFormatMapper {
         if (visningsVariant == null) {
             mapOf("label" to label, "verdiliste" to verdi)
         } else {
-            mapOf("label" to label, "visningsVariant" to visningsVariant.visningsVariantName, "verdiliste" to verdi)
+            mapOf("label" to label, "visningsVariant" to visningsVariant.toString(), "verdiliste" to verdi)
         }
 
     /**
@@ -169,9 +172,7 @@ object SøknadTilGenereltFormatMapper {
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
 }
 
-enum class VisningsVariant(
-    val visningsVariantName: String,
-) {
-    TABELL_BARN("Tabell Barn"),
-    VEDLEGG("Vedlegg"),
+enum class VisningsVariant {
+    TABELL_BARN,
+    VEDLEGG,
 }
