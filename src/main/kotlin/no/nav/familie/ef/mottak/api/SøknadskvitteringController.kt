@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.service.PdfSøknadService
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController
 )
 class SøknadskvitteringController(
     val søknadKvitteringService: SøknadskvitteringService,
-    val pdfSøknadService: PdfSøknadService,
 ) {
     @GetMapping("{søknadId}")
     fun hentSøknad(
@@ -36,5 +34,5 @@ class SøknadskvitteringController(
     @PostMapping("overgangsstonad")
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering = okEllerKastException { pdfSøknadService.mottaOvergangsstønad(søknad) }
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaOvergangsstønad(søknad) }
 }
