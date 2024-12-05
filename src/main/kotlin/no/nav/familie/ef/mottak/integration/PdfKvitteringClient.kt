@@ -31,6 +31,7 @@ class PdfKvitteringClient(
                 .pathSegment("api/pdf/opprett-pdf")
                 .build()
                 .toUri()
+        println(feltMap)
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
