@@ -115,7 +115,7 @@ object SøknadTilGenereltFormatMapper {
         if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!! is Dokumentasjon) {
                 @Suppress("UNCHECKED_CAST")
-                return listOf(mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>))
+                return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
                 return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
@@ -128,15 +128,8 @@ object SøknadTilGenereltFormatMapper {
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
-                val skalEkskluderes = verdiliste.any { element ->
-                    element is Map<*, *> &&
-                            element["label"]?.toString() == "harSendtInn" &&
-                            element["verdi"]?.toString() == "Nei"
-                }
-                if (skalEkskluderes) {
-                    return emptyList() // Hvis skalEkskluderes, ikke vis noe (inkludert label på nivået over)
-                }
-                else  if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
+
+                if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
             }
@@ -147,7 +140,13 @@ object SøknadTilGenereltFormatMapper {
         return list
     }
 
-    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): Map<String, *> = feltlisteMap(entitet.label, listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)))
+    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<Map<String, *>> {
+        val list = listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere))
+        if (list.isEmpty()) {
+            return emptyList()
+        }
+        return listOf( feltlisteMap(entitet.label, list))
+    }
 
     private fun feltlisteMap(
         label: String,

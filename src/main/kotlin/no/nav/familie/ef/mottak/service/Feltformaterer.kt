@@ -16,7 +16,13 @@ object Feltformaterer {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> = feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
+    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
+        if (entitet.label == "harSendtInn" &&
+            entitet.verdi.toString() == "Nei") {
+            return emptyMap()
+        }
+        return feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
+    }
 
     fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
         val verdi = vedleggTitler.joinToString("\n\n")
