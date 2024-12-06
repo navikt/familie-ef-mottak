@@ -130,13 +130,13 @@ object SøknadTilGenereltFormatMapper {
                 val verdiliste = entitet.verdi as List<*>
                 val skalEkskluderes = verdiliste.any { element ->
                     element is Map<*, *> &&
-                            element["label"]?.toString() == "Jeg har sendt inn denne dokumentasjonen til NAV tidligere" &&
+                            element["label"]?.toString() == "harSendtInn" &&
                             element["verdi"]?.toString() == "Nei"
                 }
                 if (skalEkskluderes) {
                     return emptyList() // Hvis skalEkskluderes, ikke vis noe (inkludert label på nivået over)
                 }
-                if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
+                else  if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
             }

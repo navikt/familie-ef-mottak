@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController
 @Profile("!prod")
 @RestController
 @RequestMapping(path = ["/api/pdf-soknad"], produces = [MediaType.APPLICATION_JSON_VALUE])
-@Unprotected
+@ProtectedWithClaims(
+    issuer = EksternBrukerUtils.ISSUER_TOKENX,
+    claimMap = ["acr=Level4"],
+)
 class PdfSøknadController(
     val pdfSøknadService: PdfSøknadService,
 ) {
