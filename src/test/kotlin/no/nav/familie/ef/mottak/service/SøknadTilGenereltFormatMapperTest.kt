@@ -140,6 +140,23 @@ class SøknadTilGenereltFormatMapperTest {
         generatePdfAndAssert(mapEttersending, "pdf_generated_ettersending_med_typer.json")
     }
 
+    @Test
+    fun `ekskluderer verdiliste når skalEkskluderes matcher`() {
+        val søknad = Testdata.søknadOvergangsstønad
+
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTilGenereltFormatMapper.mapOvergangsstønad(søknad, vedlegg)
+
+        val verdiliste = mapSøknadsfelter["verdiliste"] as List<Map<String, Any>>
+        val harEkskludertElement = verdiliste.any {
+            it["label"] == "harSendtInn" &&
+                    it["verdi"] == "Nei"
+        }
+        Assertions.assertThat(harEkskludertElement).isFalse
+    }
+
+
     private fun generatePdfAndAssert(
         mapSøknadsfelter: Map<String, Any>,
         filename: String,
