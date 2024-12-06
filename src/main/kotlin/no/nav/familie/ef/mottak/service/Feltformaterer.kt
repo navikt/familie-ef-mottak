@@ -17,7 +17,7 @@ object Feltformaterer {
      * Håndterer formatering utover vanlig toString for endenodene
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
-        if (entitet.label == "harSendtInn" &&
+        if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til NAV tidligere" &&
             entitet.verdi.toString() == "Nei") {
             return emptyMap()
         }
