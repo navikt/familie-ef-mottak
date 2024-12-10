@@ -3,8 +3,10 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
+import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.context.annotation.Profile
@@ -35,4 +37,14 @@ class SøknadskvitteringController(
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { søknadKvitteringService.mottaOvergangsstønad(søknad) }
+
+    @PostMapping("barnetilsyn")
+    fun barnetilsyn(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaBarnetilsyn(søknad) }
+
+    @PostMapping("skolepenger")
+    fun skolepenger(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSkolepenger(søknad) }
 }
