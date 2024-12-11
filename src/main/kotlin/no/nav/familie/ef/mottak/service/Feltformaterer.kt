@@ -18,7 +18,7 @@ object Feltformaterer {
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
         //skal ekskluderes
-        if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til NAV tidligere" &&
+        if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
             entitet.verdi.toString() == "false") {
             return emptyMap()
         }
