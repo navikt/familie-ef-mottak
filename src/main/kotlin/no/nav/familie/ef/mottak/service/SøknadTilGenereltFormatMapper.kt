@@ -133,9 +133,12 @@ object SøknadTilGenereltFormatMapper {
                     return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
                 }
             }
-            if (list.isNotEmpty()) {
-                return listOf(feltlisteMap(entitet.label, list))
+            //skal ekskluderes
+            if (list.isEmpty()) {
+                return emptyList()
             }
+            return listOf(feltlisteMap(entitet.label, list))
+
         }
         return list
     }
