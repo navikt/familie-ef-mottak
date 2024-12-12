@@ -7,6 +7,7 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
@@ -18,6 +19,11 @@ import org.springframework.http.ResponseEntity
 internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var søknadRepository: SøknadRepository
+
+    @BeforeEach
+    fun setUp() {
+        headers.setBearerAuth(søkerBearerToken())
+    }
 
     @Test
     internal fun `Skal returnere 200 OK for å hente søknad med id`() {
