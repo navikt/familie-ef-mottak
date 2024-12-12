@@ -123,6 +123,9 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Barna dine") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
             }
+            if (entitet.label == "Om arbeidsforholdet ditt") {
+                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_ARBEIDSFORHOLD))
+            }
             if (entitet.label == "Vedlegg") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
             }
@@ -174,5 +177,6 @@ object SøknadTilGenereltFormatMapper {
 
 enum class VisningsVariant {
     TABELL_BARN,
+    TABELL_ARBEIDSFORHOLD,
     VEDLEGG,
 }
