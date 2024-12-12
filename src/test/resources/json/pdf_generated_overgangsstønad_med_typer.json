@@ -341,6 +341,7 @@
         },
         {
           "label":"Om arbeidsforholdet ditt",
+          "visningsVariant": "TABELL_ARBEIDSFORHOLD",
           "verdiliste":[
             {
               "label":"Navn på arbeidsgiveren",
