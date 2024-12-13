@@ -135,7 +135,6 @@ object SøknadTilGenereltFormatMapper {
             }
             //skal ekskluderes
             if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
-                println ("heihei ${entitet.label}")
                 return emptyList()
             }
             return listOf(feltlisteMap(entitet.label, list))
@@ -147,8 +146,6 @@ object SøknadTilGenereltFormatMapper {
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<Map<String, *>> {
         val list = listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere))
         if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
-            println("heihei 2 ${entitet.label}")
-            println("jeg retrunerer tom liste med  ${entitet.label} og list ${list.first()}")
             return emptyList()
         }
         return listOf( feltlisteMap(entitet.label, list))
