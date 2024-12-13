@@ -118,7 +118,7 @@ object SøknadTilGenereltFormatMapper {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
+                return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
             }
             if (entitet.label == "Barna dine") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
@@ -130,7 +130,7 @@ object SøknadTilGenereltFormatMapper {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
-                    return listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet))
+                    return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
                 }
             }
             //skal ekskluderes
@@ -144,7 +144,7 @@ object SøknadTilGenereltFormatMapper {
     }
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<Map<String, *>> {
-        val list = listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere))
+        val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
         if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
             return emptyList()
         }

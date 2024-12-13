@@ -16,7 +16,9 @@ object Feltformaterer {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> {
+    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> =feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
+
+    fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): Map<String, String> {
         //skal ekskluderes
         if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
             entitet.verdi.toString() == "false") {
