@@ -58,10 +58,16 @@ Se README i navkafka-docker-compose for mer info om hvordan man kjører den og k
 For å sette opp Postgres-database lokalt med Docker:
 ```
 docker run --name familie-ef-mottak -e POSTGRES_PASSWORD=<PASSWORD> -d -p 5432:5432 postgres
-docker ps -a (finn container id)
+docker ps (finn container id)
 docker exec -it <container_id> bash
 psql -U postgres
 CREATE DATABASE "familie-ef-mottak";
+```
+
+For å starte en container som ikke kjører lenger:
+```
+docker ps -a (lister ut alle)
+docker start <container id>
 ```
 
 For å kjøre med denne lokalt må følgende miljøvariabler settes i `application-local.yml`:
