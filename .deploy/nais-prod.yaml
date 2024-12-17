@@ -59,6 +59,7 @@ spec:
         - application: familie-brev
         - application: familie-dokument
         - application: familie-ef-sak
+        - application: familie-pdf
       external:
         - host: familie-integrasjoner.prod-fss-pub.nais.io
         - host: kafka-schema-registry.nais.adeo.no
