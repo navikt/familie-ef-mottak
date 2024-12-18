@@ -126,6 +126,9 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Om arbeidsforholdet ditt") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_ARBEIDSFORHOLD))
             }
+            if (entitet.label == "Gjelder noe av dette deg?") {
+                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.PUNKTLISTE))
+            }
             if (entitet.label == "Vedlegg") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
             }
@@ -136,12 +139,11 @@ object SøknadTilGenereltFormatMapper {
                     return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
                 }
             }
-            //skal ekskluderes
+            // skal ekskluderes
             if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
                 return emptyList()
             }
             return listOf(feltlisteMap(entitet.label, list))
-
         }
         return list
     }
@@ -151,7 +153,7 @@ object SøknadTilGenereltFormatMapper {
         if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
             return emptyList()
         }
-        return listOf( feltlisteMap(entitet.label, list))
+        return listOf(feltlisteMap(entitet.label, list))
     }
 
     private fun feltlisteMap(
@@ -191,4 +193,5 @@ enum class VisningsVariant {
     TABELL_BARN,
     TABELL_ARBEIDSFORHOLD,
     VEDLEGG,
+    PUNKTLISTE,
 }
