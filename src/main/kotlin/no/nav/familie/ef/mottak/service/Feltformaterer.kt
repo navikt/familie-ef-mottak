@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
@@ -16,18 +17,20 @@ object Feltformaterer {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): Map<String, String> =feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
+    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): VerdilisteElement = feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
 
-    fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): Map<String, String> {
-        //skal ekskluderes
+    fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): VerdilisteElement {
+        // skal ekskluderes
         if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
-            entitet.verdi.toString() == "false") {
-            return emptyMap()
+            entitet.verdi.toString() == "false"
+        ) {
+            // return emptyMap()
+            return VerdilisteElement(label = "", verdi = "")
         }
         return feltMap(entitet.label, mapVerdi(entitet.verdi!!), entitet.alternativer)
     }
 
-    fun mapVedlegg(vedleggTitler: List<String>): Map<String, String> {
+    fun mapVedlegg(vedleggTitler: List<String>): VerdilisteElement {
         val verdi = vedleggTitler.joinToString("\n\n")
         return feltMap("Vedlegg", verdi)
     }
@@ -83,10 +86,10 @@ object Feltformaterer {
         label: String,
         verdi: String,
         alternativer: List<String>? = null,
-    ): Map<String, String> =
+    ): VerdilisteElement =
         if (alternativer != null) {
-            mapOf("label" to label, "verdi" to verdi, "alternativer" to alternativer.joinToString(" / "))
+            VerdilisteElement(label = label, verdi = verdi, alternativer = alternativer.joinToString(" / "))
         } else {
-            mapOf("label" to label, "verdi" to verdi)
+            VerdilisteElement(label = label, verdi = verdi)
         }
 }
