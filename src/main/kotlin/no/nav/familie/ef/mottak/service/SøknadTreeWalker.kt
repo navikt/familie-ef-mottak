@@ -48,7 +48,7 @@ object SøknadTreeWalker {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(
@@ -57,7 +57,7 @@ object SøknadTreeWalker {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
     fun mapSkolepenger(
@@ -66,12 +66,12 @@ object SøknadTreeWalker {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
     }
 
     fun mapEttersending(
@@ -92,7 +92,7 @@ object SøknadTreeWalker {
                     ),
             )
         val vedleggMap = VerdilisteElement(label = "Dokumenter vedlagt", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
+        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {
@@ -139,11 +139,6 @@ object SøknadTreeWalker {
             label = entitet.label,
             verdiliste = listOf(Feltformaterer.mapEndenodeTilUtskriftMap(entitet.verdi.harSendtInnTidligere)),
         )
-
-    private fun feltlisteMap(
-        label: String,
-        verdiliste: List<VerdilisteElement>,
-    ): FeltMap = FeltMap(label = label, verdiliste = verdiliste)
 
     /**
      * Henter ut verdien for felt på entitet.
