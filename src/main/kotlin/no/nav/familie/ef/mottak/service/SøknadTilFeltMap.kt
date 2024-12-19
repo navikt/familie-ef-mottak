@@ -47,7 +47,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement("Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)), visningsVariant = VisningsVariant.VEDLEGG.toString())
+        val vedlegg = mapTilVedlegg(vedleggTitler)
         return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
@@ -56,7 +56,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement("Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)), visningsVariant = VisningsVariant.VEDLEGG.toString())
+        val vedlegg = mapTilVedlegg(vedleggTitler)
         return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
@@ -65,7 +65,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement("Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)), visningsVariant = VisningsVariant.VEDLEGG.toString())
+        val vedlegg = mapTilVedlegg(vedleggTitler)
         return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
     }
 
@@ -83,15 +83,15 @@ object SøknadTilFeltMap {
                 label = "Ettersending av vedlegg",
                 verdiliste =
                     listOf(
-                        Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
-                        Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
-                        Feltformaterer.feltMap(
+                        VerdilisteElement("Stønadstype", verdi = ettersending.stønadType),
+                        VerdilisteElement("Fødselsnummer", verdi = ettersending.fnr),
+                        VerdilisteElement(
                             "Dato mottatt",
-                            ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                            verdi = ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
                         ),
                     ),
             )
-        val vedleggMap = VerdilisteElement("Dokumenter vedlagt", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)), visningsVariant = VisningsVariant.VEDLEGG.toString())
+        val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
         return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
@@ -121,22 +121,40 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
+                return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
             if (entitet.label == "Barna dine") {
-                return listOf(VerdilisteElement(entitet.label, verdiliste = list, visningsVariant = VisningsVariant.TABELL_BARN.toString()))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.TABELL_BARN.toString(),
+                    ),
+                )
             }
             if (entitet.label == "Om arbeidsforholdet ditt") {
-                return listOf(VerdilisteElement(entitet.label, verdiliste = list, visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString()))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
+                    ),
+                )
             }
             if (entitet.label == "Vedlegg") {
-                return listOf(VerdilisteElement(entitet.label, verdiliste = list, visningsVariant = VisningsVariant.VEDLEGG.toString()))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.VEDLEGG.toString(),
+                    ),
+                )
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
+                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
                 }
             }
             // skal ekskluderes
@@ -153,7 +171,7 @@ object SøknadTilFeltMap {
         if (list.singleOrNull()?.verdiliste?.isEmpty() == true) {
             return emptyList()
         }
-        return listOf(VerdilisteElement(label = entitet.label, verdiliste = list))
+        return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
 
     /**
@@ -176,6 +194,15 @@ object SøknadTilFeltMap {
      * Konstruktørparametere er det eneste som gir oss en garantert rekkefølge for feltene, så vi henter disse først.
      */
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
+
+    private fun mapTilVedlegg(
+        vedleggTitler: List<String>,
+        label: String = "Vedlegg",
+    ) = VerdilisteElement(
+        label,
+        verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
+        visningsVariant = VisningsVariant.VEDLEGG.toString(),
+    )
 }
 
 enum class VisningsVariant {

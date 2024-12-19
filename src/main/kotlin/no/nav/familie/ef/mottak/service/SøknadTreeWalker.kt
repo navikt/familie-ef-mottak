@@ -47,7 +47,8 @@ object SøknadTreeWalker {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg =
+            VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
@@ -56,7 +57,8 @@ object SøknadTreeWalker {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg =
+            VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
@@ -65,7 +67,8 @@ object SøknadTreeWalker {
         vedleggTitler: List<String>,
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedlegg =
+            VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
         return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
     }
 
@@ -83,15 +86,19 @@ object SøknadTreeWalker {
                 label = "Ettersending av vedlegg",
                 verdiliste =
                     listOf(
-                        Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
-                        Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
-                        Feltformaterer.feltMap(
+                        VerdilisteElement("Stønadstype", verdi = ettersending.stønadType),
+                        VerdilisteElement("Fødselsnummer", verdi = ettersending.fnr),
+                        VerdilisteElement(
                             "Dato mottatt",
-                            ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                            verdi = ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
                         ),
                     ),
             )
-        val vedleggMap = VerdilisteElement(label = "Dokumenter vedlagt", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
+        val vedleggMap =
+            VerdilisteElement(
+                label = "Dokumenter vedlagt",
+                verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
+            )
         return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
