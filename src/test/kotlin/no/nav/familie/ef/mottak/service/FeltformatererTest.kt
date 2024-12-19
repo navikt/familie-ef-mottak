@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.service
 
+import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
@@ -19,7 +20,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "desember"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "desember"))
     }
 
     @Test
@@ -28,7 +29,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Ja"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja"))
     }
 
     @Test
@@ -37,7 +38,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Ja\n\nNei"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja\n\nNei"))
     }
 
     @Test
@@ -46,7 +47,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Lille\n\nGrimme\n\nArne\n\nTrenger\n\nRis"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Lille\n\nGrimme\n\nArne\n\nTrenger\n\nRis"))
     }
 
     @Test
@@ -56,7 +57,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to fnr))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = fnr))
     }
 
     @Test
@@ -65,7 +66,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Husebyskogen 15\n\n1572 Fet\n\nNorge"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n\n1572 Fet\n\nNorge"))
     }
 
     @Test
@@ -74,7 +75,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "05.12.2015"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015"))
     }
 
     @Test
@@ -83,7 +84,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "05.12.2015 14:52:48"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015 14:52:48"))
     }
 
     @Test
@@ -92,7 +93,7 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra februar 2015 til juli 2018"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra februar 2015 til juli 2018"))
     }
 
     @Test
@@ -101,6 +102,6 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(mapOf("label" to "label", "verdi" to "Fra 01.02.2015 til 14.07.2018"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra 01.02.2015 til 14.07.2018"))
     }
 }

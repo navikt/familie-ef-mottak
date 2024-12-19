@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil.readFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,11 +16,9 @@ class SøknadTreeWalkerTest {
 
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, emptyList())
 
-        assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
-
-        val verdiliste = mapSøknadsfelter["verdiliste"] as List<*>
-        assertThat(verdiliste).hasSize(12)
+        assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
+        assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
+        assertThat(mapSøknadsfelter.verdiliste).hasSize(12)
     }
 
     @Test
@@ -29,9 +28,9 @@ class SøknadTreeWalkerTest {
         val vedlegg = listOf("Dokumentasjon på at du er syk")
         val mapSøknadsfelter = SøknadTreeWalker.mapOvergangsstønad(søknad, vedlegg)
 
-        assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(12)
+        assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
+        assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
+        assertThat(mapSøknadsfelter.verdiliste).hasSize(12)
     }
 
     @Test
@@ -41,9 +40,9 @@ class SøknadTreeWalkerTest {
         val vedlegg = listOf("Dokumentasjon på at du er syk")
         val mapSøknadsfelter = SøknadTreeWalker.mapSkolepenger(søknad, vedlegg)
 
-        assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Søknad om stønad til skolepenger (NAV 15-00.04)")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(9)
+        assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
+        assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om stønad til skolepenger (NAV 15-00.04)")
+        assertThat(mapSøknadsfelter.verdiliste).hasSize(9)
     }
 
     @Test
@@ -52,9 +51,9 @@ class SøknadTreeWalkerTest {
 
         val mapSøknadsfelter = SøknadTreeWalker.mapSkjemafelter(skjemaForArbeidssøker)
 
-        assertThat(mapSøknadsfelter).isNotEmpty
-        assertThat(mapSøknadsfelter["label"]).isEqualTo("Skjema for arbeidssøker - 15-08.01")
-        assertThat(mapSøknadsfelter["verdiliste"] as List<Any?>).hasSize(3)
+        assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
+        assertThat(mapSøknadsfelter.label).isEqualTo("Skjema for arbeidssøker - 15-08.01")
+        assertThat(mapSøknadsfelter.verdiliste).hasSize(3)
     }
 
     @Test
@@ -111,7 +110,7 @@ class SøknadTreeWalkerTest {
     }
 
     private fun generatePdfAndAssert(
-        mapSøknadsfelter: Map<String, Any>,
+        mapSøknadsfelter: FeltMap,
         filename: String,
     ) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)

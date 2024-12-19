@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -38,7 +39,7 @@ class PdfService(
     private fun lagFeltMap(
         innsending: Søknad,
         vedleggTitler: List<String>,
-    ): Map<String, Any> =
+    ): FeltMap =
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
