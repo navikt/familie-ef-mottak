@@ -21,8 +21,8 @@ object Feltformaterer {
 
     fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): VerdilisteElement? {
         // skal ekskluderes
-        if (entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
-            entitet.verdi.toString() == "false"
+        if ((entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
+            entitet.verdi.toString() == "false") || (entitet.label == "Født" && entitet.verdi.toString() == "true")
         ) {
             return null
         }
