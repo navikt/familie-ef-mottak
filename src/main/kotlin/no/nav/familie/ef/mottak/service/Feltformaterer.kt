@@ -15,7 +15,7 @@ import java.util.Locale
 
 object Feltformaterer {
     /**
-     * Håndterer formatering utover vanlig toString for endenodene
+     * Håndterer formatering utover vanlig toString for endenodenee
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): VerdilisteElement = mapTilVerdiListeElement(entitet)
 
