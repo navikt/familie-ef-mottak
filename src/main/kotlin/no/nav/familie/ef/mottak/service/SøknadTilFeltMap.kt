@@ -1,6 +1,8 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
+import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
@@ -22,7 +24,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.primaryConstructor
 
-object SøknadTilGenereltFormatMapper {
+object SøknadTilFeltMap {
     private val endNodes =
         setOf<KClass<*>>(
             String::class,
@@ -43,56 +45,57 @@ object SøknadTilGenereltFormatMapper {
     fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønad,
         vedleggTitler: List<String>,
-    ): Map<String, Any> {
+    ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
-        return feltlisteMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(
         søknad: SøknadBarnetilsyn,
         vedleggTitler: List<String>,
-    ): Map<String, Any> {
+    ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
-        return feltlisteMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
     }
 
     fun mapSkolepenger(
         søknad: SøknadSkolepenger,
         vedleggTitler: List<String>,
-    ): Map<String, Any> {
+    ): FeltMap {
         val finnFelter = finnFelter(søknad)
-        val vedlegg = feltlisteMap("Vedlegg", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
-        return feltlisteMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
     }
 
-    fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): Map<String, Any> {
+    fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return feltlisteMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
     }
 
     fun mapEttersending(
         ettersending: Ettersending,
         vedleggTitler: List<String>,
-    ): Map<String, Any> {
+    ): FeltMap {
         val infoMap =
-            feltlisteMap(
-                "Ettersending av vedlegg",
-                listOf(
-                    Feltformaterer.feltMap("Stønadstype", ettersending.stønadType),
-                    Feltformaterer.feltMap("Fødselsnummer", ettersending.fnr),
-                    Feltformaterer.feltMap(
-                        "Dato mottatt",
-                        ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+            VerdilisteElement(
+                label = "Ettersending av vedlegg",
+                verdiliste =
+                    listOf(
+                        VerdilisteElement("Stønadstype", verdi = ettersending.stønadType),
+                        VerdilisteElement("Fødselsnummer", verdi = ettersending.fnr),
+                        VerdilisteElement(
+                            "Dato mottatt",
+                            verdi = ettersending.opprettetTid.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                        ),
                     ),
-                ),
             )
-        val vedleggMap = feltlisteMap("Dokumenter vedlagt", listOf(Feltformaterer.mapVedlegg(vedleggTitler)), VisningsVariant.VEDLEGG)
-        return feltlisteMap("Ettersending", listOf(infoMap, vedleggMap))
+        val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
+        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
     }
 
-    private fun finnFelter(entitet: Any): List<Map<String, *>> {
+    private fun finnFelter(entitet: Any): List<VerdilisteElement> {
         // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
         if (entitet is List<Any?>) {
             return entitet
@@ -118,13 +121,25 @@ object SøknadTilGenereltFormatMapper {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
+                return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
             if (entitet.label == "Barna dine") {
-                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_BARN))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.TABELL_BARN.toString(),
+                    ),
+                )
             }
             if (entitet.label == "Om arbeidsforholdet ditt") {
-                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_ARBEIDSFORHOLD))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
+                    ),
+                )
             }
             if (entitet.alternativer != null) {
                 val verdi =
@@ -132,45 +147,41 @@ object SøknadTilGenereltFormatMapper {
                         is List<*> -> verdi.joinToString("\n\n") { it.toString() }
                         else -> verdi?.toString() ?: ""
                     }
-                return listOf(mapOf("label" to entitet.label, "visningsVariant" to VisningsVariant.PUNKTLISTE, "verdi" to verdi, "alternativer" to entitet.alternativer?.joinToString(" / ")))
+                return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdi = verdi, alternativer = entitet.alternativer?.joinToString(" / ")))
             }
             if (entitet.label == "Vedlegg") {
-                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
+                return listOf(
+                    VerdilisteElement(
+                        entitet.label,
+                        verdiliste = list,
+                        visningsVariant = VisningsVariant.VEDLEGG.toString(),
+                    ),
+                )
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
 
-                if (verdiliste.isNotEmpty() && verdiliste.first() is String) {
-                    return listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet))
+                if (verdiliste.firstOrNull() is String) {
+                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
                 }
             }
             // skal ekskluderes
-            if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
+            if (list.size == 1 && list.first().verdiliste.isNullOrEmpty() && list.first().verdi.isNullOrEmpty()) {
                 return emptyList()
             }
-            return listOf(feltlisteMap(entitet.label, list))
+
+            return listOf(VerdilisteElement(label = entitet.label, verdiliste = list))
         }
         return list
     }
 
-    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<Map<String, *>> {
+    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
         val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
-        if (list.size == 1 && (list[0] as Map<*, *>).isEmpty()) {
+        if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
-        return listOf(feltlisteMap(entitet.label, list))
+        return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
-
-    private fun feltlisteMap(
-        label: String,
-        verdiliste: List<*>,
-        visningsVariant: VisningsVariant? = null,
-    ): Map<String, Any> =
-        if (visningsVariant == null) {
-            mapOf("label" to label, "verdiliste" to verdiliste)
-        } else {
-            mapOf("label" to label, "visningsVariant" to visningsVariant.toString(), "verdiliste" to verdiliste)
-        }
 
     /**
      * Henter ut verdien for felt på entitet.
@@ -192,6 +203,15 @@ object SøknadTilGenereltFormatMapper {
      * Konstruktørparametere er det eneste som gir oss en garantert rekkefølge for feltene, så vi henter disse først.
      */
     private fun konstruktørparametere(entity: Any) = entity::class.primaryConstructor?.parameters ?: emptyList()
+
+    private fun mapTilVedlegg(
+        vedleggTitler: List<String>,
+        label: String = "Vedlegg",
+    ) = VerdilisteElement(
+        label,
+        verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
+        visningsVariant = VisningsVariant.VEDLEGG.toString(),
+    )
 }
 
 enum class VisningsVariant {
