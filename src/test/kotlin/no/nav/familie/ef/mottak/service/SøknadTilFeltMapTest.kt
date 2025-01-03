@@ -24,12 +24,12 @@ class SøknadTilFeltMapTest {
     }
 
     @Test
-    fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL_BARN`() {
+    fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
-        val harVisningsVariantBarn = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL_BARN.toString() }
+        val harVisningsVariantBarn = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL.toString() }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
 
