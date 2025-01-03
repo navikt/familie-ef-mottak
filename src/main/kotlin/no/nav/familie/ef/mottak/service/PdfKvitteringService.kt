@@ -9,6 +9,7 @@ import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
+import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -35,23 +36,23 @@ class PdfKvitteringService(
     private fun lagFeltMap(
         innsending: Søknad,
         vedleggTitler: List<String>,
-    ): Map<String, Any> =
+    ): FeltMap =
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTilGenereltFormatMapper.mapOvergangsstønad(dto, vedleggTitler)
+                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
             }
             DOKUMENTTYPE_BARNETILSYN -> {
                 val dto = SøknadMapper.toDto<SøknadBarnetilsyn>(innsending)
-                SøknadTilGenereltFormatMapper.mapBarnetilsyn(dto, vedleggTitler)
+                SøknadTilFeltMap.mapBarnetilsyn(dto, vedleggTitler)
             }
             DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER -> {
                 val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
-                SøknadTilGenereltFormatMapper.mapSkjemafelter(dto)
+                SøknadTilFeltMap.mapSkjemafelter(dto)
             }
             DOKUMENTTYPE_SKOLEPENGER -> {
                 val dto = SøknadMapper.toDto<SøknadSkolepenger>(innsending)
-                SøknadTilGenereltFormatMapper.mapSkolepenger(dto, vedleggTitler)
+                SøknadTilFeltMap.mapSkolepenger(dto, vedleggTitler)
             }
             else -> {
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
