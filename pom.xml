@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
     </parent>
 
     <properties>
@@ -21,12 +21,12 @@
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>2.1.0</kotlin.version>
         <springdoc.version>2.7.0</springdoc.version>
-        <mockk.version>1.13.13</mockk.version>
-        <felles.version>3.20241127123724_adfc561</felles.version>
-        <prosessering.version>2.20241205111631_afe703f</prosessering.version>
+        <mockk.version>1.13.14</mockk.version>
+        <felles.version>3.20241216102134_145872f</felles.version>
+        <prosessering.version>2.20241212142143_6cd44ac</prosessering.version>
         <confluent.version>7.8.0</confluent.version>
         <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
-        <kontrakter.version>3.0_20241206132953_18ef9da</kontrakter.version>
+        <kontrakter.version>3.0_20241220141021_9e86ad8</kontrakter.version>
         <token-validation.version>5.0.13</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -211,7 +211,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.0.1</version>
+            <version>11.1.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
