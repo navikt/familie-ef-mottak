@@ -158,9 +158,10 @@ object SøknadTilFeltMap {
                 }
             }
             // skal ekskluderes
-            if (list.singleOrNull()?.verdiliste?.isEmpty() == true) {
+            if (list.size == 1 && list.first().verdiliste.isNullOrEmpty() && list.first().verdi.isNullOrEmpty()) {
                 return emptyList()
             }
+
             return listOf(VerdilisteElement(label = entitet.label, verdiliste = list))
         }
         return list
