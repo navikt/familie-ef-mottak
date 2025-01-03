@@ -127,7 +127,12 @@ object SøknadTilGenereltFormatMapper {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_ARBEIDSFORHOLD))
             }
             if (entitet.label == "Gjelder noe av dette deg?") {
-                return listOf(feltlisteMap(entitet.label, list, VisningsVariant.PUNKTLISTE))
+                val verdi =
+                    when (val verdi = entitet.verdi) {
+                        is List<*> -> verdi.joinToString("\n\n") { it.toString() }
+                        else -> verdi?.toString() ?: ""
+                    }
+                return listOf(mapOf("label" to entitet.label, "visningsVariant" to VisningsVariant.PUNKTLISTE, "verdi" to verdi, "alternativer" to entitet.alternativer?.joinToString(" / ")))
             }
             if (entitet.label == "Vedlegg") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.VEDLEGG))
@@ -158,13 +163,13 @@ object SøknadTilGenereltFormatMapper {
 
     private fun feltlisteMap(
         label: String,
-        verdi: List<*>,
+        verdiliste: List<*>,
         visningsVariant: VisningsVariant? = null,
     ): Map<String, Any> =
         if (visningsVariant == null) {
-            mapOf("label" to label, "verdiliste" to verdi)
+            mapOf("label" to label, "verdiliste" to verdiliste)
         } else {
-            mapOf("label" to label, "visningsVariant" to visningsVariant.toString(), "verdiliste" to verdi)
+            mapOf("label" to label, "visningsVariant" to visningsVariant.toString(), "verdiliste" to verdiliste)
         }
 
     /**
