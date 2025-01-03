@@ -169,7 +169,7 @@ object SøknadTilFeltMap {
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
         val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
-        if (list.singleOrNull()?.verdiliste?.isEmpty() == true) {
+        if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
