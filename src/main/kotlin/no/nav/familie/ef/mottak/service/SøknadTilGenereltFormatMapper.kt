@@ -126,7 +126,7 @@ object SøknadTilGenereltFormatMapper {
             if (entitet.label == "Om arbeidsforholdet ditt") {
                 return listOf(feltlisteMap(entitet.label, list, VisningsVariant.TABELL_ARBEIDSFORHOLD))
             }
-            if (entitet.label == "Gjelder noe av dette deg?") {
+            if (entitet.alternativer != null) {
                 val verdi =
                     when (val verdi = entitet.verdi) {
                         is List<*> -> verdi.joinToString("\n\n") { it.toString() }
