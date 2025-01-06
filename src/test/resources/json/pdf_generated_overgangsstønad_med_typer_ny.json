@@ -509,6 +509,7 @@
       "verdiliste": [
         {
           "label": "Gjelder noe av dette deg?",
+          "visningsVariant" : "PUNKTLISTE",
           "verdi": "Barnet mitt er sykt\n\nJeg har søkt om barnepass, men ikke fått plass enda\n\nJeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
           "alternativer": "123 / 234 / 345"
         },

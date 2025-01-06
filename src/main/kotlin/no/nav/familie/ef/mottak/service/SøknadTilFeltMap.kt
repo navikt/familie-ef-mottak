@@ -123,11 +123,19 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine" && entitet.verdi is List<*>) {
+            if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
                 return mapListeElementer("Barn", entitet.label, entitet.verdi as List<*>, list)
             }
-            if (entitet.label == "Om arbeidsforholdet ditt" && entitet.verdi is List<*>) {
+            if ((entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>) {
                 return mapListeElementer("Arbeidsforhold", entitet.label, entitet.verdi as List<*>, list)
+            }
+            if (entitet.alternativer != null) {
+                val verdi =
+                    when (val verdi = entitet.verdi) {
+                        is List<*> -> verdi.joinToString("\n\n") { it.toString() }
+                        else -> verdi?.toString() ?: ""
+                    }
+                return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdi = verdi, alternativer = entitet.alternativer?.joinToString(" / ")))
             }
             if (entitet.label == "Vedlegg") {
                 return listOf(
@@ -210,4 +218,5 @@ object SøknadTilFeltMap {
 enum class VisningsVariant {
     TABELL,
     VEDLEGG,
+    PUNKTLISTE,
 }
