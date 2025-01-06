@@ -123,7 +123,7 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine") {
+            if (entitet.label == "Barna dine" || entitet.label == "Your children") {
                 return listOf(
                     VerdilisteElement(
                         entitet.label,
@@ -132,7 +132,7 @@ object SøknadTilFeltMap {
                     ),
                 )
             }
-            if (entitet.label == "Om arbeidsforholdet ditt") {
+            if (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") {
                 return listOf(
                     VerdilisteElement(
                         entitet.label,
@@ -140,6 +140,14 @@ object SøknadTilFeltMap {
                         visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
                     ),
                 )
+            }
+            if (entitet.alternativer != null) {
+                val verdi =
+                    when (val verdi = entitet.verdi) {
+                        is List<*> -> verdi.joinToString("\n\n") { it.toString() }
+                        else -> verdi?.toString() ?: ""
+                    }
+                return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdi = verdi, alternativer = entitet.alternativer?.joinToString(" / ")))
             }
             if (entitet.label == "Vedlegg") {
                 return listOf(
@@ -158,9 +166,10 @@ object SøknadTilFeltMap {
                 }
             }
             // skal ekskluderes
-            if (list.singleOrNull()?.verdiliste?.isEmpty() == true) {
+            if (list.size == 1 && list.first().verdiliste.isNullOrEmpty() && list.first().verdi.isNullOrEmpty()) {
                 return emptyList()
             }
+
             return listOf(VerdilisteElement(label = entitet.label, verdiliste = list))
         }
         return list
@@ -168,7 +177,7 @@ object SøknadTilFeltMap {
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
         val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
-        if (list.singleOrNull()?.verdiliste?.isEmpty() == true) {
+        if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
@@ -209,4 +218,5 @@ enum class VisningsVariant {
     TABELL_BARN,
     TABELL_ARBEIDSFORHOLD,
     VEDLEGG,
+    PUNKTLISTE,
 }
