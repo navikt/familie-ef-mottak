@@ -123,21 +123,43 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine") {
+            if (entitet.label == "Barna dine" && entitet.verdi is List<*>) {
+                val barnMapped =
+                    (entitet.verdi as List<*>)
+                        .mapIndexedNotNull { indeks, it ->
+                            it?.let {
+                                VerdilisteElement(
+                                    label = "Barn ${indeks + 1}",
+                                    verdiliste = list,
+                                )
+                            }
+                        }
+
                 return listOf(
                     VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_BARN.toString(),
+                        label = entitet.label,
+                        verdiliste = barnMapped,
+                        visningsVariant = VisningsVariant.TABELL.toString(),
                     ),
                 )
             }
-            if (entitet.label == "Om arbeidsforholdet ditt") {
+            if (entitet.label == "Om arbeidsforholdet ditt" && entitet.verdi is List<*>) {
+                val arbeidsforholdMapped =
+                    (entitet.verdi as List<*>)
+                        .mapIndexedNotNull { indeks, it ->
+                            it?.let {
+                                VerdilisteElement(
+                                    label = "Arbeidsforhold ${indeks + 1}",
+                                    verdiliste = list,
+                                )
+                            }
+                        }
+
                 return listOf(
                     VerdilisteElement(
                         entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
+                        verdiliste = arbeidsforholdMapped,
+                        visningsVariant = VisningsVariant.TABELL.toString(),
                     ),
                 )
             }
@@ -175,6 +197,30 @@ object SøknadTilFeltMap {
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
 
+    private fun mapListElements(
+        label: String,
+        elements: List<*>,
+        list: List<VerdilisteElement>,
+    ): List<VerdilisteElement> {
+        val mappedElements =
+            elements.mapIndexedNotNull { indeks, it ->
+                it?.let {
+                    VerdilisteElement(
+                        label = "$label ${indeks + 1}",
+                        verdiliste = list,
+                    )
+                }
+            }
+
+        return listOf(
+            VerdilisteElement(
+                label = label,
+                verdiliste = mappedElements,
+                visningsVariant = VisningsVariant.TABELL.toString(),
+            ),
+        )
+    }
+
     /**
      * Henter ut verdien for felt på entitet.
      */
@@ -207,7 +253,6 @@ object SøknadTilFeltMap {
 }
 
 enum class VisningsVariant {
-    TABELL_BARN,
-    TABELL_ARBEIDSFORHOLD,
+    TABELL,
     VEDLEGG,
 }

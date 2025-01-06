@@ -95,7 +95,7 @@ class SøknadTilFeltMapTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_med_typer.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_med_typer_ny.json")
     }
 
     @Test
@@ -118,7 +118,7 @@ class SøknadTilFeltMapTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapBarnetilsyn(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn_med_typer.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn_med_typer_ny.json")
     }
 
     @Test
