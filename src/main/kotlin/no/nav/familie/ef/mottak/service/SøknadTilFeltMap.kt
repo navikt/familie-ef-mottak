@@ -141,6 +141,14 @@ object SøknadTilFeltMap {
                     ),
                 )
             }
+            if (entitet.alternativer != null) {
+                val verdi =
+                    when (val verdi = entitet.verdi) {
+                        is List<*> -> verdi.joinToString("\n\n") { it.toString() }
+                        else -> verdi?.toString() ?: ""
+                    }
+                return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdi = verdi, alternativer = entitet.alternativer?.joinToString(" / ")))
+            }
             if (entitet.label == "Vedlegg") {
                 return listOf(
                     VerdilisteElement(
@@ -210,4 +218,5 @@ enum class VisningsVariant {
     TABELL_BARN,
     TABELL_ARBEIDSFORHOLD,
     VEDLEGG,
+    PUNKTLISTE,
 }
