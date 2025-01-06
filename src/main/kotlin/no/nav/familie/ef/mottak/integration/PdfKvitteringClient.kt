@@ -29,7 +29,7 @@ class PdfKvitteringClient(
         val uri =
             UriComponentsBuilder
                 .fromUri(uri)
-                .pathSegment("api/pdf/opprett-pdf")
+                .pathSegment("api/v1/pdf/opprett-pdf")
                 .build()
                 .toUri()
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
