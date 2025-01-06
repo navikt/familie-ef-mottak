@@ -221,9 +221,9 @@ internal object Testdata {
 
     private fun stønadsstart() =
         Stønadsstart(
-            Søknadsfelt("Fra måned", Month.AUGUST),
-            Søknadsfelt("Fra år", 2018),
-            Søknadsfelt("Søke fra bestemt mnd", true),
+            fraMåned = Søknadsfelt("Fra måned", Month.AUGUST),
+            fraÅr = Søknadsfelt("Fra år", 2018),
+            søkerFraBestemtMåned = Søknadsfelt("Søke fra bestemt mnd", true),
         )
 
     @Suppress("LongLine")
