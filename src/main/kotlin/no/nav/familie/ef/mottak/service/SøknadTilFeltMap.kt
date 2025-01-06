@@ -123,7 +123,7 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine") {
+            if (entitet.label == "Barna dine" || entitet.label == "Your children") {
                 return listOf(
                     VerdilisteElement(
                         entitet.label,
@@ -132,7 +132,7 @@ object SøknadTilFeltMap {
                     ),
                 )
             }
-            if (entitet.label == "Om arbeidsforholdet ditt") {
+            if (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") {
                 return listOf(
                     VerdilisteElement(
                         entitet.label,
