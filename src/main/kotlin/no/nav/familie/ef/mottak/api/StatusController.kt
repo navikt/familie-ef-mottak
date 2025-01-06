@@ -30,12 +30,12 @@ class StatusController(
     private fun loggLiteAktivitet(tidSidenSisteLagredeSøknad: Duration) {
         if (erDagtid() && !erHelg()) {
             when {
-                tidSidenSisteLagredeSøknad.toHours() > 3 ->
-                    logger.error(
+                tidSidenSisteLagredeSøknad.toHours() > 5 ->
+                    logger.warn(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad",
                     )
-                tidSidenSisteLagredeSøknad.toMinutes() > 60 ->
-                    logger.warn(
+                tidSidenSisteLagredeSøknad.toHours() > 2 ->
+                    logger.info(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad",
                     )
             }
