@@ -15,15 +15,16 @@ import java.util.Locale
 
 object Feltformaterer {
     /**
-     * Håndterer formatering utover vanlig toString for endenodenee
+     * Håndterer formatering utover vanlig toString for endenodene
      */
     fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): VerdilisteElement = mapTilVerdiListeElement(entitet)
 
     fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): VerdilisteElement? {
         // skal ekskluderes
-        if ((entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" &&
-            entitet.verdi.toString() == "false") || (entitet.label == "Født" && entitet.verdi.toString() == "true")
-        ) {
+        val skalEkskluderes = (entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" && entitet.verdi.toString() == "false") ||
+                (entitet.label == "Født" && entitet.verdi.toString() == "true")
+
+        if (skalEkskluderes) {
             return null
         }
         return mapTilVerdiListeElement(entitet)
