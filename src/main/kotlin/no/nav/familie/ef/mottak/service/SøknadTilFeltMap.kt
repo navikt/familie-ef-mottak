@@ -49,7 +49,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg, )
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = false), finnFelter + vedlegg, )
     }
 
     fun mapBarnetilsyn(

@@ -50,7 +50,7 @@ object SøknadTreeWalker {
         val finnFelter = finnFelter(søknad)
         val vedlegg =
             VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg)
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = false), finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(
