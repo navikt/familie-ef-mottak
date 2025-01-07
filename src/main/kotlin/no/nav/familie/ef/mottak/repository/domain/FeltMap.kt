@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull
 data class FeltMap(
     @field:NotNull(message = "Label kan ikke være null")
     val label: String,
+    val pdfConfig: PdfConfig? = null,
     @field:NotNull(message = "Verdiliste kan ikke være null")
     val verdiliste: List<VerdilisteElement>,
-    val PdfConfig: PdfConfig? = null,
 )
 enum class Sprak {
     NO,
@@ -16,7 +16,7 @@ enum class Sprak {
 }
 
 data class PdfConfig(
-    val harInnholdsFortegnelse: Boolean,
+    val harInnholdsfortegnelse: Boolean,
     val sprak: Sprak? = null,
 )
 

@@ -1,5 +1,9 @@
 {
   "label": "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "sprak" : null
+  },
   "verdiliste": [
     {
       "label": "detaljer",

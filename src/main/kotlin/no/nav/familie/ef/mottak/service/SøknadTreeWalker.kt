@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.PdfConfig
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
@@ -49,7 +50,7 @@ object SøknadTreeWalker {
         val finnFelter = finnFelter(søknad)
         val vedlegg =
             VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(
@@ -59,7 +60,7 @@ object SøknadTreeWalker {
         val finnFelter = finnFelter(søknad)
         val vedlegg =
             VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", PdfConfig(harInnholdsfortegnelse = true),finnFelter + vedlegg)
     }
 
     fun mapSkolepenger(
@@ -69,12 +70,12 @@ object SøknadTreeWalker {
         val finnFelter = finnFelter(søknad)
         val vedlegg =
             VerdilisteElement(label = "Vedlegg", verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)))
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMap("Skjema for arbeidssøker - 15-08.01",PdfConfig(harInnholdsfortegnelse = true), finnFelter)
     }
 
     fun mapEttersending(
@@ -99,7 +100,7 @@ object SøknadTreeWalker {
                 label = "Dokumenter vedlagt",
                 verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
             )
-        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
+        return FeltMap("Ettersending",PdfConfig(harInnholdsfortegnelse = true), listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {

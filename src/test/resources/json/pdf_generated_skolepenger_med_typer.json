@@ -1,5 +1,9 @@
 {
   "label" : "Søknad om stønad til skolepenger (NAV 15-00.04)",
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "sprak" : null
+  },
   "verdiliste" : [ {
     "label" : "detaljer",
     "verdiliste" : [ {

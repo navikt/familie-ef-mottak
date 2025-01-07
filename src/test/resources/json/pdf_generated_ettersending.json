@@ -1,5 +1,9 @@
 {
   "label": "Ettersending",
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "sprak" : null
+  },
   "verdiliste": [ {
       "label": "Ettersending av vedlegg",
       "verdiliste": [

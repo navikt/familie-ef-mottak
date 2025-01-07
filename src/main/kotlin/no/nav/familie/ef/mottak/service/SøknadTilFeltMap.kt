@@ -49,7 +49,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(harInnholdsFortegnelse = false))
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg, )
     }
 
     fun mapBarnetilsyn(
@@ -58,7 +58,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg,PdfConfig(harInnholdsFortegnelse = false))
+        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg,)
     }
 
     fun mapSkolepenger(
@@ -67,12 +67,12 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg, PdfConfig(harInnholdsFortegnelse = false))
+        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)",PdfConfig(harInnholdsfortegnelse = true), finnFelter + vedlegg,)
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMap("Skjema for arbeidssøker - 15-08.01",PdfConfig(harInnholdsfortegnelse = true), finnFelter)
     }
 
     fun mapEttersending(
@@ -93,7 +93,7 @@ object SøknadTilFeltMap {
                     ),
             )
         val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
-        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
+        return FeltMap("Ettersending",PdfConfig(harInnholdsfortegnelse = true), listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {
