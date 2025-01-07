@@ -540,16 +540,16 @@
       "label": "Når søker du stønad fra?",
       "verdiliste": [
         {
+          "label": "Søke fra bestemt mnd",
+          "verdi": "Ja"
+        },
+        {
           "label": "Fra måned",
           "verdi": "august"
         },
         {
           "label": "Fra år",
           "verdi": "2018"
-        },
-        {
-          "label": "Søke fra bestemt mnd",
-          "verdi": "Ja"
         }
       ]
     },
