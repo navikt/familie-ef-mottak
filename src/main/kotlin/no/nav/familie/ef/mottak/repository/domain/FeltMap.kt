@@ -6,20 +6,20 @@ import jakarta.validation.constraints.NotNull
 data class FeltMap(
     @field:NotNull(message = "Label kan ikke være null")
     val label: String,
-    val pdfConfig: PdfConfig? = null,
     @field:NotNull(message = "Verdiliste kan ikke være null")
     val verdiliste: List<VerdilisteElement>,
+    val pdfConfig: PdfConfig? = null,
 )
-enum class Sprak {
-    NO,
+
+enum class Språk {
+    NB,
     EN,
 }
 
 data class PdfConfig(
     val harInnholdsfortegnelse: Boolean,
-    val sprak: Sprak? = null,
+    val språk: Språk,
 )
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class VerdilisteElement(

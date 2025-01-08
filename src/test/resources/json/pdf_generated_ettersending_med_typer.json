@@ -1,9 +1,5 @@
 {
   "label" : "Ettersending",
-  "pdfConfig" : {
-    "harInnholdsfortegnelse" : true,
-    "sprak" : null
-  },
   "verdiliste" : [ {
     "label" : "Ettersending av vedlegg",
     "verdiliste" : [ {
@@ -23,5 +19,6 @@
       "label" : "Vedlegg",
       "verdi" : "Lærlingkontrakt\n\nUtgifter til pass av barn"
     } ]
-  } ]
+  } ],
+  "pdfConfig" : null
 }
