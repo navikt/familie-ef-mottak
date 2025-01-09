@@ -11,16 +11,6 @@ data class FeltMap(
     val pdfConfig: PdfConfig? = null,
 )
 
-enum class Språk {
-    NB,
-    EN,
-}
-
-data class PdfConfig(
-    val harInnholdsfortegnelse: Boolean,
-    val språk: Språk,
-)
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class VerdilisteElement(
     val label: String,
@@ -29,3 +19,13 @@ data class VerdilisteElement(
     val verdiliste: List<VerdilisteElement>? = null,
     val alternativer: String? = null,
 )
+
+data class PdfConfig(
+    val harInnholdsfortegnelse: Boolean,
+    val språk: Språk,
+)
+
+enum class Språk {
+    NB,
+    EN,
+}

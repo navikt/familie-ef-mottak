@@ -2,8 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
-import no.nav.familie.ef.mottak.repository.domain.PdfConfig
-import no.nav.familie.ef.mottak.repository.domain.Språk
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
@@ -50,7 +48,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(harInnholdsfortegnelse = false, språk = Språk.NB))
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
     }
 
     fun mapBarnetilsyn(
