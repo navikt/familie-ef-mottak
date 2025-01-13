@@ -169,6 +169,21 @@ class SøknadTilFeltMapTest {
         Assertions.assertThat(harEkskludertElement).isTrue
     }
 
+    @Test
+    fun `Eksluderer felter med tomme lister`() {
+        val søknad = Testdata.søknadOvergangsstønadMedTommeFelter
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
+
+        val harEksludertListe =
+            !mapSøknadsfelter.verdiliste.any {
+                it.label == "Barna dine" &&
+                    it.verdiliste?.any { barn -> barn.label == "Barn 1" && barn.verdiliste?.any { ufødtBarn -> ufødtBarn.label == "Samvær" && ufødtBarn.verdiliste?.isEmpty() == true } ?: true } ?: true
+            }
+        Assertions.assertThat(harEksludertListe).isTrue
+    }
+
     private fun generatePdfAndAssert(
         mapSøknadsfelter: FeltMap,
         filename: String,
