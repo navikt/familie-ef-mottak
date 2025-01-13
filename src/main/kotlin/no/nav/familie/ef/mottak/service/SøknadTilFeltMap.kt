@@ -177,9 +177,10 @@ object SøknadTilFeltMap {
         elementer: List<*>,
         verdiliste: List<VerdilisteElement>,
     ): List<VerdilisteElement> {
+        val ekskluderTommeElementer = verdiliste.filterNot { it.verdi.isNullOrEmpty() && it.verdiliste.isNullOrEmpty() }
         val mappedElementer =
             elementer.mapIndexedNotNull { indeks, it ->
-                it?.let { VerdilisteElement("$elementLabel ${indeks + 1}", verdiliste = verdiliste) }
+                it?.let { VerdilisteElement("$elementLabel ${indeks + 1}", verdiliste = ekskluderTommeElementer) }
             }
         return listOf(VerdilisteElement(label, verdiliste = mappedElementer, visningsVariant = VisningsVariant.TABELL.toString()))
     }

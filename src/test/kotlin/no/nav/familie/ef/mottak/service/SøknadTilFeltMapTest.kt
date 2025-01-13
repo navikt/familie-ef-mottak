@@ -29,7 +29,8 @@ class SøknadTilFeltMapTest {
 
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
-        val harVisningsVariantBarn = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL.toString() }
+        val harVisningsVariantBarn =
+            mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL.toString() }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
 
@@ -45,7 +46,8 @@ class SøknadTilFeltMapTest {
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
 
-        val harVisningsVariantVedlegg = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.VEDLEGG.toString() }
+        val harVisningsVariantVedlegg =
+            mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.VEDLEGG.toString() }
         Assertions.assertThat(harVisningsVariantVedlegg).isTrue
     }
 
@@ -150,6 +152,21 @@ class SøknadTilFeltMapTest {
                     it.verdi == "Nei"
             }
         Assertions.assertThat(harEkskludertElement).isFalse
+    }
+
+    @Test
+    fun `Eksluderer navn for ufødte barn`() {
+        val søknad = Testdata.søknadOvergangsstønadMedTommeFelter
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
+
+        val harEkskludertElement =
+            !mapSøknadsfelter.verdiliste.any {
+                it.label == "Barna dine" &&
+                    it.verdiliste?.any { barn -> barn.label == "Barn 1" && barn.verdiliste?.any { ufødtBarn -> ufødtBarn.label == "Navn" && ufødtBarn.verdi.isNullOrBlank() } ?: true } ?: true
+            }
+        Assertions.assertThat(harEkskludertElement).isTrue
     }
 
     private fun generatePdfAndAssert(
