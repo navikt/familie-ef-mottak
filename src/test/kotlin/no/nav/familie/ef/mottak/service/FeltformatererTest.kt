@@ -66,7 +66,34 @@ internal class FeltformatererTest {
 
         val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
 
-        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n\n1572 Fet\n\nNorge"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n1572 Fet\nNorge"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med tomme felter korrekt`() {
+        val testverdi = Søknadsfelt("label", Adresse("", "", "", ""))
+
+        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ingen registrert adresse"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med delvis utfylte felter korrekt`() {
+        val testverdi = Søknadsfelt("label", Adresse("Husebyskogen 15", "", "Fet", ""))
+
+        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n Fet"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med kun land`() {
+        val testverdi = Søknadsfelt("label", Adresse("", "", "", "Norge"))
+
+        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Norge"))
     }
 
     @Test
