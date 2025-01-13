@@ -89,10 +89,19 @@ object Feltformaterer {
 
     private fun tilUtskriftsformat(verdi: LocalDate): String = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
-    private fun tilUtskriftsformat(adresse: Adresse): String =
-        listOf(
-            adresse.adresse,
-            listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
-            adresse.land,
-        ).joinToString("\n\n")
+    private fun tilUtskriftsformat(adresse: Adresse): String {
+        val adresseelementer = listOfNotNull(
+            adresse.adresse?.takeIf { it.isNotBlank() },
+            listOfNotNull(adresse.postnummer, adresse.poststedsnavn)
+                .joinToString(" ") { it.trim() }
+                .takeIf { it.isNotBlank() },
+            adresse.land?.takeIf { it.isNotBlank() }
+        )
+
+        return if (adresseelementer.isEmpty()) {
+            "Ingen registrert adresse"
+        } else {
+            adresseelementer.joinToString("\n")
+        }
+    }
 }
