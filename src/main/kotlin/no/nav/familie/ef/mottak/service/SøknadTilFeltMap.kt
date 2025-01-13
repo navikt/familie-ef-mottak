@@ -50,7 +50,7 @@ object SøknadTilFeltMap {
     ): FeltMapMedConfig {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMapMedConfig("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(true, Språk.NB))
+        return FeltMapMedConfig("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(false, Språk.NB))
     }
 
     fun mapBarnetilsyn(

@@ -626,7 +626,7 @@
     }
   ],
   "pdfConfig" : {
-    "harInnholdsfortegnelse": true,
+    "harInnholdsfortegnelse": false,
     "språk": "NB"
   }
 }
