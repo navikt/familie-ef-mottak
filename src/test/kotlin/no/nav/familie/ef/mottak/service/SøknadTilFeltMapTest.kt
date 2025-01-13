@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.FeltMapMedConfig
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -153,7 +153,7 @@ class SøknadTilFeltMapTest {
     }
 
     private fun generatePdfAndAssert(
-        mapSøknadsfelter: FeltMap,
+        mapSøknadsfelter: FeltMapMedConfig,
         filename: String,
     ) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)

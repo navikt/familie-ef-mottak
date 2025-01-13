@@ -272,5 +272,8 @@
       "verdi" : "Utgifter til utdanning"
     } ]
   } ],
-  "pdfConfig" : null
+  "pdfConfig" : {
+    "harInnholdsfortegnelse": true,
+    "språk": "NB"
+  }
 }

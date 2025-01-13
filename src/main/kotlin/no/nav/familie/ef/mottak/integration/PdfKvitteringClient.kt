@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.FeltMapMedConfig
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
@@ -25,7 +25,7 @@ class PdfKvitteringClient(
             .build()
             .toUri()
 
-    fun opprettPdf(feltMap: FeltMap): ByteArray {
+    fun opprettPdf(feltMap: FeltMapMedConfig): ByteArray {
         val uri =
             UriComponentsBuilder
                 .fromUri(uri)

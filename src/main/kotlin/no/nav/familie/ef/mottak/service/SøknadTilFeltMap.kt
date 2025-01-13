@@ -1,7 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
-import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.FeltMapMedConfig
+import no.nav.familie.ef.mottak.repository.domain.PdfConfig
+import no.nav.familie.ef.mottak.repository.domain.Språk
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
@@ -45,39 +47,39 @@ object SøknadTilFeltMap {
     fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønad,
         vedleggTitler: List<String>,
-    ): FeltMap {
+    ): FeltMapMedConfig {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
+        return FeltMapMedConfig("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(true, Språk.NB))
     }
 
     fun mapBarnetilsyn(
         søknad: SøknadBarnetilsyn,
         vedleggTitler: List<String>,
-    ): FeltMap {
+    ): FeltMapMedConfig {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
+        return FeltMapMedConfig("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg, PdfConfig(true, Språk.NB))
     }
 
     fun mapSkolepenger(
         søknad: SøknadSkolepenger,
         vedleggTitler: List<String>,
-    ): FeltMap {
+    ): FeltMapMedConfig {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
+        return FeltMapMedConfig("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg, PdfConfig(true, Språk.NB))
     }
 
-    fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
+    fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMapMedConfig {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMapMedConfig("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(true, Språk.NB))
     }
 
     fun mapEttersending(
         ettersending: Ettersending,
         vedleggTitler: List<String>,
-    ): FeltMap {
+    ): FeltMapMedConfig {
         val infoMap =
             VerdilisteElement(
                 label = "Ettersending av vedlegg",
@@ -92,7 +94,7 @@ object SøknadTilFeltMap {
                     ),
             )
         val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
-        return FeltMap("Ettersending", verdiliste = listOf(infoMap, vedleggMap))
+        return FeltMapMedConfig("Ettersending", verdiliste = listOf(infoMap, vedleggMap), PdfConfig(true, Språk.NB))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {
