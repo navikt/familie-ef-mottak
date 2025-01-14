@@ -25,34 +25,34 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `overgangsstønad ok request`() {
         verifySøknadMedVedleggRequest(
-            SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg())),
+            SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg()), locale = "Nb"),
             "/api/soknad/overgangsstonad",
         )
     }
 
     @Test
     internal fun `barnetilsyn ok request`() {
-        val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg(), lagVedlegg()))
+        val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg(), lagVedlegg()), locale = "Nb")
         verifySøknadMedVedleggRequest(søknad, "/api/soknad/barnetilsyn")
     }
 
     @Test
     internal fun `skolepenger ok request`() {
-        val søknad = SøknadMedVedlegg(søknadSkolepenger, listOf(lagVedlegg(), lagVedlegg()))
+        val søknad = SøknadMedVedlegg(søknadSkolepenger, listOf(lagVedlegg(), lagVedlegg()), locale = "Nb")
         verifySøknadMedVedleggRequest(søknad, "/api/soknad/skolepenger")
     }
 
     @Test
     internal fun `det skal ikke være mulig å sende inn samme vedlegg på nytt med ny søknad`() {
         val vedleggId = UUID.randomUUID().toString()
-        val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(vedleggId)))
+        val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(vedleggId)), locale = "Nb")
         verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad")
         verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad", HttpStatus.BAD_REQUEST)
     }
 
     @Test
     internal fun `vedlegg savnes i listen med vedlegg`() {
-        val request = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("finnes_ikke")))
+        val request = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("finnes_ikke")), locale = "Nb")
         val response: ResponseEntity<Any> =
             restTemplate.exchange(
                 localhost("/api/soknad/overgangsstonad"),
