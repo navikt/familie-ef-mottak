@@ -124,10 +124,12 @@ object SøknadTilFeltMap {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
             if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
-                return mapListeElementer("Barn", entitet.label, entitet.verdi as List<*>, list)
+                val elementLabel = if (entitet.label == "Barna dine") "Barn" else "Child"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
             if ((entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>) {
-                return mapListeElementer("Arbeidsforhold", entitet.label, entitet.verdi as List<*>, list)
+                val elementLabel = if (entitet.label == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
             if (entitet.alternativer != null) {
                 val verdi =
