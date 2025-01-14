@@ -153,8 +153,8 @@
               "verdi": "18.12.2012"
             },
             {
-              "label" : "I hvilket land oppholdt du deg?",
-              "verdi" : "Spania"
+              "label": "I hvilket land oppholdt du deg?",
+              "verdi": "Spania"
             },
             {
               "label": "Hvorfor bodde du i utlandet?",
@@ -381,24 +381,29 @@
           "visningsVariant": "TABELL",
           "verdiliste": [
             {
-              "label": "Navn på arbeidsgiveren",
-              "verdi": "Palpatine"
-            },
-            {
-              "label": "Hvor mye jobber du?",
-              "verdi": "15"
-            },
-            {
-              "label": "Er stillingen fast eller midlertidig?",
-              "verdi": "Fast"
-            },
-            {
-              "label": "Har du en sluttdato?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Når skal du slutte?",
-              "verdi": "18.11.2020"
+              "label": "Arbeidsforhold 1",
+              "verdiliste": [
+                {
+                  "label": "Navn på arbeidsgiveren",
+                  "verdi": "Palpatine"
+                },
+                {
+                  "label": "Hvor mye jobber du?",
+                  "verdi": "15"
+                },
+                {
+                  "label": "Er stillingen fast eller midlertidig?",
+                  "verdi": "Fast"
+                },
+                {
+                  "label": "Har du en sluttdato?",
+                  "verdi": "Ja"
+                },
+                {
+                  "label": "Når skal du slutte?",
+                  "verdi": "18.11.2020"
+                }
+              ]
             }
           ]
         },
@@ -586,7 +591,7 @@
     },
     {
       "label": "Vedlegg",
-      "visningsVariant" : "VEDLEGG",
+      "visningsVariant": "VEDLEGG",
       "verdiliste": [
         {
           "label": "Vedlegg",
@@ -596,7 +601,7 @@
     }
   ],
   "pdfConfig" : {
-    "harInnholdsfortegnelse": true,
-    "språk": "NB"
+    "harInnholdsfortegnelse" : true,
+    "språk" : "NB"
   }
 }

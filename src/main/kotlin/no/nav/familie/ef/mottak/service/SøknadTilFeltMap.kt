@@ -123,23 +123,13 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine" || entitet.label == "Your children") {
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_BARN.toString(),
-                    ),
-                )
+            if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
+                val elementLabel = if (entitet.label == "Barna dine") "Barn" else "Child"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
-            if (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") {
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
-                    ),
-                )
+            if ((entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>) {
+                val elementLabel = if (entitet.label == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
             if (entitet.alternativer != null) {
                 val verdi =
@@ -183,6 +173,20 @@ object SøknadTilFeltMap {
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
 
+    private fun mapListeElementer(
+        elementLabel: String,
+        label: String,
+        elementer: List<*>,
+        verdiliste: List<VerdilisteElement>,
+    ): List<VerdilisteElement> {
+        val ekskluderTommeElementer = verdiliste.filterNot { it.verdi.isNullOrEmpty() && it.verdiliste.isNullOrEmpty() }
+        val mappedElementer =
+            elementer.mapIndexedNotNull { indeks, it ->
+                it?.let { VerdilisteElement("$elementLabel ${indeks + 1}", verdiliste = ekskluderTommeElementer) }
+            }
+        return listOf(VerdilisteElement(label, verdiliste = mappedElementer, visningsVariant = VisningsVariant.TABELL.toString()))
+    }
+
     /**
      * Henter ut verdien for felt på entitet.
      */
@@ -215,8 +219,7 @@ object SøknadTilFeltMap {
 }
 
 enum class VisningsVariant {
-    TABELL_BARN,
-    TABELL_ARBEIDSFORHOLD,
+    TABELL,
     VEDLEGG,
     PUNKTLISTE,
 }
