@@ -594,5 +594,9 @@
         }
       ]
     }
-  ]
+  ],
+  "pdfConfig" : {
+    "harInnholdsfortegnelse": true,
+    "språk": "NB"
+  }
 }

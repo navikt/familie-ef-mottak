@@ -92,7 +92,7 @@ object SøknadTilFeltMap {
                     ),
             )
         val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
-        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
+        return FeltMap("Ettersending", verdiliste = listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {
