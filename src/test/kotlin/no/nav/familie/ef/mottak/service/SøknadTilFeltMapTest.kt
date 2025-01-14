@@ -158,7 +158,7 @@ class SøknadTilFeltMapTest {
     ) {
         val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         // kommentere ut for å skrive over fila
-        // java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray())
+        java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray())
         Assertions.assertThat(pdf).isEqualToIgnoringWhitespace(IOTestUtil.readFile(filename))
     }
 }
