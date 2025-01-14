@@ -18,5 +18,9 @@
       "label" : "Vedlegg",
       "verdi" : "Lærlingkontrakt\n\nUtgifter til pass av barn"
     } ]
-  } ]
+  } ],
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "språk" : "NB"
+  }
 }

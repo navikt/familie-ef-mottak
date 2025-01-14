@@ -265,21 +265,25 @@
       "verdi" : "Jeg er hjemme med barn under 1 år\n\nJeg er i arbeid\n\nJeg er selvstendig næringsdrivende eller frilanser"
     }, {
       "label" : "Om arbeidsforholdet ditt",
+      "visningsVariant" : "TABELL",
       "verdiliste" : [ {
-        "label" : "Navn på arbeidsgiveren",
-        "verdi" : "Palpatine"
-      }, {
-        "label" : "Hvor mye jobber du?",
-        "verdi" : "15"
-      }, {
-        "label" : "Er stillingen fast eller midlertidig?",
-        "verdi" : "Fast"
-      }, {
-        "label" : "Har du en sluttdato?",
-        "verdi" : "Ja"
-      }, {
-        "label" : "Når skal du slutte?",
-        "verdi" : "18.11.2020"
+        "label" : "Arbeidsforhold 1",
+        "verdiliste" : [ {
+          "label" : "Navn på arbeidsgiveren",
+          "verdi" : "Palpatine"
+        }, {
+          "label" : "Hvor mye jobber du?",
+          "verdi" : "15"
+        }, {
+          "label" : "Er stillingen fast eller midlertidig?",
+          "verdi" : "Fast"
+        }, {
+          "label" : "Har du en sluttdato?",
+          "verdi" : "Ja"
+        }, {
+          "label" : "Når skal du slutte?",
+          "verdi" : "18.11.2020"
+        } ]
       } ]
     }, {
       "label" : "Om firmaet du driver",
@@ -410,6 +414,7 @@
     } ]
   }, {
     "label" : "Vedlegg",
+    "visningsVariant" : "VEDLEGG",
     "verdiliste" : [ {
       "label" : "Vedlegg",
       "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"

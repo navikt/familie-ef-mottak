@@ -433,5 +433,9 @@
       "label" : "Vedlegg",
       "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"
     } ]
-  } ]
+  } ],
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "språk" : "NB"
+  }
 }
