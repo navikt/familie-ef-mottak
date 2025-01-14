@@ -98,6 +98,21 @@ internal object Testdata {
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
 
+    val søknadOvergangsstønadMedTommeFelter =
+        SøknadOvergangsstønad(
+            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
+            Søknadsfelt("Søker", personalia()),
+            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
+            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+            Søknadsfelt("Bosituasjonen din", bosituasjon()),
+            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+            Søknadsfelt("Barna dine", listOf(ufødtBarn())),
+            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+            Søknadsfelt("Mer om situasjonen din", situasjon()),
+            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+        )
+
     val søknadBarnetilsyn =
         SøknadBarnetilsyn(
             Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
@@ -414,6 +429,26 @@ internal object Testdata {
                     ),
                 ),
             ),
+        )
+
+    private fun ufødtBarn(): Barn =
+        Barn(
+            navn = Søknadsfelt("Navn", ""),
+            erBarnetFødt = Søknadsfelt("Er barnet født?", false),
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.now().plusDays(1)),
+            terminbekreftelse = dokumentfelt("Bekreftelse på ventet fødselsdato"),
+            annenForelder =
+                Søknadsfelt(
+                    "Barnets andre forelder",
+                    AnnenForelder(
+                        Søknadsfelt(
+                            "Hvorfor kan du ikke oppgi den andre forelderen?",
+                            "Fordi jeg ikke liker hen.",
+                        ),
+                    ),
+                ),
+            harSkalHaSammeAdresse = Søknadsfelt("Skal ha samme adresse", true),
+            ikkeRegistrertPåSøkersAdresseBeskrivelse = Søknadsfelt("Ikke registrert på søkers adresse", "Nei"),
         )
 
     @Suppress("LongLine")

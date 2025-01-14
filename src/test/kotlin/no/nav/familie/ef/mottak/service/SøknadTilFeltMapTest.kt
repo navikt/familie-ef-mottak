@@ -24,12 +24,13 @@ class SøknadTilFeltMapTest {
     }
 
     @Test
-    fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL_BARN`() {
+    fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL`() {
         val søknad = Testdata.søknadOvergangsstønad
 
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
-        val harVisningsVariantBarn = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL_BARN.toString() }
+        val harVisningsVariantBarn =
+            mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.TABELL.toString() }
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
 
@@ -45,7 +46,8 @@ class SøknadTilFeltMapTest {
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
 
-        val harVisningsVariantVedlegg = mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.VEDLEGG.toString() }
+        val harVisningsVariantVedlegg =
+            mapSøknadsfelter.verdiliste.any { it.visningsVariant == VisningsVariant.VEDLEGG.toString() }
         Assertions.assertThat(harVisningsVariantVedlegg).isTrue
     }
 
@@ -95,7 +97,7 @@ class SøknadTilFeltMapTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_med_typer.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_med_typer_ny.json")
     }
 
     @Test
@@ -118,7 +120,7 @@ class SøknadTilFeltMapTest {
                 "Dokumentasjon på at kan arbeide",
             )
         val mapSøknadsfelter = SøknadTilFeltMap.mapBarnetilsyn(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn_med_typer.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_barnetilsyn_med_typer_ny.json")
     }
 
     @Test
@@ -150,6 +152,36 @@ class SøknadTilFeltMapTest {
                     it.verdi == "Nei"
             }
         Assertions.assertThat(harEkskludertElement).isFalse
+    }
+
+    @Test
+    fun `Eksluderer navn for ufødte barn`() {
+        val søknad = Testdata.søknadOvergangsstønadMedTommeFelter
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
+
+        val harEkskludertElement =
+            !mapSøknadsfelter.verdiliste.any {
+                it.label == "Barna dine" &&
+                    it.verdiliste?.any { barn -> barn.label == "Barn 1" && barn.verdiliste?.any { ufødtBarn -> ufødtBarn.label == "Navn" && ufødtBarn.verdi.isNullOrBlank() } ?: true } ?: true
+            }
+        Assertions.assertThat(harEkskludertElement).isTrue
+    }
+
+    @Test
+    fun `Eksluderer felter med tomme lister`() {
+        val søknad = Testdata.søknadOvergangsstønadMedTommeFelter
+
+        val vedlegg = listOf("Dokumentasjon på at du er syk")
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
+
+        val harEksludertListe =
+            !mapSøknadsfelter.verdiliste.any {
+                it.label == "Barna dine" &&
+                    it.verdiliste?.any { barn -> barn.label == "Barn 1" && barn.verdiliste?.any { ufødtBarn -> ufødtBarn.label == "Samvær" && ufødtBarn.verdiliste?.isEmpty() == true } ?: true } ?: true
+            }
+        Assertions.assertThat(harEksludertListe).isTrue
     }
 
     private fun generatePdfAndAssert(
