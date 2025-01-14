@@ -20,7 +20,6 @@ class PdfKvitteringClient(
     @Qualifier("restTemplateAzure")
     restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie-pdf") {
-    private val logger = LoggerFactory.getLogger(this::class.java)
     override val pingUri: URI =
         UriComponentsBuilder
             .fromUri(uri)
@@ -35,8 +34,6 @@ class PdfKvitteringClient(
                 .pathSegment("api/v1/pdf/opprett-pdf")
                 .build()
                 .toUri()
-        logger.info("Sender med body: ${objectMapper.writeValueAsString(feltMap)}")
-        println(" Sender med body: ${objectMapper.writeValueAsString(feltMap)}")
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
