@@ -1,30 +1,22 @@
 {
-  "label": "Ettersending",
-  "verdiliste": [ {
-      "label": "Ettersending av vedlegg",
-      "verdiliste": [
-        {
-          "label": "Stønadstype",
-          "verdi": "OVERGANGSSTØNAD"
-        },
-        {
-          "label": "Fødselsnummer",
-          "verdi": "23118612345"
-        },
-        {
-          "label": "Dato mottatt",
-          "verdi": "01.05.2021 12:00:00"
-        }
-      ]
-    },
-    {
-      "label": "Dokumenter vedlagt",
-      "verdiliste": [
-        {
-          "label": "Vedlegg",
-          "verdi": "Lærlingkontrakt\n\nUtgifter til pass av barn"
-        }
-      ]
-    }
-  ]
+  "label" : "Ettersending",
+  "verdiliste" : [ {
+    "label" : "Ettersending av vedlegg",
+    "verdiliste" : [ {
+      "label" : "Stønadstype",
+      "verdi" : "OVERGANGSSTØNAD"
+    }, {
+      "label" : "Fødselsnummer",
+      "verdi" : "23118612345"
+    }, {
+      "label" : "Dato mottatt",
+      "verdi" : "01.05.2021 12:00:00"
+    } ]
+  }, {
+    "label" : "Dokumenter vedlagt",
+    "verdiliste" : [ {
+      "label" : "Vedlegg",
+      "verdi" : "Lærlingkontrakt\n\nUtgifter til pass av barn"
+    } ]
+  } ]
 }
