@@ -600,8 +600,8 @@
       ]
     }
   ],
-  "pdfConfig" : {
-    "harInnholdsfortegnelse" : true,
-    "språk" : "NB"
+  "pdfConfig": {
+    "harInnholdsfortegnelse": true,
+    "språk": "NB"
   }
 }

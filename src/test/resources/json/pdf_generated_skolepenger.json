@@ -131,8 +131,8 @@
               "verdi": "18.12.2012"
             },
             {
-              "label" : "I hvilket land oppholdt du deg?",
-              "verdi" : "Spania"
+              "label": "I hvilket land oppholdt du deg?",
+              "verdi": "Spania"
             },
             {
               "label": "Hvorfor bodde du i utlandet?",
@@ -387,8 +387,8 @@
       ]
     }
   ],
-  "pdfConfig" : {
-    "harInnholdsfortegnelse" : true,
-    "språk" : "NB"
+  "pdfConfig": {
+    "harInnholdsfortegnelse": true,
+    "språk": "NB"
   }
 }
