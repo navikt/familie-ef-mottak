@@ -121,7 +121,7 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
             if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
                 val elementLabel = if (entitet.label == "Barna dine") "Barn" else "Child"
@@ -156,7 +156,7 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
                 }
             }
             // skal ekskluderes
@@ -170,7 +170,7 @@ object SøknadTilFeltMap {
     }
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
-        val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
+        val list = listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
         if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
@@ -217,7 +217,7 @@ object SøknadTilFeltMap {
         label: String = "Vedlegg",
     ) = VerdilisteElement(
         label,
-        verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
+        verdiliste = listOf(FeltformatererPdfKvittering.mapVedlegg(vedleggTitler)),
         visningsVariant = VisningsVariant.VEDLEGG.toString(),
     )
 }

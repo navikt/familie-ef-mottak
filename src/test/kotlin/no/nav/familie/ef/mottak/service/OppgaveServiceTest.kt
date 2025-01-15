@@ -739,7 +739,6 @@ internal class OppgaveServiceTest {
                     vedlegg = listOf(),
                     dokumentasjonsbehov = listOf(),
                     behandleINySaksbehandling = true,
-                    locale = "Nb",
                 )
             return SøknadMapper.fromDto(søknad.søknad, true)
         }
