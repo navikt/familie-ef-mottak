@@ -13,11 +13,20 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-object Feltformaterer {
+object FeltformatererPdfKvittering {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): VerdilisteElement = mapTilVerdiListeElement(entitet)
+    fun genereltFormatMapperMapEndenode(entitet: Søknadsfelt<*>): VerdilisteElement? {
+        // skal ekskluderes
+        val skalEkskluderes = ((entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" || entitet.label == "I have already submitted this documentation to Nav in the past") && entitet.verdi.toString() == "false") ||
+                (entitet.label == "Født" && entitet.verdi.toString() == "true")
+
+        if (skalEkskluderes) {
+            return null
+        }
+        return mapTilVerdiListeElement(entitet)
+    }
 
     fun mapVedlegg(vedleggTitler: List<String>): VerdilisteElement = VerdilisteElement("Vedlegg", verdi = vedleggTitler.joinToString("\n\n"))
 
@@ -78,10 +87,19 @@ object Feltformaterer {
 
     private fun tilUtskriftsformat(verdi: LocalDate): String = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
-    private fun tilUtskriftsformat(adresse: Adresse): String =
-        listOf(
-            adresse.adresse,
-            listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
-            adresse.land,
-        ).joinToString("\n\n")
+    private fun tilUtskriftsformat(adresse: Adresse): String {
+        val adresseelementer = listOfNotNull(
+            adresse.adresse?.takeIf { it.isNotBlank() },
+            listOfNotNull(adresse.postnummer, adresse.poststedsnavn)
+                .joinToString(" ") { it.trim() }
+                .takeIf { it.isNotBlank() },
+            adresse.land?.takeIf { it.isNotBlank() }
+        )
+
+        return if (adresseelementer.isEmpty()) {
+            "Ingen registrert adresse"
+        } else {
+            adresseelementer.joinToString("\n")
+        }
+    }
 }

@@ -21,7 +21,7 @@
     } ]
   } ],
   "pdfConfig" : {
-    "harInnholdsfortegnelse": true,
-    "språk": "NB"
+    "harInnholdsfortegnelse" : true,
+    "språk" : "NB"
   }
 }
