@@ -1,5 +1,5 @@
 {
-  "label" : "Søknad om overgangsstønad (NAV 15-00.01)",
+  "label" : "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
   "verdiliste" : [ {
     "label" : "detaljer",
     "verdiliste" : [ {
@@ -19,7 +19,7 @@
       "verdi" : "Norsk"
     }, {
       "label" : "Adresse",
-      "verdi" : "Jerpefaret 5C\n\n1440 Drøbak\n\nNorge"
+      "verdi" : "Jerpefaret 5C\n1440 Drøbak\nNorge"
     }, {
       "label" : "Sivilstand",
       "verdi" : "Ugift"
@@ -151,7 +151,7 @@
       } ]
     } ]
   }, {
-    "label" : "Barna dine",
+    "label" : "Barn",
     "verdiliste" : [ {
       "label" : "Barnets fulle navn, hvis dette er bestemt",
       "verdi" : "Sorgløs"
@@ -230,6 +230,33 @@
         "label" : "Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
         "verdi" : "Vi sees stadig vekk"
       } ]
+    }, {
+      "label" : "Skal ha barnepass",
+      "verdi" : "Ja"
+    }, {
+      "label" : "Barnepass",
+      "verdiliste" : [ {
+        "label" : "Årsak Barnepass",
+        "verdi" : "Årsak"
+      }, {
+        "label" : "Ordninger",
+        "verdiliste" : [ {
+          "label" : "Hva slags barnepassordning?",
+          "verdi" : "En"
+        }, {
+          "label" : "Navn",
+          "verdi" : "navn"
+        }, {
+          "label" : "Periode",
+          "verdi" : "Fra januar 2020 til juli 2020"
+        }, {
+          "label" : "Periode",
+          "verdi" : "Fra 12.01.2020 til 15.02.2020"
+        }, {
+          "label" : "Beløp",
+          "verdi" : "1000,21"
+        } ]
+      } ]
     } ]
   }, {
     "label" : "Arbeid, utdanning og andre aktiviteter",
@@ -238,21 +265,25 @@
       "verdi" : "Jeg er hjemme med barn under 1 år\n\nJeg er i arbeid\n\nJeg er selvstendig næringsdrivende eller frilanser"
     }, {
       "label" : "Om arbeidsforholdet ditt",
+      "visningsVariant" : "TABELL",
       "verdiliste" : [ {
-        "label" : "Navn på arbeidsgiveren",
-        "verdi" : "Palpatine"
-      }, {
-        "label" : "Hvor mye jobber du?",
-        "verdi" : "15"
-      }, {
-        "label" : "Er stillingen fast eller midlertidig?",
-        "verdi" : "Fast"
-      }, {
-        "label" : "Har du en sluttdato?",
-        "verdi" : "Ja"
-      }, {
-        "label" : "Når skal du slutte?",
-        "verdi" : "18.11.2020"
+        "label" : "Arbeidsforhold 1",
+        "verdiliste" : [ {
+          "label" : "Navn på arbeidsgiveren",
+          "verdi" : "Palpatine"
+        }, {
+          "label" : "Hvor mye jobber du?",
+          "verdi" : "15"
+        }, {
+          "label" : "Er stillingen fast eller midlertidig?",
+          "verdi" : "Fast"
+        }, {
+          "label" : "Har du en sluttdato?",
+          "verdi" : "Ja"
+        }, {
+          "label" : "Når skal du slutte?",
+          "verdi" : "18.11.2020"
+        } ]
       } ]
     }, {
       "label" : "Om firmaet du driver",
@@ -346,76 +377,6 @@
       } ]
     } ]
   }, {
-    "label" : "Mer om situasjonen din",
-    "verdiliste" : [ {
-      "label" : "Gjelder noe av dette deg?",
-      "verdi" : "Barnet mitt er sykt\n\nJeg har søkt om barnepass, men ikke fått plass enda\n\nJeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
-      "alternativer" : "123 / 234 / 345"
-    }, {
-      "label" : "Legeerklæring",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Legeattest for egen sykdom eller sykt barn",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Avslag på søknad om barnehageplass, skolefritidsordning e.l.",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Dokumentasjon av særlig tilsynsbehov",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Dokumentasjon av studieopptak",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Læringskontrakt",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Når skal du starte i ny jobb?",
-      "verdi" : "16.12.2045"
-    }, {
-      "label" : "Dokumentasjon av jobbtilbud",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    }, {
-      "label" : "Når skal du starte utdanningen?",
-      "verdi" : "28.07.2025"
-    }, {
-      "label" : "Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?",
-      "verdi" : "Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)"
-    }, {
-      "label" : "Hvorfor sa du opp?",
-      "verdi" : "Sjefen var dum"
-    }, {
-      "label" : "Når sa du opp?",
-      "verdi" : "12.01.2014"
-    }, {
-      "label" : "Dokumentasjon av arbeidsforhold",
-      "verdiliste" : [ {
-        "label" : "harSendtInn",
-        "verdi" : "Nei"
-      } ]
-    } ]
-  }, {
     "label" : "Når søker du stønad fra?",
     "verdiliste" : [ {
       "label" : "Søke fra bestemt mnd",
@@ -428,7 +389,32 @@
       "verdi" : "2018"
     } ]
   }, {
+    "label" : "Barnepassordning faktura",
+    "verdiliste" : [ {
+      "label" : "harSendtInn",
+      "verdi" : "Nei"
+    } ]
+  }, {
+    "label" : "Avtale barnepasser",
+    "verdiliste" : [ {
+      "label" : "harSendtInn",
+      "verdi" : "Nei"
+    } ]
+  }, {
+    "label" : "Arbeidstid",
+    "verdiliste" : [ {
+      "label" : "harSendtInn",
+      "verdi" : "Nei"
+    } ]
+  }, {
+    "label" : "Spesielle behov",
+    "verdiliste" : [ {
+      "label" : "harSendtInn",
+      "verdi" : "Nei"
+    } ]
+  }, {
     "label" : "Vedlegg",
+    "visningsVariant" : "VEDLEGG",
     "verdiliste" : [ {
       "label" : "Vedlegg",
       "verdi" : "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"

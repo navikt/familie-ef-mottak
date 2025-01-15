@@ -19,7 +19,7 @@
       "verdi" : "Norsk"
     }, {
       "label" : "Adresse",
-      "verdi" : "Jerpefaret 5C\n\n1440 Drøbak\n\nNorge"
+      "verdi" : "Jerpefaret 5C\n1440 Drøbak\nNorge"
     }, {
       "label" : "Sivilstand",
       "verdi" : "Ugift"
@@ -271,5 +271,9 @@
       "label" : "Vedlegg",
       "verdi" : "Utgifter til utdanning"
     } ]
-  } ]
+  } ],
+  "pdfConfig" : {
+    "harInnholdsfortegnelse" : true,
+    "språk" : "NB"
+  }
 }

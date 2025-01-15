@@ -8,6 +8,7 @@ data class FeltMap(
     val label: String,
     @field:NotNull(message = "Verdiliste kan ikke være null")
     val verdiliste: List<VerdilisteElement>,
+    val pdfConfig: PdfConfig = PdfConfig(harInnholdsfortegnelse = true, språk = Språk.NB),
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,3 +19,13 @@ data class VerdilisteElement(
     val verdiliste: List<VerdilisteElement>? = null,
     val alternativer: String? = null,
 )
+
+data class PdfConfig(
+    val harInnholdsfortegnelse: Boolean,
+    val språk: Språk,
+)
+
+enum class Språk {
+    NB,
+    EN,
+}

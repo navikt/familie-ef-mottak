@@ -92,7 +92,7 @@ object SøknadTilFeltMap {
                     ),
             )
         val vedleggMap = mapTilVedlegg(vedleggTitler, "Dokumenter vedlagt")
-        return FeltMap("Ettersending", listOf(infoMap, vedleggMap))
+        return FeltMap("Ettersending", verdiliste = listOf(infoMap, vedleggMap))
     }
 
     private fun finnFelter(entitet: Any): List<VerdilisteElement> {
@@ -121,25 +121,15 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
             }
-            if (entitet.label == "Barna dine" || entitet.label == "Your children") {
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_BARN.toString(),
-                    ),
-                )
+            if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
+                val elementLabel = if (entitet.label == "Barna dine") "Barn" else "Child"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
-            if (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") {
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.TABELL_ARBEIDSFORHOLD.toString(),
-                    ),
-                )
+            if ((entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>) {
+                val elementLabel = if (entitet.label == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
+                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
             }
             if (entitet.alternativer != null) {
                 val verdi =
@@ -153,7 +143,7 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
                 }
             }
             // skal ekskluderes
@@ -167,11 +157,25 @@ object SøknadTilFeltMap {
     }
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
-        val list = listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
+        val list = listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
         if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
+    }
+
+    private fun mapListeElementer(
+        elementLabel: String,
+        label: String,
+        elementer: List<*>,
+        verdiliste: List<VerdilisteElement>,
+    ): List<VerdilisteElement> {
+        val ekskluderTommeElementer = verdiliste.filterNot { it.verdi.isNullOrEmpty() && it.verdiliste.isNullOrEmpty() }
+        val mappedElementer =
+            elementer.mapIndexedNotNull { indeks, it ->
+                it?.let { VerdilisteElement("$elementLabel ${indeks + 1}", verdiliste = ekskluderTommeElementer) }
+            }
+        return listOf(VerdilisteElement(label, verdiliste = mappedElementer, visningsVariant = VisningsVariant.TABELL.toString()))
     }
 
     /**
@@ -200,14 +204,13 @@ object SøknadTilFeltMap {
         label: String = "Vedlegg",
     ) = VerdilisteElement(
         label,
-        verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
+        verdiliste = listOf(FeltformatererPdfKvittering.mapVedlegg(vedleggTitler)),
         visningsVariant = VisningsVariant.VEDLEGG.toString(),
     )
 }
 
 enum class VisningsVariant {
-    TABELL_BARN,
-    TABELL_ARBEIDSFORHOLD,
+    TABELL,
     VEDLEGG,
     PUNKTLISTE,
 }

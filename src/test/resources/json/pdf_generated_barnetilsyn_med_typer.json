@@ -27,7 +27,7 @@
         },
         {
           "label": "Adresse",
-          "verdi": "Jerpefaret 5C\n\n1440 Drøbak\n\nNorge"
+          "verdi": "Jerpefaret 5C\n1440 Drøbak\nNorge"
         },
         {
           "label": "Sivilstand",
@@ -153,8 +153,8 @@
               "verdi": "18.12.2012"
             },
             {
-              "label" : "I hvilket land oppholdt du deg?",
-              "verdi" : "Spania"
+              "label": "I hvilket land oppholdt du deg?",
+              "verdi": "Spania"
             },
             {
               "label": "Hvorfor bodde du i utlandet?",
@@ -378,7 +378,7 @@
         },
         {
           "label": "Om arbeidsforholdet ditt",
-          "visningsVariant": "TABELL_ARBEIDSFORHOLD",
+          "visningsVariant": "TABELL",
           "verdiliste": [
             {
               "label": "Navn på arbeidsgiveren",
@@ -586,7 +586,7 @@
     },
     {
       "label": "Vedlegg",
-      "visningsVariant" : "VEDLEGG",
+      "visningsVariant": "VEDLEGG",
       "verdiliste": [
         {
           "label": "Vedlegg",
@@ -594,5 +594,9 @@
         }
       ]
     }
-  ]
+  ],
+  "pdfConfig": {
+    "harInnholdsfortegnelse": true,
+    "språk": "NB"
+  }
 }
