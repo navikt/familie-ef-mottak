@@ -23,5 +23,5 @@ class SkjemaController(
     @PostMapping
     fun sendInn(
         @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
-    ): Kvittering = søknadService.motta(skjemaForArbeidssøker)
+    ): Kvittering = søknadService.mottaSkjemaForArbeidssøker(skjemaForArbeidssøker)
 }

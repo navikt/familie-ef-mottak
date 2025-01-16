@@ -2,22 +2,26 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
-import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
+import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +29,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
-
 
 @Service
 @Transactional
@@ -98,6 +101,36 @@ class SøknadskvitteringService(
 
     fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
 
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
+        val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
+        return if (søknadFraDb?.søknadJson?.data != null) {
+            objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
+        } else {
+            null
+        }
+    }
+
+    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> = søknadRepository.findAllByFnr(personIdent.ident)
+
+    fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> =
+        søknadRepository
+            .finnSisteSøknadenPerStønadtype(personIdent)
+            .filter { SøknadType.hentSøknadTypeForDokumenttype(it.dokumenttype).harDokumentasjonsbehov }
+            .map {
+                SøknadMedDokumentasjonsbehovDto(
+                    søknadId = it.id,
+                    stønadType =
+                        StønadType
+                            .valueOf(
+                                SøknadType
+                                    .hentSøknadTypeForDokumenttype(it.dokumenttype)
+                                    .toString(),
+                            ),
+                    søknadDato = it.opprettetTid.toLocalDate(),
+                    dokumentasjonsbehov = hentDokumentasjonsbehovForSøknad(it),
+                )
+            }
+
     fun hentDokumentasjonsbehovForSøknad(søknad: Søknad): DokumentasjonsbehovDto {
         val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
@@ -137,5 +170,4 @@ class SøknadskvitteringService(
         }
         søknadRepository.deleteById(søknadId)
     }
-
 }

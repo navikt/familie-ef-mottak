@@ -5,7 +5,6 @@ import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
-import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger

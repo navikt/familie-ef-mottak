@@ -34,7 +34,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `lagre skjema for arbeidssøker`() {
-        val kvittering = søknadService.motta(skjemaForArbeidssøker)
+        val kvittering = søknadService.mottaSkjemaForArbeidssøker(skjemaForArbeidssøker)
         val søknad = søknadService.get(kvittering.id)
         assertThat(søknad).isNotNull
     }
