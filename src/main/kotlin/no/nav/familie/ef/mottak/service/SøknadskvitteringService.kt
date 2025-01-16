@@ -37,6 +37,7 @@ class SøknadskvitteringService(
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
+        println("HEI " + søknadDb)
         return motta(søknadDb, vedlegg)
     }
 
