@@ -44,28 +44,28 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
     @Test
     internal fun `lagre skjema for søknad`() {
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, emptyList()))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for søknad overgangsstønad med vedlegg`() {
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for skolepenger`() {
         val kvittering = søknadskvittreingService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, emptyList()))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for søknad skolepenger med vedlegg`() {
         val kvittering = søknadskvittreingService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, vedlegg))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
@@ -83,7 +83,7 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
             )
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
@@ -105,7 +105,7 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
             )
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
@@ -126,7 +126,7 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
                 barn = Søknadsfelt("Barn", barn1mnd),
             )
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
@@ -134,7 +134,7 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
     @Test
     internal fun `lagre skjema for søknad barnetilsyn`() {
         val kvittering = søknadskvittreingService.mottaBarnetilsyn(SøknadMedVedlegg(søknadBarnetilsyn, emptyList()))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
@@ -144,7 +144,7 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
         val søknad = søknadOvergangsstønad
         val kvittering =
             søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
-        val dokumentasjonsbehovDto = søknadskvittreingService.hentDokumentasjonsbehovForSøknad(søknadskvittreingService.get(kvittering.id))
+        val dokumentasjonsbehovDto = søknadskvittreingService.hentDokumentasjonsbehovForSøknad(søknadskvittreingService.hentSøknad(kvittering.id))
 
         assertThat(dokumentasjonsbehovDto.personIdent).isEqualTo(søknad.personalia.verdi.fødselsnummer.verdi.verdi)
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov).hasSize(1)
@@ -156,12 +156,12 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
     @Test
     fun `reduserSøknad sletter søknadPdf, dokumentasjonsbehov og vedlegg for gitt søknadId`() {
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknadFørReduksjon = søknadskvittreingService.get(kvittering.id)
+        val søknadFørReduksjon = søknadskvittreingService.hentSøknad(kvittering.id)
         søknadskvittreingService.oppdaterSøknad(søknadFørReduksjon.copy(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321"))
 
         søknadskvittreingService.reduserSøknad(søknadFørReduksjon.id)
 
-        val søknad = søknadskvittreingService.get(søknadFørReduksjon.id)
+        val søknad = søknadskvittreingService.hentSøknad(søknadFørReduksjon.id)
         assertThat(dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)).isNull()
         assertThat(vedleggRepository.findBySøknadId(søknad.id)).isEmpty()
     }
@@ -169,12 +169,12 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
     @Test
     fun `slettSøknad sletter søknad for gitt søknadId`() {
         val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknad = søknadskvittreingService.get(kvittering.id)
+        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
         søknadskvittreingService.oppdaterSøknad(søknad.copy(journalpostId = "321"))
         søknadskvittreingService.reduserSøknad(søknad.id)
 
         søknadskvittreingService.slettSøknad(søknad.id)
 
-        assertThrows<IllegalStateException> { (søknadskvittreingService.get(søknad.id)) }
+        assertThrows<IllegalStateException> { (søknadskvittreingService.hentSøknad(søknad.id)) }
     }
 }
