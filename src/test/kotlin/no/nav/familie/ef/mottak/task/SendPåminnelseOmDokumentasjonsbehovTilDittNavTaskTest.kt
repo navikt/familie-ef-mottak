@@ -71,7 +71,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
@@ -93,7 +93,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
@@ -111,7 +111,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
@@ -135,7 +135,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
@@ -159,7 +159,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
@@ -177,7 +177,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
@@ -195,7 +195,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called

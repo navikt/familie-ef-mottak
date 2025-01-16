@@ -67,7 +67,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
 
     private fun verifiserForventetKallMed(forventetTekst: String) {
         verify(exactly = 1) {
-            søknadskvitteringService.get(any())
+            søknadskvitteringService.hentSøknad(any())
             dittNavKafkaProducer.sendToKafka(
                 FNR,
                 forventetTekst,
