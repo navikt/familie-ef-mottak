@@ -38,6 +38,11 @@ class SøknadskvitteringService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    fun hentSøknadPdf(søknadId: String): ByteArray {
+        val søknad = hentSøknad(søknadId)
+        return søknad.søknadPdf?.bytes ?: error("Søknadspdf mangler for søknad med id: $søknadId")
+    }
+
     @Transactional
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
@@ -89,11 +94,6 @@ class SøknadskvitteringService(
         dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
-    }
-
-    fun hentSøknadPdf(søknadId: String): ByteArray {
-        val søknad = hentSøknad(søknadId)
-        return søknad.søknadPdf?.bytes ?: error("Søknadspdf mangler for søknad med id: $søknadId")
     }
 
     fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
