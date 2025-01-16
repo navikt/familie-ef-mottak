@@ -3,8 +3,10 @@ package no.nav.familie.ef.mottak.service
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
+import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
@@ -13,10 +15,13 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
+
 
 @Service
 @Transactional
@@ -24,6 +29,7 @@ class SøknadskvitteringService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
+    private val dokumentasjonsbehovRepository: DokumentasjonsbehovRepository,
     private val taskProsesseringService: TaskProsesseringService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -37,21 +43,21 @@ class SøknadskvitteringService(
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg)
+        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     private fun mapVedlegg(
@@ -71,10 +77,17 @@ class SøknadskvitteringService(
     private fun motta(
         søknadDb: Søknad,
         vedlegg: List<Vedlegg>,
+        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-        taskProsesseringService.startPdfKvitteringTaskProsessering(søknadDb)
+        taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
+        val databaseDokumentasjonsbehov =
+            DatabaseDokumentasjonsbehov(
+                søknadId = lagretSkjema.id,
+                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
+            )
+        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
