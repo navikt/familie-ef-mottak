@@ -6,10 +6,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
-import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
@@ -26,9 +25,8 @@ import java.util.UUID
 internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
-    private lateinit var søknadService: SøknadService
+    private lateinit var søknadskvitteringService: SøknadskvitteringService
     private lateinit var taskService: TaskService
-    private lateinit var featureToggleService: FeatureToggleService
     private lateinit var ettersendingConfig: EttersendingConfig
 
     private val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
@@ -36,20 +34,17 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
-        søknadService = mockk()
+        søknadskvitteringService = mockk()
         taskService = mockk(relaxed = true)
-        featureToggleService = mockk()
         ettersendingConfig = mockk()
         sendDokumentasjonsbehovMeldingTilDittNavTask =
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
-                søknadService,
+                søknadskvitteringService,
                 taskService,
                 ettersendingConfig,
-                featureToggleService,
             )
 
-        every { featureToggleService.isEnabled(any()) } returns true
         every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 
@@ -64,8 +59,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            søknadService.get(any())
-            søknadService.hentDokumentasjonsbehovForSøknad(any())
+            søknadskvitteringService.hentSøknad(any())
+            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
             taskService.save(any())
             dittNavKafkaProducer.sendToKafka(FNR, any(), any(), EVENT_ID, isNull(true))
         }
@@ -125,10 +120,10 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            søknadService.get(any())
+            søknadskvitteringService.hentSøknad(any())
         }
         verify(exactly = 0) {
-            søknadService.hentDokumentasjonsbehovForSøknad(any())
+            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
         }
 
         verify(exactly = 0) {
@@ -163,12 +158,12 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
         }
 
-        every { søknadService.hentDokumentasjonsbehovForSøknad(any()) } returns
+        every { søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any()) } returns
             DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
     }
 
     private fun mockSøknad(søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
-        every { søknadService.get(SØKNAD_ID) } returns
+        every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
             Søknad(
                 id = SØKNAD_ID,
                 søknadJson = EncryptedString(""),

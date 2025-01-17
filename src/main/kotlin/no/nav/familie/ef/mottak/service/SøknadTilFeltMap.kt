@@ -72,7 +72,7 @@ object SøknadTilFeltMap {
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(false, "nb"))
+        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(false, skjema.innsendingsdetaljer.verdi.språk ?: "nb"))
     }
 
     fun mapEttersending(

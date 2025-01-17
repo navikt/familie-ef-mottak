@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service
 @Service
 class OppgaveService(
     private val integrasjonerClient: IntegrasjonerClient,
-    private val søknadService: SøknadService,
+    private val søknadskvitteringService: SøknadskvitteringService,
     private val ettersendingService: EttersendingService,
     private val opprettOppgaveMapper: OpprettOppgaveMapper,
     private val mappeService: MappeService,
@@ -32,7 +32,7 @@ class OppgaveService(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     fun lagJournalføringsoppgaveForSøknadId(søknadId: String): Long? {
-        val søknad: Søknad = søknadService.get(søknadId)
+        val søknad: Søknad = søknadskvitteringService.hentSøknad(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad mangler journalpostId")
         val journalpost = integrasjonerClient.hentJournalpost(journalpostId)
         val prioritet = UtledPrioritetForSøknadUtil.utledPrioritet(søknad)

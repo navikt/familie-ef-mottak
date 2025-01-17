@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional
     beskrivelse = "Resuserer datasomfanget for en søknad.",
 )
 class SøknadsreduksjonTask(
-    private val søknadService: SøknadService,
+    private val søknadskvitteringService: SøknadskvitteringService,
 ) : AsyncTaskStep {
     @Transactional
     override fun doTask(task: Task) {
-        søknadService.reduserSøknad(task.payload)
+        søknadskvitteringService.reduserSøknad(task.payload)
     }
 
     companion object {
