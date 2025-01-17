@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
-import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional
     beskrivelse = "Sletter en søknad fra mottak",
 )
 class SøknadsslettingTask(
-    private val søknadService: SøknadService,
+    private val søknadskvitteringService: SøknadskvitteringService,
 ) : AsyncTaskStep {
     @Transactional
     override fun doTask(task: Task) {
-        søknadService.slettSøknad(task.payload)
+        søknadskvitteringService.slettSøknad(task.payload)
     }
 
     companion object {

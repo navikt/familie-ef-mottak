@@ -11,7 +11,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.AutomatiskJournalføringService
 import no.nav.familie.ef.mottak.service.MappeService
-import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
@@ -23,7 +23,7 @@ import java.util.Properties
 
 internal class AutomatiskJournalførTaskTest {
     val automatiskJournalføringService: AutomatiskJournalføringService = mockk()
-    val søknadService: SøknadService = mockk()
+    val søknadskvitteringService: SøknadskvitteringService = mockk()
     val taskService: TaskService = mockk()
     val integrasjonerClient: IntegrasjonerClient = mockk(relaxed = true)
     val mappeService: MappeService = mockk(relaxed = true)
@@ -32,7 +32,7 @@ internal class AutomatiskJournalførTaskTest {
         AutomatiskJournalførTask(
             taskService = taskService,
             automatiskJournalføringService = automatiskJournalføringService,
-            søknadService = søknadService,
+            søknadskvitteringService = søknadskvitteringService,
             integrasjonerClient = integrasjonerClient,
             mappeService = mappeService,
         )
@@ -55,7 +55,7 @@ internal class AutomatiskJournalførTaskTest {
     @BeforeEach
     internal fun setUp() {
         every {
-            søknadService.get(overgangsstønadSøknadId)
+            søknadskvitteringService.hentSøknad(overgangsstønadSøknadId)
         } returns
             Søknad(
                 søknadJson = EncryptedString(""),

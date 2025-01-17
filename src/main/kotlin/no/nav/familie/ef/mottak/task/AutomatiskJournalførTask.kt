@@ -6,7 +6,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.AutomatiskJournalføringService
 import no.nav.familie.ef.mottak.service.MappeService
-import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 @Service
 @TaskStepBeskrivelse(taskStepType = AutomatiskJournalførTask.TYPE, beskrivelse = "Automatisk journalfør")
 class AutomatiskJournalførTask(
-    val søknadService: SøknadService,
+    val søknadskvitteringService: SøknadskvitteringService,
     val taskService: TaskService,
     val automatiskJournalføringService: AutomatiskJournalføringService,
     val integrasjonerClient: IntegrasjonerClient,
@@ -30,7 +30,7 @@ class AutomatiskJournalførTask(
     val antallAutomatiskJournalført: Counter = counter("alene.med.barn.automatiskjournalfort")
 
     override fun doTask(task: Task) {
-        val søknad: Søknad = søknadService.get(task.payload)
+        val søknad: Søknad = søknadskvitteringService.hentSøknad(task.payload)
         val stønadstype: StønadType =
             dokumenttypeTilStønadType(søknad.dokumenttype) ?: error("Må ha stønadstype for å automatisk journalføre")
         val journalpostId = task.metadata["journalpostId"].toString()

@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -21,7 +20,6 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
@@ -47,24 +45,24 @@ class SøknadService(
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
-    private fun motta(
+    private fun mottaSkjemaForArbeidssøker(
         søknadDb: Søknad,
         vedlegg: List<Vedlegg>,
         dokumentasjonsbehov: List<Dokumentasjonsbehov>,
@@ -98,24 +96,8 @@ class SøknadService(
 
     fun get(id: String): Søknad = søknadRepository.findByIdOrThrow(id)
 
-    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> = søknadRepository.findAllByFnr(personIdent.ident)
-
-    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
-        val søknadFraDb = hentSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
-        if (søknadFraDb?.søknadJson?.data != null) {
-            return objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
-        } else {
-            return null
-        }
-    }
-
-    fun hentSøknadForPersonOgStønadstype(
-        personIdent: String,
-        stønadstype: String,
-    ): Søknad? = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, stønadstype)
-
     @Transactional
-    fun motta(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+    fun mottaSkjemaForArbeidssøker(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
         val lagretSkjema = søknadRepository.insert(søknadDb)
         taskProsesseringService.startTaskProsessering(lagretSkjema)
