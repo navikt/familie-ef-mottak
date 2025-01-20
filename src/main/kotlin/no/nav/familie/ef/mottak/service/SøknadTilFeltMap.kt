@@ -138,8 +138,8 @@ object SøknadTilFeltMap {
                     val alternativer = entitet.alternativer as List<String>
                     val svar = entitet.verdi as List<String>
                     alternativer.forEach { alternativ ->
-                        val verdi = if (svar.contains(alternativ)) "Ja" else "Nei"
-                        verdiliste.add(VerdilisteElement(alternativ, verdi = verdi))
+                        val verdi = svar.contains(alternativ)
+                        verdiliste.add(VerdilisteElement(alternativ, verdi = verdi.toString()))
                     }
                 }
                 return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdiliste = verdiliste))

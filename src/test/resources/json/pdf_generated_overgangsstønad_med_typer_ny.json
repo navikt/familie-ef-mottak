@@ -513,15 +513,15 @@
           "verdiliste": [
             {
               "label": "Barnet mitt er sykt",
-              "verdi": "Ja"
+              "verdi": "true"
             },
             {
               "label": "Jeg har søkt om barnepass, men ikke fått plass enda",
-              "verdi": "Ja"
+              "verdi": "true"
             },
             {
               "label": "Jeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
-              "verdi": "Nei"
+              "verdi": "false"
             }
           ]
         },
