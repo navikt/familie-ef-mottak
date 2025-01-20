@@ -12,9 +12,9 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
-import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
@@ -69,7 +69,7 @@ class SøknadskvitteringService(
     }
 
     @Transactional
-    fun mottaArbeidsøkerSkjema(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+    fun mottaArbeidssøkerSkjema(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
         val lagretSkjema = søknadRepository.insert(søknadDb)
         taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)

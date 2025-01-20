@@ -52,5 +52,5 @@ class SøknadskvitteringController(
     @PostMapping("arbeidssoker")
     fun arbeidssøker(
         @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaArbeidsøkerSkjema(skjemaForArbeidssøker) }
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
 }
