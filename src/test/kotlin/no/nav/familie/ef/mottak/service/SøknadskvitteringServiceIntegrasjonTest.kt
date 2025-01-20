@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.Testdata.skjemaForArbeidssøker
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
@@ -24,7 +25,7 @@ import java.time.LocalDate
 
 internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Autowired
-    lateinit var søknadskvittreingService: SøknadskvitteringService
+    lateinit var søknadskvitteringService: SøknadskvitteringService
 
     @Autowired
     lateinit var vedleggRepository: VedleggRepository
@@ -32,39 +33,38 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
     @Autowired
     lateinit var dokumentasjonsbehovRepository: DokumentasjonsbehovRepository
 
-//    ToDo: jobbes med i en annen oppgave
-    //    @Test
-//    internal fun `lagre skjema for arbeidssøker`() {
-//        val kvittering = søknadskvittreingService.motta(skjemaForArbeidssøker)
-//        val søknad = søknadskvittreingService.get(kvittering.id)
-//        assertThat(søknad).isNotNull
-//    }
+    @Test
+    internal fun `lagre skjema for arbeidssøker`() {
+        val kvittering = søknadskvitteringService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker)
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
+        assertThat((søknad)).isNotNull
+    }
 
     @Test
     internal fun `lagre skjema for søknad`() {
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, emptyList()))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, emptyList()))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for søknad overgangsstønad med vedlegg`() {
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for skolepenger`() {
-        val kvittering = søknadskvittreingService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, emptyList()))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, emptyList()))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
     @Test
     internal fun `lagre skjema for søknad skolepenger med vedlegg`() {
-        val kvittering = søknadskvittreingService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, vedlegg))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaSkolepenger(SøknadMedVedlegg(søknadSkolepenger, vedlegg))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
@@ -80,9 +80,9 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
             søknadOvergangsstønad.copy(
                 barn = Søknadsfelt("Barn", barnFødtIDag),
             )
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
@@ -102,9 +102,9 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
             søknadOvergangsstønad.copy(
                 barn = Søknadsfelt("Barn", listOf(barnFødtforLengeSiden, barnFødtIDag)),
             )
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarnFødtIDag, vedlegg))
 
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
@@ -124,16 +124,16 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
             søknadOvergangsstønad.copy(
                 barn = Søknadsfelt("Barn", barn1mnd),
             )
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadMedBarn1mnd, vedlegg))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
         assertThat(søknad.behandleINySaksbehandling).isTrue
     }
 
     @Test
     internal fun `lagre skjema for søknad barnetilsyn`() {
-        val kvittering = søknadskvittreingService.mottaBarnetilsyn(SøknadMedVedlegg(søknadBarnetilsyn, emptyList()))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
+        val kvittering = søknadskvitteringService.mottaBarnetilsyn(SøknadMedVedlegg(søknadBarnetilsyn, emptyList()))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
         assertThat(søknad).isNotNull
     }
 
@@ -142,8 +142,8 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
         val dokumentasjonsbehov = listOf(Dokumentasjonsbehov("label", "id", false, emptyList()))
         val søknad = søknadOvergangsstønad
         val kvittering =
-            søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
-        val dokumentasjonsbehovDto = søknadskvittreingService.hentDokumentasjonsbehovForSøknad(søknadskvittreingService.hentSøknad(kvittering.id))
+            søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknad, emptyList(), dokumentasjonsbehov))
+        val dokumentasjonsbehovDto = søknadskvitteringService.hentDokumentasjonsbehovForSøknad(søknadskvitteringService.hentSøknad(kvittering.id))
 
         assertThat(dokumentasjonsbehovDto.personIdent).isEqualTo(søknad.personalia.verdi.fødselsnummer.verdi.verdi)
         assertThat(dokumentasjonsbehovDto.dokumentasjonsbehov).hasSize(1)
@@ -154,26 +154,26 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
 
     @Test
     fun `reduserSøknad sletter søknadPdf, dokumentasjonsbehov og vedlegg for gitt søknadId`() {
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknadFørReduksjon = søknadskvittreingService.hentSøknad(kvittering.id)
-        søknadskvittreingService.oppdaterSøknad(søknadFørReduksjon.copy(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321"))
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
+        val søknadFørReduksjon = søknadskvitteringService.hentSøknad(kvittering.id)
+        søknadskvitteringService.oppdaterSøknad(søknadFørReduksjon.copy(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321"))
 
-        søknadskvittreingService.reduserSøknad(søknadFørReduksjon.id)
+        søknadskvitteringService.reduserSøknad(søknadFørReduksjon.id)
 
-        val søknad = søknadskvittreingService.hentSøknad(søknadFørReduksjon.id)
+        val søknad = søknadskvitteringService.hentSøknad(søknadFørReduksjon.id)
         assertThat(dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)).isNull()
         assertThat(vedleggRepository.findBySøknadId(søknad.id)).isEmpty()
     }
 
     @Test
     fun `slettSøknad sletter søknad for gitt søknadId`() {
-        val kvittering = søknadskvittreingService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
-        val søknad = søknadskvittreingService.hentSøknad(kvittering.id)
-        søknadskvittreingService.oppdaterSøknad(søknad.copy(journalpostId = "321"))
-        søknadskvittreingService.reduserSøknad(søknad.id)
+        val kvittering = søknadskvitteringService.mottaOvergangsstønad(SøknadMedVedlegg(søknadOvergangsstønad, vedlegg))
+        val søknad = søknadskvitteringService.hentSøknad(kvittering.id)
+        søknadskvitteringService.oppdaterSøknad(søknad.copy(journalpostId = "321"))
+        søknadskvitteringService.reduserSøknad(søknad.id)
 
-        søknadskvittreingService.slettSøknad(søknad.id)
+        søknadskvitteringService.slettSøknad(søknad.id)
 
-        assertThrows<IllegalStateException> { (søknadskvittreingService.hentSøknad(søknad.id)) }
+        assertThrows<IllegalStateException> { (søknadskvitteringService.hentSøknad(søknad.id)) }
     }
 }

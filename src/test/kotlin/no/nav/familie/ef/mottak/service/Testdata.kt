@@ -50,6 +50,7 @@ internal object Testdata {
 
     val skjemaForArbeidssøker =
         SkjemaForArbeidssøker(
+            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
             Søknadsfelt("Søker", lagPersonaliaForArbeidssøker()),
             Søknadsfelt(
                 "Arbeidssøker",
@@ -74,7 +75,6 @@ internal object Testdata {
                     ),
                 ),
             ),
-            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat))),
         )
 
     private fun lagPersonaliaForArbeidssøker(): PersonaliaArbeidssøker =
