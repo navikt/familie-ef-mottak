@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
+import no.nav.familie.ef.mottak.repository.domain.PdfConfig
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
@@ -48,7 +49,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg)
+        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
     }
 
     fun mapBarnetilsyn(
@@ -57,7 +58,7 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
     }
 
     fun mapSkolepenger(
@@ -66,12 +67,12 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg)
+        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter)
+        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(false, skjema.innsendingsdetaljer.verdi.språk ?: "nb"))
     }
 
     fun mapEttersending(
@@ -142,15 +143,6 @@ object SøknadTilFeltMap {
                     }
                 }
                 return listOf(VerdilisteElement(entitet.label, visningsVariant = VisningsVariant.PUNKTLISTE.toString(), verdiliste = verdiliste))
-            }
-            if (entitet.label == "Vedlegg") {
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        verdiliste = list,
-                        visningsVariant = VisningsVariant.VEDLEGG.toString(),
-                    ),
-                )
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>

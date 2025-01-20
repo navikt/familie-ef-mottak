@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
+import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 )
 class SøknadController(
     val søknadService: SøknadService,
+    val søknadskvitteringService: SøknadskvitteringService,
 ) {
     @PostMapping("overgangsstonad")
     fun overgangsstønad(
@@ -43,6 +45,6 @@ class SøknadController(
     @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+        return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 }
