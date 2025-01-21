@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.api
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@Profile("!prod")
 @RequestMapping("api/soknadskvittering", produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
@@ -47,4 +47,9 @@ class SøknadskvitteringController(
     fun skolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
     ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSkolepenger(søknad) }
+
+    @PostMapping("arbeidssoker")
+    fun arbeidssøker(
+        @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
 }
