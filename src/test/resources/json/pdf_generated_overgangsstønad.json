@@ -624,5 +624,6 @@
   "pdfConfig": {
     "harInnholdsfortegnelse": true,
     "språk": "nb"
-  }
+  },
+  "underOverskrift": null
 }

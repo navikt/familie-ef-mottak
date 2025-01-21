@@ -49,7 +49,13 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om overgangsstønad (NAV 15-00.01)",
+            finnFelter + vedlegg,
+            PdfConfig(true, språk),
+            getSøknadsTypeTekst("overgangsstønad", språk),
+        )
     }
 
     fun mapBarnetilsyn(
@@ -58,7 +64,16 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
+            finnFelter + vedlegg,
+            PdfConfig(
+                true,
+                språk,
+            ),
+            getSøknadsTypeTekst("barnetilsyn", språk),
+        )
     }
 
     fun mapSkolepenger(
@@ -67,12 +82,24 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om stønad til skolepenger (NAV 15-00.04)",
+            finnFelter + vedlegg,
+            PdfConfig(true, språk),
+            getSøknadsTypeTekst("skolepenger", språk),
+        )
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(false, skjema.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = skjema.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Skjema for arbeidssøker - 15-08.01",
+            finnFelter,
+            PdfConfig(false, språk),
+            getSøknadsTypeTekst("arbeidssøker", språk),
+        )
     }
 
     fun mapEttersending(
@@ -214,4 +241,18 @@ enum class VisningsVariant {
     TABELL,
     VEDLEGG,
     PUNKTLISTE,
+}
+
+private fun getSøknadsTypeTekst(
+    søknadsType: String,
+    språk: String,
+): String? {
+    val søknadsTyper =
+        mapOf(
+            "overgangsstønad" to mapOf("nb" to "Søknadstype: NAV 15-00.01", "en" to "Application type: NAV 15-00.01"),
+            "barnetilsyn" to mapOf("nb" to "Søknadstype: NAV 15-00.02", "en" to "Application type: NAV 15-00.02"),
+            "skolepenger" to mapOf("nb" to "Søknadstype: NAV 15-00.04", "en" to "Application type: NAV 15-00.04"),
+            "arbeidssøker" to mapOf("nb" to "Skjema for arbeidssøker - 15-08.01", "en" to "Form for job seeker - 15-08.01"),
+        )
+    return søknadsTyper[søknadsType]?.get(språk)
 }

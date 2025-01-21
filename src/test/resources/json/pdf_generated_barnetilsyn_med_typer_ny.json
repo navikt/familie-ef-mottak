@@ -603,5 +603,6 @@
   "pdfConfig": {
     "harInnholdsfortegnelse": true,
     "språk": "nb"
-  }
+  },
+  "underOverskrift" : "Søknadstype: NAV 15-00.02"
 }
