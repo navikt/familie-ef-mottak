@@ -10,7 +10,6 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -52,4 +51,10 @@ class SøknadskvitteringController(
     fun arbeidssøker(
         @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
     ): Kvittering = okEllerKastException { søknadKvitteringService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
+
+    @GetMapping("barnetilsyn/forrige")
+    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadKvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+    }
 }
