@@ -54,7 +54,7 @@ object SøknadTilFeltMap {
             "Søknad om overgangsstønad (NAV 15-00.01)",
             finnFelter + vedlegg,
             PdfConfig(true, språk),
-            getSøknadsTypeTekst("overgangsstønad", språk),
+            getBrevkodeTekst("overgangsstønad", språk),
         )
     }
 
@@ -72,7 +72,7 @@ object SøknadTilFeltMap {
                 true,
                 språk,
             ),
-            getSøknadsTypeTekst("barnetilsyn", språk),
+            getBrevkodeTekst("barnetilsyn", språk),
         )
     }
 
@@ -87,7 +87,7 @@ object SøknadTilFeltMap {
             "Søknad om stønad til skolepenger (NAV 15-00.04)",
             finnFelter + vedlegg,
             PdfConfig(true, språk),
-            getSøknadsTypeTekst("skolepenger", språk),
+            getBrevkodeTekst("skolepenger", språk),
         )
     }
 
@@ -98,7 +98,7 @@ object SøknadTilFeltMap {
             "Skjema for arbeidssøker - 15-08.01",
             finnFelter,
             PdfConfig(false, språk),
-            getSøknadsTypeTekst("arbeidssøker", språk),
+            getBrevkodeTekst("arbeidssøker", språk),
         )
     }
 
@@ -243,16 +243,16 @@ enum class VisningsVariant {
     PUNKTLISTE,
 }
 
-private fun getSøknadsTypeTekst(
-    søknadsType: String,
+private fun getBrevkodeTekst(
+    brevkode: String,
     språk: String,
 ): String? {
-    val søknadsTyper =
+    val brevkoder =
         mapOf(
-            "overgangsstønad" to mapOf("nb" to "Søknadstype: NAV 15-00.01", "en" to "Application type: NAV 15-00.01"),
-            "barnetilsyn" to mapOf("nb" to "Søknadstype: NAV 15-00.02", "en" to "Application type: NAV 15-00.02"),
-            "skolepenger" to mapOf("nb" to "Søknadstype: NAV 15-00.04", "en" to "Application type: NAV 15-00.04"),
-            "arbeidssøker" to mapOf("nb" to "Skjema for arbeidssøker - 15-08.01", "en" to "Form for job seeker - 15-08.01"),
+            "overgangsstønad" to mapOf("nb" to "Brevkode: NAV 15-00.01", "en" to "Letter code: NAV 15-00.01"),
+            "barnetilsyn" to mapOf("nb" to "Brevkode: NAV 15-00.02", "en" to "Letter code: NAV 15-00.02"),
+            "skolepenger" to mapOf("nb" to "Brevkode: NAV 15-00.04", "en" to "Letter code: NAV 15-00.04"),
+            "arbeidssøker" to mapOf("nb" to "Brevkode: NAV 15-08.01", "en" to "Letter code: NAV 15-08.01"),
         )
-    return søknadsTyper[søknadsType]?.get(språk)
+    return brevkoder[brevkode]?.get(språk)
 }
