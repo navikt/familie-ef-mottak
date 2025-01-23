@@ -1,5 +1,5 @@
 {
-  "label": "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
+  "label": "Søknad om stønad til barnetilsyn",
   "verdiliste": [
     {
       "label": "detaljer",
@@ -603,5 +603,6 @@
   "pdfConfig": {
     "harInnholdsfortegnelse": true,
     "språk": "nb"
-  }
+  },
+  "skjemanummer" : "Skjemanummer: NAV 15-00.02"
 }
