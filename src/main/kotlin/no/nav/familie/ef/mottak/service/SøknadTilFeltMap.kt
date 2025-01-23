@@ -51,7 +51,7 @@ object SøknadTilFeltMap {
         val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
         return FeltMap(
-            "Søknad om overgangsstønad (NAV 15-00.01)",
+            "Søknad om overgangsstønad",
             finnFelter + vedlegg,
             PdfConfig(true, språk),
             getSkjemanummerTekst("overgangsstønad", språk),
@@ -66,7 +66,7 @@ object SøknadTilFeltMap {
         val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
         return FeltMap(
-            "Søknad om stønad til barnetilsyn (NAV 15-00.02)",
+            "Søknad om stønad til barnetilsyn",
             finnFelter + vedlegg,
             PdfConfig(
                 true,
@@ -84,7 +84,7 @@ object SøknadTilFeltMap {
         val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
         return FeltMap(
-            "Søknad om stønad til skolepenger (NAV 15-00.04)",
+            "Søknad om stønad til skolepenger",
             finnFelter + vedlegg,
             PdfConfig(true, språk),
             getSkjemanummerTekst("skolepenger", språk),
@@ -95,7 +95,7 @@ object SøknadTilFeltMap {
         val finnFelter = finnFelter(skjema)
         val språk = skjema.innsendingsdetaljer.verdi.språk ?: "nb"
         return FeltMap(
-            "Skjema for arbeidssøker - 15-08.01",
+            "Skjema for arbeidssøker",
             finnFelter,
             PdfConfig(false, språk),
             getSkjemanummerTekst("arbeidssøker", språk),
