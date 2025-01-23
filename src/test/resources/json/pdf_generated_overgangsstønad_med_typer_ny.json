@@ -1,5 +1,5 @@
 {
-  "label": "Søknad om overgangsstønad (NAV 15-00.01)",
+  "label": "Søknad om overgangsstønad",
   "verdiliste": [
     {
       "label": "detaljer",
@@ -753,5 +753,6 @@
   "pdfConfig": {
     "harInnholdsfortegnelse": true,
     "språk": "nb"
-  }
+  },
+  "skjemanummer" : "Skjemanummer: NAV 15-00.01"
 }
