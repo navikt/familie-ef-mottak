@@ -9,7 +9,7 @@ data class FeltMap(
     @field:NotNull(message = "Verdiliste kan ikke være null")
     val verdiliste: List<VerdilisteElement>,
     val pdfConfig: PdfConfig = PdfConfig(harInnholdsfortegnelse = true, "nb"),
-    val brevkode: String? = null,
+    val skjemanummer: String? = null,
 )
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
