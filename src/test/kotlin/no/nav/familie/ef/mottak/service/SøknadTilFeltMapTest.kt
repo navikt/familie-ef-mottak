@@ -88,7 +88,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - overgangsstønad`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val vedlegg =
             listOf(
@@ -111,7 +111,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - barnetilsyn`() {
-        val søknad = Testdata.søknadBarnetilsyn
+        val søknad = Testdata.søknadBarnetilsynNy
 
         val vedlegg =
             listOf(
