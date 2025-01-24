@@ -118,6 +118,21 @@ internal object Testdata {
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
 
+    val søknadOvergangsstønadNy =
+        SøknadOvergangsstønad(
+            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
+            Søknadsfelt("Søker", personalia()),
+            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
+            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+            Søknadsfelt("Bosituasjonen din", bosituasjon()),
+            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+            Søknadsfelt("Barna dine", listOf(barn(), barn2())),
+            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+            Søknadsfelt("Mer om situasjonen din", situasjon()),
+            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+        )
+
     val søknadOvergangsstønadMedTommeFelter =
         SøknadOvergangsstønad(
             Søknadsfelt(
@@ -149,6 +164,27 @@ internal object Testdata {
             Søknadsfelt("Bosituasjonen din", bosituasjon()),
             Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
             Søknadsfelt("Barn", listOf(barn(barnetilsyn = true))),
+            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+            dokumentasjon =
+                BarnetilsynDokumentasjon(
+                    barnepassordningFaktura = dokumentfelt("Barnepassordning faktura"),
+                    avtaleBarnepasser = dokumentfelt("Avtale barnepasser"),
+                    arbeidstid = dokumentfelt("Arbeidstid"),
+                    spesielleBehov = dokumentfelt("Spesielle behov"),
+                ),
+        )
+
+    val søknadBarnetilsynNy =
+        SøknadBarnetilsyn(
+            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
+            Søknadsfelt("Søker", personalia()),
+            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
+            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+            Søknadsfelt("Bosituasjonen din", bosituasjon()),
+            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+            Søknadsfelt("Barna dine", listOf(barn(barnetilsyn = true))),
             Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
             dokumentasjon =
@@ -515,6 +551,84 @@ internal object Testdata {
         Barn(
             navn = Søknadsfelt("Barnets fulle navn, hvis dette er bestemt", "Sorgløs"),
             erBarnetFødt = Søknadsfelt("Er barnet født?", false),
+            fødselTermindato = Søknadsfelt("Termindato", LocalDate.of(2020, 5, 16)),
+            terminbekreftelse = dokumentfelt("Bekreftelse på ventet fødselsdato"),
+            annenForelder =
+                Søknadsfelt(
+                    "Barnets andre forelder",
+                    AnnenForelder(
+                        Søknadsfelt(
+                            "Hvorfor kan du ikke oppgi den andre forelderen?",
+                            "Fordi jeg ikke liker hen.",
+                        ),
+                    ),
+                ),
+            fødselsnummer = Søknadsfelt("Fødselsnummer", Fødselsnummer("03125462714")), // random fnr anno 1854,
+            harSkalHaSammeAdresse = Søknadsfelt("Skal ha samme adresse", true),
+            ikkeRegistrertPåSøkersAdresseBeskrivelse = Søknadsfelt("Ikke registrert på søkers adresse", "Nei"),
+            samvær =
+                Søknadsfelt(
+                    "Samvær",
+                    Samvær(
+                        skalAnnenForelderHaSamvær =
+                            Søknadsfelt(
+                                "Har den andre forelderen samvær med barnet",
+                                "Ja, men ikke mer enn vanlig samværsrett",
+                            ),
+                        harDereSkriftligAvtaleOmSamvær =
+                            Søknadsfelt(
+                                "Har dere skriftlig samværsavtale for barnet?",
+                                "Ja, men den beskriver ikke når barnet er sammen med hver av foreldrene",
+                            ),
+                        samværsavtale = dokumentfelt("Avtale om samvær"),
+                        skalBarnetBoHosSøkerMenAnnenForelderSamarbeiderIkke = dokumentfelt("Skal barnet bo hos deg"),
+                        hvordanPraktiseresSamværet =
+                            Søknadsfelt(
+                                "Hvordan praktiserer dere samværet?",
+                                "Litt hver for oss",
+                            ),
+                        borAnnenForelderISammeHus =
+                            Søknadsfelt(
+                                "Bor du og den andre forelderen til [barnets navn] i samme hus/blokk, gårdstun, kvartal eller vei?",
+                                "ja",
+                            ),
+                        borAnnenForelderISammeHusBeskrivelse =
+                            Søknadsfelt(
+                                "Bor du og den andre forelderen til  i samme hus/blokk beskrivelse",
+                                "Ekstra info?",
+                            ),
+                        harDereTidligereBoddSammen =
+                            Søknadsfelt(
+                                "Har du bodd sammen med den andre forelderen til [barnets fornavn] før?",
+                                true,
+                            ),
+                        nårFlyttetDereFraHverandre =
+                            Søknadsfelt(
+                                "Når flyttet dere fra hverandre?",
+                                LocalDate.of(2018, 7, 21),
+                            ),
+                        erklæringOmSamlivsbrudd = dokumentfelt("Erklæring om samlivsbrudd"),
+                        hvorMyeErDuSammenMedAnnenForelder =
+                            Søknadsfelt(
+                                "Hvor mye er du sammen med den andre forelderen til barnet?",
+                                "Vi møtes også uten at barnet er til stede",
+                            ),
+                        beskrivSamværUtenBarn =
+                            Søknadsfelt(
+                                "Beskriv  hvor mye er du sammen med den andre forelderen til barnet?",
+                                "Vi sees stadig vekk",
+                            ),
+                    ),
+                ),
+            skalHaBarnepass = if (barnetilsyn) Søknadsfelt("Skal ha barnepass", true) else null,
+            barnepass = if (barnetilsyn) barnepass() else null,
+        )
+
+    @Suppress("LongLine")
+    private fun barn2(barnetilsyn: Boolean = false): Barn =
+        Barn(
+            navn = Søknadsfelt("Navn", "Sorgløs"),
+            erBarnetFødt = Søknadsfelt("Er barnet født?", true),
             fødselTermindato = Søknadsfelt("Termindato", LocalDate.of(2020, 5, 16)),
             terminbekreftelse = dokumentfelt("Bekreftelse på ventet fødselsdato"),
             annenForelder =

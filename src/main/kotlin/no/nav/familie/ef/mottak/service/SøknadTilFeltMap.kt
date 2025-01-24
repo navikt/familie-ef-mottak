@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.repository.domain.PdfConfig
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Barn
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
@@ -49,7 +50,13 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om overgangsstønad (NAV 15-00.01)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om overgangsstønad",
+            finnFelter + vedlegg,
+            PdfConfig(true, språk),
+            getSkjemanummerTekst("overgangsstønad", språk),
+        )
     }
 
     fun mapBarnetilsyn(
@@ -58,7 +65,16 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til barnetilsyn (NAV 15-00.02)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om stønad til barnetilsyn",
+            finnFelter + vedlegg,
+            PdfConfig(
+                true,
+                språk,
+            ),
+            getSkjemanummerTekst("barnetilsyn", språk),
+        )
     }
 
     fun mapSkolepenger(
@@ -67,12 +83,24 @@ object SøknadTilFeltMap {
     ): FeltMap {
         val finnFelter = finnFelter(søknad)
         val vedlegg = mapTilVedlegg(vedleggTitler)
-        return FeltMap("Søknad om stønad til skolepenger (NAV 15-00.04)", finnFelter + vedlegg, PdfConfig(true, søknad.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Søknad om stønad til skolepenger",
+            finnFelter + vedlegg,
+            PdfConfig(true, språk),
+            getSkjemanummerTekst("skolepenger", språk),
+        )
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val finnFelter = finnFelter(skjema)
-        return FeltMap("Skjema for arbeidssøker - 15-08.01", finnFelter, PdfConfig(false, skjema.innsendingsdetaljer.verdi.språk ?: "nb"))
+        val språk = skjema.innsendingsdetaljer.verdi.språk ?: "nb"
+        return FeltMap(
+            "Skjema for arbeidssøker",
+            finnFelter,
+            PdfConfig(false, språk),
+            getSkjemanummerTekst("arbeidssøker", språk),
+        )
     }
 
     fun mapEttersending(
@@ -122,15 +150,14 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
+                    ?: emptyList()
             }
             if ((entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>) {
-                val elementLabel = if (entitet.label == "Barna dine") "Barn" else "Child"
-                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
+                return mapListeElementer(entitet)
             }
             if ((entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>) {
-                val elementLabel = if (entitet.label == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
-                return mapListeElementer(elementLabel, entitet.label, entitet.verdi as List<*>, list)
+                return mapListeElementer(entitet)
             }
             if (entitet.alternativer != null) {
                 val verdiliste = mutableListOf<VerdilisteElement>()
@@ -148,7 +175,8 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) } ?: emptyList()
+                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
+                        ?: emptyList()
                 }
             }
             // skal ekskluderes
@@ -162,25 +190,58 @@ object SøknadTilFeltMap {
     }
 
     private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
-        val list = listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
+        val list =
+            listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
         if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
 
-    private fun mapListeElementer(
+    private fun mapBarnElementer(
         elementLabel: String,
-        label: String,
-        elementer: List<*>,
-        verdiliste: List<VerdilisteElement>,
+        indeks: Int,
+        barn: Barn,
+    ): VerdilisteElement? {
+        val element = if (elementLabel == "Barna dine") "Barn" else "Child"
+        val tabellCaption = "$element ${indeks + 1}"
+        val verdilisteElementListe = finnFelter(barn).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+        return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
+            VerdilisteElement(label = tabellCaption, verdiliste = it)
+        }
+    }
+
+    private fun mapArbeidsforholdElementer(
+        elementLabel: String,
+        indeks: Int,
+        arbeidsforhold: no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver,
+    ): VerdilisteElement? {
+        val element = if (elementLabel == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
+        val tabellCaption = "$element ${indeks + 1}"
+        val verdilisteElementListe = finnFelter(arbeidsforhold)
+        return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
+            VerdilisteElement(label = tabellCaption, verdiliste = it)
+        }
+    }
+
+    private fun mapListeElementer(
+        entitet: Søknadsfelt<*>,
     ): List<VerdilisteElement> {
-        val ekskluderTommeElementer = verdiliste.filterNot { it.verdi.isNullOrEmpty() && it.verdiliste.isNullOrEmpty() }
         val mappedElementer =
-            elementer.mapIndexedNotNull { indeks, it ->
-                it?.let { VerdilisteElement("$elementLabel ${indeks + 1}", verdiliste = ekskluderTommeElementer) }
+            (entitet.verdi as List<*>).mapIndexedNotNull { indeks, it ->
+                when (it) {
+                    is Barn -> mapBarnElementer(entitet.label, indeks, it)
+                    is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver -> mapArbeidsforholdElementer(entitet.label, indeks, it)
+                    else -> null
+                }
             }
-        return listOf(VerdilisteElement(label, verdiliste = mappedElementer, visningsVariant = VisningsVariant.TABELL.toString()))
+        return listOf(
+            VerdilisteElement(
+                entitet.label,
+                verdiliste = mappedElementer,
+                visningsVariant = VisningsVariant.TABELL.toString(),
+            ),
+        )
     }
 
     /**
@@ -218,4 +279,18 @@ enum class VisningsVariant {
     TABELL,
     VEDLEGG,
     PUNKTLISTE,
+}
+
+private fun getSkjemanummerTekst(
+    skjemanummer: String,
+    språk: String,
+): String? {
+    val skjemanumre =
+        mapOf(
+            "overgangsstønad" to mapOf("nb" to "Skjemanummer: NAV 15-00.01", "en" to "Application number: NAV 15-00.01"),
+            "barnetilsyn" to mapOf("nb" to "Skjemanummer: NAV 15-00.02", "en" to "Application number: NAV 15-00.02"),
+            "skolepenger" to mapOf("nb" to "Skjemanummer: NAV 15-00.04", "en" to "Application number: NAV 15-00.04"),
+            "arbeidssøker" to mapOf("nb" to "Skjemanummer: NAV 15-08.01", "en" to "Application number: NAV 15-08.01"),
+        )
+    return skjemanumre[skjemanummer]?.get(språk)
 }
