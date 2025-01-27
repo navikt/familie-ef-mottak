@@ -38,6 +38,7 @@
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
         <sonar.organization>navit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <brukervarsel-builder.version>2.1.1</brukervarsel-builder.version>
         <!--suppress UnresolvedMavenProperty Ligger som secret i github-->
         <sonar.login>${SONAR_LOGIN}</sonar.login>
     </properties>
@@ -197,6 +198,11 @@
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.tms.varsel</groupId>
+            <artifactId>kotlin-builder</artifactId>
+            <version>${brukervarsel-builder.version}</version>
         </dependency>
 
         <!-- Database -->
