@@ -160,19 +160,7 @@ object SøknadTilFeltMap {
                 return mapListeElementer(entitet)
             }
             if (entitet.alternativer != null) {
-                val verdi =
-                    when (val verdi = entitet.verdi) {
-                        is List<*> -> verdi.joinToString("\n\n") { it.toString() }
-                        else -> verdi?.toString() ?: ""
-                    }
-                return listOf(
-                    VerdilisteElement(
-                        entitet.label,
-                        visningsVariant = VisningsVariant.PUNKTLISTE.toString(),
-                        verdi = verdi,
-                        alternativer = entitet.alternativer?.joinToString(" / "),
-                    ),
-                )
+                return mapAlternativerOgSvar(entitet)
             }
             if (entitet.verdi is List<*>) {
                 val verdiliste = entitet.verdi as List<*>
@@ -243,6 +231,46 @@ object SøknadTilFeltMap {
                 entitet.label,
                 verdiliste = mappedElementer,
                 visningsVariant = VisningsVariant.TABELL.toString(),
+            ),
+        )
+    }
+
+    private fun mapAlternativerOgSvar(entitet: Søknadsfelt<*>): List<VerdilisteElement> {
+        val alternativListe = mutableListOf<VerdilisteElement>()
+        val svarListe = mutableListOf<VerdilisteElement>()
+
+        if (entitet.verdi is List<*> && entitet.alternativer is List<*>) {
+            val alternativer = entitet.alternativer as List<String>
+            val svar = entitet.verdi as List<String>
+
+            alternativer.forEach { alternativ ->
+                alternativListe.add(VerdilisteElement(alternativ))
+                if (svar.contains(alternativ)) {
+                    svarListe.add(VerdilisteElement(alternativ))
+                }
+            }
+        }
+
+        val svaralternativTittel = if (entitet.label == "Does any of the following apply to you?") "Answer options" else "Svaralternativ"
+        val alternativerElement =
+            VerdilisteElement(
+                label = svaralternativTittel,
+                visningsVariant = VisningsVariant.PUNKTLISTE.toString(),
+                verdiliste = alternativListe,
+            )
+
+        val svarTittel = if (entitet.label == "Does any of the following apply to you?") "Answer" else "Svar"
+        val svarElement =
+            VerdilisteElement(
+                label = svarTittel,
+                visningsVariant = VisningsVariant.PUNKTLISTE.toString(),
+                verdiliste = svarListe,
+            )
+
+        return listOf(
+            VerdilisteElement(
+                label = entitet.label,
+                verdiliste = listOf(alternativerElement, svarElement),
             ),
         )
     }
