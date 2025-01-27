@@ -100,6 +100,24 @@ internal object Testdata {
             Søknadsfelt("Mer om situasjonen din", situasjon()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
+//    val søknadOvergangsstønadNy =
+//        SøknadOvergangsstønad(
+//            Søknadsfelt(
+//                "detaljer",
+//                Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate()),
+//            ),
+//            Søknadsfelt("Søker", personalia()),
+//            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
+//            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+//            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+//            Søknadsfelt("Bosituasjonen din", bosituasjon()),
+//            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+//            Søknadsfelt("Barna dine", listOf(barn())),
+//            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
+//            Søknadsfelt("Mer om situasjonen din", situasjonNy()),
+//            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+//        )
+
     val søknadOvergangsstønadNy =
         SøknadOvergangsstønad(
             Søknadsfelt(
@@ -112,24 +130,9 @@ internal object Testdata {
             Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
             Søknadsfelt("Bosituasjonen din", bosituasjon()),
             Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-            Søknadsfelt("Barna dine", listOf(barn())),
-            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
-            Søknadsfelt("Mer om situasjonen din", situasjonNy()),
-            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
-        )
-
-    val søknadOvergangsstønadNy =
-        SøknadOvergangsstønad(
-            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
-            Søknadsfelt("Søker", personalia()),
-            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
-            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
-            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
-            Søknadsfelt("Bosituasjonen din", bosituasjon()),
-            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
             Søknadsfelt("Barna dine", listOf(barn(), barn2())),
             Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
-            Søknadsfelt("Mer om situasjonen din", situasjon()),
+            Søknadsfelt("Mer om situasjonen din", situasjonNy()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
 
@@ -177,7 +180,10 @@ internal object Testdata {
 
     val søknadBarnetilsynNy =
         SøknadBarnetilsyn(
-            Søknadsfelt("detaljer", Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate())),
+            Søknadsfelt(
+                "detaljer",
+                Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate()),
+            ),
             Søknadsfelt("Søker", personalia()),
             Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
             Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
@@ -313,7 +319,11 @@ internal object Testdata {
                     "Jeg har søkt om barnepass, men ikke fått plass enda",
                     "Jeg har barn som har behov for særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
                 ),
-                listOf("123", "234", "345"),
+                listOf(
+                    "123",
+                    "234",
+                    "345",
+                ),
             ),
             dokumentfelt("Legeerklæring"),
             dokumentfelt("Legeattest for egen sykdom eller sykt barn"),
