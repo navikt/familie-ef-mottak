@@ -251,10 +251,10 @@ object SøknadTilFeltMap {
             }
         }
 
-        val alternativTittel = if (entitet.label == "Does any of the following apply to you?") "Answer options" else "Svaralternativ"
+        val svaralternativTittel = if (entitet.label == "Does any of the following apply to you?") "Answer options" else "Svaralternativ"
         val alternativerElement =
             VerdilisteElement(
-                label = alternativTittel,
+                label = svaralternativTittel,
                 visningsVariant = VisningsVariant.PUNKTLISTE.toString(),
                 verdiliste = alternativListe,
             )

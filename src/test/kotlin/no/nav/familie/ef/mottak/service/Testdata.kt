@@ -100,23 +100,6 @@ internal object Testdata {
             Søknadsfelt("Mer om situasjonen din", situasjon()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
-//    val søknadOvergangsstønadNy =
-//        SøknadOvergangsstønad(
-//            Søknadsfelt(
-//                "detaljer",
-//                Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate()),
-//            ),
-//            Søknadsfelt("Søker", personalia()),
-//            Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
-//            Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
-//            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
-//            Søknadsfelt("Bosituasjonen din", bosituasjon()),
-//            Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
-//            Søknadsfelt("Barna dine", listOf(barn())),
-//            Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
-//            Søknadsfelt("Mer om situasjonen din", situasjonNy()),
-//            Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
-//        )
 
     val søknadOvergangsstønadNy =
         SøknadOvergangsstønad(
