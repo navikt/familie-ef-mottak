@@ -27,7 +27,7 @@
         },
         {
           "label": "Adresse",
-          "verdi": "Jerpefaret 5C\n1440 Drøbak\nNorge"
+          "verdi": "Jerpefaret 5C\n\n1440 Drøbak\n\nNorge"
         },
         {
           "label": "Sivilstand",
@@ -627,6 +627,6 @@
   ],
   "pdfConfig": {
     "harInnholdsfortegnelse": true,
-    "språk": "NB"
+    "språk": "nb"
   }
 }

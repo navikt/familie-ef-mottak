@@ -12,12 +12,12 @@ import java.time.LocalDateTime
 class SøknadTilFeltMapTest {
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
         Assertions.assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
-        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
+        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad")
 
         val verdiliste = mapSøknadsfelter.verdiliste
         Assertions.assertThat(verdiliste).hasSize(12)
@@ -25,7 +25,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med typen TABELL`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
@@ -36,7 +36,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med typen VEDLEGG`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val vedlegg =
             listOf(
@@ -53,13 +53,13 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter returnerer en map-struktur med feltene fra søknaden sammen med vedlegg`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val vedlegg = listOf("Dokumentasjon på at du er syk")
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
 
         Assertions.assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
-        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad (NAV 15-00.01)")
+        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om overgangsstønad")
         Assertions.assertThat(mapSøknadsfelter.verdiliste).hasSize(12)
     }
 
@@ -71,7 +71,7 @@ class SøknadTilFeltMapTest {
         val mapSøknadsfelter = SøknadTilFeltMap.mapSkolepenger(søknad, vedlegg)
 
         Assertions.assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
-        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om stønad til skolepenger (NAV 15-00.04)")
+        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Søknad om stønad til skolepenger")
         Assertions.assertThat(mapSøknadsfelter.verdiliste).hasSize(9)
     }
 
@@ -82,13 +82,13 @@ class SøknadTilFeltMapTest {
         val mapSøknadsfelter = SøknadTilFeltMap.mapSkjemafelter(skjemaForArbeidssøker)
 
         Assertions.assertThat(mapSøknadsfelter.verdiliste).isNotEmpty
-        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Skjema for arbeidssøker - 15-08.01")
+        Assertions.assertThat(mapSøknadsfelter.label).isEqualTo("Skjema for arbeidssøker")
         Assertions.assertThat(mapSøknadsfelter.verdiliste).hasSize(3)
     }
 
     @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - overgangsstønad`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val vedlegg =
             listOf(
@@ -111,7 +111,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - barnetilsyn`() {
-        val søknad = Testdata.søknadBarnetilsyn
+        val søknad = Testdata.søknadBarnetilsynNy
 
         val vedlegg =
             listOf(
@@ -141,7 +141,7 @@ class SøknadTilFeltMapTest {
 
     @Test
     fun `ekskluderer verdiliste når skalEkskluderes matcher`() {
-        val søknad = Testdata.søknadOvergangsstønad
+        val søknad = Testdata.søknadOvergangsstønadNy
 
         val vedlegg = listOf("Dokumentasjon på at du er syk")
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, vedlegg)
