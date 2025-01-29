@@ -20,6 +20,7 @@ import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
+import java.util.UUID
 
 @Service
 class DittNavKafkaProducer(
@@ -37,37 +38,32 @@ class DittNavKafkaProducer(
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun sendBeskjedTilBruker(
-        type: Varseltype,
+        personIdent: String,
         varselId: String,
-        ident: String,
         melding: String,
-        sensitivitet: Sensitivitet,
         link: String? = null,
         aktivFremTil: ZonedDateTime? = null,
-        smsVarslingstekst: String? = null,
+        eksternKanal: EksternKanal? = null
     ) {
         val varsel = VarselActionBuilder.opprett {
-            this.ident = ident
-            this.type = type
+            this.ident = personIdent
             this.varselId = varselId
-            this.sensitivitet = sensitivitet
             this.link = link
             this.aktivFremTil = aktivFremTil
+            this.type = Varseltype.Beskjed
+            this.sensitivitet = Sensitivitet.High
 
-            tekst = Tekst(
+            this.tekst = Tekst(
                 spraakkode = "nb",
                 tekst = melding,
                 default = true
             )
 
-            eksternVarsling {
-                if (!smsVarslingstekst.isNullOrBlank()) {
-                    preferertKanal = EksternKanal.SMS
-                    this.smsVarslingstekst = smsVarslingstekst
-                }
+            this.eksternVarsling {
+                this.preferertKanal = eksternKanal
             }
 
-            produsent = Produsent(
+            this.produsent = Produsent(
                 cluster = cluster,
                 namespace = namespace,
                 appnavn = applicationName,

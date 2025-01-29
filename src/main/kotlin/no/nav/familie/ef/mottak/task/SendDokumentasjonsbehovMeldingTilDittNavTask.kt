@@ -49,11 +49,9 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
             val linkMelding = lagLinkMelding(søknad, manglerVedleggPåSøknad)
 
             producer.sendBeskjedTilBruker(
-                type = Varseltype.Beskjed,
+                personIdent = søknad.fnr,
                 varselId = task.metadata["eventId"].toString(),
-                ident = søknad.fnr,
                 melding = linkMelding.melding,
-                sensitivitet = Sensitivitet.High,
                 link = linkMelding.link.toString()
             )
 

@@ -27,11 +27,9 @@ class SendSøknadMottattTilDittNavTask(
         val søknad = søknadskvitteringService.hentSøknad(task.payload)
 
         producer.sendBeskjedTilBruker(
-            type = Varseltype.Beskjed,
+            personIdent = søknad.fnr,
             varselId = task.metadata["eventId"].toString(),
-            ident = søknad.fnr,
             melding = lagLinkMelding(søknad.dokumenttype),
-            sensitivitet = Sensitivitet.High
         )
 
         logger.info("Send melding til ditt nav søknadId=${task.payload}")

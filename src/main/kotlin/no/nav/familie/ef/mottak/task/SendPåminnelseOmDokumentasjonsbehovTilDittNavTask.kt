@@ -22,6 +22,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.util.VirkedagerProvider
+import no.nav.tms.varsel.action.EksternKanal
 import no.nav.tms.varsel.action.Sensitivitet
 import no.nav.tms.varsel.action.Varseltype
 import org.slf4j.LoggerFactory
@@ -67,13 +68,11 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         val linkMelding = lagLinkMelding(søknad)
 
         producer.sendBeskjedTilBruker(
-            type = Varseltype.Beskjed,
+            personIdent = søknad.fnr,
             varselId = task.metadata["eventId"].toString(),
-            ident = søknad.fnr,
             melding = linkMelding.melding,
-            sensitivitet = Sensitivitet.High,
             link = linkMelding.link.toString(),
-            smsVarslingstekst = linkMelding.melding + linkMelding.link // TODO: Kanskje endres på litt senere.
+            eksternKanal = EksternKanal.SMS
         )
 
         dokumentasjonsbehovVarslingerSendt.increment()
@@ -97,7 +96,7 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         loggMicrometer(brukerHarSendtInnNoe, tilhørendeBehandleSakOppgaveErPåbegynt)
 
         return brukerHarSendtInnNoe ||
-            tilhørendeBehandleSakOppgaveErPåbegynt
+                tilhørendeBehandleSakOppgaveErPåbegynt
     }
 
     private fun loggMicrometer(
