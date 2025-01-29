@@ -14,6 +14,8 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
+import no.nav.tms.varsel.action.Sensitivitet
+import no.nav.tms.varsel.action.Varseltype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -46,13 +48,15 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
 
             val linkMelding = lagLinkMelding(søknad, manglerVedleggPåSøknad)
 
-            producer.sendToKafka(
-                søknad.fnr,
-                linkMelding.melding,
-                task.payload,
-                task.metadata["eventId"].toString(),
-                linkMelding.link,
+            producer.sendBeskjedTilBruker(
+                type = Varseltype.Beskjed,
+                varselId = task.metadata["eventId"].toString(),
+                ident = søknad.fnr,
+                melding = linkMelding.melding,
+                sensitivitet = Sensitivitet.High,
+                link = linkMelding.link.toString()
             )
+
             logger.info("Send melding til ditt nav søknadId=${task.payload}")
         }
     }

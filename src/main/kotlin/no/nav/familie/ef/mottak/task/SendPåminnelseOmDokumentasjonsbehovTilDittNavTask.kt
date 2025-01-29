@@ -22,6 +22,8 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.util.VirkedagerProvider
+import no.nav.tms.varsel.action.Sensitivitet
+import no.nav.tms.varsel.action.Varseltype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -63,14 +65,17 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         }
 
         val linkMelding = lagLinkMelding(søknad)
-        producer.sendToKafka(
-            søknad.fnr,
-            linkMelding.melding,
-            task.payload,
-            task.metadata["eventId"].toString(),
-            linkMelding.link,
-            PreferertKanal.SMS,
+
+        producer.sendBeskjedTilBruker(
+            type = Varseltype.Beskjed,
+            varselId = task.metadata["eventId"].toString(),
+            ident = søknad.fnr,
+            melding = linkMelding.melding,
+            sensitivitet = Sensitivitet.High,
+            link = linkMelding.link.toString(),
+            smsVarslingstekst = linkMelding.melding + linkMelding.link // TODO: Kanskje endres på litt senere.
         )
+
         dokumentasjonsbehovVarslingerSendt.increment()
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")
     }

@@ -7,6 +7,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.tms.varsel.action.Sensitivitet
+import no.nav.tms.varsel.action.Varseltype
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -23,12 +25,15 @@ class SendSøknadMottattTilDittNavTask(
 
     override fun doTask(task: Task) {
         val søknad = søknadskvitteringService.hentSøknad(task.payload)
-        producer.sendToKafka(
-            søknad.fnr,
-            lagLinkMelding(søknad.dokumenttype),
-            task.payload,
-            task.metadata["eventId"].toString(),
+
+        producer.sendBeskjedTilBruker(
+            type = Varseltype.Beskjed,
+            varselId = task.metadata["eventId"].toString(),
+            ident = søknad.fnr,
+            melding = lagLinkMelding(søknad.dokumenttype),
+            sensitivitet = Sensitivitet.High
         )
+
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 

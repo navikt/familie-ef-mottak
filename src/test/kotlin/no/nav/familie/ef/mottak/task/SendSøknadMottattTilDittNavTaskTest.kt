@@ -11,6 +11,8 @@ import no.nav.familie.ef.mottak.task.SendDokumentasjonsbehovMeldingTilDittNavTas
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.domene.Task
+import no.nav.tms.varsel.action.Sensitivitet
+import no.nav.tms.varsel.action.Varseltype
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Properties
@@ -68,12 +70,12 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     private fun verifiserForventetKallMed(forventetTekst: String) {
         verify(exactly = 1) {
             søknadskvitteringService.hentSøknad(any())
-            dittNavKafkaProducer.sendToKafka(
-                FNR,
-                forventetTekst,
-                task.payload,
-                EVENT_ID,
-                null,
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                type = Varseltype.Beskjed,
+                varselId = EVENT_ID,
+                ident = FNR,
+                melding = forventetTekst,
+                sensitivitet = Sensitivitet.High
             )
         }
     }
