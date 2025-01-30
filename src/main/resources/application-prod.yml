@@ -26,6 +26,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      familie-pdf:
+        resource-url: ${familie.pdf.url}
+        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+        grant-type: client_credentials
+        scope: api://prod-gcp.teamfamilie.familie-pdf/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
       dokument:
         resource-url: ${familie.dokument.url}
         well-known-url: ${TOKEN_X_WELL_KNOWN_URL}
