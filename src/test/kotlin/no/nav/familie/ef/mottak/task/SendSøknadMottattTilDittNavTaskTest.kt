@@ -84,12 +84,12 @@ internal class SendSøknadMottattTilDittNavTaskTest {
 
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
-                Søknad(
-                    id = SØKNAD_ID,
-                    søknadJson = EncryptedString(""),
-                    dokumenttype = søknadType.dokumentType,
-                    fnr = FNR,
-                )
+            Søknad(
+                id = SØKNAD_ID,
+                søknadJson = EncryptedString(""),
+                dokumenttype = søknadType.dokumentType,
+                fnr = FNR,
+            )
     }
 
     companion object {

@@ -66,32 +66,35 @@ class DittNavKafkaProducer(
         melding: String,
         link: String? = null,
         aktivFremTil: ZonedDateTime? = null,
-        eksternKanal: EksternKanal? = null
+        eksternKanal: EksternKanal? = null,
     ) {
-        val varsel = VarselActionBuilder.opprett {
-            this.ident = personIdent
-            this.varselId = varselId
-            this.link = link
-            this.aktivFremTil = aktivFremTil
-            this.type = Varseltype.Beskjed
-            this.sensitivitet = Sensitivitet.High
+        val varsel =
+            VarselActionBuilder.opprett {
+                this.ident = personIdent
+                this.varselId = varselId
+                this.link = link
+                this.aktivFremTil = aktivFremTil
+                this.type = Varseltype.Beskjed
+                this.sensitivitet = Sensitivitet.High
 
-            this.tekst = Tekst(
-                spraakkode = "nb",
-                tekst = melding,
-                default = true
-            )
+                this.tekst =
+                    Tekst(
+                        spraakkode = "nb",
+                        tekst = melding,
+                        default = true,
+                    )
 
-            this.eksternVarsling {
-                this.preferertKanal = eksternKanal
+                this.eksternVarsling {
+                    this.preferertKanal = eksternKanal
+                }
+
+                this.produsent =
+                    Produsent(
+                        cluster = cluster,
+                        namespace = namespace,
+                        appnavn = applicationName,
+                    )
             }
-
-            this.produsent = Produsent(
-                cluster = cluster,
-                namespace = namespace,
-                appnavn = applicationName,
-            )
-        }
 
         secureLogger.debug("Sending to Kafka topic: {}: {}", nyTopic, varsel)
 

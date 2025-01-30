@@ -220,24 +220,24 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     private fun mockHentSøknad(søknadData: SøknadData) {
         every { søknadskvitteringService.hentSøknad(søknadIds.first()) } returns
-                søknad(
-                    søknadData.id,
-                    søknadData.dokumentType,
-                    søknadData.opprettetTid,
-                )
+            søknad(
+                søknadData.id,
+                søknadData.dokumentType,
+                søknadData.opprettetTid,
+            )
     }
 
     private fun mockHentSøknaderForPerson(søknadData: List<SøknadData>) {
         every { søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR)) } returns
-                listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
-                søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
+            listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
+            søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
     }
 
     private fun ettersending(opprettetTid: LocalDateTime) = Ettersending(ettersendingJson = EncryptedString(""), stønadType = "OS", fnr = FNR, opprettetTid = opprettetTid)
 
     private fun mockHentEttersendingerForPerson(opprettetTid: LocalDateTime? = null) {
         every { ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR)) } returns
-                if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
+            if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
     }
 
     data class SøknadData(

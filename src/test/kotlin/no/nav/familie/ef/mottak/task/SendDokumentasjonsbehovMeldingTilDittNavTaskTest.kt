@@ -65,7 +65,14 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 søknadskvitteringService.hentSøknad(any())
                 søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
                 taskService.save(any())
-                dittNavKafkaProducer.sendToKafka(FNR, any(), any(), EVENT_ID, isNull(true))
+                // TODO: Fjern denne.
+                // dittNavKafkaProducer.sendToKafka(fnr = FNR, melding = any(), grupperingsnummer = any(), eventId = EVENT_ID, link = isNull(true))
+                dittNavKafkaProducer.sendBeskjedTilBruker(
+                    personIdent = FNR,
+                    varselId = EVENT_ID,
+                    melding = any(),
+                    link = isNull(true),
+                )
             }
         }
 
@@ -98,7 +105,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             testOgVerifiserMelding(
                 listOf(Dokumentasjonsbehov("", "", false, emptyList())),
                 "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
-                        "Se hva som mangler og last opp vedlegg.",
+                    "Se hva som mangler og last opp vedlegg.",
             )
             verify(exactly = 1) {
                 taskService.save(any())
@@ -150,7 +157,14 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            dittNavKafkaProducer.sendToKafka(eq(FNR), eq(forventetMelding), any(), eq(EVENT_ID), link ?: any())
+            // TODO: Fjern denne.
+            // dittNavKafkaProducer.sendToKafka(fnr = eq(FNR), melding = eq(forventetMelding), grupperingsnummer = any(), eventId = eq(EVENT_ID), link = link ?: any())
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = eq(FNR),
+                varselId = eq(EVENT_ID),
+                melding = eq(forventetMelding),
+                link = link?.toString() ?: any(),
+            )
         }
     }
 
@@ -163,17 +177,17 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         }
 
         every { søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any()) } returns
-                DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
+            DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
     }
 
     private fun mockSøknad(søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
         every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
-                Søknad(
-                    id = SØKNAD_ID,
-                    søknadJson = EncryptedString(""),
-                    dokumenttype = søknadType.dokumentType,
-                    fnr = FNR,
-                )
+            Søknad(
+                id = SØKNAD_ID,
+                søknadJson = EncryptedString(""),
+                dokumenttype = søknadType.dokumentType,
+                fnr = FNR,
+            )
     }
 
     companion object {
