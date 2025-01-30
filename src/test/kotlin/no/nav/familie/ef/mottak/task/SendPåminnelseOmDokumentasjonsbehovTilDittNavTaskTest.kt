@@ -19,6 +19,7 @@ import no.nav.familie.ef.mottak.util.lagMeldingPåminnelseManglerDokumentasjonsb
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.prosessering.domene.Task
+import no.nav.tms.varsel.action.EksternKanal
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -77,7 +78,16 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
                 søknadskvitteringService.hentSøknad(any())
                 søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
                 ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+                // TODO: Husk å fjerne meg.
+                dittNavKafkaProducer.sendToKafka(fnr = FNR, melding = eq(forventetMelding.melding), grupperingsnummer = any(), eventId = EVENT_ID, link = forventetMelding.link, kanal = PreferertKanal.SMS)// TODO: Fjern denne.
+                /*dittNavKafkaProducer.sendBeskjedTilBruker(
+                    personIdent = FNR,
+                    varselId = EVENT_ID,
+                    melding = eq(forventetMelding.melding),
+                    link = forventetMelding.link.toString(),
+                    eksternKanal = EksternKanal.SMS
+                )*/
             }
         }
 
@@ -141,7 +151,16 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
                 søknadskvitteringService.hentSøknad(any())
                 søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
                 ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+                // TODO: Husk å fjerne meg.
+                dittNavKafkaProducer.sendToKafka(fnr = FNR, melding = eq(forventetMelding.melding), grupperingsnummer = any(), eventId = EVENT_ID, link = forventetMelding.link, kanal = PreferertKanal.SMS)
+                /*dittNavKafkaProducer.sendBeskjedTilBruker(
+                    personIdent = FNR,
+                    varselId = EVENT_ID,
+                    melding = eq(forventetMelding.melding),
+                    link = forventetMelding.link.toString(),
+                    eksternKanal = EksternKanal.SMS
+                )*/
             }
         }
 
@@ -165,7 +184,16 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
                 søknadskvitteringService.hentSøknad(any())
                 søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
                 ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+                // TODO: Husk å fjerne meg.
+                dittNavKafkaProducer.sendToKafka(fnr = FNR, melding = eq(forventetMelding.melding), grupperingsnummer = any(), eventId = EVENT_ID, link = forventetMelding.link, kanal = PreferertKanal.SMS)
+                /*dittNavKafkaProducer.sendBeskjedTilBruker(
+                    personIdent = FNR,
+                    varselId = EVENT_ID,
+                    melding = eq(forventetMelding.melding),
+                    link = forventetMelding.link.toString(),
+                    eksternKanal = EksternKanal.SMS
+                )*/
             }
         }
 
@@ -220,24 +248,24 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
 
     private fun mockHentSøknad(søknadData: SøknadData) {
         every { søknadskvitteringService.hentSøknad(søknadIds.first()) } returns
-            søknad(
-                søknadData.id,
-                søknadData.dokumentType,
-                søknadData.opprettetTid,
-            )
+                søknad(
+                    søknadData.id,
+                    søknadData.dokumentType,
+                    søknadData.opprettetTid,
+                )
     }
 
     private fun mockHentSøknaderForPerson(søknadData: List<SøknadData>) {
         every { søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR)) } returns
-            listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
-            søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
+                listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
+                søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
     }
 
     private fun ettersending(opprettetTid: LocalDateTime) = Ettersending(ettersendingJson = EncryptedString(""), stønadType = "OS", fnr = FNR, opprettetTid = opprettetTid)
 
     private fun mockHentEttersendingerForPerson(opprettetTid: LocalDateTime? = null) {
         every { ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR)) } returns
-            if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
+                if (opprettetTid == null) emptyList() else listOf(ettersending(opprettetTid))
     }
 
     data class SøknadData(
