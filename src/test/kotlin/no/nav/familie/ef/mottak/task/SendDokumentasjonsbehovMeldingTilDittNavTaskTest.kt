@@ -65,8 +65,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 søknadskvitteringService.hentSøknad(any())
                 søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
                 taskService.save(any())
-                // TODO: Fjern denne.
-                // dittNavKafkaProducer.sendToKafka(fnr = FNR, melding = any(), grupperingsnummer = any(), eventId = EVENT_ID, link = isNull(true))
+
                 dittNavKafkaProducer.sendBeskjedTilBruker(
                     personIdent = FNR,
                     varselId = EVENT_ID,
@@ -157,8 +156,6 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            // TODO: Fjern denne.
-            // dittNavKafkaProducer.sendToKafka(fnr = eq(FNR), melding = eq(forventetMelding), grupperingsnummer = any(), eventId = eq(EVENT_ID), link = link ?: any())
             dittNavKafkaProducer.sendBeskjedTilBruker(
                 personIdent = eq(FNR),
                 varselId = eq(EVENT_ID),

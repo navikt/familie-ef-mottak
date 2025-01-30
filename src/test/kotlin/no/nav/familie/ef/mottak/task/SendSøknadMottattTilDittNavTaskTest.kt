@@ -73,31 +73,22 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         verify(exactly = 1) {
             søknadskvitteringService.hentSøknad(any())
 
-            // TODO: Husk å fjerne meg.
-           dittNavKafkaProducer.sendToKafka(
-                fnr = FNR,
-                melding = forventetTekst,
-                grupperingsnummer = task.payload,
-                eventId = EVENT_ID,
-                link = null,
-            )
-
-            /*dittNavKafkaProducer.sendBeskjedTilBruker(
+            dittNavKafkaProducer.sendBeskjedTilBruker(
                 personIdent = FNR,
                 varselId = EVENT_ID,
-                melding = forventetTekst
-            )*/
+                melding = forventetTekst,
+            )
         }
     }
 
     private fun mockSøknad(søknadType: SøknadType) {
         every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
-                Søknad(
-                    id = SØKNAD_ID,
-                    søknadJson = EncryptedString(""),
-                    dokumenttype = søknadType.dokumentType,
-                    fnr = FNR,
-                )
+            Søknad(
+                id = SØKNAD_ID,
+                søknadJson = EncryptedString(""),
+                dokumenttype = søknadType.dokumentType,
+                fnr = FNR,
+            )
     }
 
     companion object {

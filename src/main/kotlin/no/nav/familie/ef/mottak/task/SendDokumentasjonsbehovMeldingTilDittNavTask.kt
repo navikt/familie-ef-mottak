@@ -46,15 +46,6 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
 
             val linkMelding = lagLinkMelding(søknad, manglerVedleggPåSøknad)
 
-            // TODO: Husk å fjerne meg, samt tilsvarende avhengigheter.
-            producer.sendToKafka(
-                fnr = søknad.fnr,
-                melding = linkMelding.melding,
-                grupperingsnummer = task.payload,
-                eventId = task.metadata["eventId"].toString(),
-                link = linkMelding.link,
-            )
-
             producer.sendBeskjedTilBruker(
                 personIdent = søknad.fnr,
                 varselId = task.metadata["eventId"].toString(),
