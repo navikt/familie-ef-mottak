@@ -82,6 +82,7 @@ KAFKA_CREDSTORE_PASSWORD: password
 KAFKA_TRUSTSTORE_PATH: path
 
 JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoering-v1
+BRUKERNOTIFIKASJON_VARSEL_TOPIC: min-side.aapen-brukervarsel-v1
 
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
