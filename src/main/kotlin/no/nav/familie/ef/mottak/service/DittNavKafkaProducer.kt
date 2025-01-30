@@ -17,7 +17,7 @@ import java.time.ZonedDateTime
 class DittNavKafkaProducer(
     private val kafkaTemplate: KafkaTemplate<String, String>,
     @Value("\${BRUKERNOTIFIKASJON_VARSEL_TOPIC}")
-    val nyTopic: String,
+    val topic: String,
     @Value("\${NAIS_APP_NAME}")
     val applicationName: String,
     @Value("\${NAIS_NAMESPACE}")
@@ -61,10 +61,10 @@ class DittNavKafkaProducer(
                     )
             }
 
-        secureLogger.debug("Sending to Kafka topic: {}: {}", nyTopic, varsel)
+        secureLogger.debug("Sending to Kafka topic: {}: {}", topic, varsel)
 
         runCatching {
-            val producerRecord = ProducerRecord(nyTopic, varselId, varsel)
+            val producerRecord = ProducerRecord(topic, varselId, varsel)
             kafkaTemplate.send(producerRecord).get()
         }.onFailure {
             val errorMessage = "Could not send varsel to Kafka. Check secure logs for more information."
