@@ -25,7 +25,6 @@
         <felles.version>3.20250106100611_6ae49d2</felles.version>
         <prosessering.version>2.20250114104710_d9ad759</prosessering.version>
         <confluent.version>7.8.0</confluent.version>
-        <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20250116111901_78b5a16</kontrakter.version>
         <token-validation.version>5.0.14</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
@@ -138,11 +137,6 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
             <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.tms</groupId>
-            <artifactId>brukernotifikasjon-schemas</artifactId>
-            <version>${brukernotifikasjon-skjemas.version}</version>
         </dependency>
 
         <dependency>
