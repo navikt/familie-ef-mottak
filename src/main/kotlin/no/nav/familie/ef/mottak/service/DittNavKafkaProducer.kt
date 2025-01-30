@@ -20,13 +20,13 @@ import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
-import java.util.UUID
 
 @Service
 class DittNavKafkaProducer(
-    private val kafkaTemplate: KafkaTemplate<String, String>,
+    private val kafkaTemplate: KafkaTemplate<NokkelInput, BeskjedInput>,
+    private val nyKafkaTemplate: KafkaTemplate<String, String>,
     @Value("\${BRUKERNOTIFIKASJON_VARSEL_TOPIC}")
-    val topic: String,
+    val nyTopic: String,
     @Value("\${NAIS_APP_NAME}")
     val applicationName: String,
     @Value("\${NAIS_NAMESPACE}")
@@ -34,8 +34,31 @@ class DittNavKafkaProducer(
     @Value("\${NAIS_CLUSTER_NAME}")
     val cluster: String,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    @Value("\${KAFKA_TOPIC_DITTNAV}")
+    private lateinit var topic: String
+
+    fun sendToKafka(
+        fnr: String,
+        melding: String,
+        grupperingsnummer: String,
+        eventId: String,
+        link: URL? = null,
+        kanal: PreferertKanal? = null,
+    ) {
+        val nokkel = lagNøkkel(fnr, grupperingsnummer, eventId)
+        val beskjed = lagBeskjed(melding, link, kanal)
+
+        secureLogger.debug("Sending to Kafka topic: {}: {}", topic, beskjed)
+        runCatching {
+            val producerRecord = ProducerRecord(topic, nokkel, beskjed)
+            kafkaTemplate.send(producerRecord).get()
+        }.onFailure {
+            val errorMessage = "Could not send DittNav to Kafka. Check secure logs for more information."
+            logger.error(errorMessage)
+            secureLogger.error("Could not send DittNav to Kafka melding={}", beskjed, it)
+            throw RuntimeException(errorMessage)
+        }
+    }
 
     fun sendBeskjedTilBruker(
         personIdent: String,
@@ -70,16 +93,52 @@ class DittNavKafkaProducer(
             )
         }
 
-        secureLogger.debug("Sending to Kafka topic: {}: {}", topic, varsel)
+        secureLogger.debug("Sending to Kafka topic: {}: {}", nyTopic, varsel)
 
         runCatching {
-            val producerRecord = ProducerRecord(topic, varselId, varsel)
-            kafkaTemplate.send(producerRecord).get()
+            val producerRecord = ProducerRecord(nyTopic, varselId, varsel)
+            nyKafkaTemplate.send(producerRecord).get()
         }.onFailure {
             val errorMessage = "Could not send varsel to Kafka. Check secure logs for more information."
             logger.error(errorMessage)
             secureLogger.error("Could not send varsel to Kafka varsel={}", varsel, it)
             throw RuntimeException(errorMessage)
         }
+    }
+
+    private fun lagNøkkel(
+        fnr: String,
+        grupperingsId: String,
+        eventId: String,
+    ): NokkelInput =
+        NokkelInputBuilder()
+            .withAppnavn("familie-ef-mottak")
+            .withNamespace("teamfamilie")
+            .withFodselsnummer(fnr)
+            .withGrupperingsId(grupperingsId)
+            .withEventId(eventId)
+            .build()
+
+    private fun lagBeskjed(
+        melding: String,
+        link: URL?,
+        kanal: PreferertKanal?,
+    ): BeskjedInput {
+        val builder =
+            BeskjedInputBuilder()
+                .withSikkerhetsnivaa(4)
+                .withSynligFremTil(null)
+                .withTekst(melding)
+                .withTidspunkt(LocalDateTime.now(UTC))
+
+        if (link != null) builder.withLink(link)
+        if (kanal != null) builder.withEksternVarsling(true).withPrefererteKanaler(kanal)
+
+        return builder.build()
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+        private val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
 }

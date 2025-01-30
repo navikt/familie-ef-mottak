@@ -19,9 +19,8 @@ import no.nav.familie.ef.mottak.util.lagMeldingPåminnelseManglerDokumentasjonsb
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.prosessering.domene.Task
-import no.nav.tms.varsel.action.Sensitivitet
-import no.nav.tms.varsel.action.Varseltype
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URL
 import java.time.LocalDateTime
@@ -60,169 +59,150 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 
-    @Test
-    internal fun `ingen etterfølgende søknader, ingen innsendte ettersendinger - skal sende påminnelse`() {
-        val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
-        val forventetMelding =
-            lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson()
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
+    @Nested
+    inner class SendPåminnelseOmDokumentasjonsbehovTilDittNav {
+        @Test
+        internal fun `ingen etterfølgende søknader, ingen innsendte ettersendinger - skal sende påminnelse`() {
+            val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
+            val forventetMelding =
+                lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson()
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendBeskjedTilBruker(
-                type = Varseltype.Beskjed,
-                varselId = EVENT_ID,
-                ident = FNR,
-                melding = eq(forventetMelding.melding),
-                sensitivitet = Sensitivitet.High,
-                smsVarslingstekst = "Test tekst!"
-            )
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            }
         }
-    }
 
-    @Test
-    internal fun `har etterfølgende søknad, ingen innsendte ettersendinger - skal ikke sende påminnelse`() {
-        val søknadData =
-            listOf(
-                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-                SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1)),
-            )
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson()
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
+        @Test
+        internal fun `har etterfølgende søknad, ingen innsendte ettersendinger - skal ikke sende påminnelse`() {
+            val søknadData =
+                listOf(
+                    SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                    SøknadData(søknadIds.get(1), SøknadType.BARNETILSYN.dokumentType, LocalDateTime.now().plusDays(1)),
+                )
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson()
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer wasNot called
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer wasNot called
+            }
         }
-    }
 
-    @Test
-    internal fun `ikke etterfølgende søknad, har innsendte ettersendinger - skal ikke sende påminnelse`() {
-        val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson(LocalDateTime.now().plusHours(1))
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
+        @Test
+        internal fun `ikke etterfølgende søknad, har innsendte ettersendinger - skal ikke sende påminnelse`() {
+            val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson(LocalDateTime.now().plusHours(1))
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer wasNot called
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer wasNot called
+            }
         }
-    }
 
-    @Test
-    internal fun `har etterfølgende søknad for arbeidssøker - skal sende påminnelse`() {
-        val søknadData =
-            listOf(
-                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-                SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now()),
-            )
-        val forventetMelding =
-            lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson()
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
+        @Test
+        internal fun `har etterfølgende søknad for arbeidssøker - skal sende påminnelse`() {
+            val søknadData =
+                listOf(
+                    SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                    SøknadData(søknadIds.get(1), SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER.dokumentType, LocalDateTime.now()),
+                )
+            val forventetMelding =
+                lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson()
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendBeskjedTilBruker(
-                type = Varseltype.Beskjed,
-                varselId = EVENT_ID,
-                ident = FNR,
-                melding = eq(forventetMelding.melding),
-                sensitivitet = Sensitivitet.High,
-                link = forventetMelding.link.toString(),
-                smsVarslingstekst = "Test tekst!"
-            )
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            }
         }
-    }
 
-    @Test
-    internal fun `har tidligere søknader, har tidligere ettersendinger - skal sende påminnelse`() {
-        val søknadData =
-            listOf(
-                SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
-                SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1)),
-            )
-        val forventetMelding =
-            lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson(LocalDateTime.now().minusHours(1))
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
+        @Test
+        internal fun `har tidligere søknader, har tidligere ettersendinger - skal sende påminnelse`() {
+            val søknadData =
+                listOf(
+                    SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()),
+                    SøknadData(søknadIds.get(1), SøknadType.SKOLEPENGER.dokumentType, LocalDateTime.now().minusDays(1)),
+                )
+            val forventetMelding =
+                lagMeldingPåminnelseManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, "overgangsstønad")
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson(LocalDateTime.now().minusHours(1))
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendBeskjedTilBruker(
-                type = Varseltype.Beskjed,
-                varselId = EVENT_ID,
-                ident = FNR,
-                melding = forventetMelding.link.toString(),
-                sensitivitet = any(),
-                smsVarslingstekst = "Test tekst!"
-            )
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+            }
         }
-    }
 
-    @Test
-    internal fun `søknad har resultert i en påbegynt behandleSak oppgave - skal ikke sende påminnelse`() {
-        val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson()
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
+        @Test
+        internal fun `søknad har resultert i en påbegynt behandleSak oppgave - skal ikke sende påminnelse`() {
+            val søknadData = listOf(SøknadData(søknadIds.first(), SøknadType.OVERGANGSSTØNAD.dokumentType, LocalDateTime.now()))
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson()
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns true
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer wasNot called
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer wasNot called
+            }
         }
-    }
 
-    @Test
-    internal fun `stønadType er null - skal ikke sende påminnelse`() {
-        val søknadData = listOf(SøknadData(søknadIds.first(), "", LocalDateTime.now()))
-        mockHentSøknad(søknadData.first())
-        mockHentSøknaderForPerson(søknadData)
-        mockHentEttersendingerForPerson()
-        every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
+        @Test
+        internal fun `stønadType er null - skal ikke sende påminnelse`() {
+            val søknadData = listOf(SøknadData(søknadIds.first(), "", LocalDateTime.now()))
+            mockHentSøknad(søknadData.first())
+            mockHentSøknaderForPerson(søknadData)
+            mockHentEttersendingerForPerson()
+            every { saksbehandlingClient.kanSendePåminnelseTilBruker(any()) } returns false
 
-        sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
+            sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
-        verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
-            ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer wasNot called
+            verify(exactly = 1) {
+                søknadskvitteringService.hentSøknad(any())
+                søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+                ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
+                dittNavKafkaProducer wasNot called
+            }
         }
     }
 
