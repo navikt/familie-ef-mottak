@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.task
 
 import io.micrometer.core.instrument.Metrics.counter
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
@@ -22,6 +21,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.util.VirkedagerProvider
+import no.nav.tms.varsel.action.EksternKanal
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -63,13 +63,13 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         }
 
         val linkMelding = lagLinkMelding(søknad)
-        producer.sendToKafka(
-            søknad.fnr,
-            linkMelding.melding,
-            task.payload,
-            task.metadata["eventId"].toString(),
-            linkMelding.link,
-            PreferertKanal.SMS,
+
+        producer.sendBeskjedTilBruker(
+            personIdent = søknad.fnr,
+            varselId = task.metadata["eventId"].toString(),
+            melding = linkMelding.melding,
+            link = linkMelding.link.toString(),
+            eksternKanal = EksternKanal.SMS,
         )
         dokumentasjonsbehovVarslingerSendt.increment()
         logger.info("Sender påminnelse til ditt nav om å sende inn ettersending søknadId=${task.payload}")

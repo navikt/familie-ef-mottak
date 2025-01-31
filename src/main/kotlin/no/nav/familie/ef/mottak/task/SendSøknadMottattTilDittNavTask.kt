@@ -23,12 +23,13 @@ class SendSøknadMottattTilDittNavTask(
 
     override fun doTask(task: Task) {
         val søknad = søknadskvitteringService.hentSøknad(task.payload)
-        producer.sendToKafka(
-            søknad.fnr,
-            lagLinkMelding(søknad.dokumenttype),
-            task.payload,
-            task.metadata["eventId"].toString(),
+
+        producer.sendBeskjedTilBruker(
+            personIdent = søknad.fnr,
+            varselId = task.metadata["eventId"].toString(),
+            melding = lagLinkMelding(søknad.dokumenttype),
         )
+
         logger.info("Send melding til ditt nav søknadId=${task.payload}")
     }
 
