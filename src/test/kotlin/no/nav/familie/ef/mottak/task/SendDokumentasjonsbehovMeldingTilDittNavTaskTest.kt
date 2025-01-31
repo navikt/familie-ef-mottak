@@ -16,7 +16,6 @@ import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.Dokumentasjonsbe
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URL
 import java.time.LocalDateTime
@@ -49,99 +48,96 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 
-    @Nested
-    inner class SendDokumentasjonsbehovTilDittNav {
-        @Test
-        internal fun `overgangsstønad riktige integrasjoner - skal sende melding`() {
-            mockSøknad()
+    @Test
+    internal fun `overgangsstønad riktige integrasjoner - skal sende melding`() {
+        mockSøknad()
 
-            val dokumentasjonsBehov =
-                listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
-            mockDokumentasjonsbehov(dokumentasjonsBehov, SøknadType.OVERGANGSSTØNAD)
+        val dokumentasjonsBehov =
+            listOf(Dokumentasjonsbehov("Ditt Nav kall må ha dokumentasjonsBehov", "id", false, listOf()))
+        mockDokumentasjonsbehov(dokumentasjonsBehov, SøknadType.OVERGANGSSTØNAD)
 
-            sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
-            verify(exactly = 1) {
-                søknadskvitteringService.hentSøknad(any())
-                søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
-                taskService.save(any())
+        verify(exactly = 1) {
+            søknadskvitteringService.hentSøknad(any())
+            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
+            taskService.save(any())
 
-                dittNavKafkaProducer.sendBeskjedTilBruker(
-                    personIdent = FNR,
-                    varselId = EVENT_ID,
-                    melding = any(),
-                    link = isNull(true),
-                )
-            }
-        }
-
-        @Test
-        internal fun `overgangsstønad uten dokumentasjonsbehov - skal ikke kalle sendToKafka`() {
-            mockSøknad()
-            mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
-            sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
-            verify {
-                dittNavKafkaProducer wasNot called
-            }
-            verify(exactly = 0) {
-                taskService.save(any())
-            }
-        }
-
-        @Test
-        internal fun `overgangsstønad har allerede sendt inn - skal sende mottatt melding`() {
-            testOgVerifiserMelding(
-                listOf(Dokumentasjonsbehov("", "", true, emptyList())),
-                "Vi har mottatt søknaden din om overgangsstønad.",
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = FNR,
+                varselId = EVENT_ID,
+                melding = any(),
+                link = isNull(true),
             )
-            verify(exactly = 0) {
-                taskService.save(any())
-            }
+        }
+    }
+
+    @Test
+    internal fun `overgangsstønad uten dokumentasjonsbehov - skal ikke kalle sendToKafka`() {
+        mockSøknad()
+        mockDokumentasjonsbehov(emptyList(), SøknadType.OVERGANGSSTØNAD)
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
+        verify {
+            dittNavKafkaProducer wasNot called
+        }
+        verify(exactly = 0) {
+            taskService.save(any())
+        }
+    }
+
+    @Test
+    internal fun `overgangsstønad har allerede sendt inn - skal sende mottatt melding`() {
+        testOgVerifiserMelding(
+            listOf(Dokumentasjonsbehov("", "", true, emptyList())),
+            "Vi har mottatt søknaden din om overgangsstønad.",
+        )
+        verify(exactly = 0) {
+            taskService.save(any())
+        }
+    }
+
+    @Test
+    internal fun `overgangsstønad mangler vedlegg - skal sende mangel melding`() {
+        testOgVerifiserMelding(
+            listOf(Dokumentasjonsbehov("", "", false, emptyList())),
+            "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
+                "Se hva som mangler og last opp vedlegg.",
+        )
+        verify(exactly = 1) {
+            taskService.save(any())
+        }
+    }
+
+    @Test
+    internal fun `overgangsstønad har sendt inn vedlegg - skal sende mottatt melding`() {
+        testOgVerifiserMelding(
+            listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
+            "Vi har mottatt søknaden din om overgangsstønad.",
+        )
+        verify(exactly = 0) {
+            taskService.save(any())
+        }
+    }
+
+    @Test
+    internal fun `arbeidssøker - skal ikke sende melding`() {
+        mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
+
+        sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
+
+        verify(exactly = 1) {
+            søknadskvitteringService.hentSøknad(any())
+        }
+        verify(exactly = 0) {
+            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
         }
 
-        @Test
-        internal fun `overgangsstønad mangler vedlegg - skal sende mangel melding`() {
-            testOgVerifiserMelding(
-                listOf(Dokumentasjonsbehov("", "", false, emptyList())),
-                "Det ser ut til at det mangler noen vedlegg til søknaden din om overgangsstønad. " +
-                    "Se hva som mangler og last opp vedlegg.",
-            )
-            verify(exactly = 1) {
-                taskService.save(any())
-            }
+        verify(exactly = 0) {
+            taskService.save(any())
         }
 
-        @Test
-        internal fun `overgangsstønad har sendt inn vedlegg - skal sende mottatt melding`() {
-            testOgVerifiserMelding(
-                listOf(Dokumentasjonsbehov("", "", false, listOf(Dokument("", "fil.pdf")))),
-                "Vi har mottatt søknaden din om overgangsstønad.",
-            )
-            verify(exactly = 0) {
-                taskService.save(any())
-            }
-        }
-
-        @Test
-        internal fun `arbeidssøker - skal ikke sende melding`() {
-            mockSøknad(søknadType = SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
-
-            sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
-
-            verify(exactly = 1) {
-                søknadskvitteringService.hentSøknad(any())
-            }
-            verify(exactly = 0) {
-                søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
-            }
-
-            verify(exactly = 0) {
-                taskService.save(any())
-            }
-
-            verify {
-                dittNavKafkaProducer wasNot called
-            }
+        verify {
+            dittNavKafkaProducer wasNot called
         }
     }
 

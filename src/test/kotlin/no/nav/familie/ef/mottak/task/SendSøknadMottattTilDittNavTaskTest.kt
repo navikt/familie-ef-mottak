@@ -12,7 +12,6 @@ import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.domene.Task
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Properties
 import java.util.UUID
@@ -38,35 +37,32 @@ internal class SendSøknadMottattTilDittNavTaskTest {
             )
     }
 
-    @Nested
-    inner class SøknadMottattTilDittNav {
-        @Test
-        internal fun `arbeidssøker skjema skal ha riktig tekst `() {
-            mockSøknad(SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
-            sendSøknadMottattTilDittNavTask.doTask(task)
-            verifiserForventetKallMed("Vi har mottatt skjema enslig mor eller far som er arbeidssøker.")
-        }
+    @Test
+    internal fun `arbeidssøker skjema skal ha riktig tekst `() {
+        mockSøknad(SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER)
+        sendSøknadMottattTilDittNavTask.doTask(task)
+        verifiserForventetKallMed("Vi har mottatt skjema enslig mor eller far som er arbeidssøker.")
+    }
 
-        @Test
-        internal fun `Overgangsstønad skal ha riktig tekst `() {
-            mockSøknad(SøknadType.OVERGANGSSTØNAD)
-            sendSøknadMottattTilDittNavTask.doTask(task)
-            verifiserForventetKallMed("Vi har mottatt søknaden din om overgangsstønad.")
-        }
+    @Test
+    internal fun `Overgangsstønad skal ha riktig tekst `() {
+        mockSøknad(SøknadType.OVERGANGSSTØNAD)
+        sendSøknadMottattTilDittNavTask.doTask(task)
+        verifiserForventetKallMed("Vi har mottatt søknaden din om overgangsstønad.")
+    }
 
-        @Test
-        internal fun `Barnetilsyn skal ha riktig tekst `() {
-            mockSøknad(SøknadType.BARNETILSYN)
-            sendSøknadMottattTilDittNavTask.doTask(task)
-            verifiserForventetKallMed("Vi har mottatt søknaden din om stønad til barnetilsyn.")
-        }
+    @Test
+    internal fun `Barnetilsyn skal ha riktig tekst `() {
+        mockSøknad(SøknadType.BARNETILSYN)
+        sendSøknadMottattTilDittNavTask.doTask(task)
+        verifiserForventetKallMed("Vi har mottatt søknaden din om stønad til barnetilsyn.")
+    }
 
-        @Test
-        internal fun `Skolepenger skal ha riktig tekst `() {
-            mockSøknad(SøknadType.SKOLEPENGER)
-            sendSøknadMottattTilDittNavTask.doTask(task)
-            verifiserForventetKallMed("Vi har mottatt søknaden din om stønad til skolepenger.")
-        }
+    @Test
+    internal fun `Skolepenger skal ha riktig tekst `() {
+        mockSøknad(SøknadType.SKOLEPENGER)
+        sendSøknadMottattTilDittNavTask.doTask(task)
+        verifiserForventetKallMed("Vi har mottatt søknaden din om stønad til skolepenger.")
     }
 
     private fun verifiserForventetKallMed(forventetTekst: String) {
