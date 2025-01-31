@@ -241,13 +241,13 @@ object SøknadTilFeltMap {
 
         if (entitet.verdi is List<*> && entitet.alternativer is List<*>) {
             val alternativer = entitet.alternativer as List<String>
-            val svar = entitet.verdi as List<String>
+            val svarene = entitet.verdi as List<String>
 
             alternativer.forEach { alternativ ->
                 alternativListe.add(VerdilisteElement(alternativ))
-                if (svar.contains(alternativ)) {
-                    svarListe.add(VerdilisteElement(alternativ))
-                }
+            }
+            svarene.forEach { svar ->
+                svarListe.add(VerdilisteElement(svar))
             }
         }
 
