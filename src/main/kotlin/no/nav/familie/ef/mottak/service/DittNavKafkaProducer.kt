@@ -61,7 +61,7 @@ class DittNavKafkaProducer(
                     )
             }
 
-        secureLogger.debug("Sending to Kafka topic: {}: {}", topic, varsel)
+        secureLogger.info("Sender til Kafka topic: {}: {}", topic, varsel)
 
         runCatching {
             val producerRecord = ProducerRecord(topic, varselId, varsel)
