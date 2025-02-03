@@ -31,8 +31,6 @@ spring:
           password: ${KAFKA_CREDSTORE_PASSWORD}
     producer:
       acks: all
-      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
   flyway:
     enabled: true
     baseline-version: 6
