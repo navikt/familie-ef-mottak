@@ -33,7 +33,7 @@ class SøknadController(
     ): Kvittering = okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
 
     @GetMapping("overgangsstonad/forrige")
-    fun hentOvergangstønadSøknadForPerson() : SøknadOvergangsstønad? {
+    fun hentOvergangstønadSøknadForPerson(): SøknadOvergangsstønad? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
         return søknadskvitteringService.hentSisteOvergangstønadSøknad(personIdent)
     }

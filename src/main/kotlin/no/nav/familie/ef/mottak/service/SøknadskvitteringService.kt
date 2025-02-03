@@ -123,10 +123,11 @@ class SøknadskvitteringService(
     }
 
     fun hentSisteOvergangstønadSøknad(personIdent: String): SøknadOvergangsstønad? {
-        val søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-            fnr = personIdent,
-            stønadstype = DOKUMENTTYPE_OVERGANGSSTØNAD
-        )
+        val søknad =
+            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                fnr = personIdent,
+                stønadstype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            )
 
         return if (søknad?.søknadJson?.data != null) {
             objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJson.data)
@@ -136,10 +137,11 @@ class SøknadskvitteringService(
     }
 
     fun hentSisteSkolepengerStønad(personIdent: String): SøknadSkolepenger? {
-        val søknad = søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-            fnr = personIdent,
-            stønadstype = DOKUMENTTYPE_SKOLEPENGER
-        )
+        val søknad =
+            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                fnr = personIdent,
+                stønadstype = DOKUMENTTYPE_SKOLEPENGER,
+            )
 
         return if (søknad?.søknadJson?.data != null) {
             objectMapper.readValue<SøknadSkolepenger>(søknad.søknadJson.data)
