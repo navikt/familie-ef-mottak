@@ -98,6 +98,9 @@ TOKEN_X_PRIVATE_JWK: '{
 
 UNLEASH_SERVER_API_URL: http://localhost:4242/api
 UNLEASH_SERVER_API_TOKEN: token
+
 NAIS_APP_NAME: familie-ef-mottak
+NAIS_NAMESPACE: teamfamilie
+NAIS_CLUSTER_NAME: local
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS

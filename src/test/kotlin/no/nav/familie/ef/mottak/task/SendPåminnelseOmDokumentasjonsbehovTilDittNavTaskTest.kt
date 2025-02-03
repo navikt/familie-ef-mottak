@@ -4,7 +4,6 @@ import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
@@ -19,6 +18,7 @@ import no.nav.familie.ef.mottak.util.lagMeldingPåminnelseManglerDokumentasjonsb
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.prosessering.domene.Task
+import no.nav.tms.varsel.action.EksternKanal
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.URL
@@ -74,7 +74,14 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = FNR,
+                varselId = EVENT_ID,
+                melding = eq(forventetMelding.melding),
+                link = forventetMelding.link.toString(),
+                eksternKanal = EksternKanal.SMS,
+            )
         }
     }
 
@@ -138,7 +145,14 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = FNR,
+                varselId = EVENT_ID,
+                melding = eq(forventetMelding.melding),
+                link = forventetMelding.link.toString(),
+                eksternKanal = EksternKanal.SMS,
+            )
         }
     }
 
@@ -162,7 +176,14 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
             søknadskvitteringService.hentSøknad(any())
             søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
-            dittNavKafkaProducer.sendToKafka(FNR, eq(forventetMelding.melding), any(), EVENT_ID, forventetMelding.link, PreferertKanal.SMS)
+
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = FNR,
+                varselId = EVENT_ID,
+                melding = eq(forventetMelding.melding),
+                link = forventetMelding.link.toString(),
+                eksternKanal = EksternKanal.SMS,
+            )
         }
     }
 

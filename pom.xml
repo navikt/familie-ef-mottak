@@ -25,7 +25,6 @@
         <felles.version>3.20250106100611_6ae49d2</felles.version>
         <prosessering.version>2.20250114104710_d9ad759</prosessering.version>
         <confluent.version>7.8.0</confluent.version>
-        <brukernotifikasjon-skjemas.version>2.6.0</brukernotifikasjon-skjemas.version>
         <kontrakter.version>3.0_20250116111901_78b5a16</kontrakter.version>
         <token-validation.version>5.0.14</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
@@ -38,6 +37,7 @@
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
         <sonar.organization>navit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <brukervarsel-builder.version>2.1.1</brukervarsel-builder.version>
         <!--suppress UnresolvedMavenProperty Ligger som secret i github-->
         <sonar.login>${SONAR_LOGIN}</sonar.login>
     </properties>
@@ -138,11 +138,6 @@
             <artifactId>kafka-avro-serializer</artifactId>
             <version>${confluent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>no.nav.tms</groupId>
-            <artifactId>brukernotifikasjon-schemas</artifactId>
-            <version>${brukernotifikasjon-skjemas.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
@@ -197,6 +192,11 @@
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.tms.varsel</groupId>
+            <artifactId>kotlin-builder</artifactId>
+            <version>${brukervarsel-builder.version}</version>
         </dependency>
 
         <!-- Database -->
