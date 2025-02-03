@@ -55,6 +55,6 @@ class SøknadskvitteringController(
     @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadKvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+        return søknadKvitteringService.hentSisteBarnetilsynSøknad(personIdent)
     }
 }

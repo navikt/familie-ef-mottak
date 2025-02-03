@@ -32,19 +32,31 @@ class SøknadController(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
 
+    @GetMapping("overgangsstonad/forrige")
+    fun hentOvergangstønadSøknadForPerson() : SøknadOvergangsstønad? {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadskvitteringService.hentSisteOvergangstønadSøknad(personIdent)
+    }
+
     @PostMapping("barnetilsyn")
     fun barnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
     ): Kvittering = okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
+
+    @GetMapping("barnetilsyn/forrige")
+    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadskvitteringService.hentSisteBarnetilsynSøknad(personIdent)
+    }
 
     @PostMapping("skolepenger")
     fun skolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
     ): Kvittering = okEllerKastException { søknadService.mottaSkolepenger(søknad) }
 
-    @GetMapping("barnetilsyn/forrige")
-    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
+    @GetMapping("skolepenger/forrige")
+    fun hentSkolepengersøknadForPerson(): SøknadSkolepenger? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+        return søknadskvitteringService.hentSisteSkolepengerStønad(personIdent)
     }
 }

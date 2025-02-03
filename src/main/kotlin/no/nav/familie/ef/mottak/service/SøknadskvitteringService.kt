@@ -113,8 +113,7 @@ class SøknadskvitteringService(
 
     fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
 
-    // TODO: Kanskje rename denne. Henter faktisk siste søknad.
-    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
+    fun hentSisteBarnetilsynSøknad(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
         return if (søknadFraDb?.søknadJson?.data != null) {
             objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
