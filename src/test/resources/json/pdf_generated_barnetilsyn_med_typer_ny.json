@@ -143,22 +143,49 @@
         },
         {
           "label": "Utenlandsopphold",
+          "visningsVariant": "TABELL",
           "verdiliste": [
             {
-              "label": "Fra",
-              "verdi": "04.12.2012"
+              "label": "Utenlandsopphold 1",
+              "verdiliste": [
+                {
+                  "label": "Fra",
+                  "verdi": "04.12.2012"
+                },
+                {
+                  "label": "Til",
+                  "verdi": "18.12.2012"
+                },
+                {
+                  "label": "I hvilket land oppholdt du deg?",
+                  "verdi": "Spania"
+                },
+                {
+                  "label": "Hvorfor bodde du i utlandet?",
+                  "verdi": "Granca, Granca, Granca"
+                }
+              ]
             },
             {
-              "label": "Til",
-              "verdi": "18.12.2012"
-            },
-            {
-              "label": "I hvilket land oppholdt du deg?",
-              "verdi": "Spania"
-            },
-            {
-              "label": "Hvorfor bodde du i utlandet?",
-              "verdi": "Granca, Granca, Granca"
+              "label": "Utenlandsopphold 2",
+              "verdiliste": [
+                {
+                  "label": "Fra",
+                  "verdi": "04.12.2013"
+                },
+                {
+                  "label": "Til",
+                  "verdi": "18.12.2014"
+                },
+                {
+                  "label": "I hvilket land oppholdt du deg?",
+                  "verdi": "Italia"
+                },
+                {
+                  "label": "Hvorfor bodde du i utlandet?",
+                  "verdi": "Fint vær"
+                }
+              ]
             }
           ]
         }
@@ -610,5 +637,5 @@
     "harInnholdsfortegnelse": true,
     "språk": "nb"
   },
-  "skjemanummer" : "Skjemanummer: NAV 15-00.02"
+  "skjemanummer": "Skjemanummer: NAV 15-00.02"
 }

@@ -106,7 +106,7 @@ class SøknadTilFeltMapTest {
 
         val vedlegg = listOf("Utgifter til utdanning")
         val mapSøknadsfelter = SøknadTilFeltMap.mapSkolepenger(søknad, vedlegg)
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger_med_typer.json")
+        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_skolepenger_med_typer_ny.json")
     }
 
     @Test
