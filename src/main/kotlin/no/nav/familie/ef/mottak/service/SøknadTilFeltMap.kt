@@ -149,7 +149,7 @@ object SøknadTilFeltMap {
             val erBarn = (entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>
             val erArbeidsforhold =
                 (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>
-            val erUtenlandsopphold = entitet.label == "Utenlandsopphold" && entitet.verdi is List<*>
+            val erUtenlandsopphold = (entitet.label == "Utenlandsopphold" || entitet.label == "Time abroad") && entitet.verdi is List<*>
             if (entitet.verdi!! is Dokumentasjon) {
                 @Suppress("UNCHECKED_CAST")
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
@@ -249,8 +249,7 @@ object SøknadTilFeltMap {
         indeks: Int,
         utenlandsopphold: Utenlandsopphold,
     ): VerdilisteElement? {
-        val element = "Utenlandsopphold"
-        val tabellCaption = "$element ${indeks + 1}"
+        val tabellCaption = "$elementLabel ${indeks + 1}"
         val verdilisteElementListe = finnFelter(utenlandsopphold)
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
