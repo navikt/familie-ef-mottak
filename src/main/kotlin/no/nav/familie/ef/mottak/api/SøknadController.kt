@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDate
 
 @RestController
 @RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
@@ -49,15 +48,9 @@ class SøknadController(
         return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 
-    @GetMapping("aktive")
-    fun hentAktiveSøknader(): List<GjeldeneSøknad> {
+    @GetMapping("akt'ive")
+    fun hentAktiveSøknader(): List<SistInnsendteSøknad> {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadService.hentAktiveSøknader(personIdent)
+        return søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
     }
 }
-
-// TODO: Flytt meg please:
-data class GjeldeneSøknad(
-    val søknadsdato: LocalDate?,
-    val søknadType: String?,
-)

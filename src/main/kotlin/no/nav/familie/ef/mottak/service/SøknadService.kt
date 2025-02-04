@@ -1,8 +1,9 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.mottak.api.GjeldeneSøknad
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
+import no.nav.familie.ef.mottak.api.dto.gjelderSøknad
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
@@ -170,56 +171,29 @@ class SøknadService(
         søknadRepository.deleteById(søknadId)
     }
 
-    // TODO: Kan ta inn en liste med stønadtyper.
     @Transactional
-    fun hentAktiveSøknader(personIdent: String): List<GjeldeneSøknad> {
-        val listeMedSøknader = mutableListOf<GjeldeneSøknad>()
-
-        val barnetilsynSøknad =
-            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-                fnr = personIdent,
-                stønadstype = DOKUMENTTYPE_BARNETILSYN,
+    fun hentSistInnsendteSøknadPerStønad(personIdent: String): List<SistInnsendteSøknadDto> {
+        val stønadstyper =
+            listOf(
+                DOKUMENTTYPE_BARNETILSYN,
+                DOKUMENTTYPE_OVERGANGSSTØNAD,
+                DOKUMENTTYPE_SKOLEPENGER,
             )
 
-        val overgangsstønadSøknad =
-            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-                fnr = personIdent,
-                stønadstype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            )
+        val søknader =
+            stønadstyper.mapNotNull { stønadstype ->
+                søknadRepository
+                    .finnSisteSøknadForPersonOgStønadstype(
+                        fnr = personIdent,
+                        stønadstype = stønadstype,
+                    )?.let { søknad ->
+                        SistInnsendteSøknadDto(
+                            søknadsdato = søknad.opprettetTid.toLocalDate(),
+                            stønadType = stønadstype,
+                        )
+                    }
+            }
 
-        val skolepengerSøknad =
-            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-                fnr = personIdent,
-                stønadstype = DOKUMENTTYPE_SKOLEPENGER,
-            )
-
-        if (barnetilsynSøknad != null) {
-            listeMedSøknader.add(
-                GjeldeneSøknad(
-                    søknadsdato = barnetilsynSøknad.opprettetTid.toLocalDate(),
-                    søknadType = DOKUMENTTYPE_BARNETILSYN,
-                ),
-            )
-        }
-
-        if (overgangsstønadSøknad != null) {
-            listeMedSøknader.add(
-                GjeldeneSøknad(
-                    søknadsdato = overgangsstønadSøknad.opprettetTid.toLocalDate(),
-                    søknadType = DOKUMENTTYPE_OVERGANGSSTØNAD,
-                ),
-            )
-        }
-
-        if (skolepengerSøknad != null) {
-            listeMedSøknader.add(
-                GjeldeneSøknad(
-                    søknadsdato = skolepengerSøknad.opprettetTid.toLocalDate(),
-                    søknadType = DOKUMENTTYPE_SKOLEPENGER,
-                ),
-            )
-        }
-
-        return listeMedSøknader
+        return søknader.filter { it.gjelderSøknad() }
     }
 }
