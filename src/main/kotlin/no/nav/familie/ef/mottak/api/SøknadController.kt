@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
@@ -48,8 +49,8 @@ class SøknadController(
         return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 
-    @GetMapping("akt'ive")
-    fun hentAktiveSøknader(): List<SistInnsendteSøknad> {
+    @GetMapping("/soknad/sist-innsendt-per-stonad")
+    fun hentSistInnsendteSøknadPerStønad(): List<SistInnsendteSøknadDto> {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
         return søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
     }
