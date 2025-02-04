@@ -46,13 +46,13 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
 
             val linkMelding = lagLinkMelding(søknad, manglerVedleggPåSøknad)
 
-            producer.sendToKafka(
-                søknad.fnr,
-                linkMelding.melding,
-                task.payload,
-                task.metadata["eventId"].toString(),
-                linkMelding.link,
+            producer.sendBeskjedTilBruker(
+                personIdent = søknad.fnr,
+                varselId = task.metadata["eventId"].toString(),
+                melding = linkMelding.melding,
+                link = linkMelding.link.toString(),
             )
+
             logger.info("Send melding til ditt nav søknadId=${task.payload}")
         }
     }

@@ -68,12 +68,11 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     private fun verifiserForventetKallMed(forventetTekst: String) {
         verify(exactly = 1) {
             søknadskvitteringService.hentSøknad(any())
-            dittNavKafkaProducer.sendToKafka(
-                FNR,
-                forventetTekst,
-                task.payload,
-                EVENT_ID,
-                null,
+
+            dittNavKafkaProducer.sendBeskjedTilBruker(
+                personIdent = FNR,
+                varselId = EVENT_ID,
+                melding = forventetTekst,
             )
         }
     }
