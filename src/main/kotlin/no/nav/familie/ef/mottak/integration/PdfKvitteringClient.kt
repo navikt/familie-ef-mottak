@@ -3,8 +3,6 @@ package no.nav.familie.ef.mottak.integration
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractPingableRestClient
-import no.nav.familie.kontrakter.felles.objectMapper
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -20,7 +18,6 @@ class PdfKvitteringClient(
     @Qualifier("restTemplateAzure")
     restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie-pdf") {
-    private val logger = LoggerFactory.getLogger(this::class.java)
     override val pingUri: URI =
         UriComponentsBuilder
             .fromUri(uri)
@@ -35,7 +32,6 @@ class PdfKvitteringClient(
                 .pathSegment("api/v1/pdf/opprett-pdf")
                 .build()
                 .toUri()
-        logger.info("Sender med body: ${objectMapper.writeValueAsString(feltMap)}")
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 }
