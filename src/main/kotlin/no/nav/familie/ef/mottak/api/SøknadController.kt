@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 @RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
@@ -32,31 +33,31 @@ class SøknadController(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
 
-    @GetMapping("overgangsstonad/forrige")
-    fun hentOvergangstønadSøknadForPerson(): SøknadOvergangsstønad? {
-        val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadskvitteringService.hentSisteOvergangstønadSøknad(personIdent)
-    }
-
     @PostMapping("barnetilsyn")
     fun barnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
     ): Kvittering = okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
-
-    @GetMapping("barnetilsyn/forrige")
-    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
-        val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadskvitteringService.hentSisteBarnetilsynSøknad(personIdent)
-    }
 
     @PostMapping("skolepenger")
     fun skolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
     ): Kvittering = okEllerKastException { søknadService.mottaSkolepenger(søknad) }
 
-    @GetMapping("skolepenger/forrige")
-    fun hentSkolepengersøknadForPerson(): SøknadSkolepenger? {
+    @GetMapping("barnetilsyn/forrige")
+    fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadskvitteringService.hentSisteSkolepengerStønad(personIdent)
+        return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+    }
+
+    @GetMapping("aktive")
+    fun hentAktiveSøknader(): List<GjeldeneSøknad> {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadService.hentAktiveSøknader(personIdent)
     }
 }
+
+// TODO: Flytt meg please:
+data class GjeldeneSøknad(
+    val søknadsdato: LocalDate?,
+    val søknadType: String?,
+)

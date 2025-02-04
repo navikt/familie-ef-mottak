@@ -3,8 +3,6 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -113,38 +111,10 @@ class SøknadskvitteringService(
 
     fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
 
-    fun hentSisteBarnetilsynSøknad(personIdent: String): SøknadBarnetilsyn? {
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
         return if (søknadFraDb?.søknadJson?.data != null) {
             objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
-        } else {
-            null
-        }
-    }
-
-    fun hentSisteOvergangstønadSøknad(personIdent: String): SøknadOvergangsstønad? {
-        val søknad =
-            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-                fnr = personIdent,
-                stønadstype = DOKUMENTTYPE_OVERGANGSSTØNAD,
-            )
-
-        return if (søknad?.søknadJson?.data != null) {
-            objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJson.data)
-        } else {
-            null
-        }
-    }
-
-    fun hentSisteSkolepengerStønad(personIdent: String): SøknadSkolepenger? {
-        val søknad =
-            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
-                fnr = personIdent,
-                stønadstype = DOKUMENTTYPE_SKOLEPENGER,
-            )
-
-        return if (søknad?.søknadJson?.data != null) {
-            objectMapper.readValue<SøknadSkolepenger>(søknad.søknadJson.data)
         } else {
             null
         }

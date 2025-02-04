@@ -1,7 +1,11 @@
 package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.mottak.api.GjeldeneSøknad
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -164,5 +168,58 @@ class SøknadService(
             throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke slettes.")
         }
         søknadRepository.deleteById(søknadId)
+    }
+
+    // TODO: Kan ta inn en liste med stønadtyper.
+    @Transactional
+    fun hentAktiveSøknader(personIdent: String): List<GjeldeneSøknad> {
+        val listeMedSøknader = mutableListOf<GjeldeneSøknad>()
+
+        val barnetilsynSøknad =
+            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                fnr = personIdent,
+                stønadstype = DOKUMENTTYPE_BARNETILSYN,
+            )
+
+        val overgangsstønadSøknad =
+            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                fnr = personIdent,
+                stønadstype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            )
+
+        val skolepengerSøknad =
+            søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                fnr = personIdent,
+                stønadstype = DOKUMENTTYPE_SKOLEPENGER,
+            )
+
+        if (barnetilsynSøknad != null) {
+            listeMedSøknader.add(
+                GjeldeneSøknad(
+                    søknadsdato = barnetilsynSøknad.opprettetTid.toLocalDate(),
+                    søknadType = DOKUMENTTYPE_BARNETILSYN,
+                ),
+            )
+        }
+
+        if (overgangsstønadSøknad != null) {
+            listeMedSøknader.add(
+                GjeldeneSøknad(
+                    søknadsdato = overgangsstønadSøknad.opprettetTid.toLocalDate(),
+                    søknadType = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                ),
+            )
+        }
+
+        if (skolepengerSøknad != null) {
+            listeMedSøknader.add(
+                GjeldeneSøknad(
+                    søknadsdato = skolepengerSøknad.opprettetTid.toLocalDate(),
+                    søknadType = DOKUMENTTYPE_SKOLEPENGER,
+                ),
+            )
+        }
+
+        return listeMedSøknader
     }
 }
