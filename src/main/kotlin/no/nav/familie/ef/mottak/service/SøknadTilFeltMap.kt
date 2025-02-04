@@ -250,7 +250,7 @@ object SøknadTilFeltMap {
         utenlandsopphold: Utenlandsopphold,
     ): VerdilisteElement? {
         val tabellCaption = "$elementLabel ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(utenlandsopphold)
+        val verdilisteElementListe = finnFelter(utenlandsopphold).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
