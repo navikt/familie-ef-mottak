@@ -8,7 +8,7 @@ data class SistInnsendteSøknadDto(
     val stønadType: String,
 )
 
-fun SistInnsendteSøknadDto.gjelderSøknad(dager: Long = 30): Boolean {
+fun SistInnsendteSøknadDto.nyereEnn(dager: Long = 30): Boolean {
     val dagensDato = LocalDate.now()
     val dagerSidenInnsending = ChronoUnit.DAYS.between(søknadsdato, dagensDato)
     return dagerSidenInnsending <= dager

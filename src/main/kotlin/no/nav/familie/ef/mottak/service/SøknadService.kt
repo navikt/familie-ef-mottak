@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
-import no.nav.familie.ef.mottak.api.dto.gjelderSøknad
+import no.nav.familie.ef.mottak.api.dto.nyereEnn
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
@@ -194,6 +194,6 @@ class SøknadService(
                     }
             }
 
-        return søknader.filter { it.gjelderSøknad() }
+        return søknader.filter { it.nyereEnn() }
     }
 }

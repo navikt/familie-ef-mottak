@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
-import no.nav.familie.ef.mottak.api.dto.gjelderSøknad
+import no.nav.familie.ef.mottak.api.dto.nyereEnn
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
@@ -205,7 +205,7 @@ class SøknadServiceTest {
                     ),
                 )
 
-            val filtrerteSøknader = søknader.filter { it.gjelderSøknad() }
+            val filtrerteSøknader = søknader.filter { it.nyereEnn() }
             assertThat(filtrerteSøknader.size).isEqualTo(1)
         }
     }
