@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
@@ -10,6 +11,7 @@ import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Autowired
@@ -174,5 +177,83 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         søknadService.slettSøknad(søknad.id)
 
         assertThrows<IllegalStateException> { (søknadService.get(søknad.id)) }
+    }
+
+    @Test
+    fun `skal returnere tom liste med innnsendte søknader for førstegangsøker`() {
+        val personIdent = "12345678910"
+        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+        assertThat(søknader.isEmpty())
+    }
+
+    @Test
+    fun `skal returnere liste med innnsendt søknad som er innsendt innen 30 dager`() {
+        val personIdent = "03125462714"
+
+        val overgangStønadSøknad =
+            søknadOvergangsstønad.copy(
+                innsendingsdetaljer =
+                    Søknadsfelt(
+                        label = "detaljer",
+                        verdi =
+                            Innsendingsdetaljer(
+                                datoMottatt =
+                                    Søknadsfelt(
+                                        label = "mottat",
+                                        verdi = LocalDateTime.now(),
+                                    ),
+                                datoPåbegyntSøknad = null,
+                            ),
+                    ),
+            )
+
+        val søknadMedVedlegg =
+            SøknadMedVedlegg(
+                søknad = overgangStønadSøknad,
+                vedlegg = emptyList(),
+            )
+
+        søknadService.mottaOvergangsstønad(søknadMedVedlegg)
+
+        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+        assertThat(søknader.size).isEqualTo(1)
+        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
+    }
+
+    @Test
+    fun `skal returnere tom liste der søknad er eldre enn 30 dager`() {
+        val personIdent = "03125462714"
+
+        val overgangStønadSøknad =
+            søknadOvergangsstønad.copy(
+                innsendingsdetaljer =
+                    Søknadsfelt(
+                        label = "detaljer",
+                        verdi =
+                            Innsendingsdetaljer(
+                                datoMottatt =
+                                    Søknadsfelt(
+                                        label = "mottat",
+                                        verdi = LocalDateTime.now().minusDays(31),
+                                    ),
+                                datoPåbegyntSøknad = null,
+                            ),
+                    ),
+            )
+
+        val søknadMedVedlegg =
+            SøknadMedVedlegg(
+                søknad = overgangStønadSøknad,
+                vedlegg = emptyList(),
+            )
+
+        søknadService.mottaOvergangsstønad(søknadMedVedlegg)
+
+        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+        assertThat(søknader.isEmpty())
+        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
     }
 }
