@@ -223,7 +223,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    fun `skal returnere tom liste der søknad er eldre enn 30 dager`() {
+    fun `skal returnere tom liste der innsendt søknad er eldre enn 30 dager`() {
         val personIdent = "03125462714"
 
         val overgangstønadSøknad =
