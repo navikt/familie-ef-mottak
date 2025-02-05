@@ -49,7 +49,7 @@ class SøknadController(
         return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 
-    @GetMapping("/soknad/sist-innsendt-per-stonad")
+    @GetMapping("sist-innsendt-per-stonad")
     fun hentSistInnsendteSøknadPerStønad(): List<SistInnsendteSøknadDto> {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
         return søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
