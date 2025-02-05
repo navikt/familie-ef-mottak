@@ -1,5 +1,8 @@
 package no.nav.familie.ef.mottak.service
 
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -10,9 +13,11 @@ import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
+import no.nav.familie.ef.mottak.util.DatoUtil
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.Fødselsnummer
@@ -181,7 +186,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `skal returnere tom liste med innnsendte søknader for førstegangsøker`() {
-        val personIdent = "12345678910"
+        val personIdent = "03125462714"
         val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
 
         assertThat(søknader.isEmpty())
@@ -190,43 +195,59 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     fun `skal returnere liste med innnsendt søknad som er innsendt innen 30 dager`() {
         val personIdent = "03125462714"
-
-        val overgangstønadSøknad =
-            søknadOvergangsstønad.copy(
-                innsendingsdetaljer =
-                    Søknadsfelt(
-                        label = "detaljer",
-                        verdi =
-                            Innsendingsdetaljer(
-                                datoMottatt =
-                                    Søknadsfelt(
-                                        label = "mottat",
-                                        verdi = LocalDateTime.now(),
-                                    ),
-                                datoPåbegyntSøknad = null,
-                            ),
-                    ),
-            )
-
-        val søknadMedVedlegg =
-            SøknadMedVedlegg(
-                søknad = overgangstønadSøknad,
-                vedlegg = emptyList(),
-            )
+        val søknadMedVedlegg = genererOvergangstønadSøknadMedVedlegg(LocalDateTime.now())
 
         søknadService.mottaOvergangsstønad(søknadMedVedlegg)
 
         val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
 
-        assertThat(søknader.size).isEqualTo(1)
+        assertThat(søknader).hasSize(1)
         assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
     }
 
     @Test
-    fun `skal returnere tom liste der innsendt søknad er eldre enn 30 dager`() {
+    fun `skal returnere tom liste der innsendt søknad ble innsendt for mer enn 30 dager siden`() {
+        mockkObject(DatoUtil)
+        every { DatoUtil.dagensDatoMedTid() } returns LocalDateTime.now().minusDays(31)
+
+        val personIdent = "03125462714"
+        val søknadMedVedlegg = genererOvergangstønadSøknadMedVedlegg(DatoUtil.dagensDatoMedTid())
+
+        søknadService.mottaOvergangsstønad(søknadMedVedlegg)
+
+        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+        assertThat(søknader).isEmpty()
+        unmockkObject(DatoUtil)
+    }
+
+    @Test
+    fun `skal returnere nyeste innsendte søknad av samme stønadtype`() {
         val personIdent = "03125462714"
 
-        val overgangstønadSøknad =
+        val tidligereSøknad = genererOvergangstønadSøknadMedVedlegg(LocalDateTime.now().minusDays(7))
+        val nyesteSøknad = genererOvergangstønadSøknadMedVedlegg(LocalDateTime.now())
+
+        søknadService.mottaOvergangsstønad(tidligereSøknad)
+        søknadService.mottaOvergangsstønad(nyesteSøknad)
+
+        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+        assertThat(søknader).hasSize(1)
+        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
+        assertThat(
+            søknader.first {
+                it.søknadsdato !=
+                    tidligereSøknad.søknad.innsendingsdetaljer.verdi.datoMottatt.verdi
+                        .toLocalDate()
+            },
+        )
+    }
+
+    private fun genererOvergangstønadSøknadMedVedlegg(
+        datoMottatt: LocalDateTime,
+    ): SøknadMedVedlegg<SøknadOvergangsstønad> {
+        val søknad =
             søknadOvergangsstønad.copy(
                 innsendingsdetaljer =
                     Søknadsfelt(
@@ -236,24 +257,16 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
                                 datoMottatt =
                                     Søknadsfelt(
                                         label = "mottat",
-                                        verdi = LocalDateTime.now().minusDays(31),
+                                        verdi = datoMottatt,
                                     ),
                                 datoPåbegyntSøknad = null,
                             ),
                     ),
             )
 
-        val søknadMedVedlegg =
-            SøknadMedVedlegg(
-                søknad = overgangstønadSøknad,
-                vedlegg = emptyList(),
-            )
-
-        søknadService.mottaOvergangsstønad(søknadMedVedlegg)
-
-        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
-
-        assertThat(søknader.isEmpty())
-        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
+        return SøknadMedVedlegg(
+            søknad = søknad,
+            vedlegg = emptyList(),
+        )
     }
 }
