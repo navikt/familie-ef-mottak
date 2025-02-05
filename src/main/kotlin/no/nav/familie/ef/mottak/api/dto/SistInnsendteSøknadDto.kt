@@ -11,5 +11,5 @@ data class SistInnsendteSøknadDto(
 fun SistInnsendteSøknadDto.gjelderSøknad(dager: Long = 30): Boolean {
     val dagensDato = LocalDate.now()
     val dagerSidenInnsending = ChronoUnit.DAYS.between(søknadsdato, dagensDato)
-    return dagerSidenInnsending >= dager
+    return dagerSidenInnsending <= dager
 }
