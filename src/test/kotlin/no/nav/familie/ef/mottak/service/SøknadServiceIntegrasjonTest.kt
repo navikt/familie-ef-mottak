@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.test.assertNotEquals
 
 internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Autowired
@@ -233,15 +234,12 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
 
+        val nyesteSøknadDato = søknader.first().søknadsdato
+        val tidligereSøknadDato = tidligereSøknad.søknad.innsendingsdetaljer.verdi.datoMottatt.verdi.toLocalDate()
+
         assertThat(søknader).hasSize(1)
         assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
-        assertThat(
-            søknader.first {
-                it.søknadsdato !=
-                    tidligereSøknad.søknad.innsendingsdetaljer.verdi.datoMottatt.verdi
-                        .toLocalDate()
-            },
-        )
+        assertNotEquals(nyesteSøknadDato, tidligereSøknadDato)
     }
 
     private fun genererOvergangstønadSøknadMedVedlegg(
