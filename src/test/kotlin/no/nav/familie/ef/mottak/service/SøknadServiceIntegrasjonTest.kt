@@ -191,7 +191,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     fun `skal returnere liste med innnsendt søknad som er innsendt innen 30 dager`() {
         val personIdent = "03125462714"
 
-        val overgangStønadSøknad =
+        val overgangstønadSøknad =
             søknadOvergangsstønad.copy(
                 innsendingsdetaljer =
                     Søknadsfelt(
@@ -210,7 +210,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         val søknadMedVedlegg =
             SøknadMedVedlegg(
-                søknad = overgangStønadSøknad,
+                søknad = overgangstønadSøknad,
                 vedlegg = emptyList(),
             )
 
@@ -226,7 +226,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     fun `skal returnere tom liste der søknad er eldre enn 30 dager`() {
         val personIdent = "03125462714"
 
-        val overgangStønadSøknad =
+        val overgangstønadSøknad =
             søknadOvergangsstønad.copy(
                 innsendingsdetaljer =
                     Søknadsfelt(
@@ -245,7 +245,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         val søknadMedVedlegg =
             SøknadMedVedlegg(
-                søknad = overgangStønadSøknad,
+                søknad = overgangstønadSøknad,
                 vedlegg = emptyList(),
             )
 
