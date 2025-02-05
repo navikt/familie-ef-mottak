@@ -122,10 +122,11 @@ class SøknadServiceTest {
 
         @Test
         fun `skal returnere tom liste for førstegangsøker`() {
-            every { søknadRepository.finnSisteSøknadenPerStønadtype(any()) } returns emptyList()
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), any()) } returns null
 
             val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
-            assertThat(søknader.isEmpty())
+
+            assertThat(søknader).isEmpty()
         }
 
         @Test
@@ -146,11 +147,13 @@ class SøknadServiceTest {
                     opprettetTid = LocalDateTime.now().minusDays(41),
                 )
 
-            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
-            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_SKOLEPENGER) } returns null
 
             val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
-            assertThat(søknader.isEmpty())
+
+            assertThat(søknader).isEmpty()
         }
 
         @Test
@@ -184,6 +187,7 @@ class SøknadServiceTest {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns skolepengerSøknad
 
             val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
             assertThat(søknader.size).isEqualTo(3)
         }
 
@@ -206,6 +210,7 @@ class SøknadServiceTest {
                 )
 
             val filtrerteSøknader = søknader.filter { it.nyereEnn() }
+
             assertThat(filtrerteSøknader.size).isEqualTo(1)
         }
     }

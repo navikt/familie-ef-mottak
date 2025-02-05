@@ -235,7 +235,9 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
 
         val nyesteSøknadDato = søknader.first().søknadsdato
-        val tidligereSøknadDato = tidligereSøknad.søknad.innsendingsdetaljer.verdi.datoMottatt.verdi.toLocalDate()
+        val tidligereSøknadDato =
+            tidligereSøknad.søknad.innsendingsdetaljer.verdi.datoMottatt.verdi
+                .toLocalDate()
 
         assertThat(søknader).hasSize(1)
         assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
