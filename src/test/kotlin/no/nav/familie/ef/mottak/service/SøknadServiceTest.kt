@@ -147,9 +147,9 @@ class SøknadServiceTest {
                     opprettetTid = LocalDateTime.now().minusDays(41),
                 )
 
-            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
-            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
-            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), DOKUMENTTYPE_SKOLEPENGER) } returns null
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns null
 
             val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
 
