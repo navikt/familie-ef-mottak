@@ -3,6 +3,12 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
+import no.nav.familie.ef.mottak.api.dto.nyereEnn
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -10,6 +16,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
+import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.TaskProsesseringService
 import no.nav.familie.ef.mottak.service.Testdata
@@ -19,6 +26,8 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.repository.findByIdOrNull
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 
@@ -104,6 +113,105 @@ class SøknadServiceTest {
             verify {
                 søknadRepository.deleteById("UUID")
             }
+        }
+    }
+
+    @Nested
+    inner class HentSistInnsendteSøknadPerStønad {
+        val personIdent = "12345678910"
+
+        @Test
+        fun `skal returnere tom liste for førstegangsøker`() {
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), any()) } returns null
+
+            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+            assertThat(søknader).isEmpty()
+        }
+
+        @Test
+        fun `skal returnere tom liste med søkander som er eldre enn 30 dager`() {
+            val overgangStønadSøknad =
+                Søknad(
+                    søknadJson = EncryptedString(""),
+                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                    fnr = personIdent,
+                    opprettetTid = LocalDateTime.now().minusDays(40),
+                )
+
+            val barnetilsynSøknad =
+                Søknad(
+                    søknadJson = EncryptedString(""),
+                    dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                    fnr = personIdent,
+                    opprettetTid = LocalDateTime.now().minusDays(41),
+                )
+
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns null
+
+            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+            assertThat(søknader).isEmpty()
+        }
+
+        @Test
+        fun `skal returnere liste med søknader som er innsendt innen 30 dager`() {
+            val overgangStønadSøknad =
+                Søknad(
+                    søknadJson = EncryptedString(""),
+                    dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                    fnr = personIdent,
+                    opprettetTid = LocalDateTime.now().minusDays(25),
+                )
+
+            val barnetilsynSøknad =
+                Søknad(
+                    søknadJson = EncryptedString(""),
+                    dokumenttype = DOKUMENTTYPE_BARNETILSYN,
+                    fnr = personIdent,
+                    opprettetTid = LocalDateTime.now().minusDays(7),
+                )
+
+            val skolepengerSøknad =
+                Søknad(
+                    søknadJson = EncryptedString(""),
+                    dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
+                    fnr = personIdent,
+                    opprettetTid = LocalDateTime.now().minusDays(6),
+                )
+
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
+            every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns skolepengerSøknad
+
+            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+
+            assertThat(søknader.size).isEqualTo(3)
+        }
+
+        @Test
+        fun `skal filtrere søknader eldre en 30 dager`() {
+            val søknader =
+                listOf(
+                    SistInnsendteSøknadDto(
+                        søknadsdato = LocalDate.now().minusDays(40),
+                        stønadType = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                    ),
+                    SistInnsendteSøknadDto(
+                        søknadsdato = LocalDate.now().minusDays(41),
+                        stønadType = DOKUMENTTYPE_BARNETILSYN,
+                    ),
+                    SistInnsendteSøknadDto(
+                        søknadsdato = LocalDate.now().minusDays(2),
+                        stønadType = DOKUMENTTYPE_SKOLEPENGER,
+                    ),
+                )
+
+            val filtrerteSøknader = søknader.filter { it.nyereEnn() }
+
+            assertThat(filtrerteSøknader.size).isEqualTo(1)
         }
     }
 }
