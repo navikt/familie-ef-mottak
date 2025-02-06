@@ -8,6 +8,7 @@ import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.kafka.KafkaErrorHandler
+import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
@@ -60,8 +61,8 @@ class ApplicationConfig {
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
         RestTemplateBuilder()
-            .setConnectTimeout(Duration.of(5, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(25, ChronoUnit.SECONDS))
+            .connectTimeout(Duration.of(5, ChronoUnit.SECONDS))
+            .readTimeout(Duration.of(25, ChronoUnit.SECONDS))
             .interceptors(
                 bearerTokenExchangeClientInterceptor,
                 mdcValuesPropagatingClientInterceptor,
@@ -75,8 +76,8 @@ class ApplicationConfig {
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
         RestTemplateBuilder()
-            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(5, ChronoUnit.MINUTES))
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .readTimeout(Duration.of(5, ChronoUnit.MINUTES))
             .interceptors(
                 mdcInterceptor,
                 bearerTokenClientInterceptor,
@@ -89,8 +90,8 @@ class ApplicationConfig {
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
         RestTemplateBuilder()
-            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
             .interceptors(mdcInterceptor, consumerIdClientInterceptor)
             .build()
 
@@ -100,8 +101,8 @@ class ApplicationConfig {
         RetryOAuth2HttpClient(
             RestClient.create(
                 RestTemplateBuilder()
-                    .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                    .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+                    .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
                     .build(),
             ),
         )
@@ -113,7 +114,7 @@ class ApplicationConfig {
     fun logFilter(): FilterRegistrationBean<LogFilter> {
         logger.info("Registering LogFilter filter")
         val filterRegistration = FilterRegistrationBean<LogFilter>()
-        filterRegistration.filter = LogFilter()
+        filterRegistration.filter = LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)
         filterRegistration.order = 1
         return filterRegistration
     }
