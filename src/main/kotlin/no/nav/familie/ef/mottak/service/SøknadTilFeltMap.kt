@@ -205,13 +205,13 @@ object SøknadTilFeltMap {
     }
 
     private fun ikkeVisFødselsdatoHvisFødt(barn: Barn): Barn {
-        val modifiedBarn =
+        val barnMedEllerUtenFødselsdato =
             if (barn.erBarnetFødt.verdi) {
                 barn.copy(fødselTermindato = null)
             } else {
                 barn
             }
-        return modifiedBarn
+        return barnMedEllerUtenFødselsdato
     }
 
     private fun mapArbeidsforholdElementer(
