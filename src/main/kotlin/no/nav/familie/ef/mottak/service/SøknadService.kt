@@ -2,6 +2,11 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
+import no.nav.familie.ef.mottak.api.dto.nyereEnn
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -164,5 +169,31 @@ class SøknadService(
             throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke slettes.")
         }
         søknadRepository.deleteById(søknadId)
+    }
+
+    @Transactional
+    fun hentSistInnsendteSøknadPerStønad(personIdent: String): List<SistInnsendteSøknadDto> {
+        val stønadstyper =
+            listOf(
+                DOKUMENTTYPE_BARNETILSYN,
+                DOKUMENTTYPE_OVERGANGSSTØNAD,
+                DOKUMENTTYPE_SKOLEPENGER,
+            )
+
+        val søknader =
+            stønadstyper.mapNotNull { stønadstype ->
+                søknadRepository
+                    .finnSisteSøknadForPersonOgStønadstype(
+                        fnr = personIdent,
+                        stønadstype = stønadstype,
+                    )?.let { søknad ->
+                        SistInnsendteSøknadDto(
+                            søknadsdato = søknad.opprettetTid.toLocalDate(),
+                            stønadType = stønadstype,
+                        )
+                    }
+            }
+
+        return søknader.filter { it.nyereEnn() }
     }
 }
