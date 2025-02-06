@@ -188,9 +188,9 @@ class SøknadService(
                         fnr = personIdent,
                         stønadstype = dokumenttype,
                     )
-                val stønadType = dokumenttypeTilStønadType(dokumenttype)
+                val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: error("Kunne ikke mappe dokumenttype=$dokumenttype til stønadstype")
 
-                if (søknad != null && stønadType != null) {
+                if (søknad != null) {
                     SistInnsendtSøknadDto(
                         søknadsdato = søknad.opprettetTid.toLocalDate(),
                         stønadType = stønadType,
