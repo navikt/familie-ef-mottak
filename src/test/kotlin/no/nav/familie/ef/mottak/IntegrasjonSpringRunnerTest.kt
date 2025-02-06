@@ -13,7 +13,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -68,7 +68,7 @@ abstract class IntegrasjonSpringRunnerTest {
     @LocalServerPort
     private var port: Int? = 0
 
-    @BeforeEach
+    @AfterEach
     fun reset() {
         loggingEvents.clear()
         dokumentasjonsbehovRepository.deleteAll()
