@@ -196,11 +196,20 @@ object SøknadTilFeltMap {
     ): VerdilisteElement? {
         val element = if (elementLabel == "Barna dine") "Barn" else "Child"
         val tabellCaption = "$element ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(barn).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+        val barnUtenFødselsdato = fjernFødselsdatoHvisFødt(barn)
+        val verdilisteElementListe =
+            finnFelter(barnUtenFødselsdato).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
     }
+
+    private fun fjernFødselsdatoHvisFødt(barn: Barn): Barn =
+        if (barn.erBarnetFødt.verdi) {
+            barn.copy(fødselTermindato = null)
+        } else {
+            barn
+        }
 
     private fun mapArbeidsforholdElementer(
         elementLabel: String,
@@ -222,7 +231,13 @@ object SøknadTilFeltMap {
             (entitet.verdi as List<*>).mapIndexedNotNull { indeks, it ->
                 when (it) {
                     is Barn -> mapBarnElementer(entitet.label, indeks, it)
-                    is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver -> mapArbeidsforholdElementer(entitet.label, indeks, it)
+                    is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver ->
+                        mapArbeidsforholdElementer(
+                            entitet.label,
+                            indeks,
+                            it,
+                        )
+
                     else -> null
                 }
             }
@@ -251,7 +266,8 @@ object SøknadTilFeltMap {
             }
         }
 
-        val svaralternativTittel = if (entitet.label == "Does any of the following apply to you?") "Answer options" else "Svaralternativ"
+        val svaralternativTittel =
+            if (entitet.label == "Does any of the following apply to you?") "Answer options" else "Svaralternativ"
         val alternativerElement =
             VerdilisteElement(
                 label = svaralternativTittel,
@@ -318,7 +334,11 @@ private fun getSkjemanummerTekst(
 ): String? {
     val skjemanumre =
         mapOf(
-            "overgangsstønad" to mapOf("nb" to "Skjemanummer: NAV 15-00.01", "en" to "Application number: NAV 15-00.01"),
+            "overgangsstønad" to
+                mapOf(
+                    "nb" to "Skjemanummer: NAV 15-00.01",
+                    "en" to "Application number: NAV 15-00.01",
+                ),
             "barnetilsyn" to mapOf("nb" to "Skjemanummer: NAV 15-00.02", "en" to "Application number: NAV 15-00.02"),
             "skolepenger" to mapOf("nb" to "Skjemanummer: NAV 15-00.04", "en" to "Application number: NAV 15-00.04"),
             "arbeidssøker" to mapOf("nb" to "Skjemanummer: NAV 15-08.01", "en" to "Application number: NAV 15-08.01"),
