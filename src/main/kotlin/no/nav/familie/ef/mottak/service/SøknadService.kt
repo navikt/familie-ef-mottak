@@ -2,8 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
-import no.nav.familie.ef.mottak.api.dto.nyereEnn
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
@@ -16,6 +14,7 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -27,6 +26,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
+import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -172,7 +173,7 @@ class SøknadService(
     }
 
     @Transactional
-    fun hentSistInnsendteSøknadPerStønad(personIdent: String): List<SistInnsendteSøknadDto> {
+    fun hentSistInnsendtSøknadPerStønad(personIdent: String): List<SistInnsendtSøknadDto> {
         val stønadstyper =
             listOf(
                 DOKUMENTTYPE_BARNETILSYN,
@@ -180,20 +181,23 @@ class SøknadService(
                 DOKUMENTTYPE_SKOLEPENGER,
             )
 
-        val søknader =
-            stønadstyper.mapNotNull { stønadstype ->
-                søknadRepository
-                    .finnSisteSøknadForPersonOgStønadstype(
+        return stønadstyper
+            .mapNotNull { dokumenttype ->
+                val søknad =
+                    søknadRepository.finnSisteSøknadForPersonOgStønadstype(
                         fnr = personIdent,
-                        stønadstype = stønadstype,
-                    )?.let { søknad ->
-                        SistInnsendteSøknadDto(
-                            søknadsdato = søknad.opprettetTid.toLocalDate(),
-                            stønadType = stønadstype,
-                        )
-                    }
-            }
+                        stønadstype = dokumenttype,
+                    )
+                val stønadType = dokumenttypeTilStønadType(dokumenttype)
 
-        return søknader.filter { it.nyereEnn() }
+                if (søknad != null && stønadType != null) {
+                    SistInnsendtSøknadDto(
+                        søknadsdato = søknad.opprettetTid.toLocalDate(),
+                        stønadType = stønadType,
+                    )
+                } else {
+                    null
+                }
+            }.filter { it.nyereEnn() }
     }
 }
