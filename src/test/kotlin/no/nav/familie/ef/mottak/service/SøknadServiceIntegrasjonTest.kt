@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
@@ -21,6 +20,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.Fødselsnummer
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.util.FnrGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -188,7 +188,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Test
     fun `skal returnere tom liste med innnsendte søknader for førstegangsøker`() {
         val personIdent = "03125462714"
-        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+        val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
         assertThat(søknader.isEmpty())
     }
@@ -200,10 +200,10 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         søknadService.mottaOvergangsstønad(søknadMedVedlegg)
 
-        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+        val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
         assertThat(søknader).hasSize(1)
-        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
+        assertThat(søknader.first { it.stønadType == StønadType.OVERGANGSSTØNAD })
     }
 
     @Test
@@ -216,7 +216,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
 
         søknadService.mottaOvergangsstønad(søknadMedVedlegg)
 
-        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+        val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
         assertThat(søknader).isEmpty()
         unmockkObject(DatoUtil)
@@ -232,7 +232,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
         søknadService.mottaOvergangsstønad(tidligereSøknad)
         søknadService.mottaOvergangsstønad(nyesteSøknad)
 
-        val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+        val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
         val nyesteSøknadDato = søknader.first().søknadsdato
         val tidligereSøknadDato =
@@ -240,7 +240,7 @@ internal class SøknadServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
                 .toLocalDate()
 
         assertThat(søknader).hasSize(1)
-        assertThat(søknader.first { it.stønadType == DOKUMENTTYPE_OVERGANGSSTØNAD })
+        assertThat(søknader.first { it.stønadType == StønadType.OVERGANGSSTØNAD })
         assertNotEquals(nyesteSøknadDato, tidligereSøknadDato)
     }
 

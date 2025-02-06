@@ -3,8 +3,6 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.ef.mottak.api.dto.SistInnsendteSøknadDto
-import no.nav.familie.ef.mottak.api.dto.nyereEnn
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
@@ -20,7 +18,10 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.service.TaskProsesseringService
 import no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
+import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -124,7 +125,7 @@ class SøknadServiceTest {
         fun `skal returnere tom liste for førstegangsøker`() {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), any()) } returns null
 
-            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader).isEmpty()
         }
@@ -151,7 +152,7 @@ class SøknadServiceTest {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns null
 
-            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader).isEmpty()
         }
@@ -186,7 +187,7 @@ class SøknadServiceTest {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns skolepengerSøknad
 
-            val søknader = søknadService.hentSistInnsendteSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader.size).isEqualTo(3)
         }
@@ -195,17 +196,17 @@ class SøknadServiceTest {
         fun `skal filtrere søknader eldre en 30 dager`() {
             val søknader =
                 listOf(
-                    SistInnsendteSøknadDto(
+                    SistInnsendtSøknadDto(
                         søknadsdato = LocalDate.now().minusDays(40),
-                        stønadType = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                        stønadType = StønadType.OVERGANGSSTØNAD,
                     ),
-                    SistInnsendteSøknadDto(
+                    SistInnsendtSøknadDto(
                         søknadsdato = LocalDate.now().minusDays(41),
-                        stønadType = DOKUMENTTYPE_BARNETILSYN,
+                        stønadType = StønadType.BARNETILSYN,
                     ),
-                    SistInnsendteSøknadDto(
+                    SistInnsendtSøknadDto(
                         søknadsdato = LocalDate.now().minusDays(2),
-                        stønadType = DOKUMENTTYPE_SKOLEPENGER,
+                        stønadType = StønadType.SKOLEPENGER,
                     ),
                 )
 
