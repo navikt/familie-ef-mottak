@@ -2,6 +2,9 @@ package no.nav.familie.ef.mottak.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -11,6 +14,7 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -22,6 +26,8 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
+import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -164,5 +170,34 @@ class SøknadService(
             throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke slettes.")
         }
         søknadRepository.deleteById(søknadId)
+    }
+
+    @Transactional
+    fun hentSistInnsendtSøknadPerStønad(personIdent: String): List<SistInnsendtSøknadDto> {
+        val stønadstyper =
+            listOf(
+                DOKUMENTTYPE_BARNETILSYN,
+                DOKUMENTTYPE_OVERGANGSSTØNAD,
+                DOKUMENTTYPE_SKOLEPENGER,
+            )
+
+        return stønadstyper
+            .mapNotNull { dokumenttype ->
+                val søknad =
+                    søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                        fnr = personIdent,
+                        stønadstype = dokumenttype,
+                    )
+                val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: error("Kunne ikke mappe dokumenttype=$dokumenttype til stønadstype")
+
+                if (søknad != null) {
+                    SistInnsendtSøknadDto(
+                        søknadsdato = søknad.opprettetTid.toLocalDate(),
+                        stønadType = stønadType,
+                    )
+                } else {
+                    null
+                }
+            }.filter { it.nyereEnn() }
     }
 }
