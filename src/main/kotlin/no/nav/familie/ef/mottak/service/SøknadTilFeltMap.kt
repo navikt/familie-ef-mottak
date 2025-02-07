@@ -5,6 +5,7 @@ import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.repository.domain.PdfConfig
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
 import no.nav.familie.kontrakter.ef.søknad.Adresse
+import no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver
 import no.nav.familie.kontrakter.ef.søknad.Barn
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
@@ -169,7 +170,7 @@ object SøknadTilFeltMap {
                         when (it) {
                             is Barn -> SøknadsfeltType.BarnElement(it)
                             is Utenlandsopphold -> SøknadsfeltType.UtenlandsoppholdElement(it)
-                            is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver -> SøknadsfeltType.ArbeidsforholdElement(it)
+                            is Arbeidsgiver -> SøknadsfeltType.ArbeidsforholdElement(it)
                             else -> null
                         }
                     }
@@ -235,7 +236,7 @@ object SøknadTilFeltMap {
     private fun mapArbeidsforholdElementer(
         elementLabel: String,
         indeks: Int,
-        arbeidsforhold: no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver,
+        arbeidsforhold: Arbeidsgiver,
     ): VerdilisteElement? {
         val element = if (elementLabel == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
         val tabellCaption = "$element ${indeks + 1}"
