@@ -146,10 +146,6 @@ object SøknadTilFeltMap {
                 .toList()
 
         if (entitet is Søknadsfelt<*>) {
-            val erBarn = (entitet.label == "Barna dine" || entitet.label == "Your children") && entitet.verdi is List<*>
-            val erArbeidsforhold =
-                (entitet.label == "Om arbeidsforholdet ditt" || entitet.label == "About your employment") && entitet.verdi is List<*>
-            val erUtenlandsopphold = (entitet.label == "Utenlandsopphold" || entitet.label == "Time abroad") && entitet.verdi is List<*>
             if (entitet.verdi!! is Dokumentasjon) {
                 @Suppress("UNCHECKED_CAST")
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
@@ -157,9 +153,6 @@ object SøknadTilFeltMap {
             if (entitet.verdi!!::class in endNodes) {
                 return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
                     ?: emptyList()
-            }
-            if (erBarn || erArbeidsforhold || erUtenlandsopphold) {
-                return mapListeElementer(entitet)
             }
             if (entitet.alternativer != null) {
                 return mapAlternativerOgSvar(entitet)
@@ -170,6 +163,32 @@ object SøknadTilFeltMap {
                 if (verdiliste.firstOrNull() is String) {
                     return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
                         ?: emptyList()
+                }
+                val mappedElementer =
+                    verdiliste.mapNotNull {
+                        when (it) {
+                            is Barn -> SøknadsfeltType.BarnElement(it)
+                            is Utenlandsopphold -> SøknadsfeltType.UtenlandsoppholdElement(it)
+                            is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver -> SøknadsfeltType.ArbeidsforholdElement(it)
+                            else -> null
+                        }
+                    }
+                if (mappedElementer.isNotEmpty()) {
+                    return listOf(
+                        VerdilisteElement(
+                            label = entitet.label,
+                            verdiliste =
+                                mappedElementer
+                                    .map {
+                                        when (it) {
+                                            is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(it.barn), it.barn)
+                                            is SøknadsfeltType.UtenlandsoppholdElement -> mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(it.utenlandsopphold), it.utenlandsopphold)
+                                            is SøknadsfeltType.ArbeidsforholdElement -> mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(it.arbeidsforhold), it.arbeidsforhold)
+                                        }
+                                    }.filterNotNull(),
+                            visningsVariant = VisningsVariant.TABELL.toString(),
+                        ),
+                    )
                 }
             }
             // skal ekskluderes
@@ -191,39 +210,12 @@ object SøknadTilFeltMap {
         return listOf(VerdilisteElement(label = entitet.label, verdiliste = list.filterNotNull()))
     }
 
-    private fun mapListeElementer(
-        entitet: Søknadsfelt<*>,
-    ): List<VerdilisteElement> {
-        val mappedElementer =
-            (entitet.verdi as List<*>).mapIndexedNotNull { indeks, it ->
-                when (it) {
-                    is Barn -> mapBarnElementer(entitet.label, indeks, it)
-                    is no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver ->
-                        mapArbeidsforholdElementer(
-                            entitet.label,
-                            indeks,
-                            it,
-                        )
-
-                    is Utenlandsopphold -> mapUtenlandsoppholdElementer(entitet.label, indeks, it)
-                    else -> null
-                }
-            }
-        return listOf(
-            VerdilisteElement(
-                entitet.label,
-                verdiliste = mappedElementer,
-                visningsVariant = VisningsVariant.TABELL.toString(),
-            ),
-        )
-    }
-
     private fun mapBarnElementer(
         elementLabel: String,
         indeks: Int,
         barn: Barn,
     ): VerdilisteElement? {
-        val element = if (elementLabel == "Barna dine") "Barn" else "Child"
+        val element = if (elementLabel.contains("Barn")) "Barn" else "Child"
         val tabellCaption = "$element ${indeks + 1}"
         val verdilisteElementListe = finnFelter(barn).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
