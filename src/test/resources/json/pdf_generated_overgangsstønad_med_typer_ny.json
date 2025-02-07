@@ -365,10 +365,6 @@
               "verdi": "Ja"
             },
             {
-              "label": "Termindato",
-              "verdi": "16.05.2020"
-            },
-            {
               "label": "Bekreftelse på ventet fødselsdato",
               "verdiliste": [
                 {

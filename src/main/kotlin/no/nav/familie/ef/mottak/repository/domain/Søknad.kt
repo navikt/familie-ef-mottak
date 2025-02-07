@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.repository.domain
 
 import no.nav.familie.ef.mottak.encryption.EncryptedString
+import no.nav.familie.ef.mottak.util.DatoUtil
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -20,6 +21,6 @@ data class Søknad(
     val saksnummer: String? = null,
     val fnr: String,
     val taskOpprettet: Boolean = false,
-    val opprettetTid: LocalDateTime = LocalDateTime.now(),
+    val opprettetTid: LocalDateTime = DatoUtil.dagensDatoMedTid(),
     val behandleINySaksbehandling: Boolean = false,
 )

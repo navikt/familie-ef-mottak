@@ -217,11 +217,20 @@ object SøknadTilFeltMap {
     ): VerdilisteElement? {
         val element = if (elementLabel.contains("Barn")) "Barn" else "Child"
         val tabellCaption = "$element ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(barn).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+        val barnUtenFødselsdato = fjernFødselsdatoHvisFødt(barn)
+        val verdilisteElementListe =
+            finnFelter(barnUtenFødselsdato).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
     }
+
+    private fun fjernFødselsdatoHvisFødt(barn: Barn): Barn =
+        if (barn.erBarnetFødt.verdi) {
+            barn.copy(fødselTermindato = null)
+        } else {
+            barn
+        }
 
     private fun mapArbeidsforholdElementer(
         elementLabel: String,

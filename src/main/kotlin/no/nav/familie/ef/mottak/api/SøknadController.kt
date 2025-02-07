@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -46,5 +47,11 @@ class SøknadController(
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
         return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+    }
+
+    @GetMapping("sist-innsendt-per-stonad")
+    fun hentSistInnsendtSøknadPerStønad(): List<SistInnsendtSøknadDto> {
+        val personIdent = EksternBrukerUtils.hentFnrFraToken()
+        return søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
     }
 }
