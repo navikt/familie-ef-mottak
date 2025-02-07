@@ -170,7 +170,7 @@ internal object Testdata {
             Søknadsfelt("Søker", personalia()),
             Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
             Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
-            Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+            Søknadsfelt("Opphold i Norge", medlemskapsdetaljerNy()),
             Søknadsfelt("Bosituasjonen din", bosituasjon()),
             Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
             Søknadsfelt("Barna dine", listOf(barn(barnetilsyn = true))),
@@ -766,6 +766,64 @@ internal object Testdata {
                                 Søknadsfelt(
                                     "Hvorfor bodde du i utlandet?",
                                     "Granca, Granca, Granca",
+                                ),
+                        ),
+                    ),
+                ),
+        )
+
+    private fun medlemskapsdetaljerNy(): Medlemskapsdetaljer =
+        Medlemskapsdetaljer(
+            oppholderDuDegINorge = Søknadsfelt("Oppholder du deg i Norge?", true),
+            bosattNorgeSisteÅrene = Søknadsfelt("Har du bodd i Norge de siste tre årene?", true),
+            utenlandsopphold =
+                Søknadsfelt(
+                    "Utenlandsopphold",
+                    listOf(
+                        Utenlandsopphold(
+                            fradato =
+                                Søknadsfelt(
+                                    "Fra",
+                                    LocalDate.of(2012, 12, 4),
+                                ),
+                            tildato =
+                                Søknadsfelt(
+                                    "Til",
+                                    LocalDate.of(2012, 12, 18),
+                                ),
+                            land =
+                                Søknadsfelt(
+                                    label = "I hvilket land oppholdt du deg?",
+                                    verdi = "Spania",
+                                    svarId = "ESP",
+                                ),
+                            årsakUtenlandsopphold =
+                                Søknadsfelt(
+                                    "Hvorfor bodde du i utlandet?",
+                                    "Granca, Granca, Granca",
+                                ),
+                        ),
+                        Utenlandsopphold(
+                            fradato =
+                                Søknadsfelt(
+                                    "Fra",
+                                    LocalDate.of(2013, 12, 4),
+                                ),
+                            tildato =
+                                Søknadsfelt(
+                                    "Til",
+                                    LocalDate.of(2014, 12, 18),
+                                ),
+                            land =
+                                Søknadsfelt(
+                                    label = "I hvilket land oppholdt du deg?",
+                                    verdi = "Italia",
+                                    svarId = "IT",
+                                ),
+                            årsakUtenlandsopphold =
+                                Søknadsfelt(
+                                    "Hvorfor bodde du i utlandet?",
+                                    "Fint vær",
                                 ),
                         ),
                     ),

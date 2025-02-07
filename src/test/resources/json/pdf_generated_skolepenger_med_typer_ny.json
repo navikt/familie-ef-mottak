@@ -1,5 +1,5 @@
 {
-  "label": "Søknad om stønad til barnetilsyn",
+  "label": "Søknad om stønad til skolepenger",
   "verdiliste": [
     {
       "label": "detaljer",
@@ -32,28 +32,6 @@
         {
           "label": "Sivilstand",
           "verdi": "Ugift"
-        }
-      ]
-    },
-    {
-      "label": "Opplysninger om adresse",
-      "verdiliste": [
-        {
-          "label": "Bor du på denne adressen?",
-          "verdi": "Nei"
-        },
-        {
-          "label": "Har du meldt adresseendring til folkeregisteret",
-          "verdi": "Ja"
-        },
-        {
-          "label": "DokumentasjonForAdresseendring",
-          "verdiliste": [
-            {
-              "label": "harSendtInn",
-              "verdi": "Nei"
-            }
-          ]
         }
       ]
     },
@@ -165,27 +143,6 @@
                   "verdi": "Granca, Granca, Granca"
                 }
               ]
-            },
-            {
-              "label": "Utenlandsopphold 2",
-              "verdiliste": [
-                {
-                  "label": "Fra",
-                  "verdi": "04.12.2013"
-                },
-                {
-                  "label": "Til",
-                  "verdi": "18.12.2014"
-                },
-                {
-                  "label": "I hvilket land oppholdt du deg?",
-                  "verdi": "Italia"
-                },
-                {
-                  "label": "Hvorfor bodde du i utlandet?",
-                  "verdi": "Fint vær"
-                }
-              ]
             }
           ]
         }
@@ -244,7 +201,7 @@
       ]
     },
     {
-      "label": "Barna dine",
+      "label": "Barn",
       "visningsVariant": "TABELL",
       "verdiliste": [
         {
@@ -359,44 +316,6 @@
                   "verdi": "Vi sees stadig vekk"
                 }
               ]
-            },
-            {
-              "label": "Skal ha barnepass",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Barnepass",
-              "verdiliste": [
-                {
-                  "label": "Årsak Barnepass",
-                  "verdi": "Årsak"
-                },
-                {
-                  "label": "Ordninger",
-                  "verdiliste": [
-                    {
-                      "label": "Hva slags barnepassordning?",
-                      "verdi": "En"
-                    },
-                    {
-                      "label": "Navn",
-                      "verdi": "navn"
-                    },
-                    {
-                      "label": "Periode",
-                      "verdi": "Fra januar 2020 til juli 2020"
-                    },
-                    {
-                      "label": "Periode",
-                      "verdi": "Fra 12.01.2020 til 15.02.2020"
-                    },
-                    {
-                      "label": "Beløp",
-                      "verdi": "1000,21"
-                    }
-                  ]
-                }
-              ]
             }
           ]
         }
@@ -406,219 +325,67 @@
       "label": "Arbeid, utdanning og andre aktiviteter",
       "verdiliste": [
         {
-          "label": "Hvordan er arbeidssituasjonen din?",
-          "verdi": "Jeg er hjemme med barn under 1 år\n\nJeg er i arbeid\n\nJeg er selvstendig næringsdrivende eller frilanser"
+          "label": "Skole/utdanningssted",
+          "verdi": "UiO"
         },
         {
-          "label": "Om arbeidsforholdet ditt",
-          "visningsVariant": "TABELL",
+          "label": "Utdanning",
           "verdiliste": [
             {
-              "label": "Arbeidsforhold 1",
-              "verdiliste": [
-                {
-                  "label": "Navn på arbeidsgiveren",
-                  "verdi": "Palpatine"
-                },
-                {
-                  "label": "Hvor mye jobber du?",
-                  "verdi": "15"
-                },
-                {
-                  "label": "Er stillingen fast eller midlertidig?",
-                  "verdi": "Fast"
-                },
-                {
-                  "label": "Har du en sluttdato?",
-                  "verdi": "Ja"
-                },
-                {
-                  "label": "Når skal du slutte?",
-                  "verdi": "18.11.2020"
-                }
-              ]
+              "label": "Linje/kurs/grad",
+              "verdi": "Profesjonsstudium Informatikk"
+            },
+            {
+              "label": "Når skal du være elev/student?",
+              "verdi": "Fra januar 1999 til oktober 2004"
             }
           ]
         },
         {
-          "label": "Om firmaet du driver",
+          "label": "Utdanning",
           "verdiliste": [
             {
-              "label": "Navn på firma",
-              "verdi": "Bobs burgers"
+              "label": "Linje/kurs/grad",
+              "verdi": "Profesjonsstudium Informatikk"
             },
             {
-              "label": "Organisasjonsnummer",
-              "verdi": "987654321"
-            },
-            {
-              "label": "Når etablerte du firmaet?",
-              "verdi": "05.04.2018"
-            },
-            {
-              "label": "Hvor mye jobber du?",
-              "verdi": "150"
-            },
-            {
-              "label": "Hvordan ser arbeidsuken din ut?",
-              "verdi": "Veldig tung"
+              "label": "Når skal du være elev/student?",
+              "verdi": "Fra 01.01.1999 til 01.10.2004"
             }
           ]
         },
         {
-          "label": "Om virksomheten du etablerer",
-          "verdiliste": [
-            {
-              "label": "Beskriv virksomheten",
-              "verdi": "Den kommer til å revolusjonere verden"
-            }
-          ]
+          "label": "Er utdanningen offentlig eller privat?",
+          "verdi": "Offentlig"
         },
         {
-          "label": "Når du er arbeidssøker",
-          "verdiliste": [
-            {
-              "label": "Er du registrert som arbeidssøker hos NAV?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-              "verdi": "Nei"
-            },
-            {
-              "label": "Hvor ønsker du å søke arbeid?",
-              "verdi": "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei"
-            },
-            {
-              "label": "Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Dokumentasjon - ikke villig til å ta import tilbud om arbeid",
-              "verdiliste": [
-                {
-                  "label": "harSendtInn",
-                  "verdi": "Nei"
-                }
-              ]
-            }
-          ]
+          "label": "Heltid, eller deltid",
+          "verdi": "Deltid"
         },
         {
-          "label": "Utdanningen du skal ta",
-          "verdiliste": [
-            {
-              "label": "Skole/utdanningssted",
-              "verdi": "UiO"
-            },
-            {
-              "label": "Utdanning",
-              "verdiliste": [
-                {
-                  "label": "Linje/kurs/grad",
-                  "verdi": "Profesjonsstudium Informatikk"
-                },
-                {
-                  "label": "Når skal du være elev/student?",
-                  "verdi": "Fra 01.01.1999 til 01.10.2004"
-                }
-              ]
-            },
-            {
-              "label": "Er utdanningen offentlig eller privat?",
-              "verdi": "Offentlig"
-            },
-            {
-              "label": "Heltid, eller deltid",
-              "verdi": "Deltid"
-            },
-            {
-              "label": "Hvor mye skal du studere?",
-              "verdi": "300"
-            },
-            {
-              "label": "Hva er målet med utdanningen?",
-              "verdi": "Økonomisk selvstendighet"
-            },
-            {
-              "label": "Har du tatt utdanning etter grunnskolen?",
-              "verdi": "Ja"
-            },
-            {
-              "label": "Tidligere Utdanning",
-              "verdiliste": [
-                {
-                  "label": "Linje/kurs/grad",
-                  "verdi": "Master Fysikk"
-                },
-                {
-                  "label": "Når var du elev/student?",
-                  "verdi": "Fra januar 1999 til oktober 2004"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "label": "Når søker du stønad fra?",
-      "verdiliste": [
+          "label": "Hvor mye skal du studere?",
+          "verdi": "300"
+        },
         {
-          "label": "Søke fra bestemt mnd",
+          "label": "Hva er målet med utdanningen?",
+          "verdi": "Økonomisk selvstendighet"
+        },
+        {
+          "label": "Har du tatt utdanning etter grunnskolen?",
           "verdi": "Ja"
         },
         {
-          "label": "Fra måned",
-          "verdi": "august"
-        },
-        {
-          "label": "Fra år",
-          "verdi": "2018"
-        }
-      ]
-    },
-    {
-      "label": "Barnepassordning faktura",
-      "verdiliste": [
-        {
-          "label": "harSendtInn",
-          "verdi": "Nei"
-        }
-      ]
-    },
-    {
-      "label": "Avtale barnepasser",
-      "verdiliste": [
-        {
-          "label": "harSendtInn",
-          "verdi": "Nei"
-        }
-      ]
-    },
-    {
-      "label": "Arbeidstid",
-      "verdiliste": [
-        {
-          "label": "harSendtInn",
-          "verdi": "Nei"
-        }
-      ]
-    },
-    {
-      "label": "Spesielle behov",
-      "verdiliste": [
-        {
-          "label": "harSendtInn",
-          "verdi": "Nei"
+          "label": "Tidligere Utdanning",
+          "verdiliste": [
+            {
+              "label": "Linje/kurs/grad",
+              "verdi": "Master Fysikk"
+            },
+            {
+              "label": "Når var du elev/student?",
+              "verdi": "Fra januar 1999 til oktober 2004"
+            }
+          ]
         }
       ]
     },
@@ -628,7 +395,7 @@
       "verdiliste": [
         {
           "label": "Vedlegg",
-          "verdi": "Dokumentasjon på at du er syk\n\nDokumentasjon på at du er syk\n\nDokumentasjon på at kan arbeide"
+          "verdi": "Utgifter til utdanning"
         }
       ]
     }
@@ -637,5 +404,5 @@
     "harInnholdsfortegnelse": true,
     "språk": "nb"
   },
-  "skjemanummer": "Skjemanummer: NAV 15-00.02"
+  "skjemanummer": "Skjemanummer: NAV 15-00.04"
 }
