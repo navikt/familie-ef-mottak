@@ -156,6 +156,10 @@ object SøknadTilFeltMap {
                     ?: emptyList()
             }
             if (entitet.alternativer != null) {
+                if (entitet.label === "Hvordan er situasjonen din?" || entitet.label === "What is your work situation?") {
+                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
+                        ?: emptyList()
+                }
                 return mapAlternativerOgSvar(entitet)
             }
             if (entitet.verdi is List<*>) {
