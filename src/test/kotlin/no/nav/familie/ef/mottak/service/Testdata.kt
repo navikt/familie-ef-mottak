@@ -362,161 +362,166 @@ internal object Testdata {
     @Suppress("LongLine")
     private fun aktivitet(): Aktivitet =
         Aktivitet(
-            Søknadsfelt(
-                "Hvordan er arbeidssituasjonen din?",
-                listOf(
-                    "Jeg er hjemme med barn under 1 år",
-                    "Jeg er i arbeid",
-                    "Jeg er selvstendig næringsdrivende eller frilanser",
-                ),
-            ),
-            Søknadsfelt(
-                "Om arbeidsforholdet ditt",
-                listOf(
-                    Arbeidsgiver(
-                        Søknadsfelt("Navn på arbeidsgiveren", "Palpatine"),
-                        Søknadsfelt("Hvor mye jobber du?", 15),
-                        Søknadsfelt(
-                            "Er stillingen fast eller midlertidig?",
-                            "Fast",
-                        ),
-                        Søknadsfelt("Har du en sluttdato?", true),
-                        Søknadsfelt(
-                            "Når skal du slutte?",
-                            LocalDate.of(2020, 11, 18),
-                        ),
+            hvordanErArbeidssituasjonen =
+                Søknadsfelt(
+                    "Hvordan er arbeidssituasjonen din?",
+                    listOf(
+                        "Jeg er hjemme med barn under 1 år",
+                        "Jeg er i arbeid",
+                        "Jeg er selvstendig næringsdrivende eller frilanser",
                     ),
                 ),
-            ),
-            null,
-            Søknadsfelt(
-                "Om firmaet du driver",
-                listOf(
-                    Selvstendig(
-                        Søknadsfelt("Navn på firma", "Bobs burgers"),
-                        Søknadsfelt("Organisasjonsnummer", "987654321"),
-                        Søknadsfelt(
-                            "Når etablerte du firmaet?",
-                            LocalDate.of(2018, 4, 5),
-                        ),
-                        Søknadsfelt("Hvor mye jobber du?", 150),
-                        Søknadsfelt(
-                            "Hvordan ser arbeidsuken din ut?",
-                            "Veldig tung",
-                        ),
-                    ),
-                ),
-            ),
-            Søknadsfelt(
-                "Om virksomheten du etablerer",
-                Virksomhet(
-                    Søknadsfelt(
-                        "Beskriv virksomheten",
-                        "Den kommer til å revolusjonere verden",
-                    ),
-                ),
-            ),
-            Søknadsfelt(
-                "Når du er arbeidssøker",
-                Arbeidssøker(
-                    registrertSomArbeidssøkerNav =
-                        Søknadsfelt(
-                            "Er du registrert som arbeidssøker hos NAV?",
-                            true,
-                        ),
-                    villigTilÅTaImotTilbudOmArbeid =
-                        Søknadsfelt(
-                            "Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
-                            true,
-                        ),
-                    kanDuBegynneInnenEnUke =
-                        Søknadsfelt(
-                            "Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
-                            true,
-                        ),
-                    kanDuSkaffeBarnepassInnenEnUke =
-                        Søknadsfelt(
-                            "Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
-                            false,
-                        ),
-                    hvorØnskerDuArbeid =
-                        Søknadsfelt(
-                            "Hvor ønsker du å søke arbeid?",
-                            "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei",
-                        ),
-                    ønskerDuMinst50ProsentStilling =
-                        Søknadsfelt(
-                            "Ønsker du å stå som arbeidssøker til minst 50% stilling?",
-                            true,
-                        ),
-                    ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon =
-                        dokumentfelt(
-                            "Dokumentasjon - ikke villig til å ta import tilbud om arbeid",
-                        ),
-                ),
-            ),
-            Søknadsfelt(
-                "Utdanningen du skal ta",
-                UnderUtdanning(
-                    Søknadsfelt("Skole/utdanningssted", "UiO"),
-                    null,
-                    Søknadsfelt(
-                        "Utdanning",
-                        GjeldendeUtdanning(
+            arbeidsforhold =
+                Søknadsfelt(
+                    "Om arbeidsforholdet ditt",
+                    listOf(
+                        Arbeidsgiver(
+                            Søknadsfelt("Navn på arbeidsgiveren", "Palpatine"),
+                            Søknadsfelt("Hvor mye jobber du?", 15),
                             Søknadsfelt(
-                                "Linje/kurs/grad",
-                                "Profesjonsstudium Informatikk",
+                                "Er stillingen fast eller midlertidig?",
+                                "Fast",
                             ),
+                            Søknadsfelt("Har du en sluttdato?", true),
                             Søknadsfelt(
-                                "Når skal du være elev/student?",
-                                Datoperiode(
-                                    LocalDate.of(
-                                        1999,
-                                        1,
-                                        1,
-                                    ),
-                                    LocalDate.of(
-                                        2004,
-                                        10,
-                                        1,
-                                    ),
-                                ),
+                                "Når skal du slutte?",
+                                LocalDate.of(2020, 11, 18),
                             ),
                         ),
                     ),
-                    Søknadsfelt(
-                        "Er utdanningen offentlig eller privat?",
-                        "Offentlig",
+                ),
+            firmaer =
+                Søknadsfelt(
+                    "Om firmaet du driver",
+                    listOf(
+                        Selvstendig(
+                            Søknadsfelt("Navn på firma", "Bobs burgers"),
+                            Søknadsfelt("Organisasjonsnummer", "987654321"),
+                            Søknadsfelt(
+                                "Når etablerte du firmaet?",
+                                LocalDate.of(2018, 4, 5),
+                            ),
+                            Søknadsfelt("Hvor mye jobber du?", 150),
+                            Søknadsfelt(
+                                "Hvordan ser arbeidsuken din ut?",
+                                "Veldig tung",
+                            ),
+                        ),
                     ),
-                    Søknadsfelt("Heltid, eller deltid", "Deltid"),
-                    Søknadsfelt("Hvor mye skal du studere?", 300),
-                    Søknadsfelt(
-                        "Hva er målet med utdanningen?",
-                        "Økonomisk selvstendighet",
+                ),
+            virksomhet =
+                Søknadsfelt(
+                    "Om virksomheten du etablerer",
+                    Virksomhet(
+                        Søknadsfelt(
+                            "Beskriv virksomheten",
+                            "Den kommer til å revolusjonere verden",
+                        ),
                     ),
-                    Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
-                    Søknadsfelt(
-                        "Tidligere Utdanning",
-                        listOf(
-                            TidligereUtdanning(
+                ),
+            arbeidssøker =
+                Søknadsfelt(
+                    "Når du er arbeidssøker",
+                    Arbeidssøker(
+                        registrertSomArbeidssøkerNav =
+                            Søknadsfelt(
+                                "Er du registrert som arbeidssøker hos NAV?",
+                                true,
+                            ),
+                        villigTilÅTaImotTilbudOmArbeid =
+                            Søknadsfelt(
+                                "Er du villig til å ta imot tilbud om arbeid eller arbeidsmarkedstiltak?",
+                                true,
+                            ),
+                        kanDuBegynneInnenEnUke =
+                            Søknadsfelt(
+                                "Kan du begynne i arbeid senest én uke etter at du har fått tilbud om jobb?",
+                                true,
+                            ),
+                        kanDuSkaffeBarnepassInnenEnUke =
+                            Søknadsfelt(
+                                "Har du eller kan du skaffe barnepass senest innen en uke etter at du har fått tilbud om jobb eller arbeidsmarkedstiltak?",
+                                false,
+                            ),
+                        hvorØnskerDuArbeid =
+                            Søknadsfelt(
+                                "Hvor ønsker du å søke arbeid?",
+                                "Kun i bodistriktet mitt, ikke mer enn 1 times reisevei",
+                            ),
+                        ønskerDuMinst50ProsentStilling =
+                            Søknadsfelt(
+                                "Ønsker du å stå som arbeidssøker til minst 50% stilling?",
+                                true,
+                            ),
+                        ikkeVilligTilÅTaImotTilbudOmArbeidDokumentasjon =
+                            dokumentfelt(
+                                "Dokumentasjon - ikke villig til å ta import tilbud om arbeid",
+                            ),
+                    ),
+                ),
+            underUtdanning =
+                Søknadsfelt(
+                    "Utdanningen du skal ta",
+                    UnderUtdanning(
+                        Søknadsfelt("Skole/utdanningssted", "UiO"),
+                        null,
+                        Søknadsfelt(
+                            "Utdanning",
+                            GjeldendeUtdanning(
                                 Søknadsfelt(
                                     "Linje/kurs/grad",
-                                    "Master Fysikk",
+                                    "Profesjonsstudium Informatikk",
                                 ),
                                 Søknadsfelt(
-                                    "Når var du elev/student?",
-                                    MånedÅrPeriode(
-                                        Month.JANUARY,
-                                        1999,
-                                        Month.OCTOBER,
-                                        2004,
+                                    "Når skal du være elev/student?",
+                                    Datoperiode(
+                                        LocalDate.of(
+                                            1999,
+                                            1,
+                                            1,
+                                        ),
+                                        LocalDate.of(
+                                            2004,
+                                            10,
+                                            1,
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                        Søknadsfelt(
+                            "Er utdanningen offentlig eller privat?",
+                            "Offentlig",
+                        ),
+                        Søknadsfelt("Heltid, eller deltid", "Deltid"),
+                        Søknadsfelt("Hvor mye skal du studere?", 300),
+                        Søknadsfelt(
+                            "Hva er målet med utdanningen?",
+                            "Økonomisk selvstendighet",
+                        ),
+                        Søknadsfelt("Har du tatt utdanning etter grunnskolen?", true),
+                        Søknadsfelt(
+                            "Tidligere Utdanning",
+                            listOf(
+                                TidligereUtdanning(
+                                    Søknadsfelt(
+                                        "Linje/kurs/grad",
+                                        "Master Fysikk",
+                                    ),
+                                    Søknadsfelt(
+                                        "Når var du elev/student?",
+                                        MånedÅrPeriode(
+                                            Month.JANUARY,
+                                            1999,
+                                            Month.OCTOBER,
+                                            2004,
+                                        ),
                                     ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-            ),
         )
 
     private fun ufødtBarn(): Barn =
