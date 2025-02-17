@@ -187,7 +187,6 @@ object SøknadTilFeltMap {
                                             is SøknadsfeltType.ArbeidsforholdElement -> mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(it.arbeidsforhold), it.arbeidsforhold)
                                         }
                                     }.filterNotNull(),
-                            visningsVariant = VisningsVariant.TABELL.toString(),
                         ),
                     )
                 }
@@ -222,7 +221,7 @@ object SøknadTilFeltMap {
         val verdilisteElementListe =
             finnFelter(barnUtenFødselsdato).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
@@ -242,8 +241,7 @@ object SøknadTilFeltMap {
         val tabellCaption = "$element ${indeks + 1}"
         val verdilisteElementListe = finnFelter(arbeidsforhold)
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
-        }
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())}
     }
 
     private fun mapUtenlandsoppholdElementer(
@@ -254,7 +252,7 @@ object SøknadTilFeltMap {
         val tabellCaption = "$elementLabel ${indeks + 1}"
         val verdilisteElementListe = finnFelter(utenlandsopphold).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
