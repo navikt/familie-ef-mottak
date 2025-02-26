@@ -19,7 +19,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer Month korrekt`() {
         val testverdi = Søknadsfelt("label", Month.DECEMBER)
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "desember"))
     }
@@ -28,7 +28,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer Boolean korrekt`() {
         val testverdi = Søknadsfelt("label", true)
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja"))
     }
@@ -37,7 +37,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer liste med Boolean korrekt`() {
         val testverdi = Søknadsfelt("label", listOf(true, false))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja\n\nNei"))
     }
@@ -46,7 +46,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer List korrekt`() {
         val testverdi = Søknadsfelt<List<*>>("label", listOf("Lille", "Grimme", "Arne", "Trenger", "Ris"))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Lille\n\nGrimme\n\nArne\n\nTrenger\n\nRis"))
     }
@@ -56,7 +56,7 @@ internal class FeltformatererPdfKvitteringTest {
         val fnr = FnrGenerator.generer()
         val testverdi = Søknadsfelt("label", Fødselsnummer(fnr))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = fnr))
     }
@@ -65,7 +65,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer Adresse korrekt`() {
         val testverdi = Søknadsfelt("label", Adresse("Husebyskogen 15", "1572", "Fet", "Norge"))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n1572 Fet\nNorge"))
     }
@@ -74,7 +74,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap håndterer adresse med tomme felter korrekt`() {
         val testverdi = Søknadsfelt("label", Adresse("", "", "", ""))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ingen registrert adresse"))
     }
@@ -83,7 +83,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap håndterer adresse med delvis utfylte felter korrekt`() {
         val testverdi = Søknadsfelt("label", Adresse("Husebyskogen 15", "", "Fet", ""))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n Fet"))
     }
@@ -92,7 +92,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap håndterer adresse med kun land`() {
         val testverdi = Søknadsfelt("label", Adresse("", "", "", "Norge"))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Norge"))
     }
@@ -101,7 +101,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer LocalDate korrekt`() {
         val testverdi = Søknadsfelt<LocalDate>("label", LocalDate.of(2015, 12, 5))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015"))
     }
@@ -110,7 +110,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer LocalDateTime korrekt`() {
         val testverdi = Søknadsfelt<LocalDateTime>("label", LocalDateTime.of(2015, 12, 5, 14, 52, 48))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015 14:52:48"))
     }
@@ -119,7 +119,7 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer MånedÅrPeriode korrekt`() {
         val testverdi = Søknadsfelt("label", MånedÅrPeriode(Month.FEBRUARY, 2015, Month.JULY, 2018))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra februar 2015 til juli 2018"))
     }
@@ -128,8 +128,12 @@ internal class FeltformatererPdfKvitteringTest {
     fun `mapEndenodeTilUtskriftMap formaterer Datoperiode korrekt`() {
         val testverdi = Søknadsfelt("label", Datoperiode(LocalDate.of(2015, 2, 1), LocalDate.of(2018, 7, 14)))
 
-        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi)
+        val resultat = FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra 01.02.2015 til 14.07.2018"))
+    }
+
+    companion object {
+        private const val SPRÅK = "nb"
     }
 }
