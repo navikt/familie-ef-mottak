@@ -50,9 +50,10 @@ object SøknadTilFeltMap {
         søknad: SøknadOvergangsstønad,
         vedleggTitler: List<String>,
     ): FeltMap {
-        val finnFelter = finnFelter(søknad)
-        val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        val finnFelter = finnFelter(søknad, språk)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+
         return FeltMap(
             "Søknad om overgangsstønad",
             finnFelter + vedlegg,
@@ -65,9 +66,10 @@ object SøknadTilFeltMap {
         søknad: SøknadBarnetilsyn,
         vedleggTitler: List<String>,
     ): FeltMap {
-        val finnFelter = finnFelter(søknad)
-        val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        val finnFelter = finnFelter(søknad, språk)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+
         return FeltMap(
             "Søknad om stønad til barnetilsyn",
             finnFelter + vedlegg,
@@ -83,9 +85,10 @@ object SøknadTilFeltMap {
         søknad: SøknadSkolepenger,
         vedleggTitler: List<String>,
     ): FeltMap {
-        val finnFelter = finnFelter(søknad)
-        val vedlegg = mapTilVedlegg(vedleggTitler)
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        val finnFelter = finnFelter(søknad, språk)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+
         return FeltMap(
             "Søknad om stønad til skolepenger",
             finnFelter + vedlegg,
@@ -95,8 +98,9 @@ object SøknadTilFeltMap {
     }
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
-        val finnFelter = finnFelter(skjema)
         val språk = skjema.innsendingsdetaljer.verdi.språk ?: "nb"
+        val finnFelter = finnFelter(skjema, språk)
+
         return FeltMap(
             "Skjema for arbeidssøker",
             finnFelter,
@@ -126,12 +130,15 @@ object SøknadTilFeltMap {
         return FeltMap("Ettersending", verdiliste = listOf(infoMap, vedleggMap))
     }
 
-    private fun finnFelter(entitet: Any): List<VerdilisteElement> {
+    private fun finnFelter(
+        entitet: Any,
+        språk: String,
+    ): List<VerdilisteElement> {
         // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
         if (entitet is List<Any?>) {
             return entitet
                 .filterNotNull()
-                .map { finnFelter(it) }
+                .map { finnFelter(it, språk) }
                 .flatten()
         }
         val parametere = konstruktørparametere(entitet)
@@ -142,17 +149,17 @@ object SøknadTilFeltMap {
                 .map { finnSøknadsfelt(entitet, it) }
                 .filter { it.visibility == KVisibility.PUBLIC }
                 .mapNotNull { getFeltverdi(it, entitet) }
-                .map { finnFelter(it) } // Kall rekursivt videre
+                .map { finnFelter(it, språk) } // Kall rekursivt videre
                 .flatten()
                 .toList()
 
         if (entitet is Søknadsfelt<*>) {
             if (entitet.verdi!! is Dokumentasjon) {
                 @Suppress("UNCHECKED_CAST")
-                return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>)
+                return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>, språk)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
+                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                     ?: emptyList()
             }
             if (entitet.alternativer != null) {
@@ -162,7 +169,7 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet)?.let { listOf(it) }
+                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                         ?: emptyList()
                 }
                 val mappedElementer =
@@ -182,9 +189,9 @@ object SøknadTilFeltMap {
                                 mappedElementer
                                     .map {
                                         when (it) {
-                                            is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(it.barn), it.barn)
-                                            is SøknadsfeltType.UtenlandsoppholdElement -> mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(it.utenlandsopphold), it.utenlandsopphold)
-                                            is SøknadsfeltType.ArbeidsforholdElement -> mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(it.arbeidsforhold), it.arbeidsforhold)
+                                            is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(it.barn), it.barn, språk)
+                                            is SøknadsfeltType.UtenlandsoppholdElement -> mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(it.utenlandsopphold), it.utenlandsopphold, språk)
+                                            is SøknadsfeltType.ArbeidsforholdElement -> mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(it.arbeidsforhold), it.arbeidsforhold, språk)
                                         }
                                     }.filterNotNull(),
                             visningsVariant = VisningsVariant.TABELL.toString(),
@@ -202,9 +209,12 @@ object SøknadTilFeltMap {
         return list
     }
 
-    private fun mapDokumentasjon(entitet: Søknadsfelt<Dokumentasjon>): List<VerdilisteElement> {
+    private fun mapDokumentasjon(
+        entitet: Søknadsfelt<Dokumentasjon>,
+        språk: String,
+    ): List<VerdilisteElement> {
         val list =
-            listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere))
+            listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere, språk))
         if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
@@ -215,12 +225,13 @@ object SøknadTilFeltMap {
         elementLabel: String,
         indeks: Int,
         barn: Barn,
+        språk: String,
     ): VerdilisteElement? {
         val element = if (elementLabel.contains("Barn")) "Barn" else "Child"
         val tabellCaption = "$element ${indeks + 1}"
         val barnUtenFødselsdato = fjernFødselsdatoHvisFødt(barn)
         val verdilisteElementListe =
-            finnFelter(barnUtenFødselsdato).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+            finnFelter(barnUtenFødselsdato, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
@@ -237,10 +248,11 @@ object SøknadTilFeltMap {
         elementLabel: String,
         indeks: Int,
         arbeidsforhold: Arbeidsgiver,
+        språk: String,
     ): VerdilisteElement? {
         val element = if (elementLabel == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
         val tabellCaption = "$element ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(arbeidsforhold)
+        val verdilisteElementListe = finnFelter(arbeidsforhold, språk)
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
@@ -250,9 +262,10 @@ object SøknadTilFeltMap {
         elementLabel: String,
         indeks: Int,
         utenlandsopphold: Utenlandsopphold,
+        språk: String,
     ): VerdilisteElement? {
         val tabellCaption = "$elementLabel ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(utenlandsopphold).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+        val verdilisteElementListe = finnFelter(utenlandsopphold, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
             VerdilisteElement(label = tabellCaption, verdiliste = it)
         }
