@@ -57,7 +57,7 @@ object SøknadTilFeltMap {
         return FeltMap(
             "Søknad om overgangsstønad",
             finnFelter + vedlegg,
-            PdfConfig(true, språk),
+            PdfConfig(false, språk),
             getSkjemanummerTekst("overgangsstønad", språk),
         )
     }
