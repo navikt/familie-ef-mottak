@@ -142,50 +142,46 @@
           "verdi": "Ja"
         },
         {
-          "label": "Utenlandsopphold",
+          "label": "Utenlandsopphold 1",
           "visningsVariant": "TABELL",
           "verdiliste": [
             {
-              "label": "Utenlandsopphold 1",
-              "verdiliste": [
-                {
-                  "label": "Fra",
-                  "verdi": "04.12.2012"
-                },
-                {
-                  "label": "Til",
-                  "verdi": "18.12.2012"
-                },
-                {
-                  "label": "I hvilket land oppholdt du deg?",
-                  "verdi": "Spania"
-                },
-                {
-                  "label": "Hvorfor bodde du i utlandet?",
-                  "verdi": "Granca, Granca, Granca"
-                }
-              ]
+              "label": "Fra",
+              "verdi": "04.12.2012"
             },
             {
-              "label": "Utenlandsopphold 2",
-              "verdiliste": [
-                {
-                  "label": "Fra",
-                  "verdi": "04.12.2013"
-                },
-                {
-                  "label": "Til",
-                  "verdi": "18.12.2014"
-                },
-                {
-                  "label": "I hvilket land oppholdt du deg?",
-                  "verdi": "Italia"
-                },
-                {
-                  "label": "Hvorfor bodde du i utlandet?",
-                  "verdi": "Fint vær"
-                }
-              ]
+              "label": "Til",
+              "verdi": "18.12.2012"
+            },
+            {
+              "label": "I hvilket land oppholdt du deg?",
+              "verdi": "Spania"
+            },
+            {
+              "label": "Hvorfor bodde du i utlandet?",
+              "verdi": "Granca, Granca, Granca"
+            }
+          ]
+        },
+        {
+          "label": "Utenlandsopphold 2",
+          "visningsVariant": "TABELL",
+          "verdiliste": [
+            {
+              "label": "Fra",
+              "verdi": "04.12.2013"
+            },
+            {
+              "label": "Til",
+              "verdi": "18.12.2014"
+            },
+            {
+              "label": "I hvilket land oppholdt du deg?",
+              "verdi": "Italia"
+            },
+            {
+              "label": "Hvorfor bodde du i utlandet?",
+              "verdi": "Fint vær"
             }
           ]
         }
@@ -245,10 +241,10 @@
     },
     {
       "label": "Barna dine",
-      "visningsVariant": "TABELL",
       "verdiliste": [
         {
           "label": "Barn 1",
+          "visningsVariant": "TABELL",
           "verdiliste": [
             {
               "label": "Barnets fulle navn, hvis dette er bestemt",
@@ -411,10 +407,10 @@
         },
         {
           "label": "Om arbeidsforholdet ditt",
-          "visningsVariant": "TABELL",
           "verdiliste": [
             {
               "label": "Arbeidsforhold 1",
+              "visningsVariant": "TABELL",
               "verdiliste": [
                 {
                   "label": "Navn på arbeidsgiveren",
