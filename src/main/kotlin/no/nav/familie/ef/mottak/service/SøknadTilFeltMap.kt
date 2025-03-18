@@ -196,8 +196,8 @@ object SøknadTilFeltMap {
 
                     return when {
                         verdiliste.isEmpty() -> emptyList()
-                        mappedElementer.any { it is SøknadsfeltType.UtenlandsoppholdElement } -> verdiListe
-                        else -> listOf(VerdilisteElement(label = entitet.label, verdiliste = verdiListe))
+                        mappedElementer.any { it is SøknadsfeltType.BarnElement } -> listOf(VerdilisteElement(label = entitet.label, verdiliste = verdiListe))
+                        else -> verdiListe
                     }
                 }
             }

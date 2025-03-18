@@ -458,33 +458,28 @@
           "verdi": "Jeg er hjemme med barn under 1 år\n\nJeg er i arbeid\n\nJeg er selvstendig næringsdrivende eller frilanser"
         },
         {
-          "label": "Om arbeidsforholdet ditt",
+          "label": "Arbeidsforhold 1",
+          "visningsVariant": "TABELL",
           "verdiliste": [
             {
-              "label": "Arbeidsforhold 1",
-              "visningsVariant": "TABELL",
-              "verdiliste": [
-                {
-                  "label": "Navn på arbeidsgiveren",
-                  "verdi": "Palpatine"
-                },
-                {
-                  "label": "Hvor mye jobber du?",
-                  "verdi": "15"
-                },
-                {
-                  "label": "Er stillingen fast eller midlertidig?",
-                  "verdi": "Fast"
-                },
-                {
-                  "label": "Har du en sluttdato?",
-                  "verdi": "Ja"
-                },
-                {
-                  "label": "Når skal du slutte?",
-                  "verdi": "18.11.2020"
-                }
-              ]
+              "label": "Navn på arbeidsgiveren",
+              "verdi": "Palpatine"
+            },
+            {
+              "label": "Hvor mye jobber du?",
+              "verdi": "15"
+            },
+            {
+              "label": "Er stillingen fast eller midlertidig?",
+              "verdi": "Fast"
+            },
+            {
+              "label": "Har du en sluttdato?",
+              "verdi": "Ja"
+            },
+            {
+              "label": "Når skal du slutte?",
+              "verdi": "18.11.2020"
             }
           ]
         },
