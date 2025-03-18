@@ -119,12 +119,9 @@
           "label": "Har du bodd i Norge de siste tre årene?",
           "verdi": "Ja"
         },
-        {
-          "label": "Utenlandsopphold",
-          "visningsVariant": "TABELL",
-          "verdiliste": [
             {
               "label": "Utenlandsopphold 1",
+              "visningsVariant": "TABELL",
               "verdiliste": [
                 {
                   "label": "Fra",
@@ -144,8 +141,7 @@
                 }
               ]
             }
-          ]
-        }
+
       ]
     },
     {
@@ -202,10 +198,10 @@
     },
     {
       "label": "Barn",
-      "visningsVariant": "TABELL",
       "verdiliste": [
         {
           "label": "Barn 1",
+          "visningsVariant": "TABELL",
           "verdiliste": [
             {
               "label": "Barnets fulle navn, hvis dette er bestemt",
