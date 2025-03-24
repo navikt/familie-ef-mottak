@@ -15,7 +15,7 @@ class FeatureToggleController(
 ) {
     private val featureTogglesIBruk =
         setOf(
-            Toggle.ENDRE_TEST
+            Toggle.ENDRE_TEST,
         )
 
     @GetMapping

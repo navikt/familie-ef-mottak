@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service
 class UnleashNextService(
     private val unleashService: UnleashService,
 ) {
-    fun isEnabled(toggle: Toggle): Boolean {
-
-        return unleashService.isEnabled(
+    fun isEnabled(toggle: Toggle): Boolean =
+        unleashService.isEnabled(
             toggleId = toggle.toggleId,
         )
-    }
 }

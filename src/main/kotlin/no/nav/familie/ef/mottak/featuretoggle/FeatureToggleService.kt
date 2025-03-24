@@ -22,4 +22,3 @@ enum class Toggle(
         fun byToggleId(toggleId: String): Toggle = toggles[toggleId] ?: error("Finner ikke toggle for $toggleId")
     }
 }
-
