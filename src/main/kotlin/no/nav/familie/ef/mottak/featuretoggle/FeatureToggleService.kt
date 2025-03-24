@@ -14,5 +14,4 @@ enum class Toggle(
     val beskrivelse: String? = null,
 ) {
     ENDRE_TEST("Endre-test-toggle"),
-    ;
 }
