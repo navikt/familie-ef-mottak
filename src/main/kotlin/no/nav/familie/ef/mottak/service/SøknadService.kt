@@ -39,7 +39,7 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggFamilieKontrakter
 
 @Service
 @Transactional
-class SøknadskvitteringService(
+class SøknadService(
     private val søknadRepository: SøknadRepository,
     private val vedleggRepository: VedleggRepository,
     private val dokumentClient: FamilieDokumentClient,

@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask.Companion.TYPE
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service
 )
 class SendSøknadMottattTilDittNavTask(
     private val producer: DittNavKafkaProducer,
-    private val søknadskvitteringService: SøknadskvitteringService,
+    private val søknadService: SøknadService,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
-        val søknad = søknadskvitteringService.hentSøknad(task.payload)
+        val søknad = søknadService.hentSøknad(task.payload)
 
         producer.sendBeskjedTilBruker(
             personIdent = søknad.fnr,

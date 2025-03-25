@@ -30,7 +30,7 @@ import java.util.UUID
 
 internal class ArkiveringServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
-    private val søknadskvitteringService: SøknadskvitteringService = mockk()
+    private val søknadService: SøknadService = mockk()
     private val ettersendingService: EttersendingService = mockk(relaxed = true)
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingVedleggRepository: EttersendingVedleggRepository = mockk(relaxed = true)
@@ -38,7 +38,7 @@ internal class ArkiveringServiceTest {
     val arkiveringService =
         ArkiveringService(
             integrasjonerClient,
-            søknadskvitteringService,
+            søknadService,
             ettersendingService,
             vedleggRepository,
             ettersendingVedleggRepository,
@@ -86,8 +86,8 @@ internal class ArkiveringServiceTest {
         val forventetJounalføringsId = "1234"
         val forventetFeil = lagRessursException(conflictException)
         val journalposter = listOf(lagJournalpost(forventetJounalføringsId, "callId"))
-        every { søknadskvitteringService.hentSøknad(any()) } returns søknad
-        every { søknadskvitteringService.oppdaterSøknad(any()) } just Runs
+        every { søknadService.hentSøknad(any()) } returns søknad
+        every { søknadService.oppdaterSøknad(any()) } just Runs
         every { integrasjonerClient.arkiver(any()) } throws forventetFeil
         every { integrasjonerClient.hentJournalposterForBruker(any()) } returns journalposter
         every { vedleggRepository.findBySøknadId(any()) } returns emptyList()
@@ -109,8 +109,8 @@ internal class ArkiveringServiceTest {
     @Test
     internal fun `Skal ikke prøve å håndtere feil som ikke er av type conflict-409 for arkivering av søknader`() {
         val feil = HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR)
-        every { søknadskvitteringService.hentSøknad(any()) } returns søknad
-        every { søknadskvitteringService.oppdaterSøknad(any()) } just Runs
+        every { søknadService.hentSøknad(any()) } returns søknad
+        every { søknadService.oppdaterSøknad(any()) } just Runs
         every { integrasjonerClient.arkiver(any()) } throws lagRessursException(feil)
         every { vedleggRepository.findBySøknadId(any()) } returns emptyList()
         val ressursException =

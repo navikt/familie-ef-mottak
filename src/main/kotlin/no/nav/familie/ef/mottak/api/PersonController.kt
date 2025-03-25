@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.sikkerhet.EksternBrukerUtils
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class PersonController(
-    val søknadskvitteringService: SøknadskvitteringService,
+    val søknadService: SøknadService,
 ) {
     @PostMapping("soknader")
     fun søknaderForPerson(
@@ -29,6 +29,6 @@ class PersonController(
         if (!EksternBrukerUtils.personIdentErLikInnloggetBruker(personIdent.ident)) {
             throw ApiFeil("Fnr fra token matcher ikke fnr i request", HttpStatus.FORBIDDEN)
         }
-        return ResponseEntity.ok().body(søknadskvitteringService.hentDokumentasjonsbehovForPerson(personIdent.ident))
+        return ResponseEntity.ok().body(søknadService.hentDokumentasjonsbehovForPerson(personIdent.ident))
     }
 }

@@ -16,10 +16,10 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 
 internal class MappeServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
-    private val søknadskvitteringService: SøknadskvitteringService = mockk()
+    private val søknadService: SøknadService = mockk()
     private val cacheManager = ConcurrentMapCacheManager()
 
-    val mappeService = MappeService(integrasjonerClient, søknadskvitteringService, cacheManager)
+    val mappeService = MappeService(integrasjonerClient, søknadService, cacheManager)
 
     val søknadId = "123"
     val enhet = "4489"
@@ -27,7 +27,7 @@ internal class MappeServiceTest {
     @BeforeEach
     internal fun setUp() {
         every {
-            søknadskvitteringService.hentSøknad("123")
+            søknadService.hentSøknad("123")
         } returns
             Søknad(
                 søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),

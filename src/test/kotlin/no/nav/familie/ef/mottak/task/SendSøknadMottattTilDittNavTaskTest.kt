@@ -6,7 +6,7 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.SendDokumentasjonsbehovMeldingTilDittNavTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
@@ -19,15 +19,15 @@ import java.util.UUID
 internal class SendSøknadMottattTilDittNavTaskTest {
     private lateinit var sendSøknadMottattTilDittNavTask: SendSøknadMottattTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
-    private lateinit var søknadskvitteringService: SøknadskvitteringService
+    private lateinit var søknadService: SøknadService
     private lateinit var task: Task
 
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
-        søknadskvitteringService = mockk()
+        søknadService = mockk()
         sendSøknadMottattTilDittNavTask =
-            SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadskvitteringService)
+            SendSøknadMottattTilDittNavTask(dittNavKafkaProducer, søknadService)
         val properties = Properties().apply { this["eventId"] = UUID.fromString(EVENT_ID) }
         task =
             Task(
@@ -67,7 +67,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
 
     private fun verifiserForventetKallMed(forventetTekst: String) {
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
+            søknadService.hentSøknad(any())
 
             dittNavKafkaProducer.sendBeskjedTilBruker(
                 personIdent = FNR,
@@ -78,7 +78,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
     }
 
     private fun mockSøknad(søknadType: SøknadType) {
-        every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
+        every { søknadService.hentSøknad(SØKNAD_ID) } returns
             Søknad(
                 id = SØKNAD_ID,
                 søknadJson = EncryptedString(""),

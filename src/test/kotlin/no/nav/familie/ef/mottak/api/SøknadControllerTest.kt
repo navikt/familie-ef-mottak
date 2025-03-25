@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.util.UUID
 
-internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() {
+internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var søknadRepository: SøknadRepository
 

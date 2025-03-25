@@ -62,7 +62,7 @@ import kotlin.test.assertEquals
 
 internal class OppgaveServiceTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
-    private val søknadskvitteringService: SøknadskvitteringService = mockk()
+    private val søknadService: SøknadService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper())
     private val ettersendingService = mockk<EttersendingService>()
     private val cacheManager = ConcurrentMapCacheManager()
@@ -70,10 +70,10 @@ internal class OppgaveServiceTest {
     private val oppgaveService: OppgaveService =
         OppgaveService(
             integrasjonerClient = integrasjonerClient,
-            søknadskvitteringService = søknadskvitteringService,
+            søknadService = søknadService,
             opprettOppgaveMapper = opprettOppgaveMapper,
             ettersendingService = ettersendingService,
-            mappeService = MappeService(integrasjonerClient, søknadskvitteringService, cacheManager),
+            mappeService = MappeService(integrasjonerClient, søknadService, cacheManager),
         )
 
     @BeforeEach
@@ -129,7 +129,7 @@ internal class OppgaveServiceTest {
             )
         every { integrasjonerClient.finnOppgaver(any(), any()) } returns FinnOppgaveResponseDto(0L, emptyList())
         every {
-            søknadskvitteringService.hentSøknad("123")
+            søknadService.hentSøknad("123")
         } returns
             Søknad(
                 søknadJson = EncryptedString("{}"),
@@ -196,7 +196,7 @@ internal class OppgaveServiceTest {
         fun `skal opprette en ny oppgave for søknad`() {
             val søknadId = "enSøknadId"
             val journalpostId = "999"
-            every { søknadskvitteringService.hentSøknad(søknadId) } returns
+            every { søknadService.hentSøknad(søknadId) } returns
                 Søknad(
                     søknadJson = EncryptedString("{}"),
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
@@ -205,7 +205,7 @@ internal class OppgaveServiceTest {
                     behandleINySaksbehandling = true,
                 )
             every {
-                søknadskvitteringService.hentSøknad(any())
+                søknadService.hentSøknad(any())
             } returns
                 Søknad(
                     søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
@@ -291,7 +291,7 @@ internal class OppgaveServiceTest {
             val sommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
-            every { søknadskvitteringService.hentSøknad(soknadId) } returns
+            every { søknadService.hentSøknad(soknadId) } returns
                 SøknadMapper
                     .fromDto(
                         Testdata.søknadOvergangsstønad.copy(
@@ -318,7 +318,7 @@ internal class OppgaveServiceTest {
             val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 5, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
-            every { søknadskvitteringService.hentSøknad(soknadId) } returns
+            every { søknadService.hentSøknad(soknadId) } returns
                 SøknadMapper
                     .fromDto(
                         Testdata.søknadOvergangsstønad.copy(
@@ -345,7 +345,7 @@ internal class OppgaveServiceTest {
             val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
-            every { søknadskvitteringService.hentSøknad(soknadId) } returns
+            every { søknadService.hentSøknad(soknadId) } returns
                 SøknadMapper
                     .fromDto(
                         Testdata.søknadOvergangsstønad.copy(
@@ -372,7 +372,7 @@ internal class OppgaveServiceTest {
             val utenforSommertid = LocalDate.of(LocalDateTime.now().year, 7, 20)
 
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpost
-            every { søknadskvitteringService.hentSøknad(soknadId) } returns
+            every { søknadService.hentSøknad(soknadId) } returns
                 SøknadMapper
                     .fromDto(
                         Testdata.søknadBarnetilsyn.copy(
@@ -422,7 +422,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
 
-            every { søknadskvitteringService.hentSøknad(any()) } returns søknadBarnetilsyn()
+            every { søknadService.hentSøknad(any()) } returns søknadBarnetilsyn()
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "1")
 
@@ -447,7 +447,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad("123") } returns søknadOvergangsstønad(erSelvstendig = true)
+            every { søknadService.hentSøknad("123") } returns søknadOvergangsstønad(erSelvstendig = true)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdSelvstendig.toLong())
@@ -474,7 +474,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad("123") } returns
+            every { søknadService.hentSøknad("123") } returns
                 søknadOvergangsstønad(
                     erSelvstendig = true,
                     harTilsynskrevendeBarn = true,
@@ -505,7 +505,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad("123") } returns
+            every { søknadService.hentSøknad("123") } returns
                 søknadBarnetilsyn(
                     erSelvstendig = true,
                     harTilsynskrevendeBarn = true,
@@ -536,7 +536,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad("123") } returns
+            every { søknadService.hentSøknad("123") } returns
                 søknadBarnetilsyn(
                     erSelvstendig = true,
                     harTilsynskrevendeBarn = false,
@@ -567,7 +567,7 @@ internal class OppgaveServiceTest {
             val søknadBarnetilsyn =
                 objectMapper.readValue<SøknadBarnetilsyn>(IOTestUtil.readFile("barnetilsyn_særlige_tilsynsbehov_soknad.json"))
 
-            every { søknadskvitteringService.hentSøknad("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
+            every { søknadService.hentSøknad("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             assertThat(oppgaveSlot.captured.mappeId).isEqualTo(gammelMappeIdTilsynskrevende.toLong())
@@ -591,7 +591,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad("123") } returns søknadOvergangsstønad(false)
+            every { søknadService.hentSøknad("123") } returns søknadOvergangsstønad(false)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
 
             verify(exactly = 0) { integrasjonerClient.oppdaterOppgave(any(), any()) }
@@ -620,7 +620,7 @@ internal class OppgaveServiceTest {
                     behandlingstema = Behandlingstema.Skolepenger,
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
-            every { søknadskvitteringService.hentSøknad(any()) } returns søknadSkolepenger()
+            every { søknadService.hentSøknad(any()) } returns søknadSkolepenger()
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
@@ -667,7 +667,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad(any()) } returns søknadBarnetilsyn()
+            every { søknadService.hentSøknad(any()) } returns søknadBarnetilsyn()
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
@@ -699,7 +699,7 @@ internal class OppgaveServiceTest {
                     behandlesAvApplikasjon = BehandlesAvApplikasjon.EF_SAK,
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
-            every { søknadskvitteringService.hentSøknad(any()) } returns søknadOvergangsstønad()
+            every { søknadService.hentSøknad(any()) } returns søknadOvergangsstønad()
 
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "-1")
 
