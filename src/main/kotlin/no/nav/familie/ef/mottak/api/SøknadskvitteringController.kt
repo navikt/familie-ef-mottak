@@ -27,11 +27,6 @@ import org.springframework.web.bind.annotation.RestController
 class SøknadskvitteringController(
     val søknadKvitteringService: SøknadskvitteringService,
 ) {
-    @GetMapping("{søknadId}")
-    fun hentSøknad(
-        @PathVariable søknadId: String,
-    ): ByteArray = søknadKvitteringService.hentSøknadPdf(søknadId)
-
     @PostMapping("overgangsstonad")
     fun overgangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
