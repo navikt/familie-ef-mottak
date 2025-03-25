@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/soknadskvittering", produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["api/soknadskvittering", "/api/soknad"], produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
