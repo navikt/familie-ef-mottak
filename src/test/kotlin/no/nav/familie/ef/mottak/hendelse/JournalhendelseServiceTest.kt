@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.slot
 import io.mockk.verify
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mockapi.clearAllMocks
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.JournalføringHendelseRecordVars.JOURNALPOST_DIGITALSØKNAD
@@ -43,9 +42,6 @@ class JournalhendelseServiceTest {
 
     @MockK
     lateinit var mockTaskService: TaskService
-
-    @MockK(relaxed = true)
-    lateinit var mockFeatureToggleService: FeatureToggleService
 
     @MockK(relaxed = true)
     lateinit var mockHendelseloggRepository: HendelsesloggRepository
@@ -141,8 +137,6 @@ class JournalhendelseServiceTest {
                 tema = "FOR",
                 kanal = "NAV_NO",
             )
-
-        every { mockFeatureToggleService.isEnabled(any()) } returns true
 
         mockJournalfoeringHendelseDbUtil =
             JournalfoeringHendelseDbUtil(mockHendelseloggRepository, mockTaskService, mockTaskRepositoryUtvidet)

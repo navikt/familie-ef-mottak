@@ -6,7 +6,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -31,7 +30,6 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
     private lateinit var søknadskvitteringService: SøknadskvitteringService
     private lateinit var ettersendingService: EttersendingService
-    private lateinit var featureToggleService: FeatureToggleService
     private lateinit var ettersendingConfig: EttersendingConfig
     private lateinit var saksbehandlingClient: SaksbehandlingClient
 
@@ -42,7 +40,6 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         dittNavKafkaProducer = mockk(relaxed = true)
         søknadskvitteringService = mockk()
         ettersendingService = mockk()
-        featureToggleService = mockk()
         ettersendingConfig = mockk()
         saksbehandlingClient = mockk()
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask =
@@ -54,7 +51,6 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
                 saksbehandlingClient,
             )
 
-        every { featureToggleService.isEnabled(any()) } returns true
         every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 

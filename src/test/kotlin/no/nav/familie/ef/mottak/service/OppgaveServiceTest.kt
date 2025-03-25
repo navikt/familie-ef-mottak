@@ -9,7 +9,6 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.mapper.BehandlesAvApplikasjon
 import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
@@ -66,7 +65,6 @@ internal class OppgaveServiceTest {
     private val søknadskvitteringService: SøknadskvitteringService = mockk()
     private val opprettOppgaveMapper = spyk(OpprettOppgaveMapper())
     private val ettersendingService = mockk<EttersendingService>()
-    private val featureToggleService = mockk<FeatureToggleService>()
     private val cacheManager = ConcurrentMapCacheManager()
 
     private val oppgaveService: OppgaveService =
@@ -107,7 +105,6 @@ internal class OppgaveServiceTest {
                     ),
             )
         every { integrasjonerClient.oppdaterOppgave(any(), any()) } returns 123
-        every { featureToggleService.isEnabled(any()) } returns true
     }
 
     @Test
