@@ -251,18 +251,18 @@ internal class SøknadskvitteringServiceIntegrasjonTest : IntegrasjonSpringRunne
         val søknad =
             søknadOvergangsstønad.copy(
                 innsendingsdetaljer =
-                Søknadsfelt(
-                    label = "detaljer",
-                    verdi =
-                    Innsendingsdetaljer(
-                        datoMottatt =
-                        Søknadsfelt(
-                            label = "mottat",
-                            verdi = datoMottatt,
-                        ),
-                        datoPåbegyntSøknad = null,
+                    Søknadsfelt(
+                        label = "detaljer",
+                        verdi =
+                            Innsendingsdetaljer(
+                                datoMottatt =
+                                    Søknadsfelt(
+                                        label = "mottat",
+                                        verdi = datoMottatt,
+                                    ),
+                                datoPåbegyntSøknad = null,
+                            ),
                     ),
-                ),
             )
 
         return SøknadMedVedlegg(

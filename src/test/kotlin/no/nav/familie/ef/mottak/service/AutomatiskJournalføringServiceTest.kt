@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.service
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringRequest
@@ -13,7 +12,6 @@ import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -25,13 +23,11 @@ import kotlin.test.assertTrue
 
 internal class AutomatiskJournalføringServiceTest {
     private val saksbehandlingClient = mockk<SaksbehandlingClient>()
-    private val featureToggleService = mockk<FeatureToggleService>()
     private val søknad = SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, true)
 
     private val automatiskJournalføringService =
         AutomatiskJournalføringService(
             taskService = mockk(),
-            søknadService = mockk(),
             saksbehandlingClient = saksbehandlingClient,
         )
 
@@ -42,11 +38,6 @@ internal class AutomatiskJournalføringServiceTest {
         )
 
     private val mappeId = 1L
-
-    @BeforeEach
-    internal fun setUp() {
-        every { featureToggleService.isEnabled(any()) } returns true
-    }
 
     @Test
     internal fun `Skal returnere true når journalføring i ef-sak går bra `() {
