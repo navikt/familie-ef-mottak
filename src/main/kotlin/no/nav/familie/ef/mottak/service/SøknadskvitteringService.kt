@@ -3,6 +3,8 @@ package no.nav.familie.ef.mottak.service
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -12,6 +14,7 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
+import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.ettersending.SøknadMedDokumentasjonsbehovDto
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
@@ -24,12 +27,15 @@ import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.Dokumentasjonsbe
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
+import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggFamilieKontrakter
 
 @Service
 @Transactional
@@ -45,22 +51,22 @@ class SøknadskvitteringService(
     @Transactional
     fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
     fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return motta(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
@@ -70,38 +76,6 @@ class SøknadskvitteringService(
         taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Pdf-skjema lagret med id ${lagretSkjema.id} er registrert mottatt.")
-    }
-
-    private fun mapVedlegg(
-        søknadDbId: String,
-        vedleggMetadata: List<no.nav.familie.kontrakter.ef.søknad.Vedlegg>,
-    ): List<Vedlegg> =
-        vedleggMetadata.map {
-            Vedlegg(
-                id = UUID.fromString(it.id),
-                søknadId = søknadDbId,
-                navn = it.navn,
-                tittel = it.tittel,
-                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)),
-            )
-        }
-
-    private fun motta(
-        søknadDb: Søknad,
-        vedlegg: List<Vedlegg>,
-        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
-    ): Kvittering {
-        val lagretSkjema = søknadRepository.insert(søknadDb)
-        vedleggRepository.insertAll(vedlegg)
-        taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
-        val databaseDokumentasjonsbehov =
-            DatabaseDokumentasjonsbehov(
-                søknadId = lagretSkjema.id,
-                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
-            )
-        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
-        logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
-        return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 
     fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
@@ -174,5 +148,66 @@ class SøknadskvitteringService(
             throw IllegalStateException("Søknad $søknadId er ikke journalført og kan ikke slettes.")
         }
         søknadRepository.deleteById(søknadId)
+    }
+
+    @Transactional
+    fun hentSistInnsendtSøknadPerStønad(personIdent: String): List<SistInnsendtSøknadDto> {
+        val stønadstyper =
+            listOf(
+                DOKUMENTTYPE_BARNETILSYN,
+                DOKUMENTTYPE_OVERGANGSSTØNAD,
+                DOKUMENTTYPE_SKOLEPENGER,
+            )
+
+        return stønadstyper
+            .mapNotNull { dokumenttype ->
+                val søknad =
+                    søknadRepository.finnSisteSøknadForPersonOgStønadstype(
+                        fnr = personIdent,
+                        stønadstype = dokumenttype,
+                    )
+                val stønadType = dokumenttypeTilStønadType(dokumenttype) ?: error("Kunne ikke mappe dokumenttype=$dokumenttype til stønadstype")
+
+                if (søknad != null) {
+                    SistInnsendtSøknadDto(
+                        søknadsdato = søknad.opprettetTid.toLocalDate(),
+                        stønadType = stønadType,
+                    )
+                } else {
+                    null
+                }
+            }.filter { it.nyereEnn() }
+    }
+
+    private fun mapSøknadsvedlegg(
+        søknadDbId: String,
+        vedleggMetadata: List<VedleggFamilieKontrakter>,
+    ): List<Vedlegg> =
+        vedleggMetadata.map {
+            Vedlegg(
+                id = UUID.fromString(it.id),
+                søknadId = søknadDbId,
+                navn = it.navn,
+                tittel = it.tittel,
+                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)),
+            )
+        }
+
+    private fun mottaSøknad(
+        søknadDb: Søknad,
+        vedlegg: List<Vedlegg>,
+        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
+    ): Kvittering {
+        val lagretSkjema = søknadRepository.insert(søknadDb)
+        vedleggRepository.insertAll(vedlegg)
+        taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
+        val databaseDokumentasjonsbehov =
+            DatabaseDokumentasjonsbehov(
+                søknadId = lagretSkjema.id,
+                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
+            )
+        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
+        logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
+        return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 }
