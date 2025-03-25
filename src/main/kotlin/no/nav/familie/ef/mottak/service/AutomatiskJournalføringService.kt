@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 @Service
 class AutomatiskJournalføringService(
     val saksbehandlingClient: SaksbehandlingClient,
-    val søknadService: SøknadService,
     val taskService: TaskService,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)

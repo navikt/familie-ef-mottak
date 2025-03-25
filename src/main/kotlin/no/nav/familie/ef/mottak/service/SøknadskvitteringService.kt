@@ -49,21 +49,21 @@ class SøknadskvitteringService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+    fun mottaSøknadOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
-    fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
+    fun mottaSøknadBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
-    fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
+    fun mottaSøknadSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)

@@ -30,17 +30,17 @@ class SøknadskvitteringController(
     @PostMapping("overgangsstonad")
     fun mottaSøknadOvergangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaOvergangsstønad(søknad) }
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadOvergangsstønad(søknad) }
 
     @PostMapping("barnetilsyn")
     fun mottaSøknadBarnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaBarnetilsyn(søknad) }
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadBarnetilsyn(søknad) }
 
     @PostMapping("skolepenger")
     fun mottaSøknadSkolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSkolepenger(søknad) }
+    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadSkolepenger(søknad) }
 
     @PostMapping("arbeidssoker")
     fun mottaArbeidssøkerSkjema(
