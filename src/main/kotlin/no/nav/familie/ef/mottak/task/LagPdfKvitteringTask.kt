@@ -8,7 +8,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagPdfKvitteringTask.TYPE, beskrivelse = "Lag PDF kvittering")
+@TaskStepBeskrivelse(taskStepType = LagPdfKvitteringTask.TYPE, beskrivelse = "Lager en PDF-oppsummering av søknaden")
 class LagPdfKvitteringTask(
     private val pdfKvitteringService: PdfKvitteringService,
     private val taskService: TaskService,

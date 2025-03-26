@@ -73,7 +73,7 @@ class SøknadService(
     fun mottaArbeidssøkerSkjema(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
         val lagretSkjema = søknadRepository.insert(søknadDb)
-        taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
+        taskProsesseringService.startTaskProsessering(lagretSkjema)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
         return Kvittering(lagretSkjema.id, "Pdf-skjema lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
@@ -200,7 +200,7 @@ class SøknadService(
     ): Kvittering {
         val lagretSkjema = søknadRepository.insert(søknadDb)
         vedleggRepository.insertAll(vedlegg)
-        taskProsesseringService.startPdfKvitteringTaskProsessering(lagretSkjema)
+        taskProsesseringService.startTaskProsessering(lagretSkjema)
         val databaseDokumentasjonsbehov =
             DatabaseDokumentasjonsbehov(
                 søknadId = lagretSkjema.id,
