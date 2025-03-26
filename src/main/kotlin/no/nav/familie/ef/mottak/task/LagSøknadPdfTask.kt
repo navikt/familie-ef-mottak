@@ -8,8 +8,8 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagPdfKvitteringTask.TYPE, beskrivelse = "Lag pdf-oppsummering av søknad")
-class LagPdfKvitteringTask(
+@TaskStepBeskrivelse(taskStepType = LagSøknadPdfTask.TYPE, beskrivelse = "Lag pdf av søknad")
+class LagSøknadPdfTask(
     private val pdfKvitteringService: PdfKvitteringService,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
@@ -28,6 +28,6 @@ class LagPdfKvitteringTask(
     }
 
     companion object {
-        const val TYPE = "lagPdfKvittering"
+        const val TYPE = "lagSøknadPdf"
     }
 }

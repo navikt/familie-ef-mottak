@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.task
 
 fun hovedflyt() =
     listOf(
-        TaskType(LagPdfKvitteringTask.TYPE),
+        TaskType(LagSøknadPdfTask.TYPE),
         TaskType(ArkiverSøknadTask.TYPE),
         TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
     )
