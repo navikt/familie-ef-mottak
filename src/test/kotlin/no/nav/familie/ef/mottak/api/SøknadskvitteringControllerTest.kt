@@ -1,11 +1,12 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
-import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.SøknadRepository
-import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
-import no.nav.familie.ef.mottak.service.Testdata
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
+import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
+import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
+import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,6 +16,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import java.util.UUID
 
 internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() {
     @Autowired
@@ -26,24 +28,59 @@ internal class SøknadskvitteringControllerTest : IntegrasjonSpringRunnerTest() 
     }
 
     @Test
-    internal fun `Skal returnere 200 OK for å hente søknad med id`() {
-        val søknadPdfBytes = objectMapper.writeValueAsBytes(Testdata.søknadOvergangsstønadNy)
-        val søknad =
-            søknadRepository.insert(
-                søknad(
-                    søknadPdf = EncryptedFile(søknadPdfBytes),
-                ),
-            )
-        val respons = hentSøknad(søknad.id)
-
-        assertThat(respons.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(respons.body).isNotNull()
+    internal fun `overgangsstønad ok request`() {
+        verifySøknadMedVedleggRequest(
+            SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(), lagVedlegg())),
+            "/api/soknad/overgangsstonad",
+        )
     }
 
-    private fun hentSøknad(søknadId: String): ResponseEntity<ByteArray> =
-        restTemplate.exchange(
-            localhost("/api/soknadskvittering/$søknadId"),
-            HttpMethod.GET,
-            HttpEntity<ByteArray>(headers),
-        )
+    @Test
+    internal fun `barnetilsyn ok request`() {
+        val søknad = SøknadMedVedlegg(søknadBarnetilsyn, listOf(lagVedlegg(), lagVedlegg()))
+        verifySøknadMedVedleggRequest(søknad, "/api/soknad/barnetilsyn")
+    }
+
+    @Test
+    internal fun `skolepenger ok request`() {
+        val søknad = SøknadMedVedlegg(søknadSkolepenger, listOf(lagVedlegg(), lagVedlegg()))
+        verifySøknadMedVedleggRequest(søknad, "/api/soknad/skolepenger")
+    }
+
+    @Test
+    internal fun `det skal ikke være mulig å sende inn samme vedlegg på nytt med ny søknad`() {
+        val vedleggId = UUID.randomUUID().toString()
+        val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(vedleggId)))
+        verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad")
+        verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad", HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    internal fun `vedlegg savnes i listen med vedlegg`() {
+        val request = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("finnes_ikke")))
+        val response: ResponseEntity<Any> =
+            restTemplate.exchange(
+                localhost("/api/soknad/overgangsstonad"),
+                HttpMethod.POST,
+                HttpEntity(request, headers),
+            )
+        assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    private fun <T> verifySøknadMedVedleggRequest(
+        søknad: SøknadMedVedlegg<T>,
+        url: String,
+        forventetHttpStatus: HttpStatus = HttpStatus.OK,
+    ) {
+        val response: ResponseEntity<Any> =
+            restTemplate.exchange(
+                localhost(url),
+                HttpMethod.POST,
+                HttpEntity(søknad, headers),
+            )
+
+        assertThat(response.statusCode).isEqualTo(forventetHttpStatus)
+    }
+
+    private fun lagVedlegg(id: String = UUID.randomUUID().toString()) = Vedlegg(id, "navn", "tittel")
 }

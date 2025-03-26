@@ -28,7 +28,6 @@ internal class AutomatiskJournalføringServiceTest {
     private val automatiskJournalføringService =
         AutomatiskJournalføringService(
             taskService = mockk(),
-            søknadService = mockk(),
             saksbehandlingClient = saksbehandlingClient,
         )
 
