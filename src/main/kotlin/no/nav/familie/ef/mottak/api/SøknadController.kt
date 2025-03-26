@@ -1,7 +1,7 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.okEllerKastException
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -25,37 +25,37 @@ import org.springframework.web.bind.annotation.RestController
     claimMap = ["acr=Level4"],
 )
 class SøknadController(
-    val søknadKvitteringService: SøknadskvitteringService,
+    val søknadService: SøknadService,
 ) {
     @PostMapping("overgangsstonad")
     fun mottaSøknadOvergangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadOvergangsstønad(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønad(søknad) }
 
     @PostMapping("barnetilsyn")
     fun mottaSøknadBarnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadBarnetilsyn(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadBarnetilsyn(søknad) }
 
     @PostMapping("skolepenger")
     fun mottaSøknadSkolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaSøknadSkolepenger(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadSkolepenger(søknad) }
 
     @PostMapping("arbeidssoker")
     fun mottaArbeidssøkerSkjema(
         @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
-    ): Kvittering = okEllerKastException { søknadKvitteringService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
+    ): Kvittering = okEllerKastException { søknadService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
 
     @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadKvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 
     @GetMapping("sist-innsendt-per-stonad")
     fun hentSistInnsendtSøknadPerStønad(): List<SistInnsendtSøknadDto> {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadKvitteringService.hentSistInnsendtSøknadPerStønad(personIdent)
+        return søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
     }
 }

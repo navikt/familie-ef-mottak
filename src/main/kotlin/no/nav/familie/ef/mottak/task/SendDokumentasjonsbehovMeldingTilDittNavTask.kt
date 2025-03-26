@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.task
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.LinkMelding
 import no.nav.familie.ef.mottak.util.lagMeldingManglerDokumentasjonsbehov
 import no.nav.familie.ef.mottak.util.lagMeldingSøknadMottattBekreftelse
@@ -24,19 +24,19 @@ import org.springframework.stereotype.Service
 )
 class SendDokumentasjonsbehovMeldingTilDittNavTask(
     private val producer: DittNavKafkaProducer,
-    private val søknadskvitteringService: SøknadskvitteringService,
+    private val søknadService: SøknadService,
     private val taskService: TaskService,
     private val ettersendingConfig: EttersendingConfig,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
-        val søknad = søknadskvitteringService.hentSøknad(task.payload)
+        val søknad = søknadService.hentSøknad(task.payload)
         val søknadType = SøknadType.hentSøknadTypeForDokumenttype(søknad.dokumenttype)
         if (søknadType == SøknadType.OVERGANGSSTØNAD_ARBEIDSSØKER) {
             return
         }
-        val dokumentasjonsbehov = søknadskvitteringService.hentDokumentasjonsbehovForSøknad(søknad).dokumentasjonsbehov
+        val dokumentasjonsbehov = søknadService.hentDokumentasjonsbehovForSøknad(søknad).dokumentasjonsbehov
         if (dokumentasjonsbehov.isNotEmpty()) {
             val manglerVedleggPåSøknad = manglerVedlegg(dokumentasjonsbehov)
 

@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.ef.søknad.Dokument
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
@@ -25,7 +25,7 @@ import java.util.UUID
 internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     private lateinit var sendDokumentasjonsbehovMeldingTilDittNavTask: SendDokumentasjonsbehovMeldingTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
-    private lateinit var søknadskvitteringService: SøknadskvitteringService
+    private lateinit var søknadService: SøknadService
     private lateinit var taskService: TaskService
     private lateinit var ettersendingConfig: EttersendingConfig
 
@@ -34,13 +34,13 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
-        søknadskvitteringService = mockk()
+        søknadService = mockk()
         taskService = mockk(relaxed = true)
         ettersendingConfig = mockk()
         sendDokumentasjonsbehovMeldingTilDittNavTask =
             SendDokumentasjonsbehovMeldingTilDittNavTask(
                 dittNavKafkaProducer,
-                søknadskvitteringService,
+                søknadService,
                 taskService,
                 ettersendingConfig,
             )
@@ -59,8 +59,8 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
+            søknadService.hentSøknad(any())
+            søknadService.hentDokumentasjonsbehovForSøknad(any())
             taskService.save(any())
 
             dittNavKafkaProducer.sendBeskjedTilBruker(
@@ -126,10 +126,10 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         sendDokumentasjonsbehovMeldingTilDittNavTask.doTask(Task("", SØKNAD_ID, properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
+            søknadService.hentSøknad(any())
         }
         verify(exactly = 0) {
-            søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any())
+            søknadService.hentDokumentasjonsbehovForSøknad(any())
         }
 
         verify(exactly = 0) {
@@ -169,12 +169,12 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
             error("Lagrer aldri dokumentasjonsbehov til arbeidssøker")
         }
 
-        every { søknadskvitteringService.hentDokumentasjonsbehovForSøknad(any()) } returns
+        every { søknadService.hentDokumentasjonsbehovForSøknad(any()) } returns
             DokumentasjonsbehovDto(dokumentasjonsbehov, LocalDateTime.now(), søknadType, FNR)
     }
 
     private fun mockSøknad(søknadType: SøknadType = SøknadType.OVERGANGSSTØNAD) {
-        every { søknadskvitteringService.hentSøknad(SØKNAD_ID) } returns
+        every { søknadService.hentSøknad(SØKNAD_ID) } returns
             Søknad(
                 id = SØKNAD_ID,
                 søknadJson = EncryptedString(""),
