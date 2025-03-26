@@ -8,13 +8,13 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.springframework.stereotype.Service
 
 @Service
-@TaskStepBeskrivelse(taskStepType = LagPdfKvitteringTask.TYPE, beskrivelse = "Lag PDF kvittering")
+@TaskStepBeskrivelse(taskStepType = LagPdfKvitteringTask.TYPE, beskrivelse = "Lag pdf-oppsummering av søknad")
 class LagPdfKvitteringTask(
     private val pdfKvitteringService: PdfKvitteringService,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
-        pdfKvitteringService.lagPdfKvittering(task.payload)
+        pdfKvitteringService.lagPdf(task.payload)
     }
 
     override fun onCompletion(task: Task) {

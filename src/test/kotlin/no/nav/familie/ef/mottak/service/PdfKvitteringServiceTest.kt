@@ -52,7 +52,7 @@ class PdfKvitteringServiceTest {
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
         // When
-        pdfKvitteringService.lagPdfKvittering(søknadOvergangsstønadId)
+        pdfKvitteringService.lagPdf(søknadOvergangsstønadId)
         // Then
         Assertions.assertThat(pdf).isEqualTo(slot.captured.søknadPdf)
     }
