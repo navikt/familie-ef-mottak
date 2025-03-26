@@ -20,7 +20,7 @@ class LagPdfKvitteringTask(
     override fun onCompletion(task: Task) {
         taskService.save(
             Task(
-                TaskType(TYPE).nestePdfKvitteringTask(),
+                TaskType(TYPE).nesteHovedflytTask(),
                 task.payload,
                 task.metadata,
             ),
