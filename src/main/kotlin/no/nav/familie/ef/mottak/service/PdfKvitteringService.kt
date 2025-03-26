@@ -24,7 +24,7 @@ class PdfKvitteringService(
     private val vedleggRepository: VedleggRepository,
     private val pdfKvitteringClient: PdfKvitteringClient,
 ) {
-    fun lagPdfKvittering(id: String) {
+    fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)

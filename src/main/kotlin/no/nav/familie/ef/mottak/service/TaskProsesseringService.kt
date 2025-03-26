@@ -6,7 +6,6 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.task.LagEttersendingPdfTask
 import no.nav.familie.ef.mottak.task.LagPdfKvitteringTask
-import no.nav.familie.ef.mottak.task.LagPdfTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.log.IdUtils
 import no.nav.familie.log.mdc.MDCConstants
@@ -35,50 +34,6 @@ class TaskProsesseringService(
                 .apply { this["dokumenttype"] = søknad.dokumenttype }
         taskService.save(
             Task(
-                LagPdfTask.TYPE,
-                søknad.id,
-                properties,
-            ),
-        )
-
-        properties["eventId"] = UUID.randomUUID().toString()
-        taskService.save(
-            Task(
-                SendSøknadMottattTilDittNavTask.TYPE,
-                søknad.id,
-                properties,
-            ),
-        )
-        søknadRepository.update(søknad.copy(taskOpprettet = true))
-        logger.info("Task opprettet for søknad med id ${søknad.id}")
-    }
-
-    @Transactional
-    fun startTaskProsessering(ettersending: Ettersending) {
-        val properties =
-            Properties().apply {
-                this["søkersFødselsnummer"] = ettersending.fnr
-                this["stønadType"] = ettersending.stønadType
-            }
-
-        val task = Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties)
-
-        task.metadata.apply {
-            this["callId"] = hentEllerOpprettCallId() + "_" + ettersending.stønadType.fjernØ()
-        }
-
-        taskService.save(task)
-        ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
-    }
-
-    @Transactional
-    fun startPdfKvitteringTaskProsessering(søknad: Søknad) {
-        val properties =
-            Properties()
-                .apply { this["søkersFødselsnummer"] = søknad.fnr }
-                .apply { this["dokumenttype"] = søknad.dokumenttype }
-        taskService.save(
-            Task(
                 LagPdfKvitteringTask.TYPE,
                 søknad.id,
                 properties,
@@ -97,7 +52,23 @@ class TaskProsesseringService(
         logger.info("PdfKvitteringTask opprettet for søknad med id ${søknad.id}")
     }
 
+    @Transactional
+    fun startTaskProsessering(ettersending: Ettersending) {
+        val properties =
+            Properties().apply {
+                this["søkersFødselsnummer"] = ettersending.fnr
+                this["stønadType"] = ettersending.stønadType
+            }
+
+        val task = Task(LagEttersendingPdfTask.TYPE, ettersending.id.toString(), properties)
+
+        task.metadata.apply {
+            this["callId"] = hentEllerOpprettCallId() + "_" + ettersending.stønadType.replace("Ø", "O")
+        }
+
+        taskService.save(task)
+        ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
+    }
+
     private fun hentEllerOpprettCallId(): String = MDC.get(MDCConstants.MDC_CALL_ID) as? String ?: IdUtils.generateId()
 }
-
-private fun String.fjernØ(): String = this.replace("Ø", "O")
