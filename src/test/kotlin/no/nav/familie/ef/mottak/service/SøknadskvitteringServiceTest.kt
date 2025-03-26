@@ -192,7 +192,7 @@ class SøknadskvitteringServiceTest {
         }
 
         @Test
-        fun `skal filtrere søknader eldre en 30 dager`() {
+        fun `skal filtrere søknader eldre enn 30 dager`() {
             val søknader =
                 listOf(
                     SistInnsendtSøknadDto(
