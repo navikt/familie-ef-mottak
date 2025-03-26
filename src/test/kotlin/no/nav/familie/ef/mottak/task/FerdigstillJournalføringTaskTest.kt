@@ -7,7 +7,7 @@ import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.kontrakter.felles.arbeidsfordeling.Enhet
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.util.FnrGenerator
@@ -17,9 +17,9 @@ import java.util.Properties
 
 internal class FerdigstillJournalføringTaskTest {
     private val integrasjonerClient: IntegrasjonerClient = mockk()
-    private val søknadskvitteringService: SøknadskvitteringService = mockk()
+    private val søknadService: SøknadService = mockk()
     private val arkiveringService: ArkiveringService =
-        ArkiveringService(integrasjonerClient, søknadskvitteringService, mockk(), mockk(), mockk())
+        ArkiveringService(integrasjonerClient, søknadService, mockk(), mockk(), mockk())
     private val ferdigstillJournalføringTask = FerdigstillJournalføringTask(arkiveringService)
 
     @Test
@@ -30,7 +30,7 @@ internal class FerdigstillJournalføringTaskTest {
         val enhetSlot = slot<String>()
 
         every {
-            søknadskvitteringService.hentSøknad("123L")
+            søknadService.hentSøknad("123L")
         } returns
             Søknad(
                 søknadJson = EncryptedString(""),

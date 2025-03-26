@@ -28,14 +28,14 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class SøknadskvitteringServiceTest {
+class SøknadServiceTest {
     private val søknadRepository = mockk<SøknadRepository>(relaxed = true)
     private val vedleggRepository = mockk<VedleggRepository>(relaxed = true)
     private val dokumentasjonsbehovRepository = mockk<DokumentasjonsbehovRepository>(relaxed = true)
     private val taskProsesseringService = mockk<TaskProsesseringService>(relaxed = true)
 
-    private val søknadskvitteringService =
-        SøknadskvitteringService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository, taskProsesseringService)
+    private val søknadService =
+        SøknadService(søknadRepository, vedleggRepository, mockk(), dokumentasjonsbehovRepository, taskProsesseringService)
 
     @Test
     internal fun `hentDokumentasjonsbehovforPerson fungerer for overgangsstønad, barnetilsyn og skolepenger`() {
@@ -68,7 +68,7 @@ class SøknadskvitteringServiceTest {
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)
 
-        assertThat(søknadskvitteringService.hentDokumentasjonsbehovForPerson(fnr)).hasSize(3)
+        assertThat(søknadService.hentDokumentasjonsbehovForPerson(fnr)).hasSize(3)
     }
 
     @Nested
@@ -77,7 +77,7 @@ class SøknadskvitteringServiceTest {
         fun `for søknad som ikke er journalført feiler`() {
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()
 
-            assertThrows<IllegalStateException> { søknadskvitteringService.reduserSøknad("UUID") }
+            assertThrows<IllegalStateException> { søknadService.reduserSøknad("UUID") }
         }
 
         @Test
@@ -86,7 +86,7 @@ class SøknadskvitteringServiceTest {
             every { søknadRepository.findByIdOrNull("UUID") } returns søknadTilReduksjon
             every { søknadRepository.update(any()) } returns søknadTilReduksjon
 
-            søknadskvitteringService.reduserSøknad("UUID")
+            søknadService.reduserSøknad("UUID")
 
             verify { søknadRepository.update(søknadTilReduksjon.copy(søknadPdf = null)) }
             verify { vedleggRepository.deleteBySøknadId("UUID") }
@@ -100,7 +100,7 @@ class SøknadskvitteringServiceTest {
         fun `for søknad som ikke er journalført feiler`() {
             every { søknadRepository.findByIdOrNull("UUID") } returns søknad()
 
-            assertThrows<IllegalStateException> { søknadskvitteringService.slettSøknad("UUID") }
+            assertThrows<IllegalStateException> { søknadService.slettSøknad("UUID") }
         }
 
         @Test
@@ -108,7 +108,7 @@ class SøknadskvitteringServiceTest {
             val søknadTilSletting = søknad(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321321")
             every { søknadRepository.findByIdOrNull("UUID") } returns søknadTilSletting
 
-            søknadskvitteringService.slettSøknad("UUID")
+            søknadService.slettSøknad("UUID")
 
             verify {
                 søknadRepository.deleteById("UUID")
@@ -124,7 +124,7 @@ class SøknadskvitteringServiceTest {
         fun `skal returnere tom liste for førstegangsøker`() {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(any(), any()) } returns null
 
-            val søknader = søknadskvitteringService.hentSistInnsendtSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader).isEmpty()
         }
@@ -151,7 +151,7 @@ class SøknadskvitteringServiceTest {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns null
 
-            val søknader = søknadskvitteringService.hentSistInnsendtSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader).isEmpty()
         }
@@ -186,7 +186,7 @@ class SøknadskvitteringServiceTest {
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN) } returns barnetilsynSøknad
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_SKOLEPENGER) } returns skolepengerSøknad
 
-            val søknader = søknadskvitteringService.hentSistInnsendtSøknadPerStønad(personIdent)
+            val søknader = søknadService.hentSistInnsendtSøknadPerStønad(personIdent)
 
             assertThat(søknader.size).isEqualTo(3)
         }

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service
 @Service
 class MappeService(
     private val integrasjonerClient: IntegrasjonerClient,
-    private val søknadskvitteringService: SøknadskvitteringService,
+    private val søknadService: SøknadService,
     private val cacheManager: CacheManager,
 ) {
     val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -58,7 +58,7 @@ class MappeService(
         }
 
     private fun finnSøkestrengForSøknad(søknadId: String): MappeSøkestreng {
-        val søknad = søknadskvitteringService.hentSøknad(søknadId)
+        val søknad = søknadService.hentSøknad(søknadId)
 
         return when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
             StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknad)

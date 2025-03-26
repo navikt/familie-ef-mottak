@@ -2,7 +2,7 @@ package no.nav.familie.ef.mottak.task
 
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.ef.StønadType.BARNETILSYN
@@ -21,11 +21,11 @@ import org.springframework.stereotype.Service
 )
 class VelgAutomatiskEllerManuellFlytTask(
     val taskService: TaskService,
-    val søknadskvitteringService: SøknadskvitteringService,
+    val søknadService: SøknadService,
     val saksbehandlingClient: SaksbehandlingClient,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
-        val søknad: Søknad = søknadskvitteringService.hentSøknad(task.payload)
+        val søknad: Søknad = søknadService.hentSøknad(task.payload)
         val stønadstype: StønadType? = dokumenttypeTilStønadType(søknad.dokumenttype)
 
         val neste =

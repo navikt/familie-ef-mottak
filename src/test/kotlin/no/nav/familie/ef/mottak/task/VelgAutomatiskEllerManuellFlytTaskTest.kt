@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.familie.util.FnrGenerator
@@ -20,9 +20,9 @@ import java.util.Properties
 internal class VelgAutomatiskEllerManuellFlytTaskTest {
     private val taskService: TaskService = mockk()
     private val saksbehandlingClient: SaksbehandlingClient = mockk()
-    private val søknadskvitteringService: SøknadskvitteringService = mockk()
+    private val søknadService: SøknadService = mockk()
     private val velgAutomatiskEllerManuellFlytTask =
-        VelgAutomatiskEllerManuellFlytTask(taskService, søknadskvitteringService, saksbehandlingClient)
+        VelgAutomatiskEllerManuellFlytTask(taskService, søknadService, saksbehandlingClient)
 
     private val arbeidssøkerSkjemaId = "999L"
     private val overgangsstønadSøknadId = "123L"
@@ -30,7 +30,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
     @BeforeEach
     internal fun setUp() {
         every {
-            søknadskvitteringService.hentSøknad(overgangsstønadSøknadId)
+            søknadService.hentSøknad(overgangsstønadSøknadId)
         } returns
             Søknad(
                 søknadJson = EncryptedString(""),
@@ -39,7 +39,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
                 fnr = FnrGenerator.generer(),
             )
         every {
-            søknadskvitteringService.hentSøknad(arbeidssøkerSkjemaId)
+            søknadService.hentSøknad(arbeidssøkerSkjemaId)
         } returns
             Søknad(
                 søknadJson = EncryptedString(""),
