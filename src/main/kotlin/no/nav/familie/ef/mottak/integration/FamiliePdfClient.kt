@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Service
-class PdfKvitteringClient(
+class FamiliePdfClient(
     @Value("\${familie.pdf.url}")
     private val uri: URI,
     @Qualifier("restTemplateAzure")

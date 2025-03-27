@@ -9,8 +9,8 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.integration.PdfKvitteringClient
+import no.nav.familie.ef.mottak.integration.FamilieBrevClient
+import no.nav.familie.ef.mottak.integration.FamiliePdfClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
@@ -27,9 +27,9 @@ internal class PdfServiceTest {
     private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingRepository: EttersendingRepository = mockk()
-    private val pdfClient: PdfClient = mockk()
-    private val pdfKvitteringClient: PdfKvitteringClient = mockk()
-    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient, pdfKvitteringClient)
+    private val familieBrevClient: FamilieBrevClient = mockk()
+    private val familiePdfClient: FamiliePdfClient = mockk()
+    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, familieBrevClient, familiePdfClient)
 
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
@@ -74,8 +74,8 @@ internal class PdfServiceTest {
         every { søknadRepository.findByIdOrNull(søknadBarnetilsyn.id) } returns søknadBarnetilsyn
         every { søknadRepository.findByIdOrNull(søknadSkolepenger.id) } returns søknadSkolepenger
         every { vedleggRepository.finnTitlerForSøknadId(any()) } returns vedlegg.map { it.tittel }
-        every { pdfClient.lagPdf(any()) } returns pdf.bytes
-        every { pdfKvitteringClient.lagPdf(any()) } returns pdf.bytes
+        every { familieBrevClient.lagPdf(any()) } returns pdf.bytes
+        every { familiePdfClient.lagPdf(any()) } returns pdf.bytes
     }
 
     @Test

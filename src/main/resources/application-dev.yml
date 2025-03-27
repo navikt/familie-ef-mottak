@@ -18,7 +18,7 @@ familie:
     url: http://familie-dokument
     audience: dev-gcp:teamfamilie:familie-dokument
   ef:
-    pdfgenerator:
+    brev:
       url: http://familie-brev
     integrasjoner:
       url: https://familie-integrasjoner.dev-fss-pub.nais.io/api

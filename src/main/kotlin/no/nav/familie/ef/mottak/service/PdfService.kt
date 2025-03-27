@@ -4,8 +4,8 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.integration.PdfClient
-import no.nav.familie.ef.mottak.integration.PdfKvitteringClient
+import no.nav.familie.ef.mottak.integration.FamilieBrevClient
+import no.nav.familie.ef.mottak.integration.FamiliePdfClient
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
@@ -26,14 +26,14 @@ class PdfService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
     private val vedleggRepository: VedleggRepository,
-    private val pdfClient: PdfClient,
-    private val pdfKvitteringClient: PdfKvitteringClient,
+    private val familieBrevClient: FamilieBrevClient,
+    private val familiePdfClient: FamiliePdfClient,
 ) {
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
-        val søknadPdf = pdfKvitteringClient.lagPdf(feltMap)
+        val søknadPdf = familiePdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
     }
@@ -43,7 +43,7 @@ class PdfService(
         vedleggTitler: List<String>,
     ) {
         val feltMap = SøknadTilFeltMap.mapEttersending(ettersending, vedleggTitler)
-        val søknadPdf = pdfClient.lagPdf(feltMap)
+        val søknadPdf = familieBrevClient.lagPdf(feltMap)
         ettersendingRepository.update(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
     }
 

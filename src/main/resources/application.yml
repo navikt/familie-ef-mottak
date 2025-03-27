@@ -79,7 +79,7 @@ familie:
   ef:
     integrasjoner:
       url: https://familie-integrasjoner.prod-fss-pub.nais.io/api
-    pdfgenerator:
+    brev:
       url: http://familie-brev
 
 prosessering:
