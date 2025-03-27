@@ -25,7 +25,7 @@ class PdfKvitteringClient(
             .build()
             .toUri()
 
-    fun opprettPdf(feltMap: FeltMap): ByteArray {
+    fun lagPdf(feltMap: FeltMap): ByteArray {
         val uri =
             UriComponentsBuilder
                 .fromUri(uri)

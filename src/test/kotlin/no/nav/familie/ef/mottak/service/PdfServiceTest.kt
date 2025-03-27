@@ -70,11 +70,12 @@ internal class PdfServiceTest {
 
     @BeforeEach
     fun setUp() {
-        søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn, søknadSkolepenger)
-        every {
-            vedleggRepository.finnTitlerForSøknadId(any())
-        } returns vedlegg.map { it.tittel }
-        pdfClientVilReturnere(pdf)
+        every { søknadRepository.findByIdOrNull(søknadOvergangsstønad.id) } returns søknadOvergangsstønad
+        every { søknadRepository.findByIdOrNull(søknadBarnetilsyn.id) } returns søknadBarnetilsyn
+        every { søknadRepository.findByIdOrNull(søknadSkolepenger.id) } returns søknadSkolepenger
+        every { vedleggRepository.finnTitlerForSøknadId(any()) } returns vedlegg.map { it.tittel }
+        every { pdfClient.lagPdf(any()) } returns pdf.bytes
+        every { pdfKvitteringClient.lagPdf(any()) } returns pdf.bytes
     }
 
     @Test
@@ -110,20 +111,6 @@ internal class PdfServiceTest {
         verify(exactly = 1) { vedleggRepository.finnTitlerForSøknadId(any()) }
         verify(exactly = 1) {
             søknadRepository.update(slot.captured)
-        }
-    }
-
-    private fun pdfClientVilReturnere(pdf: EncryptedFile) {
-        every {
-            pdfClient.lagPdf(any())
-        } returns pdf.bytes
-    }
-
-    private fun søknadsRepositoryVilReturnere(vararg søknad: Søknad) {
-        søknad.forEach {
-            every {
-                søknadRepository.findByIdOrNull(it.id)
-            } returns it
         }
     }
 
