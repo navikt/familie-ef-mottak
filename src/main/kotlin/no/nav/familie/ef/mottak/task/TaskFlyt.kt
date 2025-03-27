@@ -2,14 +2,7 @@ package no.nav.familie.ef.mottak.task
 
 fun hovedflyt() =
     listOf(
-        TaskType(LagPdfKvitteringTask.TYPE),
-        TaskType(ArkiverSøknadTask.TYPE),
-        TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
-    )
-
-fun pdfKvitteringFlyt() =
-    listOf(
-        TaskType(LagPdfKvitteringTask.TYPE),
+        TaskType(LagSøknadPdfTask.TYPE),
         TaskType(ArkiverSøknadTask.TYPE),
         TaskType(VelgAutomatiskEllerManuellFlytTask.TYPE),
     )
@@ -51,12 +44,6 @@ fun TaskType.nesteManuellflytTask() =
 
 fun TaskType.nesteEttersendingsflytTask() =
     ettersendingflyt()
-        .zipWithNext()
-        .first { this == it.first }
-        .second.type
-
-fun TaskType.nestePdfKvitteringTask() =
-    pdfKvitteringFlyt()
         .zipWithNext()
         .first { this == it.first }
         .second.type

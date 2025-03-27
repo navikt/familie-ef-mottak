@@ -21,7 +21,7 @@ familie:
   ef:
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
-    pdfgenerator:
+    brev:
       #url: http://localhost:8081/
       url: https://familie-brev.dev.intern.nav.no/
   dokument:

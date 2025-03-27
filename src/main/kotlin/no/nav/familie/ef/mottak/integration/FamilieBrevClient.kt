@@ -1,6 +1,6 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.ef.mottak.config.PdfgeneratorConfig
+import no.nav.familie.ef.mottak.config.FamilieBrevClientConfig
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
 import no.nav.familie.http.client.AbstractRestClient
@@ -11,13 +11,13 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.DefaultUriBuilderFactory
 
 @Service
-class PdfClient(
+class FamilieBrevClient(
     @Qualifier("restTemplateUnsecured") operations: RestOperations,
-    private val pdfgeneratorConfig: PdfgeneratorConfig,
+    private val familieBrevClientConfig: FamilieBrevClientConfig,
 ) : AbstractRestClient(operations, "pdf") {
     fun lagPdf(labelValueJson: FeltMap): ByteArray {
         val sendInnUri =
-            DefaultUriBuilderFactory().uriString(pdfgeneratorConfig.url).path("/api/generer-soknad").build()
+            DefaultUriBuilderFactory().uriString(familieBrevClientConfig.url).path("/api/generer-soknad").build()
         return postForEntity(sendInnUri, labelValueJson, HttpHeaders().medContentTypeJsonUTF8())
     }
 }

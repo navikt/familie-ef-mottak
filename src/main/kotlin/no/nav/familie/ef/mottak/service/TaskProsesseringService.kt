@@ -5,7 +5,7 @@ import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.task.LagEttersendingPdfTask
-import no.nav.familie.ef.mottak.task.LagPdfKvitteringTask
+import no.nav.familie.ef.mottak.task.LagSøknadPdfTask
 import no.nav.familie.ef.mottak.task.SendSøknadMottattTilDittNavTask
 import no.nav.familie.log.IdUtils
 import no.nav.familie.log.mdc.MDCConstants
@@ -34,7 +34,7 @@ class TaskProsesseringService(
                 .apply { this["dokumenttype"] = søknad.dokumenttype }
         taskService.save(
             Task(
-                LagPdfKvitteringTask.TYPE,
+                LagSøknadPdfTask.TYPE,
                 søknad.id,
                 properties,
             ),
