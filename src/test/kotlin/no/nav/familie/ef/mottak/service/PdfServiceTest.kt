@@ -10,6 +10,7 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.PdfClient
+import no.nav.familie.ef.mottak.integration.PdfKvitteringClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
@@ -27,7 +28,8 @@ internal class PdfServiceTest {
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingRepository: EttersendingRepository = mockk()
     private val pdfClient: PdfClient = mockk()
-    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient)
+    private val pdfKvitteringClient: PdfKvitteringClient = mockk()
+    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient, pdfKvitteringClient)
 
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
@@ -76,7 +78,7 @@ internal class PdfServiceTest {
     }
 
     @Test
-    fun `Søknad skal oppdateres med pdf når pdf genereres`() {
+    fun `Søknad om overgangsstønad skal oppdateres med pdf når pdf genereres`() {
         // Given
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
@@ -87,7 +89,7 @@ internal class PdfServiceTest {
     }
 
     @Test
-    fun `Skolepengesøknad skal oppdateres med pdf når pdf genereres`() {
+    fun `Søknad om skolepenger skal oppdateres med pdf når pdf genereres`() {
         // Given
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
