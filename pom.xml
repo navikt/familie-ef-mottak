@@ -26,7 +26,7 @@
         <prosessering.version>2.20250324083707_24007c5</prosessering.version>
         <confluent.version>7.9.0</confluent.version>
         <kontrakter.version>3.0_20250324172417_684edfe</kontrakter.version>
-        <token-validation.version>5.0.20</token-validation.version>
+        <token-validation.version>5.0.24</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.4.1</version>
+            <version>11.5.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
