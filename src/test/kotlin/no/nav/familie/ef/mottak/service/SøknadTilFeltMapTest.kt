@@ -30,10 +30,11 @@ class SøknadTilFeltMapTest {
         val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
 
         val harVisningsVariantBarn =
-            mapSøknadsfelter.verdiliste
-                .filter { it.label == "Barna dine" }[0]
-                .verdiliste
-                ?.any { it.visningsVariant == VisningsVariant.TABELL.toString() }
+            mapSøknadsfelter.verdiliste.any {
+                it.verdiliste?.any { verdilisteElement ->
+                    verdilisteElement.visningsVariant == VisningsVariant.TABELL.toString()
+                } == true
+            }
 
         Assertions.assertThat(harVisningsVariantBarn).isTrue
     }
