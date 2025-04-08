@@ -1,6 +1,7 @@
-package no.nav.familie.ef.mottak.service
+package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.repository.domain.VerdilisteElement
+import no.nav.familie.ef.mottak.service.Feltformaterer
 import no.nav.familie.kontrakter.ef.søknad.Adresse
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
@@ -18,7 +19,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer Month korrekt`() {
         val testverdi = Søknadsfelt("label", Month.DECEMBER)
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "desember"))
     }
@@ -27,7 +28,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer Boolean korrekt`() {
         val testverdi = Søknadsfelt("label", true)
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja"))
     }
@@ -36,7 +37,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer liste med Boolean korrekt`() {
         val testverdi = Søknadsfelt("label", listOf(true, false))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ja\n\nNei"))
     }
@@ -45,7 +46,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer List korrekt`() {
         val testverdi = Søknadsfelt<List<*>>("label", listOf("Lille", "Grimme", "Arne", "Trenger", "Ris"))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Lille\n\nGrimme\n\nArne\n\nTrenger\n\nRis"))
     }
@@ -55,7 +56,7 @@ internal class FeltformatererTest {
         val fnr = FnrGenerator.generer()
         val testverdi = Søknadsfelt("label", Fødselsnummer(fnr))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = fnr))
     }
@@ -64,16 +65,43 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer Adresse korrekt`() {
         val testverdi = Søknadsfelt("label", Adresse("Husebyskogen 15", "1572", "Fet", "Norge"))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
-        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n\n1572 Fet\n\nNorge"))
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n1572 Fet\nNorge"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med tomme felter korrekt`() {
+        val testverdi = Søknadsfelt("label", Adresse("", "", "", ""))
+
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Ingen registrert adresse"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med delvis utfylte felter korrekt`() {
+        val testverdi = Søknadsfelt("label", Adresse("Husebyskogen 15", "", "Fet", ""))
+
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Husebyskogen 15\n Fet"))
+    }
+
+    @Test
+    fun `mapEndenodeTilUtskriftMap håndterer adresse med kun land`() {
+        val testverdi = Søknadsfelt("label", Adresse("", "", "", "Norge"))
+
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
+
+        assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Norge"))
     }
 
     @Test
     fun `mapEndenodeTilUtskriftMap formaterer LocalDate korrekt`() {
         val testverdi = Søknadsfelt<LocalDate>("label", LocalDate.of(2015, 12, 5))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015"))
     }
@@ -82,7 +110,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer LocalDateTime korrekt`() {
         val testverdi = Søknadsfelt<LocalDateTime>("label", LocalDateTime.of(2015, 12, 5, 14, 52, 48))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "05.12.2015 14:52:48"))
     }
@@ -91,7 +119,7 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer MånedÅrPeriode korrekt`() {
         val testverdi = Søknadsfelt("label", MånedÅrPeriode(Month.FEBRUARY, 2015, Month.JULY, 2018))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra februar 2015 til juli 2018"))
     }
@@ -100,8 +128,12 @@ internal class FeltformatererTest {
     fun `mapEndenodeTilUtskriftMap formaterer Datoperiode korrekt`() {
         val testverdi = Søknadsfelt("label", Datoperiode(LocalDate.of(2015, 2, 1), LocalDate.of(2018, 7, 14)))
 
-        val resultat = Feltformaterer.mapEndenodeTilUtskriftMap(testverdi)
+        val resultat = Feltformaterer.genereltFormatMapperMapEndenode(testverdi, SPRÅK)
 
         assertThat(resultat).isEqualTo(VerdilisteElement(label = "label", verdi = "Fra 01.02.2015 til 14.07.2018"))
+    }
+
+    companion object {
+        private const val SPRÅK = "nb"
     }
 }

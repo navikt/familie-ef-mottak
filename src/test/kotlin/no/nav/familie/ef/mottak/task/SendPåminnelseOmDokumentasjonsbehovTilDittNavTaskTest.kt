@@ -6,13 +6,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.EttersendingConfig
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.featuretoggle.FeatureToggleService
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.EttersendingService
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.SendPåminnelseOmDokumentasjonsbehovTilDittNavTask
 import no.nav.familie.ef.mottak.util.lagMeldingPåminnelseManglerDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
@@ -29,9 +28,8 @@ import java.util.UUID
 internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     private lateinit var sendPåminnelseOmDokumentasjonsbehovTilDittNavTask: SendPåminnelseOmDokumentasjonsbehovTilDittNavTask
     private lateinit var dittNavKafkaProducer: DittNavKafkaProducer
-    private lateinit var søknadskvitteringService: SøknadskvitteringService
+    private lateinit var søknadService: SøknadService
     private lateinit var ettersendingService: EttersendingService
-    private lateinit var featureToggleService: FeatureToggleService
     private lateinit var ettersendingConfig: EttersendingConfig
     private lateinit var saksbehandlingClient: SaksbehandlingClient
 
@@ -40,21 +38,19 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     @BeforeEach
     internal fun setUp() {
         dittNavKafkaProducer = mockk(relaxed = true)
-        søknadskvitteringService = mockk()
+        søknadService = mockk()
         ettersendingService = mockk()
-        featureToggleService = mockk()
         ettersendingConfig = mockk()
         saksbehandlingClient = mockk()
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask =
             SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
                 dittNavKafkaProducer,
-                søknadskvitteringService,
+                søknadService,
                 ettersendingService,
                 ettersendingConfig,
                 saksbehandlingClient,
             )
 
-        every { featureToggleService.isEnabled(any()) } returns true
         every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
     }
 
@@ -71,8 +67,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
 
             dittNavKafkaProducer.sendBeskjedTilBruker(
@@ -100,8 +96,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
         }
@@ -118,8 +114,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
         }
@@ -142,8 +138,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
 
             dittNavKafkaProducer.sendBeskjedTilBruker(
@@ -173,8 +169,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
 
             dittNavKafkaProducer.sendBeskjedTilBruker(
@@ -198,8 +194,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
         }
@@ -216,8 +212,8 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         sendPåminnelseOmDokumentasjonsbehovTilDittNavTask.doTask(Task("", søknadIds.first(), properties))
 
         verify(exactly = 1) {
-            søknadskvitteringService.hentSøknad(any())
-            søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR))
+            søknadService.hentSøknad(any())
+            søknadService.hentSøknaderForPerson(PersonIdent(FNR))
             ettersendingService.hentEttersendingerForPerson(PersonIdent(FNR))
             dittNavKafkaProducer wasNot called
         }
@@ -236,7 +232,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     )
 
     private fun mockHentSøknad(søknadData: SøknadData) {
-        every { søknadskvitteringService.hentSøknad(søknadIds.first()) } returns
+        every { søknadService.hentSøknad(søknadIds.first()) } returns
             søknad(
                 søknadData.id,
                 søknadData.dokumentType,
@@ -245,7 +241,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
     }
 
     private fun mockHentSøknaderForPerson(søknadData: List<SøknadData>) {
-        every { søknadskvitteringService.hentSøknaderForPerson(PersonIdent(FNR)) } returns
+        every { søknadService.hentSøknaderForPerson(PersonIdent(FNR)) } returns
             listOf(søknad(søknadData.first().id, søknadData.first().dokumentType, søknadData.first().opprettetTid)) +
             søknadData.takeLast(søknadData.size - 1).map { søknad(it.id, it.dokumentType, it.opprettetTid) }
     }

@@ -9,7 +9,8 @@ import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.encryption.EncryptedString
-import no.nav.familie.ef.mottak.integration.PdfClient
+import no.nav.familie.ef.mottak.integration.FamilieBrevClient
+import no.nav.familie.ef.mottak.integration.FamiliePdfClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
@@ -26,8 +27,9 @@ internal class PdfServiceTest {
     private val søknadRepository: SøknadRepository = mockk()
     private val vedleggRepository: VedleggRepository = mockk()
     private val ettersendingRepository: EttersendingRepository = mockk()
-    private val pdfClient: PdfClient = mockk()
-    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, pdfClient)
+    private val familieBrevClient: FamilieBrevClient = mockk()
+    private val familiePdfClient: FamiliePdfClient = mockk()
+    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, familieBrevClient, familiePdfClient)
 
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
@@ -68,15 +70,16 @@ internal class PdfServiceTest {
 
     @BeforeEach
     fun setUp() {
-        søknadsRepositoryVilReturnere(søknadOvergangsstønad, søknadBarnetilsyn, søknadSkolepenger)
-        every {
-            vedleggRepository.finnTitlerForSøknadId(any())
-        } returns vedlegg.map { it.tittel }
-        pdfClientVilReturnere(pdf)
+        every { søknadRepository.findByIdOrNull(søknadOvergangsstønad.id) } returns søknadOvergangsstønad
+        every { søknadRepository.findByIdOrNull(søknadBarnetilsyn.id) } returns søknadBarnetilsyn
+        every { søknadRepository.findByIdOrNull(søknadSkolepenger.id) } returns søknadSkolepenger
+        every { vedleggRepository.finnTitlerForSøknadId(any()) } returns vedlegg.map { it.tittel }
+        every { familieBrevClient.lagPdf(any()) } returns pdf.bytes
+        every { familiePdfClient.lagPdf2(any()) } returns pdf.bytes
     }
 
     @Test
-    fun `Søknad skal oppdateres med pdf når pdf genereres`() {
+    fun `Søknad om overgangsstønad skal oppdateres med pdf når pdf genereres`() {
         // Given
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
@@ -87,7 +90,7 @@ internal class PdfServiceTest {
     }
 
     @Test
-    fun `Skolepengesøknad skal oppdateres med pdf når pdf genereres`() {
+    fun `Søknad om skolepenger skal oppdateres med pdf når pdf genereres`() {
         // Given
         val slot = slot<Søknad>()
         capturePdfAddedToSøknad(slot)
@@ -108,20 +111,6 @@ internal class PdfServiceTest {
         verify(exactly = 1) { vedleggRepository.finnTitlerForSøknadId(any()) }
         verify(exactly = 1) {
             søknadRepository.update(slot.captured)
-        }
-    }
-
-    private fun pdfClientVilReturnere(pdf: EncryptedFile) {
-        every {
-            pdfClient.lagPdf(any())
-        } returns pdf.bytes
-    }
-
-    private fun søknadsRepositoryVilReturnere(vararg søknad: Søknad) {
-        søknad.forEach {
-            every {
-                søknadRepository.findByIdOrNull(it.id)
-            } returns it
         }
     }
 

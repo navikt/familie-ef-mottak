@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Service
-class PdfKvitteringClient(
+class FamiliePdfClient(
     @Value("\${familie.pdf.url}")
     private val uri: URI,
     @Qualifier("restTemplateAzure")
@@ -25,7 +25,7 @@ class PdfKvitteringClient(
             .build()
             .toUri()
 
-    fun opprettPdf(feltMap: FeltMap): ByteArray {
+    fun lagPdf(feltMap: FeltMap): ByteArray {
         val uri =
             UriComponentsBuilder
                 .fromUri(uri)
@@ -35,7 +35,7 @@ class PdfKvitteringClient(
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
 
-    fun opprettPdf2(feltMap: FeltMap): ByteArray {
+    fun lagPdf2(feltMap: FeltMap): ByteArray {
         val uri =
             UriComponentsBuilder
                 .fromUri(uri)

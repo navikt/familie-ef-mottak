@@ -7,7 +7,7 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.EttersendingService
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
+import no.nav.familie.ef.mottak.service.SøknadService
 import no.nav.familie.ef.mottak.task.SendPåminnelseOmDokumentasjonsbehovTilDittNavTask.Companion.TYPE
 import no.nav.familie.ef.mottak.util.LinkMelding
 import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
@@ -35,7 +35,7 @@ import java.util.UUID
 )
 class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
     private val producer: DittNavKafkaProducer,
-    private val søknadskvitteringService: SøknadskvitteringService,
+    private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val ettersendingConfig: EttersendingConfig,
     private val saksbehandlingClient: SaksbehandlingClient,
@@ -51,9 +51,9 @@ class SendPåminnelseOmDokumentasjonsbehovTilDittNavTask(
         counter("alene.med.barn.dokumentasjonsbehovvarslingstoppet.saksbehandlerogbruker")
 
     override fun doTask(task: Task) {
-        val søknad = søknadskvitteringService.hentSøknad(task.payload)
+        val søknad = søknadService.hentSøknad(task.payload)
         val personIdent = PersonIdent(søknad.fnr)
-        val søknader = søknadskvitteringService.hentSøknaderForPerson(personIdent)
+        val søknader = søknadService.hentSøknaderForPerson(personIdent)
         val ettersendinger = ettersendingService.hentEttersendingerForPerson(personIdent)
         val stønadstype: StønadType? = dokumenttypeTilStønadType(søknad.dokumenttype)
 

@@ -17,30 +17,48 @@ object Feltformaterer {
     /**
      * Håndterer formatering utover vanlig toString for endenodene
      */
-    fun mapEndenodeTilUtskriftMap(entitet: Søknadsfelt<*>): VerdilisteElement = mapTilVerdiListeElement(entitet)
+    fun genereltFormatMapperMapEndenode(
+        entitet: Søknadsfelt<*>,
+        språk: String,
+    ): VerdilisteElement? {
+        // skal ekskluderes
+        val skalEkskluderes =
+            ((entitet.label == "Jeg har sendt inn denne dokumentasjonen til Nav tidligere" || entitet.label == "I have already submitted this documentation to Nav in the past") && entitet.verdi.toString() == "false") ||
+                (entitet.label == "Født" && entitet.verdi.toString() == "true")
+
+        if (skalEkskluderes) {
+            return null
+        }
+        return mapTilVerdiListeElement(entitet, språk)
+    }
 
     fun mapVedlegg(vedleggTitler: List<String>): VerdilisteElement = VerdilisteElement("Vedlegg", verdi = vedleggTitler.joinToString("\n\n"))
 
-    private fun mapTilVerdiListeElement(entitet: Søknadsfelt<*>) =
-        VerdilisteElement(
-            entitet.label,
-            verdi = mapVerdi(entitet.verdi!!),
-            alternativer = entitet.alternativer?.joinToString(" / "),
-        )
+    private fun mapTilVerdiListeElement(
+        entitet: Søknadsfelt<*>,
+        språk: String,
+    ) = VerdilisteElement(
+        entitet.label,
+        verdi = mapVerdi(entitet.verdi!!, språk),
+        alternativer = entitet.alternativer?.joinToString(" / "),
+    )
 
-    private fun mapVerdi(verdi: Any): String =
+    private fun mapVerdi(
+        verdi: Any,
+        språk: String,
+    ): String =
         when (verdi) {
             is Month ->
                 tilUtskriftsformat(verdi)
 
             is Boolean ->
-                tilUtskriftsformat(verdi)
+                tilUtskriftsformat(verdi, språk)
 
             is Double ->
                 tilUtskriftsformat(verdi)
 
             is List<*> ->
-                verdi.joinToString("\n\n") { mapVerdi(it!!) }
+                verdi.joinToString("\n\n") { mapVerdi(it!!, språk) }
 
             is Fødselsnummer ->
                 verdi.verdi
@@ -64,7 +82,19 @@ object Feltformaterer {
                 verdi.toString()
         }
 
-    private fun tilUtskriftsformat(verdi: Boolean) = if (verdi) "Ja" else "Nei"
+    private fun tilUtskriftsformat(
+        verdi: Boolean,
+        språk: String,
+    ): String =
+        if (språk == "en") {
+            englishResponse(verdi)
+        } else {
+            norwegianResponse(verdi)
+        }
+
+    private fun englishResponse(verdi: Boolean) = if (verdi) "Yes" else "No"
+
+    private fun norwegianResponse(verdi: Boolean) = if (verdi) "Ja" else "Nei"
 
     private fun tilUtskriftsformat(verdi: Double) = String.format("%.2f", verdi).replace(".", ",")
 
@@ -78,10 +108,20 @@ object Feltformaterer {
 
     private fun tilUtskriftsformat(verdi: LocalDate): String = verdi.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 
-    private fun tilUtskriftsformat(adresse: Adresse): String =
-        listOf(
-            adresse.adresse,
-            listOf(adresse.postnummer, adresse.poststedsnavn).joinToString(" "),
-            adresse.land,
-        ).joinToString("\n\n")
+    private fun tilUtskriftsformat(adresse: Adresse): String {
+        val adresseelementer =
+            listOfNotNull(
+                adresse.adresse?.takeIf { it.isNotBlank() },
+                listOfNotNull(adresse.postnummer, adresse.poststedsnavn)
+                    .joinToString(" ") { it.trim() }
+                    .takeIf { it.isNotBlank() },
+                adresse.land?.takeIf { it.isNotBlank() },
+            )
+
+        return if (adresseelementer.isEmpty()) {
+            "Ingen registrert adresse"
+        } else {
+            adresseelementer.joinToString("\n")
+        }
+    }
 }

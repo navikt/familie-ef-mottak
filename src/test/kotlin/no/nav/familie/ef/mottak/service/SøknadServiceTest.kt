@@ -1,4 +1,4 @@
-package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.service
+package no.nav.familie.ef.mottak.service
 
 import io.mockk.every
 import io.mockk.mockk
@@ -12,12 +12,9 @@ import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
-import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.service.TaskProsesseringService
-import no.nav.familie.ef.mottak.service.Testdata
+import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
@@ -30,7 +27,6 @@ import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov as DokumentasjonsbehovKontrakter
 
 class SøknadServiceTest {
     private val søknadRepository = mockk<SøknadRepository>(relaxed = true)
@@ -53,7 +49,7 @@ class SøknadServiceTest {
             )
         val forventetDokumentasjonsbehov =
             listOf(
-                DokumentasjonsbehovKontrakter(
+                Dokumentasjonsbehov(
                     "test",
                     UUID
                         .randomUUID()
@@ -65,7 +61,10 @@ class SøknadServiceTest {
         every { søknadRepository.finnSisteSøknadenPerStønadtype(fnr) } returns søknader
 
         every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
-            .returns(Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)))
+            .returns(
+                no.nav.familie.ef.mottak.repository.domain
+                    .Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)),
+            )
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)
 
@@ -193,7 +192,7 @@ class SøknadServiceTest {
         }
 
         @Test
-        fun `skal filtrere søknader eldre en 30 dager`() {
+        fun `skal filtrere søknader eldre enn 30 dager`() {
             val søknader =
                 listOf(
                     SistInnsendtSøknadDto(

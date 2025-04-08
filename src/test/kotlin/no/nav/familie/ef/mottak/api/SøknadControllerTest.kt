@@ -1,6 +1,7 @@
-package no.nav.familie.ef.mottak.api
+package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
 import no.nav.familie.ef.mottak.service.Testdata.søknadSkolepenger
@@ -9,6 +10,7 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -17,6 +19,9 @@ import org.springframework.http.ResponseEntity
 import java.util.UUID
 
 internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
+    @Autowired
+    lateinit var søknadRepository: SøknadRepository
+
     @BeforeEach
     fun setUp() {
         headers.setBearerAuth(søkerBearerToken())

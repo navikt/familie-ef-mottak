@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.Properties
 
-internal class LagPdfKvitteringTaskTest {
+internal class LagSøknadPdfTaskTest {
     private val taskService: TaskService = mockk()
-    private val lagPdfKvitteringTask: LagPdfKvitteringTask = LagPdfKvitteringTask(mockk(), taskService)
+    private val lagSøknadPdfTask: LagSøknadPdfTask = LagSøknadPdfTask(mockk(), taskService)
 
     @Test
     fun `Skal gå til JournalførSøknadTask når LagPdfKvitteringTask er utført`() {
@@ -22,7 +22,7 @@ internal class LagPdfKvitteringTaskTest {
             slot.captured
         }
 
-        lagPdfKvitteringTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
+        lagSøknadPdfTask.onCompletion(Task(type = "", payload = "", properties = Properties()))
 
         assertEquals(ArkiverSøknadTask.TYPE, slot.captured.type)
     }

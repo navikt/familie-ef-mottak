@@ -24,6 +24,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
-import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggKontrakt
+import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggFamilieKontrakter
 
 @Service
 @Transactional
@@ -48,69 +49,47 @@ class SøknadService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun mottaOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+    fun mottaSøknadOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
-    fun mottaBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
+    fun mottaSøknadBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
     @Transactional
-    fun mottaSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
+    fun mottaSøknadSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
-        val vedlegg = mapVedlegg(søknadDb.id, søknad.vedlegg)
-        return mottaSkjemaForArbeidssøker(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
-
-    private fun mottaSkjemaForArbeidssøker(
-        søknadDb: Søknad,
-        vedlegg: List<Vedlegg>,
-        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
-    ): Kvittering {
-        val lagretSkjema = søknadRepository.insert(søknadDb)
-        vedleggRepository.insertAll(vedlegg)
-        taskProsesseringService.startTaskProsessering(lagretSkjema)
-        val databaseDokumentasjonsbehov =
-            DatabaseDokumentasjonsbehov(
-                søknadId = lagretSkjema.id,
-                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
-            )
-        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
-        logger.info("Mottatt søknad med id ${lagretSkjema.id}")
-        return Kvittering(lagretSkjema.id, "Søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
-    }
-
-    private fun mapVedlegg(
-        søknadDbId: String,
-        vedleggMetadata: List<VedleggKontrakt>,
-    ): List<Vedlegg> =
-        vedleggMetadata.map {
-            Vedlegg(
-                id = UUID.fromString(it.id),
-                søknadId = søknadDbId,
-                navn = it.navn,
-                tittel = it.tittel,
-                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)),
-            )
-        }
-
-    fun get(id: String): Søknad = søknadRepository.findByIdOrThrow(id)
 
     @Transactional
-    fun mottaSkjemaForArbeidssøker(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
+    fun mottaArbeidssøkerSkjema(skjemaForArbeidssøker: SkjemaForArbeidssøker): Kvittering {
         val søknadDb = SøknadMapper.fromDto(skjemaForArbeidssøker)
         val lagretSkjema = søknadRepository.insert(søknadDb)
         taskProsesseringService.startTaskProsessering(lagretSkjema)
         logger.info("Mottatt skjema med id ${lagretSkjema.id}")
-
-        return Kvittering(søknadDb.id, "Skjema er mottatt og lagret med id ${lagretSkjema.id}.")
+        return Kvittering(lagretSkjema.id, "Pdf-skjema lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
+
+    fun hentSøknad(søknadId: String): Søknad = søknadRepository.findByIdOrThrow(søknadId)
+
+    fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
+        val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
+        return if (søknadFraDb?.søknadJson?.data != null) {
+            objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJson.data)
+        } else {
+            null
+        }
+    }
+
+    fun hentSøknaderForPerson(personIdent: PersonIdent): List<Søknad> = søknadRepository.findAllByFnr(personIdent.ident)
 
     fun hentDokumentasjonsbehovForPerson(personIdent: String): List<SøknadMedDokumentasjonsbehovDto> =
         søknadRepository
@@ -131,7 +110,6 @@ class SøknadService(
                 )
             }
 
-    // Gamle søknader har ikke dokumentasjonsbehov - de må returnere tom liste
     fun hentDokumentasjonsbehovForSøknad(søknad: Søknad): DokumentasjonsbehovDto {
         val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
@@ -199,5 +177,37 @@ class SøknadService(
                     null
                 }
             }.filter { it.nyereEnn() }
+    }
+
+    private fun mapSøknadsvedlegg(
+        søknadDbId: String,
+        vedleggMetadata: List<VedleggFamilieKontrakter>,
+    ): List<Vedlegg> =
+        vedleggMetadata.map {
+            Vedlegg(
+                id = UUID.fromString(it.id),
+                søknadId = søknadDbId,
+                navn = it.navn,
+                tittel = it.tittel,
+                innhold = EncryptedFile(dokumentClient.hentVedlegg(it.id)),
+            )
+        }
+
+    private fun mottaSøknad(
+        søknadDb: Søknad,
+        vedlegg: List<Vedlegg>,
+        dokumentasjonsbehov: List<Dokumentasjonsbehov>,
+    ): Kvittering {
+        val lagretSkjema = søknadRepository.insert(søknadDb)
+        vedleggRepository.insertAll(vedlegg)
+        taskProsesseringService.startTaskProsessering(lagretSkjema)
+        val databaseDokumentasjonsbehov =
+            DatabaseDokumentasjonsbehov(
+                søknadId = lagretSkjema.id,
+                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
+            )
+        dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
+        logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
+        return Kvittering(lagretSkjema.id, "Pdf-søknad lagret med id ${lagretSkjema.id} er registrert mottatt.")
     }
 }

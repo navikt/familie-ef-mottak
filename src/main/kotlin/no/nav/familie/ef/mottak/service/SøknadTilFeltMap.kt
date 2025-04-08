@@ -159,7 +159,7 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>, språk)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                     ?: emptyList()
             }
             if (entitet.alternativer != null) {
@@ -169,7 +169,7 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                         ?: emptyList()
                 }
                 val mappedElementer =
@@ -239,7 +239,7 @@ object SøknadTilFeltMap {
                 return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>, språk)
             }
             if (entitet.verdi!!::class in endNodes) {
-                return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                     ?: emptyList()
             }
             if (entitet.alternativer != null) {
@@ -249,7 +249,7 @@ object SøknadTilFeltMap {
                 val verdiliste = entitet.verdi as List<*>
 
                 if (verdiliste.firstOrNull() is String) {
-                    return FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
                         ?: emptyList()
                 }
                 val mappedElementer =
@@ -296,7 +296,7 @@ object SøknadTilFeltMap {
         språk: String,
     ): List<VerdilisteElement> {
         val list =
-            listOf(FeltformatererPdfKvittering.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere, språk))
+            listOf(Feltformaterer.genereltFormatMapperMapEndenode(entitet.verdi.harSendtInnTidligere, språk))
         if (list.size == 1 && list.first()?.verdiliste.isNullOrEmpty() && list.first()?.verdi.isNullOrEmpty()) {
             return emptyList()
         }
@@ -420,7 +420,7 @@ object SøknadTilFeltMap {
         label: String = "Vedlegg",
     ) = VerdilisteElement(
         label,
-        verdiliste = listOf(FeltformatererPdfKvittering.mapVedlegg(vedleggTitler)),
+        verdiliste = listOf(Feltformaterer.mapVedlegg(vedleggTitler)),
         visningsVariant = VisningsVariant.VEDLEGG.toString(),
     )
 }

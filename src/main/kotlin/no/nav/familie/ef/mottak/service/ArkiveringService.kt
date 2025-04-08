@@ -22,7 +22,7 @@ import org.springframework.web.client.HttpClientErrorException
 @Service
 class ArkiveringService(
     private val integrasjonerClient: IntegrasjonerClient,
-    private val søknadKvitteringService: SøknadskvitteringService,
+    private val søknadService: SøknadService,
     private val ettersendingService: EttersendingService,
     private val vedleggRepository: VedleggRepository,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
@@ -34,7 +34,7 @@ class ArkiveringService(
         callId: String,
     ): String {
         logger.info("Henter ut søknad")
-        val søknad: Søknad = søknadKvitteringService.hentSøknad(søknadId)
+        val søknad: Søknad = søknadService.hentSøknad(søknadId)
         logger.info("Henter ut vedlegg")
         val vedlegg = vedleggRepository.findBySøknadId(søknad.id)
         logger.info("Journalfører søknad med vedlegg")
@@ -45,7 +45,7 @@ class ArkiveringService(
 
         val søknadMedJournalpostId = søknad.copy(journalpostId = journalpostId)
         logger.info("Oppdaterer søknad med journalpostId")
-        søknadKvitteringService.oppdaterSøknad(søknadMedJournalpostId)
+        søknadService.oppdaterSøknad(søknadMedJournalpostId)
         return journalpostId
     }
 
@@ -65,7 +65,7 @@ class ArkiveringService(
     }
 
     fun ferdigstillJournalpost(søknadId: String) {
-        val søknad: Søknad = søknadKvitteringService.hentSøknad(søknadId)
+        val søknad: Søknad = søknadService.hentSøknad(søknadId)
         val journalpostId: String = søknad.journalpostId ?: error("Søknad=$søknadId mangler journalpostId")
 
         val enheter = integrasjonerClient.finnBehandlendeEnhet(søknad.fnr)

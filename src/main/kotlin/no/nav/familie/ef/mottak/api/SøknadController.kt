@@ -2,8 +2,8 @@ package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.service.SøknadService
-import no.nav.familie.ef.mottak.service.SøknadskvitteringService
 import no.nav.familie.ef.mottak.util.okEllerKastException
+import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
@@ -19,34 +19,38 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(path = ["/api/soknad"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping("/api/soknad", produces = [APPLICATION_JSON_VALUE])
 @ProtectedWithClaims(
     issuer = EksternBrukerUtils.ISSUER_TOKENX,
     claimMap = ["acr=Level4"],
 )
 class SøknadController(
     val søknadService: SøknadService,
-    val søknadskvitteringService: SøknadskvitteringService,
 ) {
     @PostMapping("overgangsstonad")
-    fun overgangsstønad(
+    fun mottaSøknadOvergangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
-    ): Kvittering = okEllerKastException { søknadService.mottaOvergangsstønad(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønad(søknad) }
 
     @PostMapping("barnetilsyn")
-    fun barnetilsyn(
+    fun mottaSøknadBarnetilsyn(
         @RequestBody søknad: SøknadMedVedlegg<SøknadBarnetilsyn>,
-    ): Kvittering = okEllerKastException { søknadService.mottaBarnetilsyn(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadBarnetilsyn(søknad) }
 
     @PostMapping("skolepenger")
-    fun skolepenger(
+    fun mottaSøknadSkolepenger(
         @RequestBody søknad: SøknadMedVedlegg<SøknadSkolepenger>,
-    ): Kvittering = okEllerKastException { søknadService.mottaSkolepenger(søknad) }
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadSkolepenger(søknad) }
+
+    @PostMapping("arbeidssoker")
+    fun mottaArbeidssøkerSkjema(
+        @RequestBody skjemaForArbeidssøker: SkjemaForArbeidssøker,
+    ): Kvittering = okEllerKastException { søknadService.mottaArbeidssøkerSkjema(skjemaForArbeidssøker) }
 
     @GetMapping("barnetilsyn/forrige")
     fun hentBarnetilsynssøknadForPerson(): SøknadBarnetilsyn? {
         val personIdent = EksternBrukerUtils.hentFnrFraToken()
-        return søknadskvitteringService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
+        return søknadService.hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent)
     }
 
     @GetMapping("sist-innsendt-per-stonad")
