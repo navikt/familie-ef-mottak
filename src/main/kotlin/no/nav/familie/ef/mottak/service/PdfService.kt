@@ -18,6 +18,9 @@ import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.objectMapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -29,10 +32,17 @@ class PdfService(
     private val familieBrevClient: FamilieBrevClient,
     private val familiePdfClient: FamiliePdfClient,
 ) {
+    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+
     fun lagPdf(id: String) {
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
+        if (id == "81578986-add6-4484-8d3f-e5e6e0a6f377") {
+            secureLogger.info("innsending: ${objectMapper.writeValueAsString(innsending)}")
+            secureLogger.info("vedleggTitler: ${objectMapper.writeValueAsString(vedleggTitler)}")
+            secureLogger.info("feltMap: ${objectMapper.writeValueAsString(feltMap)}")
+        }
         val søknadPdf = familiePdfClient.lagPdf(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
