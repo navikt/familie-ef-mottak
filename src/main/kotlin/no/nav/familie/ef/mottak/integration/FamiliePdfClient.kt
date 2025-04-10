@@ -34,4 +34,14 @@ class FamiliePdfClient(
                 .toUri()
         return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
     }
+
+    fun lagPdf2(feltMap: FeltMap): ByteArray {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(uri)
+                .pathSegment("api/v2/pdf/opprett-pdf")
+                .build()
+                .toUri()
+        return postForEntity(uri, feltMap, HttpHeaders().medContentTypeJsonUTF8())
+    }
 }

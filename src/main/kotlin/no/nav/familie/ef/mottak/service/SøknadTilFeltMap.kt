@@ -51,7 +51,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(søknad, språk)
+        val finnFelter = finnFelter2(søknad, språk)
         val vedlegg = mapTilVedlegg(vedleggTitler)
 
         return FeltMap(
@@ -67,7 +67,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(søknad, språk)
+        val finnFelter = finnFelter2(søknad, språk)
         val vedlegg = mapTilVedlegg(vedleggTitler)
 
         return FeltMap(
@@ -86,7 +86,7 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(søknad, språk)
+        val finnFelter = finnFelter2(søknad, språk)
         val vedlegg = mapTilVedlegg(vedleggTitler)
 
         return FeltMap(
@@ -99,7 +99,7 @@ object SøknadTilFeltMap {
 
     fun mapSkjemafelter(skjema: SkjemaForArbeidssøker): FeltMap {
         val språk = skjema.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(skjema, språk)
+        val finnFelter = finnFelter2(skjema, språk)
 
         return FeltMap(
             "Skjema for arbeidssøker",
@@ -181,6 +181,7 @@ object SøknadTilFeltMap {
                             else -> null
                         }
                     }
+
                 if (mappedElementer.isNotEmpty()) {
                     return listOf(
                         VerdilisteElement(
@@ -197,6 +198,87 @@ object SøknadTilFeltMap {
                             visningsVariant = VisningsVariant.TABELL.toString(),
                         ),
                     )
+                }
+            }
+            // skal ekskluderes
+            if (list.size == 1 && list.first().verdiliste.isNullOrEmpty() && list.first().verdi.isNullOrEmpty()) {
+                return emptyList()
+            }
+
+            return listOf(VerdilisteElement(label = entitet.label, verdiliste = list))
+        }
+        return list
+    }
+
+    private fun finnFelter2(
+        entitet: Any,
+        språk: String,
+    ): List<VerdilisteElement> {
+        // Det går ikke å hente elementene i en liste med reflection, så vi traverserer den som vanlig.
+        if (entitet is List<Any?>) {
+            return entitet
+                .filterNotNull()
+                .map { finnFelter2(it, språk) }
+                .flatten()
+        }
+        val parametere = konstruktørparametere(entitet)
+
+        val list =
+            parametere
+                .asSequence()
+                .map { finnSøknadsfelt(entitet, it) }
+                .filter { it.visibility == KVisibility.PUBLIC }
+                .mapNotNull { getFeltverdi(it, entitet) }
+                .map { finnFelter2(it, språk) } // Kall rekursivt videre
+                .flatten()
+                .toList()
+
+        if (entitet is Søknadsfelt<*>) {
+            if (entitet.verdi!! is Dokumentasjon) {
+                @Suppress("UNCHECKED_CAST")
+                return mapDokumentasjon(entitet as Søknadsfelt<Dokumentasjon>, språk)
+            }
+            if (entitet.verdi!!::class in endNodes) {
+                return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                    ?: emptyList()
+            }
+            if (entitet.alternativer != null) {
+                return mapAlternativerOgSvar(entitet)
+            }
+            if (entitet.verdi is List<*>) {
+                val verdiliste = entitet.verdi as List<*>
+
+                if (verdiliste.firstOrNull() is String) {
+                    return Feltformaterer.genereltFormatMapperMapEndenode(entitet, språk)?.let { listOf(it) }
+                        ?: emptyList()
+                }
+                val mappedElementer =
+                    verdiliste.mapNotNull {
+                        when (it) {
+                            is Barn -> SøknadsfeltType.BarnElement(it)
+                            is Utenlandsopphold -> SøknadsfeltType.UtenlandsoppholdElement(it)
+                            is Arbeidsgiver -> SøknadsfeltType.ArbeidsforholdElement(it)
+                            else -> null
+                        }
+                    }
+
+                if (mappedElementer.isNotEmpty()) {
+                    val verdiListe =
+                        mappedElementer.mapNotNull { element ->
+                            when (element) {
+                                is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(element.barn), element.barn, språk)
+                                is SøknadsfeltType.ArbeidsforholdElement ->
+                                    mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(element.arbeidsforhold), element.arbeidsforhold, språk)
+                                is SøknadsfeltType.UtenlandsoppholdElement ->
+                                    mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(element.utenlandsopphold), element.utenlandsopphold, språk)
+                            }
+                        }
+
+                    return when {
+                        verdiliste.isEmpty() -> emptyList()
+                        mappedElementer.any { it is SøknadsfeltType.BarnElement } -> listOf(VerdilisteElement(label = entitet.label, verdiliste = verdiListe))
+                        else -> verdiListe
+                    }
                 }
             }
             // skal ekskluderes
@@ -231,9 +313,9 @@ object SøknadTilFeltMap {
         val tabellCaption = "$element ${indeks + 1}"
         val barnUtenFødselsdato = fjernFødselsdatoHvisFødt(barn)
         val verdilisteElementListe =
-            finnFelter(barnUtenFødselsdato, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+            finnFelter2(barnUtenFødselsdato, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
@@ -252,9 +334,9 @@ object SøknadTilFeltMap {
     ): VerdilisteElement? {
         val element = if (elementLabel == "Om arbeidsforholdet ditt") "Arbeidsforhold" else "Employment"
         val tabellCaption = "$element ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(arbeidsforhold, språk)
+        val verdilisteElementListe = finnFelter2(arbeidsforhold, språk)
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
@@ -265,9 +347,9 @@ object SøknadTilFeltMap {
         språk: String,
     ): VerdilisteElement? {
         val tabellCaption = "$elementLabel ${indeks + 1}"
-        val verdilisteElementListe = finnFelter(utenlandsopphold, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
+        val verdilisteElementListe = finnFelter2(utenlandsopphold, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
