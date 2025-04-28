@@ -33,7 +33,7 @@ class PdfService(
         val innsending = søknadRepository.findByIdOrNull(id) ?: error("Kunne ikke finne søknad ($id) i database")
         val vedleggTitler = vedleggRepository.finnTitlerForSøknadId(id).sorted()
         val feltMap = lagFeltMap(innsending, vedleggTitler)
-        val søknadPdf = familiePdfClient.lagPdf(feltMap)
+        val søknadPdf = familiePdfClient.lagPdf2(feltMap)
         val oppdatertSoknad = innsending.copy(søknadPdf = EncryptedFile(søknadPdf))
         søknadRepository.update(oppdatertSoknad)
     }
