@@ -75,7 +75,7 @@ internal class PdfServiceTest {
         every { søknadRepository.findByIdOrNull(søknadSkolepenger.id) } returns søknadSkolepenger
         every { vedleggRepository.finnTitlerForSøknadId(any()) } returns vedlegg.map { it.tittel }
         every { familieBrevClient.lagPdf(any()) } returns pdf.bytes
-        every { familiePdfClient.lagPdf2(any()) } returns pdf.bytes
+        every { familiePdfClient.lagPdf(any()) } returns pdf.bytes
     }
 
     @Test
