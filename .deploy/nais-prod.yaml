@@ -87,4 +87,12 @@ spec:
         databases:
           - name: familie-ef-mottak
             envVarPrefix: DB
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+    autoInstrumentation:
+      enabled: true
+      runtime: java
 
