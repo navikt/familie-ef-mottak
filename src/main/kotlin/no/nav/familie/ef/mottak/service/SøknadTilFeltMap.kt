@@ -181,22 +181,24 @@ object SøknadTilFeltMap {
                             else -> null
                         }
                     }
+
                 if (mappedElementer.isNotEmpty()) {
-                    return listOf(
-                        VerdilisteElement(
-                            label = entitet.label,
-                            verdiliste =
-                                mappedElementer
-                                    .map {
-                                        when (it) {
-                                            is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(it.barn), it.barn, språk)
-                                            is SøknadsfeltType.UtenlandsoppholdElement -> mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(it.utenlandsopphold), it.utenlandsopphold, språk)
-                                            is SøknadsfeltType.ArbeidsforholdElement -> mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(it.arbeidsforhold), it.arbeidsforhold, språk)
-                                        }
-                                    }.filterNotNull(),
-                            visningsVariant = VisningsVariant.TABELL.toString(),
-                        ),
-                    )
+                    val verdiListe =
+                        mappedElementer.mapNotNull { element ->
+                            when (element) {
+                                is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(element.barn), element.barn, språk)
+                                is SøknadsfeltType.ArbeidsforholdElement ->
+                                    mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(element.arbeidsforhold), element.arbeidsforhold, språk)
+                                is SøknadsfeltType.UtenlandsoppholdElement ->
+                                    mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(element.utenlandsopphold), element.utenlandsopphold, språk)
+                            }
+                        }
+
+                    return when {
+                        verdiliste.isEmpty() -> emptyList()
+                        mappedElementer.any { it is SøknadsfeltType.BarnElement } -> listOf(VerdilisteElement(label = entitet.label, verdiliste = verdiListe))
+                        else -> verdiListe
+                    }
                 }
             }
             // skal ekskluderes
@@ -233,7 +235,7 @@ object SøknadTilFeltMap {
         val verdilisteElementListe =
             finnFelter(barnUtenFødselsdato, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
@@ -254,7 +256,7 @@ object SøknadTilFeltMap {
         val tabellCaption = "$element ${indeks + 1}"
         val verdilisteElementListe = finnFelter(arbeidsforhold, språk)
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
@@ -267,7 +269,7 @@ object SøknadTilFeltMap {
         val tabellCaption = "$elementLabel ${indeks + 1}"
         val verdilisteElementListe = finnFelter(utenlandsopphold, språk).filterNot { it.verdi == "" && it.verdiliste.isNullOrEmpty() }
         return verdilisteElementListe.takeIf { it.isNotEmpty() }?.let {
-            VerdilisteElement(label = tabellCaption, verdiliste = it)
+            VerdilisteElement(label = tabellCaption, verdiliste = it, visningsVariant = VisningsVariant.TABELL.toString())
         }
     }
 
