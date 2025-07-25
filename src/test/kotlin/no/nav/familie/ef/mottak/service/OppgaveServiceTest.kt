@@ -204,7 +204,7 @@ internal class OppgaveServiceTest {
                     journalpostId = journalpostId,
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
-                    json = "{}",
+                    json = null,
                 )
             every {
                 søknadService.hentSøknad(any())
@@ -215,7 +215,7 @@ internal class OppgaveServiceTest {
                     journalpostId = "1234",
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
-                    json = "{}",
+                    json = null,
                 )
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
