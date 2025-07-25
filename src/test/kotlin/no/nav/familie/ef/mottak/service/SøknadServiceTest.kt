@@ -137,6 +137,7 @@ class SøknadServiceTest {
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(40),
+                    json = "{}",
                 )
 
             val barnetilsynSøknad =
@@ -145,6 +146,7 @@ class SøknadServiceTest {
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(41),
+                    json = "{}",
                 )
 
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
@@ -164,6 +166,7 @@ class SøknadServiceTest {
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(25),
+                    json = "{}",
                 )
 
             val barnetilsynSøknad =
@@ -172,6 +175,7 @@ class SøknadServiceTest {
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(7),
+                    json = "{}",
                 )
 
             val skolepengerSøknad =
@@ -180,6 +184,7 @@ class SøknadServiceTest {
                     dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(6),
+                    json = "{}",
                 )
 
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad

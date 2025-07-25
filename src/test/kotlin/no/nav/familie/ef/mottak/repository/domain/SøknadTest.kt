@@ -39,5 +39,6 @@ internal class SøknadTest {
         fnr = "123",
         taskOpprettet = true,
         opprettetTid = opprettet,
+        json = "{}",
     )
 }

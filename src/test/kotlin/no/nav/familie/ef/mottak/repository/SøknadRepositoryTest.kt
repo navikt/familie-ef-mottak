@@ -28,6 +28,35 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
+    internal fun `Hent json som ikke er kryptert`() {
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = "ertert"))
+        søknadRepository.insert(søknad())
+        søknadRepository.insert(søknad(taskOpprettet = true))
+
+        val soknadUtenTask = søknadRepository.findFirstByTaskOpprettetIsFalse()
+
+        assertThat(soknadUtenTask!!.json).isEqualTo("ertert")
+    }
+
+    @Test
+    internal fun `Skal finne 1`() {
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        val soknadUtenTask = søknadRepository.finnSøknaderUtenJson(1000)
+        assertThat(soknadUtenTask!!.size).isEqualTo(1)
+    }
+
+    @Test
+    internal fun `Skal finne 3`() {
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
+        val soknadUtenTask2 = søknadRepository.finnSøknaderUtenJson(3)
+        assertThat(soknadUtenTask2!!.size).isEqualTo(3)
+    }
+
+    @Test
     internal fun `findFirstByTaskOpprettetIsFalse takler null result`() {
         søknadRepository.insert(søknad(taskOpprettet = true))
 
@@ -62,6 +91,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 taskOpprettet = true,
                 opprettetTid = LocalDateTime.now().minusDays(1),
+                json = "{}",
             )
         val søknad2 =
             Søknad(
@@ -69,6 +99,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
                 fnr = ident,
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 taskOpprettet = true,
+                json = "{}",
             )
         søknadRepository.insert(søknad)
         val søknadOvergangsstønad = søknadRepository.insert(søknad2)
@@ -80,6 +111,7 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
                     fnr = ident,
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     taskOpprettet = true,
+                    json = "{}",
                 ),
             )
 

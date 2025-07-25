@@ -62,6 +62,7 @@ internal class AutomatiskJournalførTaskTest {
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 journalpostId = "1234",
                 fnr = personIdent,
+                json = "{}",
             )
     }
 

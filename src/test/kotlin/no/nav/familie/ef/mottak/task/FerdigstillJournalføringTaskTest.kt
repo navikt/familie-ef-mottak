@@ -37,6 +37,7 @@ internal class FerdigstillJournalføringTaskTest {
                 dokumenttype = "noe",
                 journalpostId = journalpostId,
                 fnr = FnrGenerator.generer(),
+                json = "{}",
             )
 
         every {

@@ -42,6 +42,7 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = null,
             saksnummer = null,
+            json = "{}",
         )
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
@@ -54,6 +55,7 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
             journalpostId = null,
             saksnummer = null,
+            json = "{}",
         )
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
@@ -66,6 +68,7 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
             journalpostId = null,
             saksnummer = null,
+            json = "{}",
         )
 
     @BeforeEach

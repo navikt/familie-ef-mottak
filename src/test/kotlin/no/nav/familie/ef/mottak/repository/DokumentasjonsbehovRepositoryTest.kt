@@ -27,6 +27,7 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
                     søknadJson = EncryptedString("bob"),
                     fnr = "ded",
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+                    json = "bob",
                 ),
             )
 

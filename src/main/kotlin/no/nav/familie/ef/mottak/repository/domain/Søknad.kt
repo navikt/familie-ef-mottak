@@ -12,6 +12,7 @@ import java.util.UUID
 data class Søknad(
     @Id
     val id: String = UUID.randomUUID().toString(),
+    @Deprecated("bruk json i stedet", ReplaceWith("json"))
     @Column("soknad_json")
     val søknadJson: EncryptedString,
     @Column("soknad_pdf")
@@ -23,4 +24,7 @@ data class Søknad(
     val taskOpprettet: Boolean = false,
     val opprettetTid: LocalDateTime = DatoUtil.dagensDatoMedTid(),
     val behandleINySaksbehandling: Boolean = false,
-)
+    val json: String?,
+) {
+    fun søknadJsonSafe(): String = json ?: søknadJson.data
+}

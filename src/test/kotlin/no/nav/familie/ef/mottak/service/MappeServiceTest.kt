@@ -35,6 +35,7 @@ internal class MappeServiceTest {
                 journalpostId = "1234",
                 fnr = Testdata.randomFnr(),
                 behandleINySaksbehandling = true,
+                json = "{}",
             )
         every { integrasjonerClient.finnMappe(any()) } returns
             FinnMappeResponseDto(

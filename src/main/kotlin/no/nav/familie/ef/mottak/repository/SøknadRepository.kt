@@ -11,6 +11,9 @@ import java.time.LocalDateTime
 interface SøknadRepository :
     RepositoryInterface<Søknad, String>,
     InsertUpdateRepository<Søknad> {
+    @Query("""SELECT * FROM soknad WHERE json IS NULL LIMIT :batchSize""")
+    fun finnSøknaderUtenJson(batchSize: Int): List<Søknad>
+
     fun findFirstByTaskOpprettetIsFalse(): Søknad?
 
     fun findByJournalpostId(jounalpostId: String): Søknad?

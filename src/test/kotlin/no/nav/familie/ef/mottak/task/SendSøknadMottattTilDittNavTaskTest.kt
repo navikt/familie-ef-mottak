@@ -84,6 +84,7 @@ internal class SendSøknadMottattTilDittNavTaskTest {
                 søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
                 fnr = FNR,
+                json = "{}",
             )
     }
 

@@ -14,46 +14,58 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.objectMapper
 
 object SøknadMapper {
-    inline fun <reified T : Any> toDto(søknad: Søknad): T = objectMapper.readValue(søknad.søknadJson.data)
+    inline fun <reified T : Any> toDto(søknad: Søknad): T = objectMapper.readValue(søknad.søknadJsonSafe())
 
     fun fromDto(
         søknad: SøknadOvergangsstønad,
         behandleINySaksbehandling: Boolean,
-    ): Søknad =
-        Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
+    ): Søknad {
+        val data = objectMapper.writeValueAsString(søknad)
+        return Søknad(
+            søknadJson = EncryptedString(data),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             behandleINySaksbehandling = behandleINySaksbehandling,
+            json = data,
         )
+    }
 
     fun fromDto(
         søknad: SøknadBarnetilsyn,
         behandleINySaksbehandling: Boolean,
-    ): Søknad =
-        Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
+    ): Søknad {
+        val data = objectMapper.writeValueAsString(søknad)
+        return Søknad(
+            søknadJson = EncryptedString(data),
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
             behandleINySaksbehandling = behandleINySaksbehandling,
+            json = data,
         )
+    }
 
-    fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad =
-        Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(skjemaForArbeidssøker)),
+    fun fromDto(skjemaForArbeidssøker: SkjemaForArbeidssøker): Søknad {
+        val data = objectMapper.writeValueAsString(skjemaForArbeidssøker)
+        return Søknad(
+            søknadJson = EncryptedString(data),
             fnr = skjemaForArbeidssøker.personaliaArbeidssøker.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
             behandleINySaksbehandling = false,
+            json = data,
         )
+    }
 
     fun fromDto(
         søknadSkolepenger: SøknadSkolepenger,
         behandleINySaksbehandling: Boolean,
-    ): Søknad =
-        Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknadSkolepenger)),
+    ): Søknad {
+        val data = objectMapper.writeValueAsString(søknadSkolepenger)
+        return Søknad(
+            søknadJson = EncryptedString(data),
             fnr = søknadSkolepenger.personalia.verdi.fødselsnummer.verdi.verdi,
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
             behandleINySaksbehandling = behandleINySaksbehandling,
+            json = data,
         )
+    }
 }

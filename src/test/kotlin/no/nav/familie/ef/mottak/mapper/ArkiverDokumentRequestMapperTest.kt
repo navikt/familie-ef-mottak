@@ -70,13 +70,16 @@ internal class ArkiverDokumentRequestMapperTest {
     private fun lagSøknad(
         søknad: Any,
         dokumenttype: String,
-    ): Søknad =
-        Søknad(
-            søknadJson = EncryptedString(objectMapper.writeValueAsString(søknad)),
+    ): Søknad {
+        val json = objectMapper.writeValueAsString(søknad)
+        return Søknad(
+            søknadJson = EncryptedString(json),
             fnr = "123",
             søknadPdf = EncryptedFile(byteArrayOf(12)),
             dokumenttype = dokumenttype,
+            json = json,
         )
+    }
 
     private fun lagVedlegg() = Vedlegg(UUID.randomUUID(), "id", "navn", "tittel", EncryptedFile(byteArrayOf(12)))
 }

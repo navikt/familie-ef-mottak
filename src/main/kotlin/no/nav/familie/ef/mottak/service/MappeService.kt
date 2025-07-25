@@ -84,7 +84,7 @@ class MappeService(
         }
 
     private fun mappeFraOvergangsstønad(søknad: Søknad): MappeSøkestreng {
-        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJson.data)
+        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJsonSafe())
         return when {
             erSærligTilsynskrevende(søknadsdata) -> SÆRLIG_TILSYNSKREVENDE
             erSelvstendig(søknadsdata.aktivitet) -> SELVSTENDIG
@@ -97,7 +97,7 @@ class MappeService(
             ?.verdi != null
 
     private fun mappeFraBarnetilsyn(søknad: Søknad): MappeSøkestreng {
-        val søknadsdata = objectMapper.readValue<SøknadBarnetilsyn>(søknad.søknadJson.data)
+        val søknadsdata = objectMapper.readValue<SøknadBarnetilsyn>(søknad.søknadJsonSafe())
         return when {
             erSærligTilsynskrevende(søknadsdata) -> SÆRLIG_TILSYNSKREVENDE
             erSelvstendig(søknadsdata.aktivitet) -> SELVSTENDIG
