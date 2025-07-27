@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
     </parent>
 
     <properties>
@@ -25,8 +25,8 @@
         <felles.version>3.20250616113100_41d23f2</felles.version>
         <prosessering.version>2.20250718105310_e1cba2a</prosessering.version>
         <confluent.version>8.0.0</confluent.version>
-        <kontrakter.version>3.0_20250703092737_0055ff4</kontrakter.version>
-        <token-validation.version>5.0.30</token-validation.version>
+        <kontrakter.version>3.0_20250724145643_3e1e3e4</kontrakter.version>
+        <token-validation.version>5.0.33</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -206,7 +206,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.10.3</version>
+            <version>11.10.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -442,7 +442,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
