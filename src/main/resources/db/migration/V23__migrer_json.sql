@@ -1,0 +1,2 @@
+ALTER TABLE soknad
+    ADD COLUMN json VARCHAR;

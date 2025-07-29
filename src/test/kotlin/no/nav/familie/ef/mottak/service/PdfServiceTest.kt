@@ -42,30 +42,35 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = null,
             saksnummer = null,
+            json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
         )
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
+    val søknadSkole = Testdata.søknadSkolepenger
     private val søknadSkolepenger =
         Søknad(
             id = søknadSkolepengerId,
-            søknadJson = createValidSøknadJson(Testdata.søknadSkolepenger),
+            søknadJson = createValidSøknadJson(søknadSkole),
             søknadPdf = null,
             fnr = "654",
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
             journalpostId = null,
             saksnummer = null,
+            json = objectMapper.writeValueAsString(søknadSkole),
         )
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
+    val søknad = Testdata.søknadBarnetilsyn
     private val søknadBarnetilsyn =
         Søknad(
             id = søknadBarnetilsynId,
-            søknadJson = createValidSøknadJson(Testdata.søknadBarnetilsyn),
+            søknadJson = createValidSøknadJson(søknad),
             søknadPdf = null,
             fnr = "654",
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
             journalpostId = null,
             saksnummer = null,
+            json = objectMapper.writeValueAsString(søknad),
         )
 
     @BeforeEach

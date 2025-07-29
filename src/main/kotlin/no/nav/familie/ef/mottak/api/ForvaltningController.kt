@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.api
 
+import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.EttersendingService
 import no.nav.familie.ef.mottak.task.ArkiverEttersendingTask
 import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveForEttersendingTask
@@ -7,11 +8,15 @@ import no.nav.familie.log.IdUtils
 import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDateTime
 import java.util.UUID
 
 @RestController
@@ -20,7 +25,33 @@ import java.util.UUID
 class ForvaltningController(
     private val ettersendingService: EttersendingService,
     private val taskService: TaskService,
+    private val søknadRepository: SøknadRepository,
 ) {
+    val logger: Logger = LoggerFactory.getLogger(javaClass)
+
+    @PostMapping("/migrer/json/{batchSize}")
+    fun dekrypterJsonData(
+        @PathVariable batchSize: Int,
+    ): ResponseEntity<String> {
+        loggTidBrukt(logger) {
+            dekrypterOgLagreJsondataPåSøknad(batchSize)
+        }
+        return ResponseEntity.ok("Alt OK")
+    }
+
+    private fun dekrypterOgLagreJsondataPåSøknad(batchSize: Int) {
+        val findAllByJsonIsNull = søknadRepository.finnSøknaderUtenJson(batchSize)
+        var antall = 0
+        findAllByJsonIsNull.forEach { søknad ->
+            if (søknad.json == null) {
+                val søknadMedJson = søknad.copy(json = søknad.søknadJsonSafe())
+                søknadRepository.update(søknadMedJson)
+                antall++
+            }
+        }
+        logger.info("Dekryptert $antall søknader med json")
+    }
+
     @PostMapping("/ettersending/splitt")
     fun trekkUtVedleggFraEttersending(
         @RequestBody ettersendingVedleggId: EttersendingVedleggId,
@@ -71,3 +102,14 @@ data class TaskId(
 data class EttersendingVedleggId(
     val id: UUID,
 )
+
+fun <T> loggTidBrukt(
+    logger: Logger,
+    exe: () -> T,
+): T {
+    val startTime = LocalDateTime.now()
+    val exe1 = exe()
+    val endTime = LocalDateTime.now()
+    logger.info("Execution time: ${java.time.Duration.between(startTime, endTime).toMillis()} ms")
+    return exe1
+}

@@ -20,8 +20,8 @@ internal class StatistikkRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `søknader - to søknader av overgangsstønad`() {
-        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = ""))
-        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = ""))
+        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
+        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
         val statistikk = statistikkRepository.antallSøknaderPerDokumentType()
         assertThat(statistikk).hasSize(1)
         assertThat(statistikk[0].antall).isEqualTo(2)

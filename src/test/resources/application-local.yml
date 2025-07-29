@@ -38,7 +38,7 @@ logging:
 no.nav.security.jwt:
   issuer:
     tokenx:
-      discoveryurl: http://localhost:8080/fake/.well-known/openid-configuration
+      discoveryurl: https://fakedings.intern.dev.nav.no/fake/.well-known/openid-configuration
       accepted_audience: aud-localhost
   client:
     registration:

@@ -180,6 +180,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
                 fnr = FNR,
+                json = "{}",
             )
     }
 

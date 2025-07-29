@@ -64,6 +64,7 @@ internal class ArkiveringServiceTest {
             taskOpprettet = false,
             opprettetTid = LocalDateTime.now(),
             søknadPdf = EncryptedFile("pdf".toByteArray()),
+            json = "{}",
         )
 
     private val conflictException =

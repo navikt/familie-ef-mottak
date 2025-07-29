@@ -136,6 +136,7 @@ internal class OppgaveServiceTest {
                 dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                 journalpostId = "999",
                 fnr = Testdata.randomFnr(),
+                json = "{}",
             )
 
         oppgaveService.lagJournalføringsoppgaveForSøknadId("123")
@@ -203,6 +204,7 @@ internal class OppgaveServiceTest {
                     journalpostId = journalpostId,
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
+                    json = null,
                 )
             every {
                 søknadService.hentSøknad(any())
@@ -213,6 +215,7 @@ internal class OppgaveServiceTest {
                     journalpostId = "1234",
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
+                    json = null,
                 )
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand

@@ -20,6 +20,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.tms.varsel.action.EksternKanal
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URI
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.Properties
@@ -51,7 +52,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
                 saksbehandlingClient,
             )
 
-        every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
+        every { ettersendingConfig.ettersendingUrl } returns URI("https://dummy-url.nav.no").toURL()
     }
 
     @Test
@@ -229,6 +230,7 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         dokumenttype = dokumenttype,
         fnr = FNR,
         opprettetTid = opprettetTid,
+        json = "{}",
     )
 
     private fun mockHentSøknad(søknadData: SøknadData) {

@@ -37,6 +37,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 journalpostId = "1234",
                 fnr = FnrGenerator.generer(),
+                json = "{}",
             )
         every {
             søknadService.hentSøknad(arbeidssøkerSkjemaId)
@@ -46,6 +47,7 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
                 dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                 journalpostId = "1234",
                 fnr = FnrGenerator.generer(),
+                json = "{}",
             )
     }
 
