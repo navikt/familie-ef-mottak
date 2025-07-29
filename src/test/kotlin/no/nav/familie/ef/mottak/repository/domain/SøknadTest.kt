@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.repository.domain
 
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -31,7 +30,6 @@ internal class SøknadTest {
         opprettet: LocalDateTime,
     ) = Søknad(
         id = uuid,
-        søknadJson = EncryptedString("string"),
         søknadPdf = EncryptedFile("321".toByteArray()),
         dokumenttype = "",
         journalpostId = "654",
@@ -39,6 +37,6 @@ internal class SøknadTest {
         fnr = "123",
         taskOpprettet = true,
         opprettetTid = opprettet,
-        json = "{}",
+        json = "string",
     )
 }

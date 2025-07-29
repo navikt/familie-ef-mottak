@@ -20,7 +20,7 @@ object UtledPrioritetForSøknadUtil {
         if (søknad.dokumenttype != DOKUMENTTYPE_OVERGANGSSTØNAD) {
             return false
         }
-        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.søknadJsonSafe())
+        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.json)
         return (søknadsdata.aktivitet.verdi.underUtdanning != null) && erSommerPeriode(søknad.opprettetTid.toLocalDate())
     }
 
