@@ -95,7 +95,7 @@ internal class ArkiverDokumentRequestMapperTest {
         json: Any? =null ,
     ): Søknad {
         val søknadsdata = objectMapper.writeValueAsString(søknad)
-        val jsonval : String = json.let { objectMapper.writeValueAsString(json)}
+        val jsonval : String? = json?.let { objectMapper.writeValueAsString(json)}
         return Søknad(
             søknadJson = EncryptedString(søknadsdata),
             fnr = "123",
