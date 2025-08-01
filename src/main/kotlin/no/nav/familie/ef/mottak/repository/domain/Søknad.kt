@@ -1,5 +1,6 @@
 package no.nav.familie.ef.mottak.repository.domain
 
+import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.util.DatoUtil
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -11,6 +12,9 @@ import java.util.UUID
 data class Søknad(
     @Id
     val id: String = UUID.randomUUID().toString(),
+    @Deprecated("bruk json i stedet", ReplaceWith("json"))
+    @Column("soknad_json")
+    val søknadJson: EncryptedString? = null,
     @Column("soknad_pdf")
     val søknadPdf: EncryptedFile? = null,
     val dokumenttype: String,

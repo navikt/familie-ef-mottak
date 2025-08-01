@@ -3,4 +3,4 @@ create table json_kryptert_backup as (
 );
 
 ALTER TABLE soknad
-    DROP COLUMN soknad_json;
+    ALTER COLUMN soknad_json DROP NOT NULL;
