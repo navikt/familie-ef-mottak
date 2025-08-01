@@ -58,7 +58,6 @@ internal class ArkiveringServiceTest {
     private val søknad =
         Søknad(
             id = UUID.randomUUID().toString(),
-            søknadJson = EncryptedString(data = ""),
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             fnr = "",
             taskOpprettet = false,

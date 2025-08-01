@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -81,10 +80,9 @@ internal class SendSøknadMottattTilDittNavTaskTest {
         every { søknadService.hentSøknad(SØKNAD_ID) } returns
             Søknad(
                 id = SØKNAD_ID,
-                søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
                 fnr = FNR,
-                json = "{}",
+                json = "",
             )
     }
 

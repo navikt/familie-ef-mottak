@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.ArkiveringService
@@ -33,11 +32,10 @@ internal class FerdigstillJournalføringTaskTest {
             søknadService.hentSøknad("123L")
         } returns
             Søknad(
-                søknadJson = EncryptedString(""),
                 dokumenttype = "noe",
                 journalpostId = journalpostId,
                 fnr = FnrGenerator.generer(),
-                json = "{}",
+                json = "",
             )
 
         every {

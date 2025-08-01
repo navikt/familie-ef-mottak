@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
@@ -44,11 +43,9 @@ fun søknad(
     fnr: String = "11111122222",
     saksnummer: String? = null,
     behandleINySaksbehandling: Boolean = false,
-    søknadJsonString: EncryptedString = EncryptedString("test"),
-    json: String? = null,
+    søknadJsonString: String = "test",
 ) = Søknad(
     id = id,
-    søknadJson = søknadJsonString,
     søknadPdf = søknadPdf,
     fnr = fnr,
     dokumenttype = dokumenttype,
@@ -57,5 +54,5 @@ fun søknad(
     journalpostId = journalpostId,
     saksnummer = saksnummer,
     behandleINySaksbehandling = behandleINySaksbehandling,
-    json = json,
+    json = søknadJsonString,
 )

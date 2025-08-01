@@ -8,7 +8,6 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.FamilieBrevClient
 import no.nav.familie.ef.mottak.integration.FamiliePdfClient
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
@@ -36,13 +35,12 @@ internal class PdfServiceTest {
     private val søknadOvergangsstønad =
         Søknad(
             id = søknadOvergangsstønadId,
-            søknadJson = createValidSøknadJson(Testdata.søknadOvergangsstønad),
             søknadPdf = null,
             fnr = "654",
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = null,
             saksnummer = null,
-            json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
+            json = createValidSøknadJson(Testdata.søknadOvergangsstønad),
         )
 
     private val søknadSkolepengerId = "søknadSkolepengerId"
@@ -50,7 +48,6 @@ internal class PdfServiceTest {
     private val søknadSkolepenger =
         Søknad(
             id = søknadSkolepengerId,
-            søknadJson = createValidSøknadJson(søknadSkole),
             søknadPdf = null,
             fnr = "654",
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
@@ -64,7 +61,6 @@ internal class PdfServiceTest {
     private val søknadBarnetilsyn =
         Søknad(
             id = søknadBarnetilsynId,
-            søknadJson = createValidSøknadJson(søknad),
             søknadPdf = null,
             fnr = "654",
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
@@ -119,7 +115,7 @@ internal class PdfServiceTest {
         }
     }
 
-    private fun createValidSøknadJson(søknad: Any): EncryptedString = EncryptedString(objectMapper.writeValueAsString(søknad))
+    private fun createValidSøknadJson(søknad: Any): String = objectMapper.writeValueAsString(søknad)
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {
         every {

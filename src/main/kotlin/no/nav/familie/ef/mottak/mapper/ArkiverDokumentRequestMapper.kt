@@ -22,7 +22,7 @@ object ArkiverDokumentRequestMapper {
     ): ArkiverDokumentRequest {
         val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
-            Dokument(søknad.søknadJsonSafe().toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
+            Dokument(søknad.json.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
             Dokument(søknad.søknadPdf!!.bytes, Filtype.PDFA, null, dokumenttype.dokumentTittel(), dokumenttype)
         val hoveddokumentvarianter = listOf(søknadsdokumentPdf, søknadsdokumentJson)

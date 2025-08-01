@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,8 +19,8 @@ internal class StatistikkRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `søknader - to søknader av overgangsstønad`() {
-        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
-        søknadRepository.insert(Søknad(søknadJson = EncryptedString("{}"), dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
+        søknadRepository.insert(Søknad(dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
+        søknadRepository.insert(Søknad(dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD, fnr = "", json = "{}"))
         val statistikk = statistikkRepository.antallSøknaderPerDokumentType()
         assertThat(statistikk).hasSize(1)
         assertThat(statistikk[0].antall).isEqualTo(2)

@@ -14,7 +14,7 @@ data class Søknad(
     val id: String = UUID.randomUUID().toString(),
     @Deprecated("bruk json i stedet", ReplaceWith("json"))
     @Column("soknad_json")
-    val søknadJson: EncryptedString,
+    val søknadJson: EncryptedString? = null,
     @Column("soknad_pdf")
     val søknadPdf: EncryptedFile? = null,
     val dokumenttype: String,
@@ -24,7 +24,5 @@ data class Søknad(
     val taskOpprettet: Boolean = false,
     val opprettetTid: LocalDateTime = DatoUtil.dagensDatoMedTid(),
     val behandleINySaksbehandling: Boolean = false,
-    val json: String?,
-) {
-    fun søknadJsonSafe(): String = json ?: søknadJson.data
-}
+    val json: String,
+)

@@ -21,7 +21,6 @@ import no.nav.tms.varsel.action.EksternKanal
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.URI
-import java.net.URL
 import java.time.LocalDateTime
 import java.util.Properties
 import java.util.UUID
@@ -226,11 +225,10 @@ internal class SendPåminnelseOmDokumentasjonsbehovTilDittNavTaskTest {
         opprettetTid: LocalDateTime,
     ) = Søknad(
         id = id,
-        søknadJson = EncryptedString(""),
         dokumenttype = dokumenttype,
         fnr = FNR,
         opprettetTid = opprettetTid,
-        json = "{}",
+        json = "",
     )
 
     private fun mockHentSøknad(søknadData: SøknadData) {

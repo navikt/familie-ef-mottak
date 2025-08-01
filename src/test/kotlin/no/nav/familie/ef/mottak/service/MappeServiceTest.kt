@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -30,12 +29,11 @@ internal class MappeServiceTest {
             søknadService.hentSøknad("123")
         } returns
             Søknad(
-                søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 journalpostId = "1234",
                 fnr = Testdata.randomFnr(),
                 behandleINySaksbehandling = true,
-                json = null,
+                json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
             )
         every { integrasjonerClient.finnMappe(any()) } returns
             FinnMappeResponseDto(

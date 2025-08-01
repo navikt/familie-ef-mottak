@@ -6,7 +6,6 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.mapper.SøknadMapper
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
@@ -82,7 +81,7 @@ class SøknadServiceTest {
 
         @Test
         fun `sletter søknadPdf, dokumentasjonsbehov og vedlegg for gitt søknadId`() {
-            val søknadTilReduksjon = søknad(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321321")
+            val søknadTilReduksjon = søknad(journalpostId = "321321", søknadPdf = EncryptedFile(ByteArray(20)))
             every { søknadRepository.findByIdOrNull("UUID") } returns søknadTilReduksjon
             every { søknadRepository.update(any()) } returns søknadTilReduksjon
 
@@ -105,7 +104,7 @@ class SøknadServiceTest {
 
         @Test
         fun `sletter søknad for gitt søknadId`() {
-            val søknadTilSletting = søknad(søknadPdf = EncryptedFile(ByteArray(20)), journalpostId = "321321")
+            val søknadTilSletting = søknad(journalpostId = "321321", søknadPdf = EncryptedFile(ByteArray(20)))
             every { søknadRepository.findByIdOrNull("UUID") } returns søknadTilSletting
 
             søknadService.slettSøknad("UUID")
@@ -133,20 +132,18 @@ class SøknadServiceTest {
         fun `skal returnere tom liste med søkander som er eldre enn 30 dager`() {
             val overgangStønadSøknad =
                 Søknad(
-                    søknadJson = EncryptedString(""),
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(40),
-                    json = "{}",
+                    json = "",
                 )
 
             val barnetilsynSøknad =
                 Søknad(
-                    søknadJson = EncryptedString(""),
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(41),
-                    json = "{}",
+                    json = "",
                 )
 
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad
@@ -162,29 +159,26 @@ class SøknadServiceTest {
         fun `skal returnere liste med søknader som er innsendt innen 30 dager`() {
             val overgangStønadSøknad =
                 Søknad(
-                    søknadJson = EncryptedString(""),
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(25),
-                    json = "{}",
+                    json = "",
                 )
 
             val barnetilsynSøknad =
                 Søknad(
-                    søknadJson = EncryptedString(""),
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(7),
-                    json = "{}",
+                    json = "",
                 )
 
             val skolepengerSøknad =
                 Søknad(
-                    søknadJson = EncryptedString(""),
                     dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
                     fnr = personIdent,
                     opprettetTid = LocalDateTime.now().minusDays(6),
-                    json = "{}",
+                    json = "",
                 )
 
             every { søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_OVERGANGSSTØNAD) } returns overgangStønadSøknad

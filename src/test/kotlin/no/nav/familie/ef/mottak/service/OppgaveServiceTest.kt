@@ -132,7 +132,6 @@ internal class OppgaveServiceTest {
             søknadService.hentSøknad("123")
         } returns
             Søknad(
-                søknadJson = EncryptedString("{}"),
                 dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                 journalpostId = "999",
                 fnr = Testdata.randomFnr(),
@@ -199,23 +198,21 @@ internal class OppgaveServiceTest {
             val journalpostId = "999"
             every { søknadService.hentSøknad(søknadId) } returns
                 Søknad(
-                    søknadJson = EncryptedString("{}"),
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     journalpostId = journalpostId,
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
-                    json = null,
+                    json = "{}",
                 )
             every {
                 søknadService.hentSøknad(any())
             } returns
                 Søknad(
-                    søknadJson = EncryptedString(objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad)),
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     journalpostId = "1234",
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
-                    json = null,
+                    json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
                 )
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
