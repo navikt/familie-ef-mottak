@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.mottak.config.EttersendingConfig
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.DittNavKafkaProducer
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -17,6 +16,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URI
 import java.net.URL
 import java.time.LocalDateTime
 import java.util.Properties
@@ -45,7 +45,7 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
                 ettersendingConfig,
             )
 
-        every { ettersendingConfig.ettersendingUrl } returns URL("https://dummy-url.nav.no")
+        every { ettersendingConfig.ettersendingUrl } returns URI("https://dummy-url.nav.no").toURL()
     }
 
     @Test
@@ -177,10 +177,9 @@ internal class SendDokumentasjonsbehovMeldingTilDittNavTaskTest {
         every { søknadService.hentSøknad(SØKNAD_ID) } returns
             Søknad(
                 id = SØKNAD_ID,
-                søknadJson = EncryptedString(""),
                 dokumenttype = søknadType.dokumentType,
                 fnr = FNR,
-                json = "{}",
+                json = "",
             )
     }
 
