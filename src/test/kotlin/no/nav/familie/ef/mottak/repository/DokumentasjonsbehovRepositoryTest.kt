@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.repository
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov
@@ -24,7 +23,6 @@ internal class DokumentasjonsbehovRepositoryTest : IntegrasjonSpringRunnerTest()
         val søknad =
             søknadRepository.insert(
                 Søknad(
-                    søknadJson = EncryptedString("bob"),
                     fnr = "ded",
                     dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                     json = "bob",

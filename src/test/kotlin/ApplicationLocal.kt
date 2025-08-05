@@ -14,5 +14,6 @@ fun main(args: Array<String>) {
             "mock-dokument",
             "mock-ef-sak",
             "mock-pdf",
+            "mock-pdf-soknad",
         ).run(*args)
 }
