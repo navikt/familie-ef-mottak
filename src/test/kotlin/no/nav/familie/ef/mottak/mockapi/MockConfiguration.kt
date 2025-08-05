@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak.mockapi
 import io.mockk.mockk
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.ef.mottak.integration.FamilieBrevClient
+import no.nav.familie.ef.mottak.integration.FamiliePdfClient
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
@@ -23,6 +24,18 @@ class MockConfiguration {
     @Profile("mock-pdf")
     fun familieBrevClient(): FamilieBrevClient =
         object : FamilieBrevClient(mockk(), mockk()) {
+            override fun lagPdf(labelValueJson: FeltMap): ByteArray {
+                val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
+                log.info("Creating pdf: $pdf")
+                return labelValueJson.toString().toByteArray()
+            }
+        }
+
+    @Bean
+    @Primary
+    @Profile("mock-pdf-soknad")
+    fun familiePdfClient(): FamiliePdfClient =
+        object : FamiliePdfClient(URI.create("uri"), mockk()) {
             override fun lagPdf(labelValueJson: FeltMap): ByteArray {
                 val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
                 log.info("Creating pdf: $pdf")

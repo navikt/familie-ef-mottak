@@ -82,8 +82,8 @@ class SøknadService(
 
     fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
-        return if (søknadFraDb?.søknadJsonSafe() != null) {
-            objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.søknadJsonSafe())
+        return if (søknadFraDb?.json != null) {
+            objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.json)
         } else {
             null
         }

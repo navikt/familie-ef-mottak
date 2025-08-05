@@ -5,7 +5,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.integration.SaksbehandlingClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.SøknadService
@@ -33,21 +32,19 @@ internal class VelgAutomatiskEllerManuellFlytTaskTest {
             søknadService.hentSøknad(overgangsstønadSøknadId)
         } returns
             Søknad(
-                søknadJson = EncryptedString(""),
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 journalpostId = "1234",
                 fnr = FnrGenerator.generer(),
-                json = "{}",
+                json = "",
             )
         every {
             søknadService.hentSøknad(arbeidssøkerSkjemaId)
         } returns
             Søknad(
-                søknadJson = EncryptedString(""),
                 dokumenttype = DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER,
                 journalpostId = "1234",
                 fnr = FnrGenerator.generer(),
-                json = "{}",
+                json = "",
             )
     }
 
