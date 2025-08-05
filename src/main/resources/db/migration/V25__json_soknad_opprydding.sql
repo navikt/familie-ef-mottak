@@ -1,0 +1,4 @@
+ALTER TABLE soknad DROP COLUMN soknad_json;
+
+ALTER TABLE soknad
+    ALTER COLUMN json SET NOT NULL;
