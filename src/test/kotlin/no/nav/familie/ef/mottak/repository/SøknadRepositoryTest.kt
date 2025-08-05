@@ -3,7 +3,6 @@ package no.nav.familie.ef.mottak.repository
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.søknad
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -29,31 +28,12 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `Hent json som ikke er kryptert`() {
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = "ertert"))
-        søknadRepository.insert(søknad())
+        søknadRepository.insert(søknad(søknadJsonString = "ertert"))
         søknadRepository.insert(søknad(taskOpprettet = true))
 
         val soknadUtenTask = søknadRepository.findFirstByTaskOpprettetIsFalse()
 
         assertThat(soknadUtenTask!!.json).isEqualTo("ertert")
-    }
-
-    @Test
-    internal fun `Skal finne 1`() {
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        val soknadUtenTask = søknadRepository.finnSøknaderUtenJson(1000)
-        assertThat(soknadUtenTask!!.size).isEqualTo(1)
-    }
-
-    @Test
-    internal fun `Skal finne 3`() {
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        søknadRepository.insert(søknad(søknadJsonString = EncryptedString("ertert"), json = null))
-        val soknadUtenTask2 = søknadRepository.finnSøknaderUtenJson(3)
-        assertThat(soknadUtenTask2!!.size).isEqualTo(3)
     }
 
     @Test
@@ -86,20 +66,18 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val søknad =
             Søknad(
-                søknadJson = EncryptedString("kåre"),
                 fnr = ident,
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 taskOpprettet = true,
                 opprettetTid = LocalDateTime.now().minusDays(1),
-                json = "{}",
+                json = "kåre",
             )
         val søknad2 =
             Søknad(
-                søknadJson = EncryptedString("kåre"),
                 fnr = ident,
                 dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
                 taskOpprettet = true,
-                json = "{}",
+                json = "kåre",
             )
         søknadRepository.insert(søknad)
         val søknadOvergangsstønad = søknadRepository.insert(søknad2)
@@ -107,11 +85,10 @@ internal class SøknadRepositoryTest : IntegrasjonSpringRunnerTest() {
         val søknadBarnetilsyn =
             søknadRepository.insert(
                 Søknad(
-                    søknadJson = EncryptedString("kåre"),
                     fnr = ident,
                     dokumenttype = DOKUMENTTYPE_BARNETILSYN,
                     taskOpprettet = true,
-                    json = "{}",
+                    json = "kåre",
                 ),
             )
 
