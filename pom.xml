@@ -25,7 +25,7 @@
         <felles.version>3.20250804101327_a0f5fad</felles.version>
         <prosessering.version>2.20250825143618_c0302c9</prosessering.version>
         <confluent.version>8.0.0</confluent.version>
-        <kontrakter.version>3.0_20250828110046_0cd2211</kontrakter.version>
+        <kontrakter.version>3.0_20250911104501_c65b72e</kontrakter.version>
         <token-validation.version>5.0.35</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
