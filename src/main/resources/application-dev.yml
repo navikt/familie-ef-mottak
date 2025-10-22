@@ -3,15 +3,6 @@ spring:
     enabled: true
     placeholders:
       ignoreIfProd:
-  datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ef-mottak
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    hikari:
-      maximum-pool-size: 5
-      connection-test-query: "select 1"
-      max-lifetime: 900000
-      minimum-idle: 1
 
 familie:
   dokument:
