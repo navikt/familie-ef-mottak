@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.7</version>
     </parent>
 
     <properties>
@@ -19,13 +19,13 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>2.2.20</kotlin.version>
+        <kotlin.version>2.2.21</kotlin.version>
         <springdoc.version>2.8.13</springdoc.version>
         <mockk.version>1.14.6</mockk.version>
-        <felles.version>3.20251016094046_66c869d</felles.version>
-        <prosessering.version>2.20250922094930_4bb329c</prosessering.version>
+        <felles.version>3.20251021101955_e5e7dd1</felles.version>
+        <prosessering.version>2.20251021110731_39c1fd0</prosessering.version>
         <confluent.version>8.1.0</confluent.version>
-        <kontrakter.version>3.0_20251015155646_d4c9445</kontrakter.version>
+        <kontrakter.version>3.0_20251027084742_f54d77b</kontrakter.version>
         <token-validation.version>5.0.37</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -413,7 +413,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>ktlint</id>
