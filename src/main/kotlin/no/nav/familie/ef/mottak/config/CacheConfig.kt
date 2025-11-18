@@ -19,10 +19,11 @@ class CacheConfig {
             isAllowNullValues = true
 
             setCaffeine(
-                Caffeine.newBuilder()
+                Caffeine
+                    .newBuilder()
                     .maximumSize(1_000)
                     .expireAfterWrite(60, TimeUnit.MINUTES)
-                    .recordStats()
+                    .recordStats(),
             )
         }
 }

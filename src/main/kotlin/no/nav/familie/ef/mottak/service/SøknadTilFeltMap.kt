@@ -186,11 +186,17 @@ object SøknadTilFeltMap {
                     val verdiListe =
                         mappedElementer.mapNotNull { element ->
                             when (element) {
-                                is SøknadsfeltType.BarnElement -> mapBarnElementer(entitet.label, verdiliste.indexOf(element.barn), element.barn, språk)
-                                is SøknadsfeltType.ArbeidsforholdElement ->
+                                is SøknadsfeltType.BarnElement -> {
+                                    mapBarnElementer(entitet.label, verdiliste.indexOf(element.barn), element.barn, språk)
+                                }
+
+                                is SøknadsfeltType.ArbeidsforholdElement -> {
                                     mapArbeidsforholdElementer(entitet.label, verdiliste.indexOf(element.arbeidsforhold), element.arbeidsforhold, språk)
-                                is SøknadsfeltType.UtenlandsoppholdElement ->
+                                }
+
+                                is SøknadsfeltType.UtenlandsoppholdElement -> {
                                     mapUtenlandsoppholdElementer(entitet.label, verdiliste.indexOf(element.utenlandsopphold), element.utenlandsopphold, språk)
+                                }
                             }
                         }
 

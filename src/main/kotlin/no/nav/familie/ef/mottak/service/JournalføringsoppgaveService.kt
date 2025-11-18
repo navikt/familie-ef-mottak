@@ -47,9 +47,18 @@ class JournalføringsoppgaveService(
 
     private fun logJournalpost(journalpost: Journalpost) {
         when (journalpost.getJournalpostState()) {
-            JournalpostState.IKKE_MOTTATT -> logger.info(journalpost.statusIkkeMottattLogString())
-            JournalpostState.UGYLDIG_KANAL -> logger.error(journalpost.ikkeGyldigKanalLogString())
-            JournalpostState.UGYLDIG -> logger.error(journalpost.ikkeGyldigLogString())
+            JournalpostState.IKKE_MOTTATT -> {
+                logger.info(journalpost.statusIkkeMottattLogString())
+            }
+
+            JournalpostState.UGYLDIG_KANAL -> {
+                logger.error(journalpost.ikkeGyldigKanalLogString())
+            }
+
+            JournalpostState.UGYLDIG -> {
+                logger.error(journalpost.ikkeGyldigLogString())
+            }
+
             JournalpostState.GYLDIG -> {} // Ingen logging
         }
     }
