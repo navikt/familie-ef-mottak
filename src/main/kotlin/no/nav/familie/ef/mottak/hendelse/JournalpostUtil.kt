@@ -26,9 +26,11 @@ fun Journalpost.kanalMetricName(): String =
         this.kanal?.substring(0, 5) == "SKAN_" -> {
             "alene.med.barn.journalhendelse.kanal.skannets"
         }
+
         this.kanal == "NAV_NO" -> {
             "alene.med.barn.journalhendelse.kanal.navno"
         }
+
         else -> {
             "alene.med.barn.journalhendelse.kanal.annet"
         }
@@ -37,6 +39,7 @@ fun Journalpost.kanalMetricName(): String =
 fun Journalpost.incrementMetric() {
     when (this.getJournalpostState()) {
         JournalpostState.IKKE_MOTTATT -> Metrics.counter("alene.med.barn.journalhendelse.ignorerte").increment()
+
         JournalpostState.UGYLDIG_KANAL, JournalpostState.UGYLDIG,
         JournalpostState.GYLDIG,
         -> Metrics.counter(this.kanalMetricName()).increment()

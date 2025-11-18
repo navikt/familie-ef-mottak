@@ -75,11 +75,12 @@ class SendDokumentasjonsbehovMeldingTilDittNavTask(
                 lagMeldingManglerDokumentasjonsbehov(ettersendingConfig.ettersendingUrl, søknadstekst)
             }
 
-            else ->
+            else -> {
                 lagMeldingSøknadMottattBekreftelse(
                     ettersendingConfig.ettersendingUrl,
                     søknadstekst,
                 )
+            }
         }
     }
 

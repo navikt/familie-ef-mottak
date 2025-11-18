@@ -67,14 +67,17 @@ class OppgaveService(
                     loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Journalføring)
                     null
                 }
+
                 fordelingsoppgaveFinnes(journalpost) -> {
                     loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.Fordeling)
                     null
                 }
+
                 behandlesakOppgaveFinnes(journalpost) -> {
                     loggSkipOpprettOppgave(journalpost.journalpostId, Oppgavetype.BehandleSak)
                     null
                 }
+
                 else -> {
                     val opprettOppgave =
                         opprettOppgaveMapper.toJournalføringsoppgave(
@@ -187,12 +190,25 @@ class OppgaveService(
 
     private fun kanBehandlesINyLøsning(oppgave: Oppgave): Boolean =
         when (oppgave.behandlingstema) {
-            Behandlingstema.Overgangsstønad.value -> true
-            Behandlingstema.Barnetilsyn.value ->
+            Behandlingstema.Overgangsstønad.value -> {
+                true
+            }
+
+            Behandlingstema.Barnetilsyn.value -> {
                 oppgave.behandlesAvApplikasjon == BehandlesAvApplikasjon.EF_SAK.applikasjon
-            Behandlingstema.Skolepenger.value -> true
-            null -> false
-            else -> error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
+            }
+
+            Behandlingstema.Skolepenger.value -> {
+                true
+            }
+
+            null -> {
+                false
+            }
+
+            else -> {
+                error("Kan ikke utlede stønadstype for behangdlingstema ${oppgave.behandlingstema} for oppgave ${oppgave.id}")
+            }
         }
 
     companion object {

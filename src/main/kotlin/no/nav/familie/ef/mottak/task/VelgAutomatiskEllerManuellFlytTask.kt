@@ -44,12 +44,16 @@ class VelgAutomatiskEllerManuellFlytTask(
         søknad: Søknad,
     ): Boolean =
         when (stønadstype) {
-            OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER ->
+            OVERGANGSSTØNAD, BARNETILSYN, SKOLEPENGER -> {
                 saksbehandlingClient.kanOppretteFørstegangsbehandling(
                     søknad.fnr,
                     stønadstype,
                 )
-            else -> false
+            }
+
+            else -> {
+                false
+            }
         }
 
     companion object {

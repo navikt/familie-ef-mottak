@@ -48,38 +48,49 @@ object Feltformaterer {
         språk: String,
     ): String =
         when (verdi) {
-            is Month ->
+            is Month -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is Boolean ->
+            is Boolean -> {
                 tilUtskriftsformat(verdi, språk)
+            }
 
-            is Double ->
+            is Double -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is List<*> ->
+            is List<*> -> {
                 verdi.joinToString("\n\n") { mapVerdi(it!!, språk) }
+            }
 
-            is Fødselsnummer ->
+            is Fødselsnummer -> {
                 verdi.verdi
+            }
 
-            is Adresse ->
+            is Adresse -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is LocalDate ->
+            is LocalDate -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is LocalDateTime ->
+            is LocalDateTime -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is MånedÅrPeriode ->
+            is MånedÅrPeriode -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            is Datoperiode ->
+            is Datoperiode -> {
                 tilUtskriftsformat(verdi)
+            }
 
-            else ->
+            else -> {
                 verdi.toString()
+            }
         }
 
     private fun tilUtskriftsformat(

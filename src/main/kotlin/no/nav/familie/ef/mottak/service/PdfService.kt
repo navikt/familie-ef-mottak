@@ -56,18 +56,22 @@ class PdfService(
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
                 SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
             }
+
             DOKUMENTTYPE_BARNETILSYN -> {
                 val dto = SøknadMapper.toDto<SøknadBarnetilsyn>(innsending)
                 SøknadTilFeltMap.mapBarnetilsyn(dto, vedleggTitler)
             }
+
             DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER -> {
                 val dto = SøknadMapper.toDto<SkjemaForArbeidssøker>(innsending)
                 SøknadTilFeltMap.mapSkjemafelter(dto)
             }
+
             DOKUMENTTYPE_SKOLEPENGER -> {
                 val dto = SøknadMapper.toDto<SøknadSkolepenger>(innsending)
                 SøknadTilFeltMap.mapSkolepenger(dto, vedleggTitler)
             }
+
             else -> {
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }

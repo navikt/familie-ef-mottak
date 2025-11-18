@@ -30,14 +30,17 @@ class StatusController(
     private fun loggLiteAktivitet(tidSidenSisteLagredeSøknad: Duration) {
         if (erDagtid() && !erHelg()) {
             when {
-                tidSidenSisteLagredeSøknad.toHours() > 5 ->
+                tidSidenSisteLagredeSøknad.toHours() > 5 -> {
                     logger.warn(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toHours()} timer siden vi mottok en søknad",
                     )
-                tidSidenSisteLagredeSøknad.toHours() > 2 ->
+                }
+
+                tidSidenSisteLagredeSøknad.toHours() > 2 -> {
                     logger.info(
                         "Status ef-mottak: Det er ${tidSidenSisteLagredeSøknad.toMinutes()} minutter siden vi mottok en søknad",
                     )
+                }
             }
         }
     }
@@ -52,22 +55,30 @@ class StatusController(
 
     private fun nattStatus(tidSidenSisteLagredeSøknad: Duration) =
         when {
-            tidSidenSisteLagredeSøknad.toHours() > 24 ->
+            tidSidenSisteLagredeSøknad.toHours() > 24 -> {
                 StatusDto(
                     status = Plattformstatus.ISSUE,
                     description = "Det er over 24 timer siden vi mottok en søknad",
                 )
-            else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+            }
+
+            else -> {
+                StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+            }
         }
 
     private fun dagStatus(tidSidenSisteLagredeSøknad: Duration) =
         when {
-            tidSidenSisteLagredeSøknad.toHours() > 12 ->
+            tidSidenSisteLagredeSøknad.toHours() > 12 -> {
                 StatusDto(
                     status = Plattformstatus.ISSUE,
                     description = "Det er over 12 timer siden vi mottok en søknad",
                 )
-            else -> StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+            }
+
+            else -> {
+                StatusDto(status = Plattformstatus.OK, description = "Alt er bra", logLink = null)
+            }
         }
 }
 

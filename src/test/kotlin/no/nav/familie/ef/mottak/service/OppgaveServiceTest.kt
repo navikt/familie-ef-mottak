@@ -759,12 +759,15 @@ internal class OppgaveServiceTest {
 
         val barn =
             when (harTilsynskrevendeBarn) {
-                true ->
+                true -> {
                     startSøknadMedAlt.barn.verdi
                         .first()
                         .copy(barnepass = Søknadsfelt("barnepass", særligTilsynskrevende, svarId = særligTilsynskrevende))
+                }
 
-                false -> startSøknadMedAlt.barn.verdi.first()
+                false -> {
+                    startSøknadMedAlt.barn.verdi.first()
+                }
             }
 
         val aktivitet =
