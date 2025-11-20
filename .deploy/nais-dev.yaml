@@ -60,6 +60,8 @@ spec:
         - application: familie-dokument
         - application: familie-ef-sak
         - application: familie-pdf
+        - application: logging
+          namespace: nais-system
       external:
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: kafka-schema-registry.nais-q.adeo.no
