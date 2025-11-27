@@ -53,6 +53,8 @@ spec:
           cluster: dev-gcp
         - application: statuspoll
           namespace: navdig
+        - application: etterlatte-prosessering
+          namespace: etterlatte
     outbound:
       rules:
         - application: familie-ef-maler
