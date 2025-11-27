@@ -89,6 +89,10 @@ se [her](https://github.com/navikt/utvikling/blob/master/Vault.md).
 ## Swagger 
 f.eks. http://localhost:8092/swagger-ui.html
 
+## Produksjonssetting
+Alle commits krever godkjenning av minst én annen utvikler før de kan merges til main. (se Settings/Rules for oppsett av regler på github). Det er ikke mulig å pushe direkte til main branch.
+https://github.com/navikt/familie-ef-iverksett/settings/rules
+
 ## Kode generert av GitHub Copilot
 
 Dette repoet bruker GitHub Copilot til å generere kode.
