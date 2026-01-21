@@ -20,6 +20,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 
 internal class PdfServiceTest {
@@ -28,7 +29,8 @@ internal class PdfServiceTest {
     private val ettersendingRepository: EttersendingRepository = mockk()
     private val familieBrevClient: FamilieBrevClient = mockk()
     private val familiePdfClient: FamiliePdfClient = mockk()
-    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, vedleggRepository, familieBrevClient, familiePdfClient)
+    private val entityOperations: JdbcAggregateOperations = mockk()
+    private val pdfService: PdfService = PdfService(søknadRepository, ettersendingRepository, entityOperations, vedleggRepository, familieBrevClient, familiePdfClient)
 
     private val pdf = EncryptedFile("321".toByteArray())
     private val søknadOvergangsstønadId = "søknadOvergangsstønadId"
