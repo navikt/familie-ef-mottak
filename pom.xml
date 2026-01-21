@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>4.0.1</version>
     </parent>
 
     <properties>
@@ -22,7 +22,7 @@
         <kotlin.version>2.2.21</kotlin.version>
         <springdoc.version>2.8.14</springdoc.version>
         <mockk.version>1.14.6</mockk.version>
-        <felles.version>3.20251105152539_b03ed80</felles.version>
+        <felles.version>4.20260113213435_0e5b861</felles.version>
         <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <confluent.version>8.1.0</confluent.version>
         <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
@@ -80,8 +80,17 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -222,7 +231,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.12.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -272,6 +280,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-resttestclient</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -22,6 +22,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClientResponseException
@@ -67,7 +68,7 @@ internal class ArkiveringServiceTest {
         )
 
     private val conflictException =
-        HttpClientErrorException.Conflict.create(null, HttpStatus.CONFLICT, null, null, null, null)
+        HttpClientErrorException.Conflict.create("Conflict occurred", HttpStatus.CONFLICT, "Conflict", HttpHeaders(), null, null)
 
     @Test
     internal fun `Skal håndtere 409 feil fra integrasjoner ved arkivering av vedlegg som allerede er journalført med callId`() {
@@ -123,7 +124,7 @@ internal class ArkiveringServiceTest {
         RessursException(
             cause = restClientResponseException,
             ressurs = Ressurs.failure("feil"),
-            httpStatus = HttpStatus.valueOf(restClientResponseException.rawStatusCode),
+            httpStatus = HttpStatus.valueOf(restClientResponseException.statusCode.value()),
         )
 
     private fun lagJournalpost(
