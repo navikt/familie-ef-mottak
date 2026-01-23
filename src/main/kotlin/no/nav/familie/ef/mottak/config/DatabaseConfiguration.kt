@@ -12,10 +12,15 @@ import org.springframework.boot.flyway.autoconfigure.FlywayConfigurationCustomiz
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
+import org.springframework.data.jdbc.core.JdbcAggregateTemplate
+import org.springframework.data.jdbc.core.convert.DataAccessStrategy
+import org.springframework.data.jdbc.core.convert.JdbcConverter
 import org.springframework.data.jdbc.core.convert.JdbcCustomConversions
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
+import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.transaction.PlatformTransactionManager
@@ -50,13 +55,13 @@ class DatabaseConfiguration : AbstractJdbcConfiguration() {
         @Value("\${spring.flyway.placeholders.ignoreIfLocal}") ignoreIfLocal: String,
         environment: Environment,
     ): FlywayConfigurationCustomizer {
-        val isProd = environment.activeProfiles.contains("prod")
+        val isLocal = environment.activeProfiles.contains("local") || environment.activeProfiles.contains("integrationtest")
         val ignore = ignoreIfLocal == "--"
         return FlywayConfigurationCustomizer {
-            if (isProd && ignore) {
-                throw RuntimeException("Prod profile men har ikke riktig verdi for placeholder ignoreIfLocal=$ignoreIfLocal")
+            if (isLocal && !ignore) {
+                throw RuntimeException("local eller integrationtest profile, men har ikke riktig verdi for placeholder ignoreIfLocal=$ignoreIfLocal")
             }
-            if (!isProd && !ignore) {
+            if (!isLocal && ignore) {
                 throw RuntimeException("Profile=${environment.activeProfiles} men har ignoreIfLocal=--")
             }
         }
