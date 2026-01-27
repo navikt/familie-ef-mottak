@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
     </parent>
 
     <properties>
@@ -19,14 +19,14 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>2.2.21</kotlin.version>
-        <springdoc.version>2.8.14</springdoc.version>
-        <mockk.version>1.14.6</mockk.version>
+        <kotlin.version>2.3.0</kotlin.version>
+        <springdoc.version>3.0.1</springdoc.version>
+        <mockk.version>1.14.7</mockk.version>
         <felles.version>4.20260113213435_0e5b861</felles.version>
         <prosessering.version>2.20251110093725_10552cd</prosessering.version>
-        <confluent.version>8.1.0</confluent.version>
+        <confluent.version>8.1.1</confluent.version>
         <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
-        <token-validation.version>5.0.39</token-validation.version>
+        <token-validation.version>6.0.1</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.5</version>
+            <version>5.6</version>
         </dependency>
 
         <!-- Kafka -->
@@ -256,7 +256,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.3</version>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -349,7 +349,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>5.3.0.6276</version>
+                    <version>5.5.0.6356</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -408,7 +408,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.8.0</version>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
