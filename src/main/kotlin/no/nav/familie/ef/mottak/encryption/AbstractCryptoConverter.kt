@@ -9,7 +9,7 @@ private val cipherInitializer = CipherInitializer()
 abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
     abstract fun byteArrayToEntityAttribute(dbData: ByteArray?): T
 
-    override fun convert(dbData: ByteArray): T? {
+    override fun convert(dbData: ByteArray): T {
         if (KeyProperty.databaseEncryptionKey.isNotEmpty() && dbData.isNotEmpty()) {
             return decrypt(dbData)
         }
@@ -26,11 +26,11 @@ abstract class AbstractCryptoReadingConverter<T> : Converter<ByteArray, T> {
     }
 }
 
-abstract class AbstractCryptoWritingConverter<T> : Converter<T, ByteArray> {
-    abstract fun entityAttributeToByteArray(attribute: T): ByteArray?
+abstract class AbstractCryptoWritingConverter<T : Any> : Converter<T, ByteArray> {
+    abstract fun entityAttributeToByteArray(attribute: T): ByteArray
 
-    override fun convert(attribute: T): ByteArray? {
-        if (KeyProperty.databaseEncryptionKey.isNotEmpty() && attribute != null) {
+    override fun convert(attribute: T): ByteArray {
+        if (KeyProperty.databaseEncryptionKey.isNotEmpty()) {
             return encrypt(attribute)
         }
         return entityAttributeToByteArray(attribute)

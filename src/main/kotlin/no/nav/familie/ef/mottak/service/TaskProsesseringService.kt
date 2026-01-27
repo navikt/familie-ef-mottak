@@ -13,6 +13,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import org.jboss.logging.MDC
 import org.slf4j.LoggerFactory
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Properties
@@ -22,7 +23,7 @@ import java.util.UUID
 class TaskProsesseringService(
     private val taskService: TaskService,
     private val søknadRepository: SøknadRepository,
-    private val ettersendingRepository: EttersendingRepository,
+    private val entityOperations: JdbcAggregateOperations,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -67,7 +68,7 @@ class TaskProsesseringService(
         }
 
         taskService.save(task)
-        ettersendingRepository.update(ettersending.copy(taskOpprettet = true))
+        entityOperations.update(ettersending.copy(taskOpprettet = true))
     }
 
     private fun hentEllerOpprettCallId(): String = MDC.get(MDCConstants.MDC_CALL_ID) as? String ?: IdUtils.generateId()

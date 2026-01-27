@@ -52,6 +52,7 @@ class SøknadService(
     fun mottaSøknadOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -59,6 +60,7 @@ class SøknadService(
     fun mottaSøknadBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -66,6 +68,7 @@ class SøknadService(
     fun mottaSøknadSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -177,6 +180,13 @@ class SøknadService(
                     null
                 }
             }.filter { it.nyereEnn() }
+    }
+
+    private fun validerFinnesVedleggFraFør(vedlegg: List<VedleggFamilieKontrakter>) {
+        val vedleggIds = vedlegg.map { UUID.fromString(it.id) }
+        if (vedleggIds.isNotEmpty() && vedleggRepository.existsVedleggByIds(vedleggIds)) {
+            throw IllegalArgumentException("Ett eller flere vedlegg er allerede brukt. VedleggIds: $vedleggIds")
+        }
     }
 
     private fun mapSøknadsvedlegg(

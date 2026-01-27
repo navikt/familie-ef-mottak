@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.service.Testdata.søknadBarnetilsyn
 import no.nav.familie.ef.mottak.service.Testdata.søknadOvergangsstønad
@@ -10,12 +11,15 @@ import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.HttpServerErrorException
+import org.springframework.web.client.exchange
 import java.util.UUID
 
 internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
@@ -52,19 +56,25 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
         val vedleggId = UUID.randomUUID().toString()
         val søknad = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg(vedleggId)))
         verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad")
-        verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad", HttpStatus.BAD_REQUEST)
+
+        assertThrows<HttpClientErrorException.BadRequest> {
+            verifySøknadMedVedleggRequest(søknad, "/api/soknad/overgangsstonad", HttpStatus.BAD_REQUEST)
+        }
     }
 
     @Test
     internal fun `vedlegg savnes i listen med vedlegg`() {
         val request = SøknadMedVedlegg(søknadOvergangsstønad, listOf(lagVedlegg("finnes_ikke")))
-        val response: ResponseEntity<Any> =
-            restTemplate.exchange(
-                localhost("/api/soknad/overgangsstonad"),
-                HttpMethod.POST,
-                HttpEntity(request, headers),
-            )
-        assertThat(response.statusCode).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        val exception =
+            assertThrows<HttpClientErrorException.BadRequest> {
+                restTemplate.exchange<Kvittering>(
+                    localhost("/api/soknad/overgangsstonad"),
+                    HttpMethod.POST,
+                    HttpEntity(request, headers),
+                )
+            }
+
+        assertThat(exception.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 
     private fun <T> verifySøknadMedVedleggRequest(
