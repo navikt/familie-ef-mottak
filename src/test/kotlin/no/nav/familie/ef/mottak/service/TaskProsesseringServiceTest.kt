@@ -16,14 +16,13 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.jboss.logging.MDC
 import org.junit.jupiter.api.Test
-import org.springframework.data.jdbc.core.JdbcAggregateOperations
 
 internal class TaskProsesseringServiceTest {
     private val taskService: TaskService = mockk(relaxed = true)
     private val søknadRepository: SøknadRepository = mockk(relaxed = true)
-    private val entityOperations: JdbcAggregateOperations = mockk(relaxed = true)
+    private val ettersendingRepository: EttersendingRepository = mockk(relaxed = true)
 
-    private val taskProsesseringService = TaskProsesseringService(taskService, søknadRepository, entityOperations)
+    private val taskProsesseringService = TaskProsesseringService(taskService, søknadRepository, ettersendingRepository)
 
     private val ettersending =
         Ettersending(
@@ -41,7 +40,7 @@ internal class TaskProsesseringServiceTest {
         val taskSlot = slot<Task>()
 
         every { taskService.save(capture(taskSlot)) } answers { firstArg() }
-        every { entityOperations.update<Ettersending>(any()) } answers { firstArg() }
+        every { ettersendingRepository.update(any()) } answers { firstArg() }
 
         val callIdPre = MDC.get(MDCConstants.MDC_CALL_ID) as? String
 

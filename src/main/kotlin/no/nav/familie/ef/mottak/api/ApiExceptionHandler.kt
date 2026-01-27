@@ -1,11 +1,8 @@
 package no.nav.familie.ef.mottak.api
 
-import jakarta.servlet.http.HttpServletRequest
 import no.nav.familie.kontrakter.felles.Ressurs
-import org.apache.kafka.common.requests.ApiError
 import org.slf4j.LoggerFactory
 import org.springframework.core.NestedExceptionUtils
-import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -32,18 +29,4 @@ class ApiExceptionHandler {
         ResponseEntity
             .status(e.httpStatus)
             .body(Ressurs.failure(e.feil))
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(
-        e: IllegalArgumentException,
-        request: HttpServletRequest,
-    ): ResponseEntity<Ressurs<String>> {
-        secureLogger.warn(e.message, e.stackTraceToString())
-
-        return ResponseEntity
-            .badRequest()
-            .body(
-                Ressurs.failure(e.message),
-            )
-    }
 }

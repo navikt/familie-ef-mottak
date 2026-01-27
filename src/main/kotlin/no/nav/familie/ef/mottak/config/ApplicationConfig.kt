@@ -8,7 +8,6 @@ import no.nav.familie.http.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.kafka.KafkaErrorHandler
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
@@ -21,17 +20,15 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
-import org.springframework.boot.restclient.RestTemplateBuilder
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestOperations
-import org.springframework.web.client.RestTemplate
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -66,7 +63,6 @@ class ApplicationConfig {
         RestTemplateBuilder()
             .connectTimeout(Duration.of(5, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(25, ChronoUnit.SECONDS))
-            .additionalMessageConverters(listOf(MappingJackson2HttpMessageConverter(objectMapper)) + RestTemplate().messageConverters)
             .interceptors(
                 bearerTokenExchangeClientInterceptor,
                 mdcValuesPropagatingClientInterceptor,
@@ -82,7 +78,6 @@ class ApplicationConfig {
         RestTemplateBuilder()
             .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(5, ChronoUnit.MINUTES))
-            .additionalMessageConverters(listOf(MappingJackson2HttpMessageConverter(objectMapper)) + RestTemplate().messageConverters)
             .interceptors(
                 mdcInterceptor,
                 bearerTokenClientInterceptor,
@@ -97,7 +92,6 @@ class ApplicationConfig {
         RestTemplateBuilder()
             .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
-            .additionalMessageConverters(listOf(MappingJackson2HttpMessageConverter(objectMapper)) + RestTemplate().messageConverters)
             .interceptors(mdcInterceptor, consumerIdClientInterceptor)
             .build()
 
@@ -109,7 +103,6 @@ class ApplicationConfig {
                 RestTemplateBuilder()
                     .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
                     .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
-                    .additionalMessageConverters(listOf(MappingJackson2HttpMessageConverter(objectMapper)) + RestTemplate().messageConverters)
                     .build(),
             ),
         )
@@ -118,18 +111,22 @@ class ApplicationConfig {
     fun kotlinModule(): KotlinModule = KotlinModule.Builder().build()
 
     @Bean
-    fun logFilter(): FilterRegistrationBean<LogFilter> =
-        FilterRegistrationBean(LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)).apply {
-            logger.info("Registering LogFilter filter")
-            order = 1
-        }
+    fun logFilter(): FilterRegistrationBean<LogFilter> {
+        logger.info("Registering LogFilter filter")
+        val filterRegistration = FilterRegistrationBean<LogFilter>()
+        filterRegistration.filter = LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)
+        filterRegistration.order = 1
+        return filterRegistration
+    }
 
     @Bean
-    fun requestTimeFilter(): FilterRegistrationBean<RequestTimeFilter> =
-        FilterRegistrationBean(RequestTimeFilter()).apply {
-            logger.info("Registering RequestTimeFilter filter")
-            order = 2
-        }
+    fun requestTimeFilter(): FilterRegistrationBean<RequestTimeFilter> {
+        logger.info("Registering RequestTimeFilter filter")
+        val filterRegistration = FilterRegistrationBean<RequestTimeFilter>()
+        filterRegistration.filter = RequestTimeFilter()
+        filterRegistration.order = 2
+        return filterRegistration
+    }
 
     @Bean
     fun prosesseringInfoProvider(
