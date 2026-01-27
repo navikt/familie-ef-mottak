@@ -18,7 +18,6 @@ import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
-import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service
 class PdfService(
     private val søknadRepository: SøknadRepository,
     private val ettersendingRepository: EttersendingRepository,
-    private val entityOperations: JdbcAggregateOperations,
     private val vedleggRepository: VedleggRepository,
     private val familieBrevClient: FamilieBrevClient,
     private val familiePdfClient: FamiliePdfClient,
@@ -46,7 +44,7 @@ class PdfService(
     ) {
         val feltMap = SøknadTilFeltMap.mapEttersending(ettersending, vedleggTitler)
         val søknadPdf = familieBrevClient.lagPdf(feltMap)
-        entityOperations.update(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
+        ettersendingRepository.update(ettersending.copy(ettersendingPdf = EncryptedFile(søknadPdf)))
     }
 
     private fun lagFeltMap(

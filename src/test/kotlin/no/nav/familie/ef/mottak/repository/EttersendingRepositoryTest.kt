@@ -13,16 +13,12 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import java.time.LocalDateTime
 import java.util.UUID
 
 internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var ettersendingRepository: EttersendingRepository
-
-    @Autowired
-    lateinit var entityOperations: JdbcAggregateOperations
 
     @Test
     internal fun `lagre og hent ettersending`() {
@@ -44,7 +40,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                 listOf(dokumentasjonsbehov),
                 personIdent = personIdent,
             )
-        val ettersending = entityOperations.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
+        val ettersending = ettersendingRepository.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
         assertThat(ettersendingRepository.count()).isEqualTo(1)
         assertThat(objectMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java))
@@ -55,7 +51,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Test
     internal fun `finnEttersendingerKlarTilSletting finner journalførte ettersendinger eldre enn 3 måneder`() {
         val journalFørtEldreEnn3Måneder =
-            entityOperations.insert(
+            ettersendingRepository.insert(
                 Ettersending(
                     fnr = "321321321",
                     ettersendingJson = EncryptedString(""),
@@ -65,7 +61,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                 ),
             )
         val ikkeJournalFørtEldreEnn3Måneder =
-            entityOperations.insert(
+            ettersendingRepository.insert(
                 Ettersending(
                     fnr = "321321321",
                     ettersendingJson = EncryptedString(""),
@@ -74,7 +70,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
                 ),
             )
         val journalFørtYngreEnn3Måneder =
-            entityOperations.insert(
+            ettersendingRepository.insert(
                 Ettersending(
                     fnr = "321321321",
                     ettersendingJson = EncryptedString(""),

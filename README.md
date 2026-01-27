@@ -83,7 +83,8 @@ spring.datasource.username=postgres
 spring.datasource.password=test
 ``` 
 
-Les mer om postgres på nav [her](https://github.com/navikt/utvikling/blob/master/PostgreSQL.md).
+Les mer om postgres på nav [her](https://github.com/navikt/utvikling/blob/master/PostgreSQL.md). For å hente credentials manuelt, 
+se [her](https://github.com/navikt/utvikling/blob/master/Vault.md). 
 
 ## Swagger 
 f.eks. http://localhost:8092/swagger-ui.html

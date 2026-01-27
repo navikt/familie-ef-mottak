@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class InsertUpdateRepositoryImpl<T : Any>(
+class InsertUpdateRepositoryImpl<T>(
     val entityOperations: JdbcAggregateOperations,
 ) : InsertUpdateRepository<T> {
     @Transactional

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
@@ -27,7 +26,6 @@ internal class EttersendingServiceTest {
     private val ettersendingRepository = mockk<EttersendingRepository>(relaxed = true)
     private val ettersendingVedleggRepository = mockk<EttersendingVedleggRepository>(relaxed = true)
     private val dokumentClient = mockFamilieDokumentClient()
-    private val entityOperations = mockk<JdbcAggregateOperations>()
 
     private val ettersendingService =
         EttersendingService(
@@ -35,7 +33,6 @@ internal class EttersendingServiceTest {
             ettersendingVedleggRepository = ettersendingVedleggRepository,
             dokumentClient = dokumentClient,
             taskProsesseringService = mockk(relaxed = true),
-            entityOperations = entityOperations,
         )
 
     private val dokument1 = "1234".toByteArray()
@@ -85,7 +82,7 @@ internal class EttersendingServiceTest {
         } answers { ettersendingVedleggSlot.captured }
         every {
             hint(Ettersending::class)
-            entityOperations.insert(capture(ettersendingSlot))
+            ettersendingRepository.insert(capture(ettersendingSlot))
         } answers { ettersendingSlot.captured }
 
         ettersendingService.mottaEttersending(

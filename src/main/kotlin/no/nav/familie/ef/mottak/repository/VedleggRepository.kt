@@ -6,7 +6,6 @@ import no.nav.familie.ef.mottak.repository.util.RepositoryInterface
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
-import java.util.UUID
 
 @Repository
 interface VedleggRepository :
@@ -20,13 +19,4 @@ interface VedleggRepository :
     @Modifying
     @Query("DELETE FROM vedlegg WHERE soknad_id = :søknadId")
     fun deleteBySøknadId(søknadId: String)
-
-    @Query(
-        """
-    SELECT COUNT(1) > 0
-    FROM vedlegg
-    WHERE id IN (:ids)
-    """,
-    )
-    fun existsVedleggByIds(ids: Collection<UUID>): Boolean
 }
