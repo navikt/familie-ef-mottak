@@ -29,8 +29,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.web.client.RestOperations
+import org.springframework.boot.restclient.RestTemplateBuilder
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.web.client.RestTemplate
 import java.net.URI
 import java.time.LocalDate
 import kotlin.test.assertFailsWith
@@ -38,7 +39,9 @@ import kotlin.test.assertNotNull
 
 internal class IntegrasjonerClientTest {
     private val wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
-    private val restOperations: RestOperations = RestTemplateBuilder().build()
+
+    protected val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
+    protected val restTemplate = RestTemplateBuilder().additionalMessageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters).build()
 
     private lateinit var integrasjonerClient: IntegrasjonerClient
     private val arkiverSøknadRequest = ArkiverDokumentRequest("123456789", true, listOf())
@@ -49,7 +52,7 @@ internal class IntegrasjonerClientTest {
         wireMockServer.start()
         val stsRestClient = mockk<StsRestClient>()
         every { stsRestClient.systemOIDCToken } returns "token"
-        integrasjonerClient = IntegrasjonerClient(restOperations, IntegrasjonerConfig(URI.create(wireMockServer.baseUrl())))
+        integrasjonerClient = IntegrasjonerClient(restTemplate, IntegrasjonerConfig(URI.create(wireMockServer.baseUrl())))
     }
 
     @AfterEach

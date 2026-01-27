@@ -11,6 +11,7 @@ import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import java.util.UUID
 
 class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
@@ -23,6 +24,9 @@ class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     lateinit var ettersendingService: EttersendingService
 
+    @Autowired
+    lateinit var entityOperations: JdbcAggregateOperations
+
     @Test
     fun `skal splitte opp ettersendingsvedlegg fra en ettersending`() {
         val opprinneligEttersending =
@@ -33,7 +37,7 @@ class EttersendingServiceIntegrasjonTest : IntegrasjonSpringRunnerTest() {
                 stønadType = "OVERGANGSSTØNAD",
                 taskOpprettet = true,
             )
-        ettersendingRepository.insert(opprinneligEttersending)
+        entityOperations.insert(opprinneligEttersending)
         val vedlegg1 = lagVedlegg(opprinneligEttersending, "Første dokument")
         val vedlegg2 = lagVedlegg(opprinneligEttersending, "Andre dokument")
         val vedlegg3 = lagVedlegg(opprinneligEttersending, "Tredje dokument")
