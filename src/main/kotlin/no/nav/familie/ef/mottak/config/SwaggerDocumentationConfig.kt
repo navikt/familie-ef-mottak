@@ -2,28 +2,63 @@ package no.nav.familie.ef.mottak.config
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.OAuthFlow
+import io.swagger.v3.oas.models.security.OAuthFlows
+import io.swagger.v3.oas.models.security.Scopes
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.servers.Server
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 @Configuration
-class SwaggerDocumentationConfig {
-    private val bearer = "Bearer"
+@Profile("!local && !test")
+class SwaggerDocumentationConfig(
+    @Value("\${AUTHORIZATION_URL}")
+    val authorizationUrl: String,
+    @Value("\${AZUREAD_TOKEN_ENDPOINT_URL}")
+    val tokenUrl: String,
+    @Value("\${API_SCOPE}")
+    val apiScope: String,
+) {
+    private val preprodServer: Server = Server().description("Pre-prod")
 
     @Bean
-    fun openApi(): OpenAPI =
+    open fun swaggerApiConfig(): OpenAPI =
         OpenAPI()
-            .info(Info().title("Familie ef mottak api"))
-            .components(Components().addSecuritySchemes(bearer, bearerTokenSecurityScheme()))
-            .addSecurityItem(SecurityRequirement().addList(bearer, listOf("read", "write")))
+            .components(Components().addSecuritySchemes("oauth2", securitySchemes()))
+            .addSecurityItem(SecurityRequirement().addList("oauth2", listOf("read", "write")))
+            .info(
+                Info()
+                    .title("Familie ef mottak api")
+                    .description("Swagger for familie-ef-mottak")
+                    .version("1.0.0")
+                    .contact(
+                        Contact()
+                            .name("Team Efterlatte")
+                            .url("https://github.com/navikt/familie-ef-mottak"),
+                    ),
+            ).servers(
+                listOf(preprodServer),
+            )
 
-    private fun bearerTokenSecurityScheme(): SecurityScheme =
+    private fun securitySchemes(): SecurityScheme =
         SecurityScheme()
-            .type(SecurityScheme.Type.APIKEY)
-            .scheme(bearer)
-            .bearerFormat("JWT")
+            .name("oauth2")
+            .type(SecurityScheme.Type.OAUTH2)
+            .scheme("oauth2")
             .`in`(SecurityScheme.In.HEADER)
-            .name("Authorization")
+            .flows(
+                OAuthFlows()
+                    .authorizationCode(
+                        OAuthFlow()
+                            .authorizationUrl(authorizationUrl)
+                            .tokenUrl(tokenUrl)
+                            .scopes(Scopes().addString(apiScope, "read,write")),
+                    ),
+            )
 }

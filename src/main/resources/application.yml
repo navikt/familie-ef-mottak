@@ -48,10 +48,21 @@ logging:
   config: "classpath:logback-spring.xml"
 
 springdoc:
-  packagesToScan: no.nav.familie.ef.mottak
-  pathsToMatch: /v3/api-docs,/api/**
+  api-docs:
+    path: /v3/api-docs
+  #packagesToScan: no.nav.familie.ef.mottak
+  #pathsToMatch: /v3/api-docs,/api/**
   swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
     disable-swagger-default-url: true
+    persist-authorization: true
+    oauth:
+      use-pkce-with-authorization-code-grant: true
+      client-id: ${azure.app.client.id}
+      scope-separator: ","
 
 management:
   endpoint.health.show-details: always
@@ -103,3 +114,8 @@ EF_SAK_URL: http://familie-ef-sak
 ettersending.ettersendingUrl: https://www.nav.no/familie/alene-med-barn/ettersending
 
 DB_RYDDING_CRON_EXPRESSION: 0 0 2 * * MON-FRI
+
+# Azure AD miljøvariabler (for SwaggerConfig.kt)
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
+API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default

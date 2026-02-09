@@ -104,3 +104,8 @@ NAIS_NAMESPACE: teamfamilie
 NAIS_CLUSTER_NAME: local
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS
+
+AZURE_OPENID_CONFIG_ISSUER: https://login.microsoftonline.com/test-tenant-id/v2.0
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/test-tenant-id/oauth2/v2.0/token
+AZURE_APP_CLIENT_ID: test-client-id
+AZURE_APP_TENANT_ID: test-tenant-id
