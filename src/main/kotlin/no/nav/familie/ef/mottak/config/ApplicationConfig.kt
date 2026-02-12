@@ -106,7 +106,6 @@ class ApplicationConfig {
                 RestTemplateBuilder()
                     .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
                     .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
-                    .additionalMessageConverters(listOf(JacksonJsonHttpMessageConverter(jsonMapper)) + RestTemplate().messageConverters)
                     .build(),
             ),
         )
