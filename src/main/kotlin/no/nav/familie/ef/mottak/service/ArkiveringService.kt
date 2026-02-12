@@ -8,13 +8,13 @@ import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.repository.domain.Vedlegg
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.journalpost.Bruker
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.JournalposterForBrukerRequest
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
+import no.nav.familie.restklient.client.RessursException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException

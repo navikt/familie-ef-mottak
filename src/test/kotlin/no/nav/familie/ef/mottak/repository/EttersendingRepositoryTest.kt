@@ -9,7 +9,7 @@ import no.nav.familie.kontrakter.ef.ettersending.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,7 +47,7 @@ internal class EttersendingRepositoryTest : IntegrasjonSpringRunnerTest() {
         val ettersending = entityOperations.insert(EttersendingMapper.fromDto(StønadType.OVERGANGSSTØNAD, ettersendelseDto))
 
         assertThat(ettersendingRepository.count()).isEqualTo(1)
-        assertThat(objectMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java))
+        assertThat(jsonMapper.readValue(ettersending.ettersendingJson.data, EttersendelseDto::class.java))
             .usingRecursiveComparison()
             .isEqualTo(ettersendelseDto)
     }

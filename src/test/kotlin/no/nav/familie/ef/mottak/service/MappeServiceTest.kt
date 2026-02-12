@@ -6,7 +6,7 @@ import io.mockk.verify
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
 import org.junit.jupiter.api.BeforeEach
@@ -33,7 +33,7 @@ internal class MappeServiceTest {
                 journalpostId = "1234",
                 fnr = Testdata.randomFnr(),
                 behandleINySaksbehandling = true,
-                json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
+                json = jsonMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
             )
         every { integrasjonerClient.finnMappe(any()) } returns
             FinnMappeResponseDto(

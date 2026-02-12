@@ -6,7 +6,6 @@ import no.nav.familie.ef.mottak.mapper.OpprettOppgaveMapper
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.util.UtledPrioritetForSøknadUtil
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.BrukerIdType
 import no.nav.familie.kontrakter.felles.journalpost.Journalpost
@@ -16,6 +15,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import no.nav.familie.restklient.client.RessursException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

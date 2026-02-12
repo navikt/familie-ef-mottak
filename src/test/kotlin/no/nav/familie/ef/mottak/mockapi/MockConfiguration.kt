@@ -8,7 +8,7 @@ import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.context.annotation.Bean
@@ -25,7 +25,7 @@ class MockConfiguration {
     fun familieBrevClient(): FamilieBrevClient =
         object : FamilieBrevClient(mockk(), mockk()) {
             override fun lagPdf(labelValueJson: FeltMap): ByteArray {
-                val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
+                val pdf = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
                 log.info("Creating pdf: $pdf")
                 return labelValueJson.toString().toByteArray()
             }
@@ -37,7 +37,7 @@ class MockConfiguration {
     fun familiePdfClient(): FamiliePdfClient =
         object : FamiliePdfClient(URI.create("uri"), mockk()) {
             override fun lagPdf(labelValueJson: FeltMap): ByteArray {
-                val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
+                val pdf = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(labelValueJson)
                 log.info("Creating pdf: $pdf")
                 return labelValueJson.toString().toByteArray()
             }

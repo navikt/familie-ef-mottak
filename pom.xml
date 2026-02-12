@@ -22,10 +22,10 @@
         <kotlin.version>2.2.21</kotlin.version>
         <springdoc.version>3.0.1</springdoc.version>
         <mockk.version>1.14.6</mockk.version>
-        <felles.version>4.20260113213435_0e5b861</felles.version>
+        <felles.version>4.20260205114838_3a4c3dc</felles.version>
         <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <confluent.version>8.1.0</confluent.version>
-        <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
+        <kontrakter.version>4.0_20260204122732_558ee1d</kontrakter.version>
         <token-validation.version>5.0.39</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
@@ -108,10 +108,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-kotlin</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
@@ -176,7 +172,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
-            <artifactId>http-client</artifactId>
+            <artifactId>rest-klient</artifactId>
             <version>${felles.version}</version>
         </dependency>
         <dependency>

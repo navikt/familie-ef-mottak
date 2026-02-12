@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.getValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -13,7 +12,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
@@ -21,6 +20,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
 import org.springframework.stereotype.Service
+import tools.jackson.module.kotlin.readValue
 
 @Service
 class MappeService(
@@ -84,7 +84,7 @@ class MappeService(
         }
 
     private fun mappeFraOvergangsstønad(søknad: Søknad): MappeSøkestreng {
-        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.json)
+        val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønad>(søknad.json)
         return when {
             erSærligTilsynskrevende(søknadsdata) -> SÆRLIG_TILSYNSKREVENDE
             erSelvstendig(søknadsdata.aktivitet) -> SELVSTENDIG
@@ -97,7 +97,7 @@ class MappeService(
             ?.verdi != null
 
     private fun mappeFraBarnetilsyn(søknad: Søknad): MappeSøkestreng {
-        val søknadsdata = objectMapper.readValue<SøknadBarnetilsyn>(søknad.json)
+        val søknadsdata = jsonMapper.readValue<SøknadBarnetilsyn>(søknad.json)
         return when {
             erSærligTilsynskrevende(søknadsdata) -> SÆRLIG_TILSYNSKREVENDE
             erSelvstendig(søknadsdata.aktivitet) -> SELVSTENDIG

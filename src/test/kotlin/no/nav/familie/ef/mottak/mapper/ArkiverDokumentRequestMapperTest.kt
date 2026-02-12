@@ -11,7 +11,7 @@ import no.nav.familie.ef.mottak.repository.domain.Vedlegg
 import no.nav.familie.ef.mottak.service.Testdata
 import no.nav.familie.kontrakter.felles.dokarkiv.Dokumenttype
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.Filtype
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
@@ -70,7 +70,7 @@ internal class ArkiverDokumentRequestMapperTest {
         søknad: Any,
         dokumenttype: String,
     ): Søknad {
-        val jsonval: String = objectMapper.writeValueAsString(søknad)
+        val jsonval: String = jsonMapper.writeValueAsString(søknad)
         return Søknad(
             fnr = "123",
             søknadPdf = EncryptedFile(byteArrayOf(12)),

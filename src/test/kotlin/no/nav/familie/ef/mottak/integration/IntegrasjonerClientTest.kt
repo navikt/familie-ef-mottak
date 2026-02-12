@@ -8,29 +8,26 @@ import com.github.tomakehurst.wiremock.client.WireMock.put
 import com.github.tomakehurst.wiremock.client.WireMock.serverError
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import io.mockk.every
-import io.mockk.mockk
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
-import no.nav.familie.http.client.RessursException
-import no.nav.familie.http.sts.StsRestClient
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.failure
 import no.nav.familie.kontrakter.felles.Ressurs.Companion.success
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.dokarkiv.ArkiverDokumentResponse
 import no.nav.familie.kontrakter.felles.dokarkiv.v2.ArkiverDokumentRequest
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.restklient.client.RessursException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.restclient.RestTemplateBuilder
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.web.client.RestTemplate
 import java.net.URI
 import java.time.LocalDate
@@ -40,8 +37,8 @@ import kotlin.test.assertNotNull
 internal class IntegrasjonerClientTest {
     private val wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
 
-    protected val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
-    protected val restTemplate = RestTemplateBuilder().additionalMessageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters).build()
+    protected val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
+    protected val restTemplate = RestTemplateBuilder().additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters).build()
 
     private lateinit var integrasjonerClient: IntegrasjonerClient
     private val arkiverSøknadRequest = ArkiverDokumentRequest("123456789", true, listOf())
@@ -50,8 +47,6 @@ internal class IntegrasjonerClientTest {
     @BeforeEach
     fun setUp() {
         wireMockServer.start()
-        val stsRestClient = mockk<StsRestClient>()
-        every { stsRestClient.systemOIDCToken } returns "token"
         integrasjonerClient = IntegrasjonerClient(restTemplate, IntegrasjonerConfig(URI.create(wireMockServer.baseUrl())))
     }
 
@@ -94,7 +89,7 @@ internal class IntegrasjonerClientTest {
         val journalpostId = "321"
         val journalførendeEnhet = "9999"
         val json =
-            objectMapper.writeValueAsString(
+            jsonMapper.writeValueAsString(
                 success(
                     mapOf("journalpostId" to journalpostId),
                     "Ferdigstilt journalpost $journalpostId",
@@ -145,7 +140,7 @@ internal class IntegrasjonerClientTest {
 
     @Test
     internal fun `skal hente aktørid med flat json`() {
-        val mockResponse = objectMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
+        val mockResponse = jsonMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
                 .willReturn(okJson(mockResponse)),

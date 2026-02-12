@@ -15,7 +15,7 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjonsbehov
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
 import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.assertj.core.api.Assertions.assertThat
@@ -62,7 +62,7 @@ class SøknadServiceTest {
         every { dokumentasjonsbehovRepository.findByIdOrNull(any()) }
             .returns(
                 no.nav.familie.ef.mottak.repository.domain
-                    .Dokumentasjonsbehov("123", objectMapper.writeValueAsString(forventetDokumentasjonsbehov)),
+                    .Dokumentasjonsbehov("123", jsonMapper.writeValueAsString(forventetDokumentasjonsbehov)),
             )
 
         every { søknadRepository.findByIdOrNull(any()) } returns SøknadMapper.fromDto(Testdata.søknadOvergangsstønad, false)

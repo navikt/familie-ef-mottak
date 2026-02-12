@@ -16,7 +16,7 @@ import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.Testdata.vedlegg
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,7 +55,7 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_SKOLEPENGER,
             journalpostId = null,
             saksnummer = null,
-            json = objectMapper.writeValueAsString(søknadSkole),
+            json = jsonMapper.writeValueAsString(søknadSkole),
         )
 
     private val søknadBarnetilsynId = "søknadBarnetilsynId"
@@ -68,7 +68,7 @@ internal class PdfServiceTest {
             dokumenttype = DOKUMENTTYPE_BARNETILSYN,
             journalpostId = null,
             saksnummer = null,
-            json = objectMapper.writeValueAsString(søknad),
+            json = jsonMapper.writeValueAsString(søknad),
         )
 
     @BeforeEach
@@ -117,7 +117,7 @@ internal class PdfServiceTest {
         }
     }
 
-    private fun createValidSøknadJson(søknad: Any): String = objectMapper.writeValueAsString(søknad)
+    private fun createValidSøknadJson(søknad: Any): String = jsonMapper.writeValueAsString(søknad)
 
     private fun capturePdfAddedToSøknad(slot: CapturingSlot<Søknad>) {
         every {

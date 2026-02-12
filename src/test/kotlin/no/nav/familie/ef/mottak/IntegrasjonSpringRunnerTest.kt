@@ -9,7 +9,7 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.util.DbContainerInitializer
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
@@ -22,7 +22,7 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -45,8 +45,8 @@ abstract class IntegrasjonSpringRunnerTest {
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
     protected val headers = HttpHeaders()
 
-    protected val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
-    protected val restTemplate = RestTemplateBuilder().additionalMessageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters).build()
+    val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
+    protected val restTemplate = RestTemplateBuilder().additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters).build()
 
     @Autowired
     private lateinit var søknadRepository: SøknadRepository

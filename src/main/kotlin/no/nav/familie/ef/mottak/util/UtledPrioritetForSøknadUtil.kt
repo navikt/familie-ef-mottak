@@ -1,11 +1,11 @@
 package no.nav.familie.ef.mottak.util
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
+import tools.jackson.module.kotlin.readValue
 import java.time.LocalDate
 
 object UtledPrioritetForSøknadUtil {
@@ -20,7 +20,7 @@ object UtledPrioritetForSøknadUtil {
         if (søknad.dokumenttype != DOKUMENTTYPE_OVERGANGSSTØNAD) {
             return false
         }
-        val søknadsdata = objectMapper.readValue<SøknadOvergangsstønad>(søknad.json)
+        val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønad>(søknad.json)
         return (søknadsdata.aktivitet.verdi.underUtdanning != null) && erSommerPeriode(søknad.opprettetTid.toLocalDate())
     }
 
