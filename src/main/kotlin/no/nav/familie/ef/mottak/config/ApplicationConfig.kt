@@ -100,18 +100,6 @@ class ApplicationConfig {
             .interceptors(mdcInterceptor, consumerIdClientInterceptor)
             .build()
 
-    @Primary
-    @Bean
-    fun oAuth2HttpClient(): OAuth2HttpClient =
-        RetryOAuth2HttpClient(
-            RestClient.create(
-                RestTemplateBuilder()
-                    .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                    .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
-                    .build(),
-            ),
-        )
-
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> =
         FilterRegistrationBean(LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)).apply {
