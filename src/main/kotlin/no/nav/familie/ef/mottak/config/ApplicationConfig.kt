@@ -9,6 +9,7 @@ import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.client.RetryOAuth2HttpClient
 import no.nav.familie.restklient.config.RestTemplateBuilderBean
 import no.nav.familie.restklient.interceptor.BearerTokenClientInterceptor
+import no.nav.familie.restklient.interceptor.BearerTokenExchangeClientInterceptor
 import no.nav.familie.restklient.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.restklient.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
@@ -46,6 +47,7 @@ import java.time.temporal.ChronoUnit
 @EnableScheduling
 @Import(
     BearerTokenClientInterceptor::class,
+    BearerTokenExchangeClientInterceptor::class,
     RestTemplateBuilderBean::class,
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
@@ -56,7 +58,7 @@ class ApplicationConfig {
 
     @Bean("tokenExchange")
     fun restTemplateTokenExchange(
-        bearerTokenClientInterceptor: BearerTokenClientInterceptor,
+        bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
         mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
@@ -65,7 +67,7 @@ class ApplicationConfig {
             .readTimeout(Duration.of(25, ChronoUnit.SECONDS))
             .additionalMessageConverters(listOf(JacksonJsonHttpMessageConverter(jsonMapper)) + RestTemplate().messageConverters)
             .interceptors(
-                bearerTokenClientInterceptor,
+                bearerTokenExchangeClientInterceptor,
                 mdcValuesPropagatingClientInterceptor,
                 consumerIdClientInterceptor,
             ).build()
