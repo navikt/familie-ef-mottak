@@ -3,7 +3,7 @@ package no.nav.familie.ef.mottak.integration
 import no.nav.familie.ef.mottak.config.FamilieBrevClientConfig
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
 import no.nav.familie.ef.mottak.util.medContentTypeJsonUTF8
-import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.restklient.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service

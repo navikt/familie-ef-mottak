@@ -4,7 +4,7 @@ import no.nav.familie.ef.mottak.encryption.EncryptedString
 import no.nav.familie.ef.mottak.no.nav.familie.ef.mottak.util.IOTestUtil
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.FeltMap
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -193,7 +193,7 @@ class SøknadTilFeltMapTest {
         mapSøknadsfelter: FeltMap,
         filename: String,
     ) {
-        val pdf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
+        val pdf = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapSøknadsfelter)
         // kommentere ut for å skrive over fila
         // java.nio.file.Files.write(java.nio.file.Path.of("src/test/resources/json/$filename"), pdf.toByteArray())
         Assertions.assertThat(pdf).isEqualToIgnoringWhitespace(IOTestUtil.readFile(filename))
