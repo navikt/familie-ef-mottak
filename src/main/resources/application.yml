@@ -50,7 +50,10 @@ logging:
 springdoc:
   packagesToScan: no.nav.familie.ef.mottak
   pathsToMatch: /v3/api-docs,/api/**
+  api-docs:
+    enabled: true
   swagger-ui:
+    enabled: true
     disable-swagger-default-url: true
 
 management:
