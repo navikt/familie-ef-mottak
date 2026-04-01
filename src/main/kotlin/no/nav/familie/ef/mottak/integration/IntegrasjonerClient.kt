@@ -1,7 +1,6 @@
 package no.nav.familie.ef.mottak.integration
 
 import no.nav.familie.ef.mottak.config.IntegrasjonerConfig
-import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Ressurs.Status
@@ -19,6 +18,7 @@ import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable

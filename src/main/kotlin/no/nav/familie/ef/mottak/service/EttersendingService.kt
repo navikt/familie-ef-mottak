@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
@@ -13,16 +12,19 @@ import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.slf4j.LoggerFactory
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @Service
 class EttersendingService(
     private val ettersendingRepository: EttersendingRepository,
+    private val entityOperations: JdbcAggregateOperations,
     private val ettersendingVedleggRepository: EttersendingVedleggRepository,
     private val dokumentClient: FamilieDokumentClient,
     private val taskProsesseringService: TaskProsesseringService,
@@ -41,7 +43,7 @@ class EttersendingService(
 
     fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> =
         ettersendingRepository.findAllByFnr(personIdent.ident).map {
-            objectMapper.readValue(it.ettersendingJson.data)
+            jsonMapper.readValue(it.ettersendingJson.data)
         }
 
     fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> = ettersendingRepository.findAllByFnr(personIdent.ident)
@@ -66,7 +68,7 @@ class EttersendingService(
         ettersendingDb: Ettersending,
         vedlegg: List<EttersendingVedlegg>,
     ) {
-        val lagretEttersending = ettersendingRepository.insert(ettersendingDb)
+        val lagretEttersending = entityOperations.insert(ettersendingDb)
         ettersendingVedleggRepository.insertAll(vedlegg)
         taskProsesseringService.startTaskProsessering(lagretEttersending)
         logger.info("Mottatt ettersending med id ${lagretEttersending.id}")
@@ -75,7 +77,7 @@ class EttersendingService(
     fun hentEttersending(id: String): Ettersending = ettersendingRepository.findByIdOrNull(UUID.fromString(id)) ?: error("Ugyldig primærnøkkel")
 
     fun oppdaterEttersending(ettersending: Ettersending) {
-        ettersendingRepository.update(ettersending)
+        entityOperations.update(ettersending)
     }
 
     fun slettEttersending(ettersendingId: UUID) {
@@ -106,7 +108,7 @@ class EttersendingService(
                 id = UUID.randomUUID(),
                 taskOpprettet = false,
             )
-        ettersendingRepository.insert(nyEttersending)
+        entityOperations.insert(nyEttersending)
         val antallOppdatert =
             ettersendingVedleggRepository.oppdaterEttersendingIdForVedlegg(
                 id = ettersendingVedleggId,

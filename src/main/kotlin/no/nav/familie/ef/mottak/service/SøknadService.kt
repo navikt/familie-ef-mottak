@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
@@ -26,13 +25,14 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
 import no.nav.familie.kontrakter.felles.søknad.nyereEnn
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 import no.nav.familie.ef.mottak.repository.domain.Dokumentasjonsbehov as DatabaseDokumentasjonsbehov
 import no.nav.familie.kontrakter.ef.søknad.Vedlegg as VedleggFamilieKontrakter
@@ -52,6 +52,7 @@ class SøknadService(
     fun mottaSøknadOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -59,6 +60,7 @@ class SøknadService(
     fun mottaSøknadBarnetilsyn(søknad: SøknadMedVedlegg<SøknadBarnetilsyn>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -66,6 +68,7 @@ class SøknadService(
     fun mottaSøknadSkolepenger(søknad: SøknadMedVedlegg<SøknadSkolepenger>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
         return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
     }
 
@@ -83,7 +86,7 @@ class SøknadService(
     fun hentBarnetilsynSøknadsverdierTilGjenbruk(personIdent: String): SøknadBarnetilsyn? {
         val søknadFraDb = søknadRepository.finnSisteSøknadForPersonOgStønadstype(personIdent, DOKUMENTTYPE_BARNETILSYN)
         return if (søknadFraDb?.json != null) {
-            objectMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.json)
+            jsonMapper.readValue<SøknadBarnetilsyn>(søknadFraDb.json)
         } else {
             null
         }
@@ -114,7 +117,7 @@ class SøknadService(
         val dokumentasjonsbehovJson = dokumentasjonsbehovRepository.findByIdOrNull(søknad.id)
         val dokumentasjonsbehov: List<Dokumentasjonsbehov> =
             dokumentasjonsbehovJson?.let {
-                objectMapper.readValue(it.data)
+                jsonMapper.readValue(it.data)
             } ?: emptyList()
 
         return DokumentasjonsbehovDto(
@@ -179,6 +182,13 @@ class SøknadService(
             }.filter { it.nyereEnn() }
     }
 
+    private fun validerFinnesVedleggFraFør(vedlegg: List<VedleggFamilieKontrakter>) {
+        val vedleggIds = vedlegg.map { UUID.fromString(it.id) }
+        if (vedleggIds.isNotEmpty() && vedleggRepository.existsVedleggByIds(vedleggIds)) {
+            throw IllegalArgumentException("Ett eller flere vedlegg er allerede brukt. VedleggIds: $vedleggIds")
+        }
+    }
+
     private fun mapSøknadsvedlegg(
         søknadDbId: String,
         vedleggMetadata: List<VedleggFamilieKontrakter>,
@@ -204,7 +214,7 @@ class SøknadService(
         val databaseDokumentasjonsbehov =
             DatabaseDokumentasjonsbehov(
                 søknadId = lagretSkjema.id,
-                data = objectMapper.writeValueAsString(dokumentasjonsbehov),
+                data = jsonMapper.writeValueAsString(dokumentasjonsbehov),
             )
         dokumentasjonsbehovRepository.insert(databaseDokumentasjonsbehov)
         logger.info("Mottatt pdf-søknad med id ${lagretSkjema.id}")
