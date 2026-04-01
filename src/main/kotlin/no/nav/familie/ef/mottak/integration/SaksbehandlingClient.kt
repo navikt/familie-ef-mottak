@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.integration
 
-import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringRequest
 import no.nav.familie.kontrakter.ef.journalføring.AutomatiskJournalføringResponse
 import no.nav.familie.kontrakter.ef.søknad.KanSendePåminnelseRequest
@@ -8,6 +7,7 @@ import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.getDataOrThrow
+import no.nav.familie.restklient.client.AbstractPingableRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
