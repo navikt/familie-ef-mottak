@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.mottak.api.dto.Kvittering
 import no.nav.familie.ef.mottak.integration.FamilieDokumentClient
 import no.nav.familie.ef.mottak.mapper.EttersendingMapper
@@ -13,12 +12,13 @@ import no.nav.familie.ef.mottak.repository.util.findByIdOrThrow
 import no.nav.familie.kontrakter.ef.ettersending.EttersendelseDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @Service
@@ -43,7 +43,7 @@ class EttersendingService(
 
     fun hentEttersendingsdataForPerson(personIdent: PersonIdent): List<EttersendelseDto> =
         ettersendingRepository.findAllByFnr(personIdent.ident).map {
-            objectMapper.readValue(it.ettersendingJson.data)
+            jsonMapper.readValue(it.ettersendingJson.data)
         }
 
     fun hentEttersendingerForPerson(personIdent: PersonIdent): List<Ettersending> = ettersendingRepository.findAllByFnr(personIdent.ident)
