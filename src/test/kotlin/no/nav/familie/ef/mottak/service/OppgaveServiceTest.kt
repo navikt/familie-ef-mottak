@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -18,7 +17,6 @@ import no.nav.familie.ef.mottak.repository.domain.EncryptedFile
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.ef.mottak.service.Testdata.utdanning
-import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.ef.sak.DokumentBrevkode
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -36,7 +34,7 @@ import no.nav.familie.kontrakter.felles.journalpost.Journalpost
 import no.nav.familie.kontrakter.felles.journalpost.Journalposttype
 import no.nav.familie.kontrakter.felles.journalpost.Journalstatus
 import no.nav.familie.kontrakter.felles.journalpost.Sak
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.MappeDto
@@ -45,6 +43,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgavePrioritet
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import no.nav.familie.restklient.client.RessursException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -53,6 +52,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClientResponseException
+import tools.jackson.module.kotlin.readValue
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -182,7 +182,7 @@ internal class OppgaveServiceTest {
     private fun lesRessurs(e: RestClientResponseException): Ressurs<Any>? =
         try {
             if (e.responseBodyAsString.contains("status")) {
-                objectMapper.readValue<Ressurs<Any>>(e.responseBodyAsString)
+                jsonMapper.readValue<Ressurs<Any>>(e.responseBodyAsString)
             } else {
                 null
             }
@@ -212,7 +212,7 @@ internal class OppgaveServiceTest {
                     journalpostId = "1234",
                     fnr = Testdata.randomFnr(),
                     behandleINySaksbehandling = true,
-                    json = objectMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
+                    json = jsonMapper.writeValueAsString(Testdata.søknadOvergangsstønad),
                 )
             every { integrasjonerClient.hentJournalpost(any()) } returns journalpostOvergangsstøand
             every { integrasjonerClient.hentJournalpost(journalpostId) } returns journalpostOvergangsstøand
@@ -565,7 +565,7 @@ internal class OppgaveServiceTest {
                 )
             every { integrasjonerClient.oppdaterOppgave(oppgaveId, capture(oppgaveSlot)) } returns 123
             val søknadBarnetilsyn =
-                objectMapper.readValue<SøknadBarnetilsyn>(IOTestUtil.readFile("barnetilsyn_særlige_tilsynsbehov_soknad.json"))
+                jsonMapper.readValue<SøknadBarnetilsyn>(IOTestUtil.readFile("barnetilsyn_særlige_tilsynsbehov_soknad.json"))
 
             every { søknadService.hentSøknad("123") } returns SøknadMapper.fromDto(søknadBarnetilsyn, true)
             oppgaveService.oppdaterOppgaveMedRiktigMappeId(oppgaveId, "123")
