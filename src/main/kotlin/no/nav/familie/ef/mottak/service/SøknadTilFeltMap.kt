@@ -13,6 +13,7 @@ import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.ef.søknad.Utenlandsopphold
@@ -48,6 +49,22 @@ object SøknadTilFeltMap {
 
     fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønad,
+        vedleggTitler: List<String>,
+    ): FeltMap {
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        val finnFelter = finnFelter(søknad, språk)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+
+        return FeltMap(
+            "Søknad om overgangsstønad",
+            finnFelter + vedlegg,
+            PdfConfig(true, språk),
+            getSkjemanummerTekst("overgangsstønad", språk),
+        )
+    }
+
+    fun mapOvergangsstønadRegelendring2026(
+        søknad: SøknadOvergangsstønadRegelendring2026,
         vedleggTitler: List<String>,
     ): FeltMap {
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
