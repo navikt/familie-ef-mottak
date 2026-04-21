@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
+import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
@@ -114,9 +115,14 @@ object ArkiverDokumentRequestMapper {
 
     private fun mapDokumenttype(dokumenttype: String): Dokumenttype =
         when (dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
+            DOKUMENTTYPE_OVERGANGSSTØNAD,
+            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026,
+            -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
+
             DOKUMENTTYPE_BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
+
             DOKUMENTTYPE_SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
+
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
 }
@@ -124,6 +130,7 @@ object ArkiverDokumentRequestMapper {
 fun Dokumenttype?.dokumentTittel(): String =
     when (this) {
         Dokumenttype.OVERGANGSSTØNAD_SØKNAD -> "Søknad om overgangsstønad"
+        Dokumenttype.OVERGANGSSTØNAD_SØKNAD_REGELENDRING_2026 -> "Søknad om overgangsstønad"
         Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om overgangsstønad"
         Dokumenttype.SKOLEPENGER_SØKNAD -> "Søknad om stønad til skolepenger"
         Dokumenttype.SKOLEPENGER_ETTERSENDING -> "Ettersendelse til søknad om skolepenger"
