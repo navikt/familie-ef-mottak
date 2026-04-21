@@ -21,7 +21,7 @@ object ArkiverDokumentRequestMapper {
         søknad: Søknad,
         vedlegg: List<Vedlegg>,
     ): ArkiverDokumentRequest {
-        val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
+        val dokumenttype = mapTilArkivDokumenttype(søknad.dokumenttype)
         val søknadsdokumentJson =
             Dokument(søknad.json.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
@@ -125,12 +125,17 @@ object ArkiverDokumentRequestMapper {
 
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
+
+    private fun mapTilArkivDokumenttype(dokumenttype: String): Dokumenttype =
+        when (dokumenttype) {
+            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD
+            else -> Dokumenttype.valueOf(dokumenttype)
+        }
 }
 
 fun Dokumenttype?.dokumentTittel(): String =
     when (this) {
         Dokumenttype.OVERGANGSSTØNAD_SØKNAD -> "Søknad om overgangsstønad"
-        Dokumenttype.OVERGANGSSTØNAD_SØKNAD_REGELENDRING_2026 -> "Søknad om overgangsstønad"
         Dokumenttype.OVERGANGSSTØNAD_ETTERSENDING -> "Ettersendelse til søknad om overgangsstønad"
         Dokumenttype.SKOLEPENGER_SØKNAD -> "Søknad om stønad til skolepenger"
         Dokumenttype.SKOLEPENGER_ETTERSENDING -> "Ettersendelse til søknad om skolepenger"
