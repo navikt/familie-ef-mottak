@@ -20,13 +20,13 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <kotlin.version>2.3.20</kotlin.version>
-        <springdoc.version>3.0.2</springdoc.version>
+        <springdoc.version>3.0.3</springdoc.version>
         <mockk.version>1.14.9</mockk.version>
-        <felles.version>4.20260315040340_f2acdc7</felles.version>
-        <prosessering.version>2.20260331095424_89d92d2</prosessering.version>
+        <felles.version>4.20260420125050_76c5fea</felles.version>
+        <prosessering.version>2.20260420122910_8bfca04</prosessering.version>
         <confluent.version>8.2.0</confluent.version>
-        <kontrakter.version>4.0_20260326091316_bc0649b</kontrakter.version>
-        <token-validation.version>6.0.5</token-validation.version>
+        <kontrakter.version>4.0_20260424102717_a34ce11</kontrakter.version>
+        <token-validation.version>6.0.6</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -338,7 +338,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>5.5.0.6356</version>
+                    <version>5.6.0.6792</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
