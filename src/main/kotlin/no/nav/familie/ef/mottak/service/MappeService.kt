@@ -106,7 +106,7 @@ class MappeService(
         val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønadRegelendring2026>(søknad.json)
         return when {
             søknadsdata.hvaSituasjon.verdi.contains("barnSærligTilsyn") -> SÆRLIG_TILSYNSKREVENDE
-            søknadsdata.harInntekt.verdi.contains("selvstendigNæringsdrivende") -> SELVSTENDIG
+            søknadsdata.inntekter.verdi.contains("selvstendigNæringsdrivende") -> SELVSTENDIG
             søknadsdata.firmaer?.verdi?.isNotEmpty() == true -> SELVSTENDIG
             else -> UPLASSERT
         }
