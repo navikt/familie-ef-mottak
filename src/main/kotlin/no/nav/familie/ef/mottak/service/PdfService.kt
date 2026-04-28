@@ -63,7 +63,7 @@ class PdfService(
 
             DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
-                SøknadTilFeltMap.mapOvergangsstønadRegelendring2026(dto, vedleggTitler)
+                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
             }
 
             DOKUMENTTYPE_BARNETILSYN -> {

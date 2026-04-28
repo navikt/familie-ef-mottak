@@ -9,6 +9,7 @@ import no.nav.familie.kontrakter.ef.søknad.Arbeidsgiver
 import no.nav.familie.kontrakter.ef.søknad.Barn
 import no.nav.familie.kontrakter.ef.søknad.Datoperiode
 import no.nav.familie.kontrakter.ef.søknad.Dokumentasjon
+import no.nav.familie.kontrakter.ef.søknad.Innsendingsdetaljer
 import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
@@ -47,27 +48,23 @@ object SøknadTilFeltMap {
             Long::class,
         )
 
+    fun hentSpråkSøknad(innsendingsdetaljer: Søknadsfelt<Innsendingsdetaljer>): String = innsendingsdetaljer.verdi.språk ?: "nb"
+
     fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønad,
         vedleggTitler: List<String>,
-    ): FeltMap {
-        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(søknad, språk)
-        val vedlegg = mapTilVedlegg(vedleggTitler)
+    ) = mapOvergangsstønadFelles(søknad, vedleggTitler, språk = hentSpråkSøknad(søknad.innsendingsdetaljer))
 
-        return FeltMap(
-            "Søknad om overgangsstønad",
-            finnFelter + vedlegg,
-            PdfConfig(true, språk),
-            getSkjemanummerTekst("overgangsstønad", språk),
-        )
-    }
-
-    fun mapOvergangsstønadRegelendring2026(
+    fun mapOvergangsstønad(
         søknad: SøknadOvergangsstønadRegelendring2026,
         vedleggTitler: List<String>,
+    ) = mapOvergangsstønadFelles(søknad, vedleggTitler, språk = hentSpråkSøknad(søknad.innsendingsdetaljer))
+
+    fun mapOvergangsstønadFelles(
+        søknad: Any,
+        vedleggTitler: List<String>,
+        språk: String,
     ): FeltMap {
-        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
         val finnFelter = finnFelter(søknad, språk)
         val vedlegg = mapTilVedlegg(vedleggTitler)
 
