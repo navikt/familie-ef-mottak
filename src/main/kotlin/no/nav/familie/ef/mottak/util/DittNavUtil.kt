@@ -40,12 +40,7 @@ fun lagMeldingSøknadMottattBekreftelse(
 fun tilDittNavTekst(søknadType: SøknadType): String =
     when (søknadType) {
         SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
-
-        SøknadType.OVERGANGSSTØNAD,
-        SøknadType.OVERGANGSSTØNAD_REGELENDRING_2026,
-        -> "overgangsstønad"
-
+        SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
         SøknadType.SKOLEPENGER -> "stønad til skolepenger"
-
         else -> error("Kan ikke mappe dokumenttype $søknadType til dittnav tekst")
     }

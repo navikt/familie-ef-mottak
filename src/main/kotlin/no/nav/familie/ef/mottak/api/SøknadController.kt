@@ -7,7 +7,6 @@ import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
 import no.nav.familie.sikkerhet.EksternBrukerUtils
@@ -32,11 +31,6 @@ class SøknadController(
     fun mottaSøknadOvergangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønad(søknad) }
-
-    @PostMapping("overgangsstonad-regelendring-2026")
-    fun mottaSøknadOvergangsstønadRegelendring2026(
-        @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønadRegelendring2026>,
-    ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønadRegelendring2026(søknad) }
 
     @PostMapping("barnetilsyn")
     fun mottaSøknadBarnetilsyn(
