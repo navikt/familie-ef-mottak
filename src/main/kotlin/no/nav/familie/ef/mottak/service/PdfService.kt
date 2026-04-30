@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieBrevClient
@@ -18,7 +17,6 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
-import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
@@ -58,11 +56,6 @@ class PdfService(
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
                 val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
-            }
-
-            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> {
-                val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
                 SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
             }
 
