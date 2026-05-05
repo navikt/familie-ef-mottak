@@ -42,7 +42,6 @@ fun tilDittNavTekst(søknadType: SøknadType): String =
         SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
 
         SøknadType.OVERGANGSSTØNAD,
-        SøknadType.OVERGANGSSTØNAD_REGELENDRING_2026,
         -> "overgangsstønad"
 
         SøknadType.SKOLEPENGER -> "stønad til skolepenger"

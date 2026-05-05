@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.service
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.integration.FamilieBrevClient
@@ -57,13 +56,15 @@ class PdfService(
     ): FeltMap =
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
-                val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
-            }
-
-            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> {
-                val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
-                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+                val feltMap =
+                    runCatching {
+                        val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
+                        SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+                    }.getOrElse {
+                        val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
+                        SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+                    }
+                feltMap
             }
 
             DOKUMENTTYPE_BARNETILSYN -> {

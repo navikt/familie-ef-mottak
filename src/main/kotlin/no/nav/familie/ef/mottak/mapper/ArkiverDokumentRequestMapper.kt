@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.repository.domain.Ettersending
 import no.nav.familie.ef.mottak.repository.domain.EttersendingVedlegg
@@ -21,7 +20,7 @@ object ArkiverDokumentRequestMapper {
         søknad: Søknad,
         vedlegg: List<Vedlegg>,
     ): ArkiverDokumentRequest {
-        val dokumenttype = mapTilArkivDokumenttype(søknad.dokumenttype)
+        val dokumenttype = søknad.dokumenttype.let { Dokumenttype.valueOf(it) }
         val søknadsdokumentJson =
             Dokument(søknad.json.toByteArray(), Filtype.JSON, null, dokumenttype.dokumentTittel(), dokumenttype)
         val søknadsdokumentPdf =
@@ -116,7 +115,6 @@ object ArkiverDokumentRequestMapper {
     private fun mapDokumenttype(dokumenttype: String): Dokumenttype =
         when (dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD,
-            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026,
             -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
 
             DOKUMENTTYPE_BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
@@ -124,12 +122,6 @@ object ArkiverDokumentRequestMapper {
             DOKUMENTTYPE_SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
 
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
-        }
-
-    private fun mapTilArkivDokumenttype(dokumenttype: String): Dokumenttype =
-        when (dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD
-            else -> Dokumenttype.valueOf(dokumenttype)
         }
 }
 

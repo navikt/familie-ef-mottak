@@ -2,7 +2,6 @@ package no.nav.familie.ef.mottak.mapper
 
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_BARNETILSYN
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKJEMA_ARBEIDSSØKER
 import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_SKOLEPENGER
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -37,7 +36,7 @@ object SøknadMapper {
         val data = jsonMapper.writeValueAsString(søknad)
         return Søknad(
             fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
-            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026,
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             behandleINySaksbehandling = behandleINySaksbehandling,
             json = data,
         )

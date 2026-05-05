@@ -1,6 +1,5 @@
 package no.nav.familie.ef.mottak.service
 
-import no.nav.familie.ef.mottak.config.DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026
 import no.nav.familie.ef.mottak.config.getValue
 import no.nav.familie.ef.mottak.integration.IntegrasjonerClient
 import no.nav.familie.ef.mottak.repository.domain.Søknad
@@ -62,20 +61,22 @@ class MappeService(
     private fun finnSøkestrengForSøknad(søknadId: String): MappeSøkestreng {
         val søknad = søknadService.hentSøknad(søknadId)
 
-        return when (søknad.dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD_REGELENDRING_2026 -> {
-                mappeFraOvergangsstønadRegelendring2026(søknad)
-            }
-
-            else -> {
-                when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
-                    StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknad)
-                    StønadType.BARNETILSYN -> mappeFraBarnetilsyn(søknad)
-                    StønadType.SKOLEPENGER -> UPLASSERT
-                    else -> UPLASSERT
-                }
-            }
+        return when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
+            StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønadGittVersjon(søknad)
+            StønadType.BARNETILSYN -> mappeFraBarnetilsyn(søknad)
+            StønadType.SKOLEPENGER -> UPLASSERT
+            else -> UPLASSERT
         }
+    }
+
+    private fun mappeFraOvergangsstønadGittVersjon(søknad: Søknad): MappeSøkestreng {
+        val kandidater =
+            listOf(
+                runCatching { mappeFraOvergangsstønadRegelendring2026(søknad) }.getOrNull(),
+                runCatching { mappeFraOvergangsstønad(søknad) }.getOrNull(),
+            )
+
+        return kandidater.firstOrNull { it != null && it != UPLASSERT } ?: UPLASSERT
     }
 
     private fun utledMappeForSøkestreng(
