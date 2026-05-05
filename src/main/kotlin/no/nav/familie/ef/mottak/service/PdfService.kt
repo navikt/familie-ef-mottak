@@ -56,15 +56,7 @@ class PdfService(
     ): FeltMap =
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
-                val feltMap =
-                    runCatching {
-                        val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
-                        SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
-                    }.getOrElse {
-                        val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                        SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
-                    }
-                feltMap
+                lagFeltMapOvergangsstønad(innsending, vedleggTitler)
             }
 
             DOKUMENTTYPE_BARNETILSYN -> {
@@ -86,4 +78,19 @@ class PdfService(
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }
         }
+
+    private fun lagFeltMapOvergangsstønad(
+        innsending: Søknad,
+        vedleggTitler: List<String>,
+    ): FeltMap {
+        val erRegelendring2026 = innsending.json.contains("\"inntekter\"")
+
+        return if (erRegelendring2026) {
+            val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
+            SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+        } else {
+            val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
+            SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+        }
+    }
 }
