@@ -83,7 +83,7 @@ class PdfService(
         innsending: Søknad,
         vedleggTitler: List<String>,
     ): FeltMap {
-        val erRegelendring2026 = innsending.json.contains("\"inntekter\"")
+        val erRegelendring2026 = innsending.json.contains("\"erRegelendring2026\":true")
 
         return if (erRegelendring2026) {
             val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
