@@ -70,13 +70,13 @@ class MappeService(
     }
 
     private fun mappeFraOvergangsstønadGittVersjon(søknad: Søknad): MappeSøkestreng {
-        val kandidater =
-            listOf(
-                runCatching { mappeFraOvergangsstønadRegelendring2026(søknad) }.getOrNull(),
-                runCatching { mappeFraOvergangsstønad(søknad) }.getOrNull(),
-            )
+        val erRegelendring2026 = jsonMapper.readTree(søknad.json).path("erRegelendring2026").asBoolean(false)
 
-        return kandidater.firstOrNull { it != null && it != UPLASSERT } ?: UPLASSERT
+        return if (erRegelendring2026) {
+            mappeFraOvergangsstønadRegelendring2026(søknad)
+        } else {
+            mappeFraOvergangsstønad(søknad)
+        }
     }
 
     private fun utledMappeForSøkestreng(

@@ -19,6 +19,7 @@ import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -83,7 +84,7 @@ class PdfService(
         innsending: Søknad,
         vedleggTitler: List<String>,
     ): FeltMap {
-        val erRegelendring2026 = innsending.json.contains("\"erRegelendring2026\":true")
+        val erRegelendring2026 = jsonMapper.readTree(innsending.json).path("erRegelendring2026").asBoolean(false)
 
         return if (erRegelendring2026) {
             val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
