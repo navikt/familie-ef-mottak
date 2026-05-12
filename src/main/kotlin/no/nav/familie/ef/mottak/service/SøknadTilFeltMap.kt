@@ -68,15 +68,43 @@ object SøknadTilFeltMap {
         vedleggTitler: List<String>,
     ): FeltMap {
         val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
-        val finnFelter = finnFelter(søknad, språk)
+        val felter = finnFelter(søknad, språk)
         val vedlegg = mapTilVedlegg(vedleggTitler)
 
         return FeltMap(
             "Søknad om overgangsstønad",
-            finnFelter + vedlegg,
+            grupperFlateFelterISeksjon(felter) + vedlegg,
             PdfConfig(true, språk),
             getSkjemanummerTekst("overgangsstønad", språk),
         )
+    }
+
+    private fun grupperFlateFelterISeksjon(felter: List<VerdilisteElement>): List<VerdilisteElement> {
+        val flatteElementer =
+            felter
+                .filter { it.verdiliste == null && it.visningsVariant == null && it.verdi != null }
+                .toSet()
+
+        if (flatteElementer.isEmpty()) return felter
+
+        return buildList {
+            var seksjonLagtTil = false
+            for (element in felter) {
+                if (element in flatteElementer) {
+                    if (!seksjonLagtTil) {
+                        add(
+                            VerdilisteElement(
+                                label = "Mer om situasjonen din",
+                                verdiliste = felter.filter { it in flatteElementer },
+                            ),
+                        )
+                        seksjonLagtTil = true
+                    }
+                } else {
+                    add(element)
+                }
+            }
+        }
     }
 
     fun mapBarnetilsyn(
