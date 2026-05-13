@@ -140,6 +140,7 @@ internal object Testdata {
 
     val søknadOvergangsstønadRegelendring2026 =
         SøknadOvergangsstønadRegelendring2026(
+            erRegelendring2026=true,
             innsendingsdetaljer =
                 Søknadsfelt(
                     "detaljer",
@@ -155,16 +156,38 @@ internal object Testdata {
             hvaSituasjon =
                 Søknadsfelt(
                     label = "Hva er situasjonen din?",
-                    verdi = listOf("Jeg er i arbeid"),
-                    alternativer = listOf("Jeg er i arbeid", "Jeg er under utdanning", "Jeg er arbeidssøker"),
-                    svarId = listOf("erIArbeid"),
+                    verdi =
+                        listOf(
+                            "Jeg har barn under 14 måneder",
+                            "Jeg har barn som trenger særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
+                            "Barnet mitt har en sykdom som ikke er varig",
+                        ),
+                    alternativer = listOf(""),
+                    svarId =
+                        listOf(
+                            "barnUnder14Måneder",
+                            "barnSærligTilsyn",
+                            "barnSykdomIkkeVarig",
+                        ),
                 ),
             inntekter =
                 Søknadsfelt(
                     label = "Har du noen av disse inntektene?",
-                    verdi = listOf("Jeg har ingen av disse inntektene"),
-                    alternativer = listOf("Jeg har ingen av disse inntektene", "Jeg er selvstendig næringsdrivende"),
-                    svarId = listOf("ingenInntekter"),
+                    verdi =
+                        listOf(
+                            "Ja, jeg har inntekt som arbeidstaker",
+                            "Ja, jeg har inntekt som selvstendig næringsdrivende",
+                            "Ja, jeg får annen stønad fra Nav",
+                            "Nei",
+                        ),
+                    alternativer = listOf(""),
+                    svarId =
+                        listOf(
+                            "arbeidstaker",
+                            "selvstendigNæringsdrivende",
+                            "annenStønadNav",
+                            "nei",
+                        ),
                 ),
             sagtOppEllerRedusertStilling =
                 Søknadsfelt(

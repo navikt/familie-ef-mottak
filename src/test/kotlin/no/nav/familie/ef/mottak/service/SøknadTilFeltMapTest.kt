@@ -224,14 +224,6 @@ class SøknadTilFeltMapTest {
         Assertions.assertThat(flatteElementer).isEmpty()
     }
 
-    @Test
-    fun `mapSøknadsfelter printer pdf for å se endringer i pdf-genereringen i PR - overgangsstønad regelendring 2026`() {
-        val søknad = Testdata.søknadOvergangsstønadRegelendring2026
-
-        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
-        generatePdfAndAssert(mapSøknadsfelter, "pdf_generated_overgangsstønad_regelendring_2026.json")
-    }
-
     private fun generatePdfAndAssert(
         mapSøknadsfelter: FeltMap,
         filename: String,

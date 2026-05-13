@@ -105,9 +105,11 @@ class MappeService(
 
     private fun mappeFraOvergangsstønadRegelendring2026(søknad: Søknad): MappeSøkestreng {
         val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønadRegelendring2026>(søknad.json)
+        val situasjonSvarIder = søknadsdata.hvaSituasjon.svarId.orEmpty()
+        val inntektSvarIder = søknadsdata.inntekter.svarId.orEmpty()
         return when {
-            søknadsdata.hvaSituasjon.verdi.contains("barnSærligTilsyn") -> SÆRLIG_TILSYNSKREVENDE
-            søknadsdata.inntekter.verdi.contains("selvstendigNæringsdrivende") -> SELVSTENDIG
+            situasjonSvarIder.contains("barnSærligTilsyn") -> SÆRLIG_TILSYNSKREVENDE
+            inntektSvarIder.contains("selvstendigNæringsdrivende") -> SELVSTENDIG
             søknadsdata.firmaer?.verdi?.isNotEmpty() == true -> SELVSTENDIG
             else -> UPLASSERT
         }
