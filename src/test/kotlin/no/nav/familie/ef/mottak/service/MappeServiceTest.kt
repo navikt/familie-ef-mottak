@@ -57,10 +57,11 @@ internal class MappeServiceTest {
 
     @Test
     fun `regelendring 2026 - barnSærligTilsyn gir mappe særlig tilsynskrevende`() {
-        val søknad = lagRegelendring2026Søknad(
-            hvaSituasjonSvarId = listOf("barnUnder14Måneder", "barnSærligTilsyn"),
-            inntekterSvarId = listOf("arbeidstaker"),
-        )
+        val søknad =
+            lagRegelendring2026Søknad(
+                hvaSituasjonSvarId = listOf("barnUnder14Måneder", "barnSærligTilsyn"),
+                inntekterSvarId = listOf("arbeidstaker"),
+            )
         every { søknadService.hentSøknad(søknadId) } returns søknad
 
         val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknadId, enhet)
@@ -70,10 +71,11 @@ internal class MappeServiceTest {
 
     @Test
     fun `regelendring 2026 - selvstendigNæringsdrivende gir mappe selvstendig`() {
-        val søknad = lagRegelendring2026Søknad(
-            hvaSituasjonSvarId = listOf("barnUnder14Måneder"),
-            inntekterSvarId = listOf("selvstendigNæringsdrivende"),
-        )
+        val søknad =
+            lagRegelendring2026Søknad(
+                hvaSituasjonSvarId = listOf("barnUnder14Måneder"),
+                inntekterSvarId = listOf("selvstendigNæringsdrivende"),
+            )
         every { søknadService.hentSøknad(søknadId) } returns søknad
 
         val mappeId = mappeService.finnMappeIdForSøknadOgEnhet(søknadId, enhet)
@@ -85,14 +87,17 @@ internal class MappeServiceTest {
         hvaSituasjonSvarId: List<String>,
         inntekterSvarId: List<String>,
     ): Søknad {
-        val søknadData = Testdata.søknadOvergangsstønadRegelendring2026.copy(
-            hvaSituasjon = Testdata.søknadOvergangsstønadRegelendring2026.hvaSituasjon.copy(
-                svarId = hvaSituasjonSvarId,
-            ),
-            inntekter = Testdata.søknadOvergangsstønadRegelendring2026.inntekter.copy(
-                svarId = inntekterSvarId,
-            ),
-        )
+        val søknadData =
+            Testdata.søknadOvergangsstønadRegelendring2026.copy(
+                hvaSituasjon =
+                    Testdata.søknadOvergangsstønadRegelendring2026.hvaSituasjon.copy(
+                        svarId = hvaSituasjonSvarId,
+                    ),
+                inntekter =
+                    Testdata.søknadOvergangsstønadRegelendring2026.inntekter.copy(
+                        svarId = inntekterSvarId,
+                    ),
+            )
         return Søknad(
             dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
             journalpostId = "1234",

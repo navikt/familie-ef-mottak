@@ -140,7 +140,7 @@ internal object Testdata {
 
     val søknadOvergangsstønadRegelendring2026 =
         SøknadOvergangsstønadRegelendring2026(
-            erRegelendring2026=true,
+            erRegelendring2026 = true,
             innsendingsdetaljer =
                 Søknadsfelt(
                     "detaljer",
