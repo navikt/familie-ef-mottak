@@ -44,12 +44,8 @@ class SendSøknadMottattTilDittNavTask(
     private fun søknadstypeTekst(søknadType: SøknadType): String =
         when (søknadType) {
             SøknadType.BARNETILSYN -> "stønad til barnetilsyn"
-
-            SøknadType.OVERGANGSSTØNAD,
-            -> "overgangsstønad"
-
+            SøknadType.OVERGANGSSTØNAD -> "overgangsstønad"
             SøknadType.SKOLEPENGER -> "stønad til skolepenger"
-
             else -> error("Kan mappe dokumenttype $søknadType til dittnav tekst")
         }
 

@@ -114,13 +114,9 @@ object ArkiverDokumentRequestMapper {
 
     private fun mapDokumenttype(dokumenttype: String): Dokumenttype =
         when (dokumenttype) {
-            DOKUMENTTYPE_OVERGANGSSTØNAD,
-            -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
-
+            DOKUMENTTYPE_OVERGANGSSTØNAD -> Dokumenttype.OVERGANGSSTØNAD_SØKNAD_VEDLEGG
             DOKUMENTTYPE_BARNETILSYN -> Dokumenttype.BARNETILSYNSTØNAD_VEDLEGG
-
             DOKUMENTTYPE_SKOLEPENGER -> Dokumenttype.SKOLEPENGER_VEDLEGG
-
             else -> error("Ukjent dokumenttype=$dokumenttype for vedlegg")
         }
 }
