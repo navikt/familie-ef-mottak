@@ -20,6 +20,7 @@ import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.SøknadType
 import no.nav.familie.kontrakter.ef.søknad.dokumentasjonsbehov.DokumentasjonsbehovDto
@@ -50,6 +51,14 @@ class SøknadService(
 
     @Transactional
     fun mottaSøknadOvergangsstønad(søknad: SøknadMedVedlegg<SøknadOvergangsstønad>): Kvittering {
+        val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
+        val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
+        validerFinnesVedleggFraFør(søknad.vedlegg)
+        return mottaSøknad(søknadDb, vedlegg, søknad.dokumentasjonsbehov)
+    }
+
+    @Transactional
+    fun mottaSøknadOvergangsstønadRegelendring2026(søknad: SøknadMedVedlegg<SøknadOvergangsstønadRegelendring2026>): Kvittering {
         val søknadDb = SøknadMapper.fromDto(søknad.søknad, true)
         val vedlegg = mapSøknadsvedlegg(søknadDb.id, søknad.vedlegg)
         validerFinnesVedleggFraFør(søknad.vedlegg)

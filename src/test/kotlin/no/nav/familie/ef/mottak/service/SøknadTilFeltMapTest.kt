@@ -189,6 +189,41 @@ class SøknadTilFeltMapTest {
         Assertions.assertThat(harEksludertListe).isTrue
     }
 
+    @Test
+    fun `mapSøknadsfelter for regelendring 2026 - sagtOpp-felter vises som seksjon med verdiliste`() {
+        val søknad = Testdata.søknadOvergangsstønadRegelendring2026
+
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
+
+        val sagtOppSeksjon = mapSøknadsfelter.verdiliste.find { it.label == "Mer om situasjonen din" }
+        Assertions.assertThat(sagtOppSeksjon).isNotNull
+        Assertions.assertThat(sagtOppSeksjon!!.verdiliste).isNotNull
+
+        val sagtOppFelt = sagtOppSeksjon.verdiliste!!.find { it.label == "Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?" }
+        val begrunnelseFelt = sagtOppSeksjon.verdiliste.find { it.label == "Hvorfor sa du opp?" }
+        val datoFelt = sagtOppSeksjon.verdiliste.find { it.label == "Når sa du opp?" }
+
+        Assertions.assertThat(sagtOppFelt).isNotNull
+        Assertions.assertThat(sagtOppFelt!!.verdi).isEqualTo("Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)")
+        Assertions.assertThat(begrunnelseFelt).isNotNull
+        Assertions.assertThat(begrunnelseFelt!!.verdi).isEqualTo("Det ble ikke som forventet.")
+        Assertions.assertThat(datoFelt).isNotNull
+        Assertions.assertThat(datoFelt!!.verdi).isEqualTo("01.01.2026")
+    }
+
+    @Test
+    fun `mapSøknadsfelter for regelendring 2026 - ingen flate element på toppnivå`() {
+        val søknad = Testdata.søknadOvergangsstønadRegelendring2026
+
+        val mapSøknadsfelter = SøknadTilFeltMap.mapOvergangsstønad(søknad, emptyList())
+
+        val flatteElementer =
+            mapSøknadsfelter.verdiliste.filter {
+                it.verdiliste == null && it.visningsVariant == null && it.verdi != null
+            }
+        Assertions.assertThat(flatteElementer).isEmpty()
+    }
+
     private fun generatePdfAndAssert(
         mapSøknadsfelter: FeltMap,
         filename: String,
