@@ -17,7 +17,9 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -55,8 +57,7 @@ class PdfService(
     ): FeltMap =
         when (innsending.dokumenttype) {
             DOKUMENTTYPE_OVERGANGSSTØNAD -> {
-                val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
-                SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+                lagFeltMapOvergangsstønad(innsending, vedleggTitler)
             }
 
             DOKUMENTTYPE_BARNETILSYN -> {
@@ -78,4 +79,19 @@ class PdfService(
                 error("Ukjent eller manglende dokumenttype id: ${innsending.id}")
             }
         }
+
+    private fun lagFeltMapOvergangsstønad(
+        innsending: Søknad,
+        vedleggTitler: List<String>,
+    ): FeltMap {
+        val erRegelendring2026 = jsonMapper.readTree(innsending.json).path("erRegelendring2026").asBoolean(false)
+
+        return if (erRegelendring2026) {
+            val dto = SøknadMapper.toDto<SøknadOvergangsstønadRegelendring2026>(innsending)
+            SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+        } else {
+            val dto = SøknadMapper.toDto<SøknadOvergangsstønad>(innsending)
+            SøknadTilFeltMap.mapOvergangsstønad(dto, vedleggTitler)
+        }
+    }
 }
