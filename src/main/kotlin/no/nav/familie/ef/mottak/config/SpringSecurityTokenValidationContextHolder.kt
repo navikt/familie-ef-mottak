@@ -16,8 +16,8 @@ class SpringSecurityTokenValidationContextHolder(
         val auth =
             SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
                 ?: return TokenValidationContext(emptyMap())
-        val issuer = auth.token.issuer?.toString() ?: ""
-        val key = if (issuer == azureIssuer) "azuread" else "tokenx"
+        val issuer = auth.token.issuer?.toString()?.trimEnd('/') ?: ""
+        val key = if (issuer == azureIssuer.trimEnd('/')) "azuread" else "tokenx"
         return TokenValidationContext(mapOf(key to JwtToken(auth.token.tokenValue)))
     }
 

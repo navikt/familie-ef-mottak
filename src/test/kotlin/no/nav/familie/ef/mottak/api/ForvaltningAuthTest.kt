@@ -42,6 +42,22 @@ internal class ForvaltningAuthTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
+    internal fun `forvaltning skal akseptere Azure AD-token`() {
+        val azureHeaders = HttpHeaders().apply { setBearerAuth(saksbehandlerBearerToken()) }
+        try {
+            restTemplate.exchange<Any>(
+                localhost("/api/forvaltning/ettersending/splitt"),
+                HttpMethod.POST,
+                HttpEntity("{}", azureHeaders),
+            )
+        } catch (e: HttpClientErrorException.Unauthorized) {
+            throw AssertionError("Azure AD-token ble avvist med 401, men burde ha blitt akseptert", e)
+        } catch (_: Exception) {
+            // 4xx/5xx fra business-logikk er OK — auth er godkjent
+        }
+    }
+
+    @Test
     internal fun `statistikk skal akseptere Azure AD-token`() {
         val azureHeaders = HttpHeaders().apply { setBearerAuth(saksbehandlerBearerToken()) }
         try {

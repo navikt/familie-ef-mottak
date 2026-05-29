@@ -14,13 +14,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.exchange
-import org.springframework.web.client.postForEntity
 import java.util.UUID
 
 internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
@@ -65,7 +64,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `token uten acr-claim skal avvises med 401`() {
-        val headersUtenAcr = org.springframework.http.HttpHeaders()
+        val headersUtenAcr = HttpHeaders()
         headersUtenAcr.setBearerAuth(søkerBearerTokenUtenAcr())
         val søknad = SøknadMedVedlegg(søknadOvergangsstønad, emptyList())
         val exception =
@@ -81,7 +80,7 @@ internal class SøknadControllerTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     internal fun `token med acr=Level3 skal avvises med 401`() {
-        val headersLevel3 = org.springframework.http.HttpHeaders()
+        val headersLevel3 = HttpHeaders()
         headersLevel3.setBearerAuth(søkerBearerToken(acr = "Level3"))
         val søknad = SøknadMedVedlegg(søknadOvergangsstønad, emptyList())
         val exception =

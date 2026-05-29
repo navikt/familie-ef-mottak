@@ -122,7 +122,8 @@ class ApplicationConfig {
             val authentication = SecurityContextHolder.getContext().authentication
             if (authentication is JwtAuthenticationToken) {
                 return authentication.token.getClaimAsString("preferred_username")
-                    ?: error("Finner ikke preferred_username i JWT")
+                    ?: authentication.token.subject
+                    ?: error("Finner ikke brukernavn i JWT")
             }
             error("Finner ikke brukernavn i security context")
         }
