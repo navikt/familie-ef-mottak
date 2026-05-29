@@ -99,7 +99,10 @@ abstract class IntegrasjonSpringRunnerTest {
         uri: String,
     ): String = baseUrl + uri
 
-    fun søkerBearerToken(personident: String = "12345678910"): String {
+    fun søkerBearerToken(
+        personident: String = "12345678910",
+        acr: String = "Level4",
+    ): String {
         val clientId = "lokal:teamfamilie:familie-ef-mottak"
         return mockOAuth2Server
             .issueToken(
@@ -109,7 +112,39 @@ abstract class IntegrasjonSpringRunnerTest {
                     issuerId = "tokenx",
                     subject = personident,
                     audience = listOf("aud-localhost"),
-                    claims = mapOf("acr" to "Level4", "client_id" to clientId),
+                    claims = mapOf("acr" to acr, "client_id" to clientId),
+                    expiry = 3600,
+                ),
+            ).serialize()
+    }
+
+    fun søkerBearerTokenUtenAcr(personident: String = "12345678910"): String {
+        val clientId = "lokal:teamfamilie:familie-ef-mottak"
+        return mockOAuth2Server
+            .issueToken(
+                issuerId = "tokenx",
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = "tokenx",
+                    subject = personident,
+                    audience = listOf("aud-localhost"),
+                    claims = mapOf("client_id" to clientId),
+                    expiry = 3600,
+                ),
+            ).serialize()
+    }
+
+    fun saksbehandlerBearerToken(navIdent: String = "Z999999"): String {
+        val clientId = "lokal:teamfamilie:familie-ef-mottak"
+        return mockOAuth2Server
+            .issueToken(
+                issuerId = "azuread",
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = "azuread",
+                    subject = navIdent,
+                    audience = listOf("aud-localhost"),
+                    claims = mapOf("preferred_username" to navIdent, "groups" to listOf<String>()),
                     expiry = 3600,
                 ),
             ).serialize()
