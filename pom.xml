@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.6</version>
     </parent>
 
     <properties>
@@ -19,14 +19,14 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <kotlin.version>2.3.20</kotlin.version>
-        <springdoc.version>3.0.2</springdoc.version>
+        <kotlin.version>2.3.21</kotlin.version>
+        <springdoc.version>3.0.3</springdoc.version>
         <mockk.version>1.14.9</mockk.version>
-        <felles.version>4.20260315040340_f2acdc7</felles.version>
-        <prosessering.version>2.20260331095424_89d92d2</prosessering.version>
-        <confluent.version>8.2.0</confluent.version>
-        <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
-        <token-validation.version>6.0.5</token-validation.version>
+        <felles.version>4.20260529121328_2754f7c</felles.version>
+        <prosessering.version>2.20260526102747_ed05f71</prosessering.version>
+        <confluent.version>8.2.1</confluent.version>
+        <kontrakter.version>4.0_20260527090809_893fcba</kontrakter.version>
+        <token-validation.version>6.0.8</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -251,7 +251,7 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock-jre8-standalone</artifactId>
-            <version>2.35.2</version>
+            <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -338,7 +338,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>5.5.0.6356</version>
+                    <version>5.6.0.6792</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
