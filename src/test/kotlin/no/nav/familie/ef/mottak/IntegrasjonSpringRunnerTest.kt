@@ -2,6 +2,7 @@ package no.nav.familie.ef.mottak
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import no.nav.familie.ef.mottak.config.MockOAuth2ServerConfig
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
@@ -9,11 +10,11 @@ import no.nav.familie.ef.mottak.repository.HendelsesloggRepository
 import no.nav.familie.ef.mottak.repository.SøknadRepository
 import no.nav.familie.ef.mottak.repository.VedleggRepository
 import no.nav.familie.ef.mottak.util.DbContainerInitializer
+import no.nav.familie.ef.mottak.util.MockOAuth2ServerInitializer
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
-import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,9 +30,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.web.client.RestTemplate
 
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(initializers = [DbContainerInitializer::class])
+@ContextConfiguration(initializers = [DbContainerInitializer::class, MockOAuth2ServerInitializer::class])
 @AutoConfigureTestRestTemplate
-@SpringBootTest(classes = [ApplicationLocalConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+    classes = [ApplicationLocalConfig::class, MockOAuth2ServerConfig::class],
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+)
 @ActiveProfiles(
     "integrationtest",
     "mock-integrasjon",
@@ -39,7 +43,6 @@ import org.springframework.web.client.RestTemplate
     "mock-ef-sak",
     "mock-pdf",
 )
-@EnableMockOAuth2Server
 abstract class IntegrasjonSpringRunnerTest {
     protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
@@ -96,7 +99,10 @@ abstract class IntegrasjonSpringRunnerTest {
         uri: String,
     ): String = baseUrl + uri
 
-    fun søkerBearerToken(personident: String = "12345678910"): String {
+    fun søkerBearerToken(
+        personident: String = "12345678910",
+        acr: String = "Level4",
+    ): String {
         val clientId = "lokal:teamfamilie:familie-ef-mottak"
         return mockOAuth2Server
             .issueToken(
@@ -106,7 +112,39 @@ abstract class IntegrasjonSpringRunnerTest {
                     issuerId = "tokenx",
                     subject = personident,
                     audience = listOf("aud-localhost"),
-                    claims = mapOf("acr" to "Level4", "client_id" to clientId),
+                    claims = mapOf("acr" to acr, "client_id" to clientId),
+                    expiry = 3600,
+                ),
+            ).serialize()
+    }
+
+    fun søkerBearerTokenUtenAcr(personident: String = "12345678910"): String {
+        val clientId = "lokal:teamfamilie:familie-ef-mottak"
+        return mockOAuth2Server
+            .issueToken(
+                issuerId = "tokenx",
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = "tokenx",
+                    subject = personident,
+                    audience = listOf("aud-localhost"),
+                    claims = mapOf("client_id" to clientId),
+                    expiry = 3600,
+                ),
+            ).serialize()
+    }
+
+    fun saksbehandlerBearerToken(navIdent: String = "Z999999"): String {
+        val clientId = "lokal:teamfamilie:familie-ef-mottak"
+        return mockOAuth2Server
+            .issueToken(
+                issuerId = "azuread",
+                clientId,
+                DefaultOAuth2TokenCallback(
+                    issuerId = "azuread",
+                    subject = navIdent,
+                    audience = listOf("aud-localhost"),
+                    claims = mapOf("preferred_username" to navIdent, "groups" to listOf<String>()),
                     expiry = 3600,
                 ),
             ).serialize()
