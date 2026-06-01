@@ -1,13 +1,13 @@
 package no.nav.familie.ef.mottak
 
-import no.nav.familie.ef.mottak.util.MockOAuth2ServerInitializer
+import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.springframework.boot.builder.SpringApplicationBuilder
 
+@EnableMockOAuth2Server
 class ApplicationLocal : ApplicationLocalConfig()
 
 fun main(args: Array<String>) {
     SpringApplicationBuilder(ApplicationLocal::class.java)
-        .initializers(MockOAuth2ServerInitializer())
         .profiles(
             "local",
             "mock-integrasjon",

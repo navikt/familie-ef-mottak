@@ -1,6 +1,7 @@
 package no.nav.familie.ef.mottak.api
 
 import no.nav.familie.ef.mottak.repository.SøknadRepository
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
@@ -18,6 +19,7 @@ class StatusController(
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping()
+    @Unprotected
     fun status(): StatusDto {
         val søknad = søknadRepository.finnSisteLagredeSøknad()
         val tidSidenSisteLagredeSøknad = Duration.between(søknad.opprettetTid, LocalDateTime.now())

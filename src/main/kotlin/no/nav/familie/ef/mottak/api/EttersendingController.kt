@@ -8,6 +8,7 @@ import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.familie.sikkerhet.EksternBrukerUtils.personIdentErLikInnloggetBruker
+import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(path = ["/api/ettersending"], consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
+@ProtectedWithClaims(
+    issuer = EksternBrukerUtils.ISSUER_TOKENX,
+    claimMap = ["acr=Level4"],
+)
 class EttersendingController(
     val ettersendingService: EttersendingService,
 ) {
