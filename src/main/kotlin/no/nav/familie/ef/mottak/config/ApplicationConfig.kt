@@ -5,17 +5,14 @@ import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
+import no.nav.familie.log.interceptor.ConsumerIdClientInterceptor
+import no.nav.familie.log.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
-import no.nav.familie.restklient.client.RetryOAuth2HttpClient
 import no.nav.familie.restklient.config.RestTemplateBuilderBean
 import no.nav.familie.restklient.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.restklient.interceptor.BearerTokenExchangeClientInterceptor
-import no.nav.familie.restklient.interceptor.ConsumerIdClientInterceptor
-import no.nav.familie.restklient.interceptor.MdcValuesPropagatingClientInterceptor
-import no.nav.security.token.support.client.core.http.OAuth2HttpClient
+import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
-import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
@@ -25,10 +22,10 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.web.client.RestClient
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
@@ -37,13 +34,10 @@ import java.time.temporal.ChronoUnit
 @SpringBootConfiguration
 @ComponentScan(
     "no.nav.familie.prosessering",
-    "no.nav.familie.sikkerhet",
     "no.nav.familie.ef.mottak",
-    "no.nav.familie.unleash",
 )
 @ConfigurationPropertiesScan
 @EnableOAuth2Client(cacheEnabled = true)
-@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableScheduling
 @Import(
     BearerTokenClientInterceptor::class,
@@ -52,6 +46,7 @@ import java.time.temporal.ChronoUnit
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
     KafkaErrorHandler::class,
+    FamilieFellesSpringSecurityKonfigurasjon::class,
 )
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
@@ -119,27 +114,20 @@ class ApplicationConfig {
         @Value("\${prosessering.rolle}") prosesseringRolle: String,
     ) = object :
         ProsesseringInfoProvider {
-        override fun hentBrukernavn(): String =
-            try {
-                SpringTokenValidationContextHolder()
-                    .getTokenValidationContext()
-                    .getClaims("azuread")
-                    .getStringClaim("preferred_username")
-            } catch (e: Exception) {
-                throw e
+        override fun hentBrukernavn(): String {
+            val authentication = SecurityContextHolder.getContext().authentication
+            if (authentication is JwtAuthenticationToken) {
+                return authentication.token.getClaimAsString("preferred_username")
+                    ?: authentication.token.subject
+                    ?: error("Finner ikke brukernavn i JWT")
             }
+            error("Finner ikke brukernavn i security context")
+        }
 
-        override fun harTilgang(): Boolean = grupper().contains(prosesseringRolle)
-
-        private fun grupper(): List<String> =
-            try {
-                SpringTokenValidationContextHolder()
-                    .getTokenValidationContext()
-                    .getClaims(
-                        "azuread",
-                    ).get("groups") as List<String>? ?: emptyList()
-            } catch (e: Exception) {
-                emptyList()
-            }
+        override fun harTilgang(): Boolean {
+            val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
+            val grupper = authentication?.token?.getClaimAsStringList("groups")?.toSet() ?: emptySet()
+            return grupper.contains(prosesseringRolle)
+        }
     }
 }

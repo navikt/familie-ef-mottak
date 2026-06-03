@@ -22,16 +22,14 @@
         <kotlin.version>2.3.20</kotlin.version>
         <springdoc.version>3.0.2</springdoc.version>
         <mockk.version>1.14.9</mockk.version>
-        <felles.version>4.20260315040340_f2acdc7</felles.version>
-        <prosessering.version>2.20260331095424_89d92d2</prosessering.version>
+        <felles.version>4.20260529121328_2754f7c</felles.version>
+        <prosessering.version>2.20260526102747_ed05f71</prosessering.version>
+        <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <confluent.version>8.2.0</confluent.version>
         <kontrakter.version>4.0_20260505124916_025d466</kontrakter.version>
         <token-validation.version>6.0.5</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
-
-        <!-- Setter disse til token-support sine versjoner, versjoner(9.x) i spring er ikke kompatibel med oauth2-oidc-sdk -->
-        <nimbus-jose-jwt.version>8.20.2</nimbus-jose-jwt.version>
 
         <!--suppress UnresolvedMavenProperty  Ligger som secret i github-->
         <sonar.projectKey>${SONAR_PROJECTKEY}</sonar.projectKey>
@@ -148,6 +146,15 @@
         <!-- Nav-internt  -->
 
         <dependency>
+            <groupId>no.nav.familie</groupId>
+            <artifactId>prosessering-web-spring-security</artifactId>
+            <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-client-spring</artifactId>
             <version>${token-validation.version}</version>
@@ -176,6 +183,11 @@
         <dependency>
             <groupId>no.nav.familie.felles</groupId>
             <artifactId>leader</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet-spring-security</artifactId>
             <version>${felles.version}</version>
         </dependency>
         <dependency>
@@ -243,6 +255,12 @@
 
         <!-- Test -->
         <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>mock-oauth2-server</artifactId>
+            <version>3.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>1.21.4</version>
@@ -290,12 +308,6 @@
                     <artifactId>mockito-junit-jupiter</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring-test</artifactId>
-            <version>${token-validation.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <profiles>
