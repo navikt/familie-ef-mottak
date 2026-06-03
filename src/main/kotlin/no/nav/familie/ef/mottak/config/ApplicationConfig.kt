@@ -11,6 +11,7 @@ import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.config.RestTemplateBuilderBean
 import no.nav.familie.restklient.interceptor.BearerTokenClientInterceptor
 import no.nav.familie.restklient.interceptor.BearerTokenExchangeClientInterceptor
+import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -33,7 +34,6 @@ import java.time.temporal.ChronoUnit
 @SpringBootConfiguration
 @ComponentScan(
     "no.nav.familie.prosessering",
-    "no.nav.familie.sikkerhet",
     "no.nav.familie.ef.mottak",
 )
 @ConfigurationPropertiesScan
@@ -46,6 +46,7 @@ import java.time.temporal.ChronoUnit
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
     KafkaErrorHandler::class,
+    FamilieFellesSpringSecurityKonfigurasjon::class,
 )
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(ApplicationConfig::class.java)
