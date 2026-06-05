@@ -14,6 +14,7 @@ class JournalhendelseKafkaListener(
 ) {
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
+    /*
     @KafkaListener(
         id = "familie-ef-mottak",
         topics = ["\${JOURNALFOERINGHENDELSE_V1_TOPIC_URL}"],
@@ -21,6 +22,7 @@ class JournalhendelseKafkaListener(
         idIsGroup = false,
         groupId = "srvfamilie-ef-mot",
     )
+     */
     fun listen(
         consumerRecord: ConsumerRecord<String, JournalfoeringHendelseRecord>,
         ack: Acknowledgment,
