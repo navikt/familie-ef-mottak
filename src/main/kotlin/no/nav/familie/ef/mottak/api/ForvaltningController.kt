@@ -6,7 +6,6 @@ import no.nav.familie.ef.mottak.task.LagJournalføringsoppgaveForEttersendingTas
 import no.nav.familie.log.IdUtils
 import no.nav.familie.prosessering.domene.Status
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,7 +15,6 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/forvaltning"])
-@ProtectedWithClaims(issuer = "azuread")
 class ForvaltningController(
     private val ettersendingService: EttersendingService,
     private val taskService: TaskService,

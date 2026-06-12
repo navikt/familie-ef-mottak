@@ -10,6 +10,7 @@ import no.nav.familie.ef.mottak.util.dokumenttypeTilStønadType
 import no.nav.familie.kontrakter.ef.søknad.Aktivitet
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.jsonMapper
@@ -61,10 +62,20 @@ class MappeService(
         val søknad = søknadService.hentSøknad(søknadId)
 
         return when (dokumenttypeTilStønadType(søknad.dokumenttype)) {
-            StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønad(søknad)
+            StønadType.OVERGANGSSTØNAD -> mappeFraOvergangsstønadGittVersjon(søknad)
             StønadType.BARNETILSYN -> mappeFraBarnetilsyn(søknad)
             StønadType.SKOLEPENGER -> UPLASSERT
             else -> UPLASSERT
+        }
+    }
+
+    private fun mappeFraOvergangsstønadGittVersjon(søknad: Søknad): MappeSøkestreng {
+        val erRegelendring2026 = jsonMapper.readTree(søknad.json).path("erRegelendring2026").asBoolean(false)
+
+        return if (erRegelendring2026) {
+            mappeFraOvergangsstønadRegelendring2026(søknad)
+        } else {
+            mappeFraOvergangsstønad(søknad)
         }
     }
 
@@ -88,6 +99,18 @@ class MappeService(
         return when {
             erSærligTilsynskrevende(søknadsdata) -> SÆRLIG_TILSYNSKREVENDE
             erSelvstendig(søknadsdata.aktivitet) -> SELVSTENDIG
+            else -> UPLASSERT
+        }
+    }
+
+    private fun mappeFraOvergangsstønadRegelendring2026(søknad: Søknad): MappeSøkestreng {
+        val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønadRegelendring2026>(søknad.json)
+        val situasjonSvarIder = søknadsdata.hvaSituasjon.svarId.orEmpty()
+        val inntektSvarIder = søknadsdata.inntekter.svarId.orEmpty()
+        return when {
+            situasjonSvarIder.contains("barnSærligTilsyn") -> SÆRLIG_TILSYNSKREVENDE
+            inntektSvarIder.contains("selvstendigNæringsdrivende") -> SELVSTENDIG
+            søknadsdata.firmaer?.verdi?.isNotEmpty() == true -> SELVSTENDIG
             else -> UPLASSERT
         }
     }

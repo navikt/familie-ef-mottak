@@ -31,6 +31,7 @@ import no.nav.familie.kontrakter.ef.søknad.SkolepengerDokumentasjon
 import no.nav.familie.kontrakter.ef.søknad.Stønadsstart
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.ef.søknad.TidligereUtdanning
@@ -135,6 +136,75 @@ internal object Testdata {
             Søknadsfelt("Arbeid, utdanning og andre aktiviteter", aktivitet()),
             Søknadsfelt("Mer om situasjonen din", situasjon()),
             Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
+        )
+
+    val søknadOvergangsstønadRegelendring2026 =
+        SøknadOvergangsstønadRegelendring2026(
+            erRegelendring2026 = true,
+            innsendingsdetaljer =
+                Søknadsfelt(
+                    "detaljer",
+                    Innsendingsdetaljer(Søknadsfelt("mottat", mottat), mottat.minusDays(1).toLocalDate()),
+                ),
+            personalia = Søknadsfelt("Søker", personalia()),
+            adresseopplysninger = Søknadsfelt("Opplysninger om adresse", adresseopplysninger()),
+            sivilstandsdetaljer = Søknadsfelt("Detaljer om sivilstand", sivilstandsdetaljer()),
+            medlemskapsdetaljer = Søknadsfelt("Opphold i Norge", medlemskapsdetaljer()),
+            bosituasjon = Søknadsfelt("Bosituasjonen din", bosituasjon()),
+            sivilstandsplaner = Søknadsfelt("Sivilstandsplaner", sivilstandsplaner()),
+            barn = Søknadsfelt("Barna dine", listOf(barn())),
+            hvaSituasjon =
+                Søknadsfelt(
+                    label = "Hva er situasjonen din?",
+                    verdi =
+                        listOf(
+                            "Jeg har barn under 14 måneder",
+                            "Jeg har barn som trenger særlig tilsyn på grunn av fysiske, psykiske eller store sosiale problemer",
+                            "Barnet mitt har en sykdom som ikke er varig",
+                        ),
+                    alternativer = listOf(""),
+                    svarId =
+                        listOf(
+                            "barnUnder14Måneder",
+                            "barnSærligTilsyn",
+                            "barnSykdomIkkeVarig",
+                        ),
+                ),
+            inntekter =
+                Søknadsfelt(
+                    label = "Har du noen av disse inntektene?",
+                    verdi =
+                        listOf(
+                            "Ja, jeg har inntekt som arbeidstaker",
+                            "Ja, jeg har inntekt som selvstendig næringsdrivende",
+                            "Ja, jeg får annen stønad fra Nav",
+                            "Nei",
+                        ),
+                    alternativer = listOf(""),
+                    svarId =
+                        listOf(
+                            "arbeidstaker",
+                            "selvstendigNæringsdrivende",
+                            "annenStønadNav",
+                            "nei",
+                        ),
+                ),
+            sagtOppEllerRedusertStilling =
+                Søknadsfelt(
+                    "Har du sagt opp jobben eller redusert arbeidstiden de siste 6 månedene?",
+                    "Ja, jeg har sagt opp jobben eller tatt frivillig permisjon (ikke foreldrepermisjon)",
+                ),
+            begrunnelseSagtOppEllerRedusertStilling =
+                Søknadsfelt(
+                    "Hvorfor sa du opp?",
+                    "Det ble ikke som forventet.",
+                ),
+            datoSagtOppEllerRedusertStilling =
+                Søknadsfelt(
+                    "Når sa du opp?",
+                    LocalDate.of(2026, 1, 1),
+                ),
+            stønadsstart = Søknadsfelt("Når søker du stønad fra?", stønadsstart()),
         )
 
     val søknadBarnetilsyn =

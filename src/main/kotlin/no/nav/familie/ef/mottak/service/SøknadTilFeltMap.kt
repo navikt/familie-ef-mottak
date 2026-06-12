@@ -13,6 +13,7 @@ import no.nav.familie.kontrakter.ef.søknad.MånedÅrPeriode
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.ef.søknad.Søknadsfelt
 import no.nav.familie.kontrakter.ef.søknad.Utenlandsopphold
@@ -60,6 +61,50 @@ object SøknadTilFeltMap {
             PdfConfig(true, språk),
             getSkjemanummerTekst("overgangsstønad", språk),
         )
+    }
+
+    fun mapOvergangsstønad(
+        søknad: SøknadOvergangsstønadRegelendring2026,
+        vedleggTitler: List<String>,
+    ): FeltMap {
+        val språk = søknad.innsendingsdetaljer.verdi.språk ?: "nb"
+        val felter = finnFelter(søknad, språk)
+        val vedlegg = mapTilVedlegg(vedleggTitler)
+
+        return FeltMap(
+            "Søknad om overgangsstønad",
+            grupperFlateFelterISeksjon(felter) + vedlegg,
+            PdfConfig(true, språk),
+            getSkjemanummerTekst("overgangsstønad", språk),
+        )
+    }
+
+    private fun grupperFlateFelterISeksjon(felter: List<VerdilisteElement>): List<VerdilisteElement> {
+        val flatteElementer =
+            felter
+                .filter { it.verdiliste == null && it.visningsVariant == null && it.verdi != null }
+                .toSet()
+
+        if (flatteElementer.isEmpty()) return felter
+
+        return buildList {
+            var seksjonLagtTil = false
+            for (element in felter) {
+                if (element in flatteElementer) {
+                    if (!seksjonLagtTil) {
+                        add(
+                            VerdilisteElement(
+                                label = "Mer om situasjonen din",
+                                verdiliste = felter.filter { it in flatteElementer },
+                            ),
+                        )
+                        seksjonLagtTil = true
+                    }
+                } else {
+                    add(element)
+                }
+            }
+        }
     }
 
     fun mapBarnetilsyn(

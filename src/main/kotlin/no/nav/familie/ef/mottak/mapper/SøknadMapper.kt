@@ -8,6 +8,7 @@ import no.nav.familie.ef.mottak.repository.domain.Søknad
 import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.jsonMapper
 import tools.jackson.module.kotlin.readValue
@@ -17,6 +18,19 @@ object SøknadMapper {
 
     fun fromDto(
         søknad: SøknadOvergangsstønad,
+        behandleINySaksbehandling: Boolean,
+    ): Søknad {
+        val data = jsonMapper.writeValueAsString(søknad)
+        return Søknad(
+            fnr = søknad.personalia.verdi.fødselsnummer.verdi.verdi,
+            dokumenttype = DOKUMENTTYPE_OVERGANGSSTØNAD,
+            behandleINySaksbehandling = behandleINySaksbehandling,
+            json = data,
+        )
+    }
+
+    fun fromDto(
+        søknad: SøknadOvergangsstønadRegelendring2026,
         behandleINySaksbehandling: Boolean,
     ): Søknad {
         val data = jsonMapper.writeValueAsString(søknad)

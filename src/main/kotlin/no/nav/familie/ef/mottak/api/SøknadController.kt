@@ -7,10 +7,10 @@ import no.nav.familie.kontrakter.ef.søknad.SkjemaForArbeidssøker
 import no.nav.familie.kontrakter.ef.søknad.SøknadBarnetilsyn
 import no.nav.familie.kontrakter.ef.søknad.SøknadMedVedlegg
 import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønad
+import no.nav.familie.kontrakter.ef.søknad.SøknadOvergangsstønadRegelendring2026
 import no.nav.familie.kontrakter.ef.søknad.SøknadSkolepenger
 import no.nav.familie.kontrakter.felles.søknad.SistInnsendtSøknadDto
 import no.nav.familie.sikkerhet.EksternBrukerUtils
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,10 +20,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/soknad", produces = [APPLICATION_JSON_VALUE])
-@ProtectedWithClaims(
-    issuer = EksternBrukerUtils.ISSUER_TOKENX,
-    claimMap = ["acr=Level4"],
-)
 class SøknadController(
     val søknadService: SøknadService,
 ) {
@@ -31,6 +27,11 @@ class SøknadController(
     fun mottaSøknadOvergangsstønad(
         @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønad>,
     ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønad(søknad) }
+
+    @PostMapping("overgangsstonad-regelendring-2026")
+    fun mottaSøknadOvergangsstønadRegelendring2026(
+        @RequestBody søknad: SøknadMedVedlegg<SøknadOvergangsstønadRegelendring2026>,
+    ): Kvittering = okEllerKastException { søknadService.mottaSøknadOvergangsstønadRegelendring2026(søknad) }
 
     @PostMapping("barnetilsyn")
     fun mottaSøknadBarnetilsyn(
