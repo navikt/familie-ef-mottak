@@ -20,6 +20,10 @@ object UtledPrioritetForSøknadUtil {
         if (søknad.dokumenttype != DOKUMENTTYPE_OVERGANGSSTØNAD) {
             return false
         }
+        val erRegelendring2026 = jsonMapper.readTree(søknad.json).path("erRegelendring2026").asBoolean(false)
+        if (erRegelendring2026) {
+            return false
+        }
         val søknadsdata = jsonMapper.readValue<SøknadOvergangsstønad>(søknad.json)
         return (søknadsdata.aktivitet.verdi.underUtdanning != null) && erSommerPeriode(søknad.opprettetTid.toLocalDate())
     }
