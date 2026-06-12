@@ -36,10 +36,6 @@ logging:
   config: "classpath:logback-test.xml"
 
 no.nav.security.jwt:
-  issuer:
-    tokenx:
-      discoveryurl: https://fakedings.intern.dev.nav.no/fake/.well-known/openid-configuration
-      accepted_audience: aud-localhost
   client:
     registration:
       integrasjoner-client-credentials:
