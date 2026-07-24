@@ -19,7 +19,7 @@ import java.net.URI
 class SaksbehandlingClient(
     @Value("\${EF_SAK_URL}")
     private val uri: URI,
-    @Qualifier("restTemplateAzure")
+    @Qualifier("restTemplateSaksbehandling")
     restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "saksbehandling") {
     override val pingUri: URI =
