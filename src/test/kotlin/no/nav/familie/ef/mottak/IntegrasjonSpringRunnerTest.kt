@@ -3,6 +3,7 @@ package no.nav.familie.ef.mottak
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import no.nav.familie.ef.mottak.config.MockOAuth2ServerConfig
+import no.nav.familie.ef.mottak.config.TokenKlientTestConfig
 import no.nav.familie.ef.mottak.repository.DokumentasjonsbehovRepository
 import no.nav.familie.ef.mottak.repository.EttersendingRepository
 import no.nav.familie.ef.mottak.repository.EttersendingVedleggRepository
@@ -33,7 +34,7 @@ import org.springframework.web.client.RestTemplate
 @ContextConfiguration(initializers = [DbContainerInitializer::class, MockOAuth2ServerInitializer::class])
 @AutoConfigureTestRestTemplate
 @SpringBootTest(
-    classes = [ApplicationLocalConfig::class, MockOAuth2ServerConfig::class],
+    classes = [ApplicationLocalConfig::class, MockOAuth2ServerConfig::class, TokenKlientTestConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @ActiveProfiles(
