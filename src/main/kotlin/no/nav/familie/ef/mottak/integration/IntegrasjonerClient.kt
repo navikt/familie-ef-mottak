@@ -29,7 +29,7 @@ import java.net.URI
 
 @Service
 class IntegrasjonerClient(
-    @Qualifier("restTemplateAzure") operations: RestOperations,
+    @Qualifier("restTemplateIntegrasjoner") operations: RestOperations,
     private val integrasjonerConfig: IntegrasjonerConfig,
 ) : AbstractPingableRestClient(operations, "Arkiv") {
     override val pingUri: URI =

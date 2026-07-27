@@ -15,7 +15,7 @@ import java.net.URI
 class FamiliePdfClient(
     @Value("\${familie.pdf.url}")
     private val uri: URI,
-    @Qualifier("restTemplateAzure")
+    @Qualifier("restTemplatePdf")
     restOperations: RestOperations,
 ) : AbstractPingableRestClient(restOperations, "familie-pdf") {
     override val pingUri: URI =

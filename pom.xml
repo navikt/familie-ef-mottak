@@ -27,7 +27,6 @@
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <confluent.version>8.3.0</confluent.version>
         <kontrakter.version>4.0_20260702124405_ce34af2</kontrakter.version>
-        <token-validation.version>6.0.11</token-validation.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
 
@@ -155,9 +154,9 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-client-spring</artifactId>
-            <version>${token-validation.version}</version>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>token-klient</artifactId>
+            <version>${felles.version}</version>
         </dependency>
 
         <dependency>

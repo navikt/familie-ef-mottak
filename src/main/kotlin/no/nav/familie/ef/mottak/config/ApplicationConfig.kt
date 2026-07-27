@@ -1,5 +1,9 @@
 package no.nav.familie.ef.mottak.config
 
+import no.nav.familie.felles.tokenklient.entraid.EntraIDClient
+import no.nav.familie.felles.tokenklient.entraid.MaskinTilMaskinTokenInterceptor
+import no.nav.familie.felles.tokenklient.tokenx.TokenXClient
+import no.nav.familie.felles.tokenklient.tokenx.TokenXInterceptor
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
@@ -9,10 +13,8 @@ import no.nav.familie.log.interceptor.ConsumerIdClientInterceptor
 import no.nav.familie.log.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.config.RestTemplateBuilderBean
-import no.nav.familie.restklient.interceptor.BearerTokenClientInterceptor
-import no.nav.familie.restklient.interceptor.BearerTokenExchangeClientInterceptor
+import no.nav.familie.sikkerhet.EksternBrukerUtils
 import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
-import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
@@ -35,13 +37,12 @@ import java.time.temporal.ChronoUnit
 @ComponentScan(
     "no.nav.familie.prosessering",
     "no.nav.familie.ef.mottak",
+    "no.nav.familie.felles.tokenklient.entraid",
+    "no.nav.familie.felles.tokenklient.tokenx",
 )
 @ConfigurationPropertiesScan
-@EnableOAuth2Client(cacheEnabled = true)
 @EnableScheduling
 @Import(
-    BearerTokenClientInterceptor::class,
-    BearerTokenExchangeClientInterceptor::class,
     RestTemplateBuilderBean::class,
     MdcValuesPropagatingClientInterceptor::class,
     ConsumerIdClientInterceptor::class,
@@ -53,7 +54,8 @@ class ApplicationConfig {
 
     @Bean("tokenExchange")
     fun restTemplateTokenExchange(
-        bearerTokenExchangeClientInterceptor: BearerTokenExchangeClientInterceptor,
+        tokenXClient: TokenXClient,
+        @Value("\${familie.dokument.audience}") scope: String,
         mdcValuesPropagatingClientInterceptor: MdcValuesPropagatingClientInterceptor,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
@@ -62,15 +64,39 @@ class ApplicationConfig {
             .readTimeout(Duration.of(25, ChronoUnit.SECONDS))
             .additionalMessageConverters(listOf(JacksonJsonHttpMessageConverter(jsonMapper)) + RestTemplate().messageConverters)
             .interceptors(
-                bearerTokenExchangeClientInterceptor,
+                TokenXInterceptor(tokenXClient, scope) { EksternBrukerUtils.getBearerTokenForLoggedInUser() },
                 mdcValuesPropagatingClientInterceptor,
                 consumerIdClientInterceptor,
             ).build()
 
-    @Bean("restTemplateAzure")
-    fun restTemplateAzure(
+    @Bean("restTemplateIntegrasjoner")
+    fun restTemplateIntegrasjoner(
+        entraIDClient: EntraIDClient,
+        @Value("\${familie.ef.integrasjoner.scope}") scope: String,
         mdcInterceptor: MdcValuesPropagatingClientInterceptor,
-        bearerTokenClientInterceptor: BearerTokenClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
+    ): RestOperations = lagMaskinTilMaskinRestTemplate(entraIDClient, scope, mdcInterceptor, consumerIdClientInterceptor)
+
+    @Bean("restTemplateSaksbehandling")
+    fun restTemplateSaksbehandling(
+        entraIDClient: EntraIDClient,
+        @Value("\${familie.ef.saksbehandling.scope}") scope: String,
+        mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
+    ): RestOperations = lagMaskinTilMaskinRestTemplate(entraIDClient, scope, mdcInterceptor, consumerIdClientInterceptor)
+
+    @Bean("restTemplatePdf")
+    fun restTemplatePdf(
+        entraIDClient: EntraIDClient,
+        @Value("\${familie.pdf.scope}") scope: String,
+        mdcInterceptor: MdcValuesPropagatingClientInterceptor,
+        consumerIdClientInterceptor: ConsumerIdClientInterceptor,
+    ): RestOperations = lagMaskinTilMaskinRestTemplate(entraIDClient, scope, mdcInterceptor, consumerIdClientInterceptor)
+
+    private fun lagMaskinTilMaskinRestTemplate(
+        entraIDClient: EntraIDClient,
+        scope: String,
+        mdcInterceptor: MdcValuesPropagatingClientInterceptor,
         consumerIdClientInterceptor: ConsumerIdClientInterceptor,
     ): RestOperations =
         RestTemplateBuilder()
@@ -79,7 +105,7 @@ class ApplicationConfig {
             .additionalMessageConverters(listOf(JacksonJsonHttpMessageConverter(jsonMapper)) + RestTemplate().messageConverters)
             .interceptors(
                 mdcInterceptor,
-                bearerTokenClientInterceptor,
+                MaskinTilMaskinTokenInterceptor(entraIDClient, scope),
                 consumerIdClientInterceptor,
             ).build()
 

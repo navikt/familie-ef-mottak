@@ -21,28 +21,22 @@ familie:
   ef:
     integrasjoner:
       url: http://localhost:8092/mockintegrasjoner/
+      scope: test-scope-integrasjoner
+    saksbehandling:
+      scope: test-scope-saksbehandling
     brev:
       #url: http://localhost:8081/
       url: https://familie-brev.dev.intern.nav.no/
   dokument:
     url: http://localhost:8092/mockdokument/
+  pdf:
+    scope: test-scope-pdf
 
 logging:
   config: "classpath:logback-test.xml"
 
-no.nav.security.jwt:
-  client:
-    registration:
-      integrasjoner-client-credentials:
-        resource-url: ${familie.ef.integrasjoner.url}
-        token-endpoint-url: http://localhost:8092/mockapi/token
-        grant-type: client_credentials
-        scope: anything4
-        authentication:
-          client-id: anything5
-          client-secret: anything6
-          client-auth-method: client_secret_basic
-
+NAIS_TOKEN_ENDPOINT: http://localhost:8092/mockapi/token
+NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost:8092/mockapi/token
 
 database:
   encryption:
@@ -58,15 +52,6 @@ JOURNALFOERINGHENDELSE_V1_TOPIC_URL: teamdokumenthandtering.aapen-dok-journalfoe
 dittnav.soknadfrontendUrl: http://localhost:3000/familie/alene-med-barn/soknad
 EF_SAK_URL: http://localhost:8092/mockintegrasjoner/
 ettersending.ettersendingUrl: http://localhost:3000/
-
-TOKEN_X_WELL_KNOWN_URL: http://localhost
-TOKEN_X_PRIVATE_JWK: '{
-    "kty" : "RSA",
-    "e" : "AQAB",
-    "use" : "sig",
-    "kid" : "mock-oauth2-server-key",
-    "n" : ""
-  }'
 
 UNLEASH_SERVER_API_URL: http://localhost:4242/api
 UNLEASH_SERVER_API_TOKEN: token
