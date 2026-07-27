@@ -24,10 +24,10 @@ spec:
     max: 2
   resources:
     limits:
-      memory: 2Gi
+      memory: 1152Mi
     requests:
-      memory: 2Gi
-      cpu: 20m
+      memory: 1152Mi
+      cpu: 300m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
     - https://familie-ef-mottak.intern.dev.nav.no
   azure:
