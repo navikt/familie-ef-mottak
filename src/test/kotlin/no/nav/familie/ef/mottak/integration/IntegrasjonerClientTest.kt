@@ -153,18 +153,19 @@ internal class IntegrasjonerClientTest {
     }
 
     @Test
-    internal fun `skal fjerne tegn som ikke er tall fra aktørid før kall`() {
+    internal fun `skal fjerne fnutter og andre tegn som ikke er tall fra aktørid før kall`() {
         val mockResponse = jsonMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
+        val forventetAktørId = "321"
         wireMockServer.stubFor(
             post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
                 .willReturn(okJson(mockResponse)),
         )
 
-        integrasjonerClient.hentIdentForAktørId("'32-1\"")
+        integrasjonerClient.hentIdentForAktørId("'32-1'")
 
         wireMockServer.verify(
             postRequestedFor(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
-                .withRequestBody(equalTo("321")),
+                .withRequestBody(equalTo(jsonMapper.writeValueAsString(forventetAktørId))),
         )
     }
 
