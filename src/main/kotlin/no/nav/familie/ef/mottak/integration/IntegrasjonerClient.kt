@@ -214,7 +214,8 @@ class IntegrasjonerClient(
     }
 
     fun hentIdentForAktørId(aktørId: String): String {
-        val response = postForEntity<Ressurs<MutableMap<*, *>>>(identFraAktørUri, aktørId)
+        val aktørIdUtenAndreTegn = aktørId.filter { it.isDigit() } // Det ser ut til at journalposter kan ha aktørid med fnutter rundt
+        val response = postForEntity<Ressurs<MutableMap<*, *>>>(identFraAktørUri, aktørIdUtenAndreTegn)
         return response.getDataOrThrow()["personIdent"].toString()
     }
 
