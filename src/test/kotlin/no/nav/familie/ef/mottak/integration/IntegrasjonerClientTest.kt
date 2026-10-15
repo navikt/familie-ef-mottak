@@ -1,9 +1,11 @@
 package no.nav.familie.ef.mottak.integration
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.put
 import com.github.tomakehurst.wiremock.client.WireMock.serverError
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
@@ -148,6 +150,23 @@ internal class IntegrasjonerClientTest {
 
         val personIdent = integrasjonerClient.hentIdentForAktørId("321")
         assertThat(personIdent).isEqualTo("123")
+    }
+
+    @Test
+    internal fun `skal fjerne fnutter og andre tegn som ikke er tall fra aktørid før kall`() {
+        val mockResponse = jsonMapper.writeValueAsString(success(mapOf("personIdent" to "123")))
+        val forventetAktørId = "321"
+        wireMockServer.stubFor(
+            post(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
+                .willReturn(okJson(mockResponse)),
+        )
+
+        integrasjonerClient.hentIdentForAktørId("'32-1'")
+
+        wireMockServer.verify(
+            postRequestedFor(urlEqualTo("/${IntegrasjonerClient.PATH_IDENT_FRA_AKTØRID}"))
+                .withRequestBody(equalTo(jsonMapper.writeValueAsString(forventetAktørId))),
+        )
     }
 
     private fun readFile(filnavn: String): String = this::class.java.getResource("/json/$filnavn").readText()
