@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import org.apache.avro.util.ClassSecurityValidator
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties
@@ -25,6 +26,13 @@ class KafkaConfig {
         kafkaErrorHandler: KafkaErrorHandler,
     ): ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord> =
         ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord>().apply {
+            ClassSecurityValidator.setGlobal(
+                ClassSecurityValidator.composite(
+                    ClassSecurityValidator.getGlobal(),
+                    ClassSecurityValidator.builder().add(JournalfoeringHendelseRecord::class.java).build(),
+                ),
+            )
+
             val props = properties.buildConsumerProperties()
             props[ConsumerConfig.MAX_POLL_RECORDS_CONFIG] = 1
             props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"

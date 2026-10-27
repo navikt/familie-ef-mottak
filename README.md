@@ -22,6 +22,10 @@ med navn familie-ef-mottak i dev-gcp:
 Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
 
 ## Kafka
+Avro 1.12.2 krever eksplisitt godkjenning av klasser som lastes fra schemaet. `KafkaConfig` godkjenner
+bare `JournalfoeringHendelseRecord` og beholder Avros eksisterende klassekontroll. Ikke åpne for alle pakker.
+`KafkaConfigTest` tester deserialisering med appens konfigurasjon og en lokal registry-mock, uten Kafka-broker.
+
 Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
 
 ```
