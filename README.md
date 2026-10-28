@@ -22,6 +22,15 @@ med navn familie-ef-mottak i dev-gcp:
 Variablene legges inn under ApplicationLocal -> Edit Configurations -> Environment Variables.
 
 ## Kafka
+Avro-runtime kommer transitivt fra `kafka-avro-serializer`, slik at vi følger Confluents Avro-versjon.
+Maven Enforcer kontrollerer i `validate` at `avro-maven-plugin` har samme versjon som løst `org.apache.avro:avro`.
+Dependabot samler Confluent-oppdateringer i gruppen `kafka-avro` og ignorerer kodegeneratoren.
+Når en Confluent-oppdatering endrer Avro-versjonen, oppdaterer vi kodegeneratoren manuelt i samme pull request.
+Regelen kontrollerer versjonslikhet, ikke hvilken avhengighet som valgte runtime-versjonen.
+
+`KafkaConfigTest` tester deserialisering med appens konfigurasjon og en lokal registry-mock, uten Kafka-broker.
+Kjør testen med `mvn test -Dtest=KafkaConfigTest --settings .m2/maven-settings.xml`.
+
 Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
 
 ```

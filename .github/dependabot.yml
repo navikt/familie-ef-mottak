@@ -21,7 +21,14 @@ updates:
     open-pull-requests-limit: 10
     registries:
       - familie-felles
+    ignore:
+      # Følger Avro-versjonen Confluent drar inn transitivt. Bumpes manuelt når Enforcer sier fra.
+      - dependency-name: "org.apache.avro:avro-maven-plugin"
     groups:
+      kafka-avro:
+        patterns:
+          - "io.confluent*"
+          - "org.apache.avro*"
       all-dependencies:
         patterns:
           - "*"
