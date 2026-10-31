@@ -121,11 +121,6 @@
 
         <!-- Kafka -->
         <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>1.12.1</version>
-        </dependency>
-        <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-schema-registry-client</artifactId>
             <version>${confluent.version}</version>
@@ -360,8 +355,39 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>avro-plugin-foelger-confluent</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireSameVersions>
+                                    <message>
+                                        Avro-runtime kommer transitivt fra Confluent (kafka-avro-serializer) og styres ikke her.
+                                        avro-maven-plugin må ha samme versjon. Sett plugin-versjonen lik Avro-versjonen Confluent drar inn.
+                                    </message>
+                                    <dependencies>
+                                        <dependency>org.apache.avro:avro</dependency>
+                                    </dependencies>
+                                    <buildPlugins>
+                                        <buildPlugin>org.apache.avro:avro-maven-plugin</buildPlugin>
+                                    </buildPlugins>
+                                </requireSameVersions>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
+                <!-- Må være lik Avro-versjonen Confluent drar inn; Enforcer sjekker det. -->
                 <version>1.12.1</version>
                 <executions>
                     <execution>
