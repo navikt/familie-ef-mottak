@@ -20,9 +20,8 @@ spec:
     enabled: true
     path: /internal/prometheus
   replicas:
-    # Midlertidig stopp for databaseoppgradering. Gjenopprett min: 2 og max: 4 etter oppgraderingen.
-    min: 0
-    max: 0
+    min: 2
+    max: 4
   resources:
     limits:
       memory: 2176Mi
@@ -75,7 +74,7 @@ spec:
   leaderElection: true
   gcp:
     sqlInstances:
-      - type: POSTGRES_18 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+      - type: POSTGRES_18
         diskSize: 50
         diskAutoresize: true
         tier: db-custom-1-3840
