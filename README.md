@@ -28,7 +28,23 @@ Dependabot samler Confluent-oppdateringer i gruppen `kafka-avro` og ignorerer ko
 Når en Confluent-oppdatering endrer Avro-versjonen, oppdaterer vi kodegeneratoren manuelt i samme pull request.
 Regelen kontrollerer versjonslikhet, ikke hvilken avhengighet som valgte runtime-versjonen.
 
-`KafkaConfigTest` tester deserialisering med appens konfigurasjon og en lokal registry-mock, uten Kafka-broker.
+Fra Avro 1.12.2 må journalføringsklassene godkjennes før Avro kan laste dem.
+Nais-manifestene setter `org.apache.avro.SERIALIZABLE_PACKAGES` via `JDK_JAVA_OPTIONS` i dev og prod.
+Maven Surefire setter samme systemegenskap ved testoppstart, med verdien fra `avro.serializable.packages` i `pom.xml`.
+Bare pakken `no.nav.joarkjournalfoeringhendelser` godkjennes. Ikke bruk wildcard eller deaktiver klassekontrollen.
+
+Ved lokal kjøring av `ApplicationLocal` eller tester direkte i IDE-en, legg dette under **VM options**:
+
+```text
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=no.nav.joarkjournalfoeringhendelser
+```
+
+Egenskapen må settes ved JVM-oppstart. Avro leser den når klassekontrollen initialiseres,
+så `System.setProperty` i Spring-konfigurasjonen kan komme for sent.
+
+`KafkaConfigTest` kontrollerer pakkegodkjenningen og tester deserialisering med appens konfigurasjon og en lokal registry-mock, uten Kafka-broker.
+Testen av at ikke-godkjente klasser avvises, hoppes eksplisitt over når Avro ikke har klassekontrollen, som i 1.12.1.
+Denne testen må også kjøres med en Avro-versjon som har kontrollen for å verifisere godkjenningen.
 Kjør testen med `mvn test -Dtest=KafkaConfigTest --settings .m2/maven-settings.xml`.
 
 Lokalt må man kjøre serveren sammen med [navkafka-docker-compose](https://github.com/navikt/navkafka-docker-compose). Topicene vi lytter på og publiserer til må da opprettes via deres api med følgende data:
