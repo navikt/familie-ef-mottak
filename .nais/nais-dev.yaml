@@ -69,6 +69,8 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=75 -Dorg.apache.avro.SERIALIZABLE_PACKAGES=no.nav.joarkjournalfoeringhendelser"
   envFrom:
     - secret: familie
     - secret: familie-ef-mottak
