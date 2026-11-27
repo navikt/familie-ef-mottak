@@ -25,7 +25,7 @@
         <felles.version>4.20261026180911_c3ff6d9</felles.version>
         <prosessering.version>2.20261102130928_50eba5f</prosessering.version>
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
-        <confluent.version>8.3.0</confluent.version>
+        <confluent.version>8.4.1</confluent.version>
         <kontrakter.version>4.0_20261108214032_20eed0c</kontrakter.version>
         <spring-cloud.version>3.0.4</spring-cloud.version>
         <start-class>no.nav.familie.ef.mottak.ApplicationKt</start-class>
